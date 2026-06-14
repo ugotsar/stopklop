@@ -1,11 +1,6 @@
 import React from 'react';
 import { View, ActivityIndicator } from 'react-native';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
-
-const AppTheme = {
-  ...DefaultTheme,
-  colors: { ...DefaultTheme.colors, background: '#FFFFFF' },
-};
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { useUser } from '../context/UserContext';
@@ -22,14 +17,24 @@ import Step5Screen      from '../screens/onboarding/Step5Screen';
 import Step6Screen      from '../screens/onboarding/Step6Screen';
 import Step7Screen      from '../screens/onboarding/Step7Screen';
 import PaywallScreen    from '../screens/onboarding/PaywallScreen';
-import DashboardScreen  from '../screens/DashboardScreen';
+
+// ── App principale (tabs) ──────────────────────────────────────────────────
+import MainTabNavigator from './MainTabNavigator';
+import JaiFumeScreen          from '../screens/JaiFumeScreen';
+import ModifierObjectifScreen from '../screens/ModifierObjectifScreen';
+import UniteMonnaieScreen     from '../screens/UniteMonnaieScreen';
+import NousContacterScreen    from '../screens/NousContacterScreen';
+
+const AppTheme = {
+  ...DefaultTheme,
+  colors: { ...DefaultTheme.colors, background: '#FFFFFF' },
+};
 
 const Stack = createNativeStackNavigator();
 
 export default function AppNavigator() {
   const { profile, loading } = useUser();
 
-  // Pendant le chargement du profil AsyncStorage
   if (loading) {
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.white }}>
@@ -38,8 +43,7 @@ export default function AppNavigator() {
     );
   }
 
-  // Si l'onboarding est déjà terminé → on envoie directement au Dashboard
-  const initialRoute = profile?.onboardingComplete ? 'Dashboard' : 'Welcome';
+  const initialRoute = profile?.onboardingComplete ? 'MainTabs' : 'Welcome';
 
   return (
     <NavigationContainer theme={AppTheme}>
@@ -60,8 +64,14 @@ export default function AppNavigator() {
         <Stack.Screen name="Step7"     component={Step7Screen} />
         <Stack.Screen name="Paywall"   component={PaywallScreen} />
 
-        {/* ── App principale ── */}
-        <Stack.Screen name="Dashboard" component={DashboardScreen} />
+        {/* ── App principale (Bottom Tabs) ── */}
+        <Stack.Screen name="MainTabs"  component={MainTabNavigator} />
+
+        {/* ── Écrans modaux / stack au-dessus des tabs ── */}
+        <Stack.Screen name="JaiFume"          component={JaiFumeScreen}          options={{ animation: 'slide_from_bottom' }} />
+        <Stack.Screen name="ModifierObjectif" component={ModifierObjectifScreen} options={{ animation: 'slide_from_right' }} />
+        <Stack.Screen name="UniteMonnaie"     component={UniteMonnaieScreen}     options={{ animation: 'slide_from_right' }} />
+        <Stack.Screen name="NousContacter"    component={NousContacterScreen}    options={{ animation: 'slide_from_right' }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

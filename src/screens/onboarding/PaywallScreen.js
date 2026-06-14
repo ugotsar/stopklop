@@ -78,9 +78,9 @@ export default function PaywallScreen({ navigation }) {
           })}
         </View>
 
-        <PrimaryButton title="Commencer mon essai →" onPress={() => navigation.navigate('Dashboard')} style={styles.cta} />
+        <PrimaryButton title="Commencer mon essai →" onPress={() => navigation.navigate('MainTabs')} style={styles.cta} />
 
-        <TouchableOpacity onPress={() => navigation.navigate('Dashboard')}>
+        <TouchableOpacity onPress={() => navigation.navigate('MainTabs')}>
           <Text style={styles.skip}>Continuer sans abonnement</Text>
         </TouchableOpacity>
 
