@@ -3,6 +3,7 @@ import {
   View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity,
 } from 'react-native';
 import { colors, spacing, font, radius } from '../../theme';
+import { jouerSon } from '../../services/sounds';
 import StepHeader from '../../components/StepHeader';
 import PrimaryButton from '../../components/PrimaryButton';
 import FreeTextCard from '../../components/FreeTextCard';
@@ -20,6 +21,7 @@ export default function Step4Screen({ navigation, route }) {
   const [freeValue, setFreeValue] = useState('');
 
   function handleContinue() {
+    jouerSon('onboarding_step');
     const value = freeValue || selected;
     navigation.navigate('Step5', { ...route.params, ancienneteTabac: value });
   }
@@ -92,3 +94,4 @@ const styles = StyleSheet.create({
   radioDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: colors.white },
   bottom: { position: 'absolute', bottom: 0, left: 0, right: 0, padding: spacing.lg, backgroundColor: colors.white },
 });
+

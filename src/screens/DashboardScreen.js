@@ -1,13 +1,122 @@
 import React, { useEffect, useState } from 'react';
 import {
   View, Text, StyleSheet, SafeAreaView, ScrollView,
-  TouchableOpacity, Dimensions,
+  TouchableOpacity, Dimensions, Modal,
 } from 'react-native';
 import Svg, { Circle, Path } from 'react-native-svg';
 import { useUser } from '../context/UserContext';
 import { colors, spacing, font, radius } from '../theme';
+import { annulerNotificationSoir } from '../services/notifications';
+import { jouerSon } from '../services/sounds';
 
 const { width: SCREEN_W } = Dimensions.get('window');
+
+// ── Modal journée parfaite ──────────────────────────────────────────────────
+function ModalParfait({ visible, diffJours, objectifJour, onClose }) {
+  const streak = diffJours || 0;
+  const vieGagnee = objectifJour * 20;
+  return (
+    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
+      <View style={mp.overlay}>
+        <View style={mp.card}>
+          <View style={mp.banner}>
+            <Text style={mp.emoji}>🏆</Text>
+            <View style={{ flex: 1 }}>
+              <Text style={mp.titre}>Journée sans tabac !</Text>
+              <Text style={mp.sous}>0 cigarette aujourd'hui</Text>
+            </View>
+          </View>
+          <View style={mp.body}>
+            <View style={mp.statsRow}>
+              <StatColonne valeur={`+${vieGagnee} min`} label="vie gagnée" color="#1B6B3A" />
+              <View style={mp.div} />
+              <StatColonne valeur="0,00 €" label="dépensé" color="#1B6B3A" />
+              <View style={mp.div} />
+              <StatColonne valeur={`🔥 ${streak}j`} label="streak" color="#F59E0B" />
+            </View>
+            <TouchableOpacity style={mp.btn} onPress={onClose}>
+              <Text style={mp.btnText}>Super, merci !</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+    </Modal>
+  );
+}
+
+function StatColonne({ valeur, label, color }) {
+  return (
+    <View style={{ alignItems: 'center', flex: 1 }}>
+      <Text style={{ fontSize: 15, fontWeight: '700', color }}>{valeur}</Text>
+      <Text style={{ fontSize: 10, color: colors.gray, marginTop: 2 }}>{label}</Text>
+    </View>
+  );
+}
+
+const mp = StyleSheet.create({
+  overlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 28 },
+  card:    { width: '100%', backgroundColor: colors.white, borderRadius: 20, overflow: 'hidden' },
+  banner:  { flexDirection: 'row', alignItems: 'center', backgroundColor: '#1B6B3A', paddingVertical: 16, paddingHorizontal: 18, gap: 12 },
+  emoji:   { fontSize: 30 },
+  titre:   { fontSize: 15, fontWeight: '700', color: '#fff' },
+  sous:    { fontSize: 12, color: 'rgba(255,255,255,0.8)', marginTop: 2 },
+  body:    { padding: 18 },
+  statsRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', backgroundColor: '#F9FAFB', borderRadius: 12, paddingVertical: 12, marginBottom: 16 },
+  div:     { width: 1, height: 32, backgroundColor: colors.grayBorder },
+  btn:     { backgroundColor: '#1B6B3A', borderRadius: 30, paddingVertical: 13, alignItems: 'center' },
+  btnText: { color: '#fff', fontSize: 14, fontWeight: '700' },
+});
+
+// ── Modal objectif respecté (variante A) ────────────────────────────────────
+function ModalObjectif({ visible, count, objectif, prixCigarette, onClose }) {
+  const pct          = Math.round((count / objectif) * 100);
+  const marge        = Math.round(((objectif - count) / objectif) * 100);
+  const viePreservee = (objectif - count) * 5;
+  const depense      = (count * prixCigarette).toFixed(2);
+
+  return (
+    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
+      <View style={mp.overlay}>
+        <View style={[mp.card, { borderWidth: 0.5, borderColor: '#C0DD97' }]}>
+          {/* Bandeau fond vert doux */}
+          <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#EAF3DE', paddingVertical: 14, paddingHorizontal: 16, gap: 10, borderBottomWidth: 0.5, borderBottomColor: '#C0DD97' }}>
+            <View style={{ width: 38, height: 38, borderRadius: 19, backgroundColor: '#C0DD97', alignItems: 'center', justifyContent: 'center' }}>
+              <Text style={{ fontSize: 20 }}>✅</Text>
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontSize: 14, fontWeight: '700', color: '#27500A' }}>Bien joué !</Text>
+              <Text style={{ fontSize: 11, color: '#3B6D11', marginTop: 2 }}>Objectif respecté aujourd'hui</Text>
+            </View>
+          </View>
+          {/* Corps */}
+          <View style={{ padding: 16 }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 5 }}>
+              <Text style={{ fontSize: 11, color: '#888' }}>{count} cigarette{count > 1 ? 's' : ''}</Text>
+              <Text style={{ fontSize: 11, color: '#888' }}>objectif : {objectif}</Text>
+            </View>
+            <View style={{ height: 7, backgroundColor: '#E5E7EB', borderRadius: 6, overflow: 'hidden', marginBottom: 4 }}>
+              <View style={{ height: '100%', width: `${pct}%`, backgroundColor: '#1B6B3A', borderRadius: 6 }} />
+            </View>
+            <Text style={{ fontSize: 10, color: '#1B6B3A', textAlign: 'right', marginBottom: 12 }}>{marge}% de marge</Text>
+            <View style={{ flexDirection: 'row', gap: 8, marginBottom: 14 }}>
+              <View style={{ flex: 1, backgroundColor: '#EAF3DE', borderRadius: 10, paddingVertical: 8, alignItems: 'center' }}>
+                <Text style={{ fontSize: 13, fontWeight: '700', color: '#27500A' }}>{depense} €</Text>
+                <Text style={{ fontSize: 10, color: '#1B6B3A', marginTop: 1 }}>dépensé</Text>
+              </View>
+              <View style={{ flex: 1, backgroundColor: '#EAF3DE', borderRadius: 10, paddingVertical: 8, alignItems: 'center' }}>
+                <Text style={{ fontSize: 13, fontWeight: '700', color: '#27500A' }}>{viePreservee} min</Text>
+                <Text style={{ fontSize: 10, color: '#1B6B3A', marginTop: 1 }}>vie préservée</Text>
+              </View>
+            </View>
+            <TouchableOpacity style={{ backgroundColor: '#1B6B3A', borderRadius: 30, paddingVertical: 12, alignItems: 'center' }} onPress={onClose}>
+              <Text style={{ color: '#fff', fontSize: 14, fontWeight: '700' }}>C'est noté !</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+    </Modal>
+  );
+}
 
 // ── Citations motivation ────────────────────────────────────────────────────
 const MOTIVATIONS = [
@@ -57,15 +166,36 @@ function CircularProgress({ current, total, size = 110 }) {
 // ── Composant principal ─────────────────────────────────────────────────────
 export default function DashboardScreen({ navigation }) {
   const { profile, stats, resetProfile } = useUser();
-  const [, setTick]       = useState(0);
-  const [quoteIdx]        = useState(() => Math.floor(Math.random() * MOTIVATIONS.length));
-  const [liked, setLiked] = useState(false);
+  const [, setTick]          = useState(0);
+  const [quoteIdx]           = useState(() => Math.floor(Math.random() * MOTIVATIONS.length));
+  const [liked, setLiked]    = useState(false);
+  const [modalParfait, setModalParfait]   = useState(false);
+  const [modalObjectif, setModalObjectif] = useState(false);
+  const milestonesJoues      = React.useRef(new Set());
 
   // Rafraîchir chaque seconde pour le compteur live
   useEffect(() => {
     const id = setInterval(() => setTick(t => t + 1), 1000);
     return () => clearInterval(id);
   }, []);
+
+  // Détection milestones — jouer le son une seule fois par session
+  useEffect(() => {
+    if (!stats) return;
+    const { diffJours, diffHeures } = stats;
+    const totalHeures = diffJours * 24 + diffHeures;
+
+    if (totalHeures >= 24 && !milestonesJoues.current.has('24h')) {
+      milestonesJoues.current.add('24h');
+      jouerSon('milestone_24h');
+    } else if (diffJours >= 7 && !milestonesJoues.current.has('7j')) {
+      milestonesJoues.current.add('7j');
+      jouerSon('milestone_7j');
+    } else if (diffJours >= 30 && !milestonesJoues.current.has('30j')) {
+      milestonesJoues.current.add('30j');
+      jouerSon('milestone_30j');
+    }
+  }, [stats?.diffJours]);
 
   if (!profile || !stats) {
     return (
@@ -103,6 +233,21 @@ export default function DashboardScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.safe}>
+
+      <ModalParfait
+        visible={modalParfait}
+        diffJours={diffJours}
+        objectifJour={objectifJour}
+        onClose={() => setModalParfait(false)}
+      />
+      <ModalObjectif
+        visible={modalObjectif}
+        count={cigarettesToday}
+        objectif={objectifJour}
+        prixCigarette={stats?.prixCigarette ?? 0.55}
+        onClose={() => setModalObjectif(false)}
+      />
+
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
 
         {/* ── Header ── */}
@@ -150,7 +295,15 @@ export default function DashboardScreen({ navigation }) {
           </View>
 
           {/* Bouton valider */}
-          <TouchableOpacity style={styles.validateBtn}>
+          <TouchableOpacity
+            style={styles.validateBtn}
+            onPress={() => {
+              jouerSon(cigarettesToday === 0 ? 'enregistrer_zero' : 'valider_journee');
+              annulerNotificationSoir();
+              if (cigarettesToday === 0) setModalParfait(true);
+              else if (cigarettesToday <= objectifJour) setModalObjectif(true);
+            }}
+          >
             <Text style={styles.validateBtnText}>✓  Valider ma journée</Text>
           </TouchableOpacity>
 
@@ -194,7 +347,7 @@ export default function DashboardScreen({ navigation }) {
         <View style={styles.motivCard}>
           <View style={styles.motivHeader}>
             <Text style={styles.motivTitle}>✨  Motivation du jour</Text>
-            <TouchableOpacity onPress={() => setLiked(l => !l)}>
+            <TouchableOpacity onPress={() => { if (!liked) jouerSon('motivation_like'); setLiked(l => !l); }}>
               <Text style={styles.motivHeart}>{liked ? '❤️' : '🤍'}</Text>
             </TouchableOpacity>
           </View>

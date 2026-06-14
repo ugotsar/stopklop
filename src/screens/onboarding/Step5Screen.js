@@ -4,6 +4,7 @@ import {
   TouchableOpacity, TextInput,
 } from 'react-native';
 import { colors, spacing, font, radius } from '../../theme';
+import { jouerSon } from '../../services/sounds';
 import StepHeader from '../../components/StepHeader';
 import PrimaryButton from '../../components/PrimaryButton';
 
@@ -39,6 +40,7 @@ export default function Step5Screen({ navigation, route }) {
   }
 
   function handleContinue() {
+    jouerSon('onboarding_step');
     let date = selectedDate;
     if (freeDate && freeDate.length === 10) {
       const parts = freeDate.split('/');
@@ -176,3 +178,4 @@ const styles = StyleSheet.create({
   calIcon: { fontSize: 16 },
   bottom: { position: 'absolute', bottom: 0, left: 0, right: 0, padding: spacing.lg, backgroundColor: colors.white },
 });
+

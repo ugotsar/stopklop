@@ -32,7 +32,7 @@ const AppTheme = {
 
 const Stack = createNativeStackNavigator();
 
-export default function AppNavigator() {
+export default function AppNavigator({ navigationRef }) {
   const { profile, loading } = useUser();
 
   if (loading) {
@@ -46,7 +46,7 @@ export default function AppNavigator() {
   const initialRoute = profile?.onboardingComplete ? 'MainTabs' : 'Welcome';
 
   return (
-    <NavigationContainer theme={AppTheme}>
+    <NavigationContainer theme={AppTheme} ref={navigationRef}>
       <Stack.Navigator
         initialRouteName={initialRoute}
         screenOptions={{ headerShown: false, animation: 'slide_from_right' }}

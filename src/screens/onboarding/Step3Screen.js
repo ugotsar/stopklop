@@ -3,6 +3,7 @@ import {
   View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, TextInput,
 } from 'react-native';
 import { colors, spacing, font, radius } from '../../theme';
+import { jouerSon } from '../../services/sounds';
 import StepHeader from '../../components/StepHeader';
 import PrimaryButton from '../../components/PrimaryButton';
 import FreeTextCard from '../../components/FreeTextCard';
@@ -18,6 +19,7 @@ export default function Step3Screen({ navigation, route }) {
   const [freeValue, setFreeValue] = useState('');
 
   function handleContinue() {
+    jouerSon('onboarding_step');
     const value = freeValue ? parseInt(freeValue, 10) || selected : (selected ?? 20);
     navigation.navigate('Step4', { ...route.params, cigarettesParPaquet: value });
   }
@@ -92,3 +94,4 @@ const styles = StyleSheet.create({
   checkMark: { color: colors.white, fontSize: 12, fontWeight: '800' },
   bottom: { position: 'absolute', bottom: 0, left: 0, right: 0, padding: spacing.lg, backgroundColor: colors.white },
 });
+

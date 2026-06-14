@@ -4,6 +4,7 @@ import {
   TouchableOpacity, TextInput, PanResponder, Dimensions,
 } from 'react-native';
 import { colors, spacing, font, radius } from '../../theme';
+import { jouerSon } from '../../services/sounds';
 import StepHeader from '../../components/StepHeader';
 import PrimaryButton from '../../components/PrimaryButton';
 import FreeTextCard from '../../components/FreeTextCard';
@@ -93,6 +94,7 @@ export default function Step2Screen({ navigation, route }) {
   const displayPrice = freeValue ? parseFloat(freeValue.replace(',', '.')) || selected : selected;
 
   function handleContinue() {
+    jouerSon('onboarding_step');
     navigation.navigate('Step3', { ...route.params, prixPaquet: displayPrice });
   }
 
@@ -196,3 +198,4 @@ const styles = StyleSheet.create({
   sliderLabel: { fontSize: font.sm, color: colors.gray, fontWeight: '500' },
   bottom: { position: 'absolute', bottom: 0, left: 0, right: 0, padding: spacing.lg, backgroundColor: colors.white },
 });
+

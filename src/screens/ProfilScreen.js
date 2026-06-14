@@ -5,6 +5,7 @@ import {
 } from 'react-native';
 import { useUser } from '../context/UserContext';
 import { colors, spacing, font, radius } from '../theme';
+import { jouerSon } from '../services/sounds';
 
 // ── Modal bottom sheet générique ─────────────────────────────────────────────
 function EditModal({ visible, onClose, title, currentValue, unit, onSave, step = 0.5 }) {
@@ -157,7 +158,7 @@ export default function ProfilScreen({ navigation }) {
             <QuickStat icon="🐷" valeur={`+${argentEco.toFixed(2)} €`} label="économisés"    color={colors.primary} />
             <QuickStat icon="🕐" valeur={vieStr}                        label="de vie gagnées" color="#F59E0B" />
             <QuickStat icon="🎯" valeur={`${motivation}/10`}            label="motivation"     color="#7C3AED" />
-            <QuickStat icon="🏆" valeur="3"                             label="badges"         color="#F59E0B" />
+            <QuickStat icon="🏆" valeur="3"                             label="badges"         color="#F59E0B" onPress={() => jouerSon('badge_debloque')} />
           </View>
         </View>
 
@@ -318,13 +319,14 @@ export default function ProfilScreen({ navigation }) {
 }
 
 // ── Sous-composant stat rapide ────────────────────────────────────────────────
-function QuickStat({ icon, valeur, label, color }) {
+function QuickStat({ icon, valeur, label, color, onPress }) {
+  const Wrapper = onPress ? TouchableOpacity : View;
   return (
-    <View style={styles.quickStat}>
+    <Wrapper style={styles.quickStat} onPress={onPress} activeOpacity={0.7}>
       <Text style={{ fontSize: 20, marginBottom: 2 }}>{icon}</Text>
       <Text style={[styles.quickStatVal, { color }]}>{valeur}</Text>
       <Text style={styles.quickStatLabel}>{label}</Text>
-    </View>
+    </Wrapper>
   );
 }
 
