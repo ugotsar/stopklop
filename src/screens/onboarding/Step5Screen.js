@@ -85,11 +85,13 @@ export default function Step5Screen({ navigation, route }) {
               return (
                 <TouchableOpacity
                   key={i}
-                  style={[styles.calCell, isSelected && styles.calCellSelected]}
+                  style={styles.calCell}
                   onPress={() => { setSelectedDate(new Date(viewYear, viewMonth, day)); setFreeDate(''); }}
                   activeOpacity={0.7}
                 >
-                  <Text style={[styles.calDay, isSelected && styles.calDaySelected]}>{day}</Text>
+                  <View style={isSelected ? styles.calDaySelectedCircle : null}>
+                    <Text style={[styles.calDay, isSelected && styles.calDaySelected]}>{day}</Text>
+                  </View>
                 </TouchableOpacity>
               );
             })}
@@ -140,8 +142,13 @@ const styles = StyleSheet.create({
   calDayNames: { flexDirection: 'row', marginBottom: spacing.sm },
   calDayName: { flex: 1, textAlign: 'center', fontSize: font.sm, color: colors.gray, fontWeight: '600' },
   calGrid: { flexDirection: 'row', flexWrap: 'wrap' },
-  calCell: { width: `${100 / 7}%`, aspectRatio: 1, alignItems: 'center', justifyContent: 'center' },
-  calCellSelected: { backgroundColor: colors.primary, borderRadius: 99 },
+  calCell: { width: `${100 / 7}%`, height: 44, alignItems: 'center', justifyContent: 'center' },
+  calCellSelected: { },
+  calDaySelectedCircle: {
+    width: 36, height: 36, borderRadius: 18,
+    backgroundColor: colors.primary,
+    alignItems: 'center', justifyContent: 'center',
+  },
   calDay: { fontSize: font.md, color: colors.black },
   calDaySelected: { color: colors.white, fontWeight: '800' },
   dividerRow: { flexDirection: 'row', alignItems: 'center', marginVertical: spacing.md },

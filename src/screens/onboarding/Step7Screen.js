@@ -7,6 +7,7 @@ import { colors, spacing, font, radius } from '../../theme';
 import StepHeader from '../../components/StepHeader';
 import PrimaryButton from '../../components/PrimaryButton';
 import { saveProfile } from '../../store/onboardingStore';
+import { useUser } from '../../context/UserContext';
 
 const DESCRIPTIONS = [
   '', // 0 unused
@@ -25,6 +26,7 @@ const DESCRIPTIONS = [
 const LEVEL_COLORS = ['','#EF4444','#F97316','#F59E0B','#EAB308','#84CC16','#22C55E','#10B981','#14B8A6','#06B6D4','#1B6B3A'];
 
 export default function Step7Screen({ navigation, route }) {
+  const { updateProfile } = useUser();
   const [level, setLevel] = useState(5);
   const [freeValue, setFreeValue] = useState('');
   const animScale = useRef(new Animated.Value(1)).current;
@@ -38,8 +40,13 @@ export default function Step7Screen({ navigation, route }) {
 
   async function handleFinish() {
     const finalLevel = freeValue ? parseInt(freeValue, 10) || level : level;
-    const profile = { ...route.params, niveauMotivation: finalLevel, onboardingComplete: true, createdAt: new Date() };
-    await saveProfile(profile);
+    const profileData = {
+      ...route.params,
+      niveauMotivation: finalLevel,
+      onboardingComplete: true,
+      createdAt: new Date().toISOString(),
+    };
+    await updateProfile(profileData);
     navigation.navigate('Paywall');
   }
 

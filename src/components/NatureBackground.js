@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, StyleSheet, Dimensions } from 'react-native';
-import Svg, { Path, Ellipse, Circle, G } from 'react-native-svg';
+import Svg, { Path, Ellipse, G } from 'react-native-svg';
 
 const { width } = Dimensions.get('window');
 const H = 320;
@@ -96,5 +96,5 @@ export default function NatureBackground({ height = H }) {
 }
 
 const styles = StyleSheet.create({
-  container: { width: '100%', overflow: 'hidden' },
+  container: { width: '100%', overflow: 'hidden', backgroundColor: '#EAF4EC' },
 });

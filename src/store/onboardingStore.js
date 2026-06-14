@@ -29,9 +29,21 @@ export const defaultProfile = {
   onboardingComplete: false,
 };
 
+function toISO(val) {
+  if (!val) return null;
+  if (typeof val === 'string') return val; // déjà une string ISO
+  if (val instanceof Date) return val.toISOString();
+  return String(val);
+}
+
 export async function saveProfile(profile) {
   try {
-    const toSave = { ...profile, createdAt: profile.createdAt?.toISOString(), startDate: profile.startDate?.toISOString(), dateArretSouhaitee: profile.dateArretSouhaitee?.toISOString() };
+    const toSave = {
+      ...profile,
+      createdAt: toISO(profile.createdAt),
+      startDate: toISO(profile.startDate),
+      dateArretSouhaitee: toISO(profile.dateArretSouhaitee),
+    };
     await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
   } catch (e) {
     console.error('saveProfile error', e);
