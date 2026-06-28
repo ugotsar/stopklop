@@ -1,5 +1,5 @@
-import { Audio } from 'expo-av';
 import { Platform } from 'react-native';
+import { Audio } from 'expo-av';
 
 // ── Map de tous les fichiers audio ───────────────────────────────────────────
 const SOUND_FILES = {
@@ -59,7 +59,7 @@ export async function jouerSon(nom) {
       }
     });
   } catch (e) {
-    // Son non bloquant — ignorer les erreurs silencieusement
+    console.warn('[son] erreur jouerSon(' + nom + '):', e?.message ?? e);
   }
 }
 
