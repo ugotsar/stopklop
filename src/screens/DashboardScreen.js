@@ -191,9 +191,11 @@ function CircularProgress({ current, total, size = 110 }) {
   const cx = size / 2;
   const cy = size / 2;
   const circumference = 2 * Math.PI * r;
+  const depasse = current > total;
   const ratio = total > 0 ? Math.min(current / total, 1) : 0;
   const dash = circumference * ratio;
   const gap  = circumference - dash;
+  const strokeColor = depasse ? colors.red : colors.primary;
 
   // Arc starts at top (rotate -90deg)
   return (
@@ -201,14 +203,14 @@ function CircularProgress({ current, total, size = 110 }) {
       {/* Track */}
       <Circle
         cx={cx} cy={cy} r={r}
-        stroke="#E5E7EB"
+        stroke={depasse ? '#FECACA' : '#E5E7EB'}
         strokeWidth={strokeWidth}
         fill="none"
       />
       {/* Progress */}
       <Circle
         cx={cx} cy={cy} r={r}
-        stroke={colors.primary}
+        stroke={strokeColor}
         strokeWidth={strokeWidth}
         fill="none"
         strokeDasharray={`${dash} ${gap}`}
@@ -315,7 +317,7 @@ export default function DashboardScreen({ navigation }) {
               {profile.prenom || profile.email?.split('@')[0] || 'Champion'}
             </Text>
           </Text>
-          <TouchableOpacity style={styles.bellBtn}>
+          <TouchableOpacity style={styles.bellBtn} onPress={() => navigation.navigate('Notifications')}>
             <Text style={styles.bellIcon}>🔔</Text>
           </TouchableOpacity>
         </View>
@@ -338,7 +340,7 @@ export default function DashboardScreen({ navigation }) {
             <View style={styles.arcContainer}>
               <CircularProgress current={cigarettesToday} total={objectifJour} size={110} />
               <View style={styles.arcInner}>
-                <Text style={styles.arcCurrent}>{cigarettesToday}</Text>
+                <Text style={[styles.arcCurrent, cigarettesToday > objectifJour && { color: colors.red }]}>{cigarettesToday}</Text>
                 <Text style={styles.arcSep}>/</Text>
                 <Text style={styles.arcTotal}>{objectifJour}</Text>
               </View>

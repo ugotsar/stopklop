@@ -22,10 +22,12 @@ import OnboardingPaywall     from '../screens/onboarding/PaywallScreen';
 
 // ── App principale (tabs) ──────────────────────────────────────────────────
 import MainTabNavigator from './MainTabNavigator';
-import JaiFumeScreen          from '../screens/JaiFumeScreen';
-import ModifierObjectifScreen from '../screens/ModifierObjectifScreen';
-import UniteMonnaieScreen     from '../screens/UniteMonnaieScreen';
-import NousContacterScreen    from '../screens/NousContacterScreen';
+import JaiFumeScreen           from '../screens/JaiFumeScreen';
+import ModifierObjectifScreen  from '../screens/ModifierObjectifScreen';
+import UniteMonnaieScreen      from '../screens/UniteMonnaieScreen';
+import NousContacterScreen     from '../screens/NousContacterScreen';
+import NotificationsScreen          from '../screens/NotificationsScreen';
+import PersonnaliserHorairesScreen  from '../screens/PersonnaliserHorairesScreen';
 
 const AppTheme = {
   ...DefaultTheme,
@@ -86,7 +88,9 @@ export default function AppNavigator({ navigationRef }) {
         <Stack.Screen name="ModifierObjectif" component={ModifierObjectifScreen} options={{ animation: 'slide_from_right' }} />
         <Stack.Screen name="UniteMonnaie"     component={UniteMonnaieScreen}     options={{ animation: 'slide_from_right' }} />
         <Stack.Screen name="NousContacter"    component={NousContacterScreen}    options={{ animation: 'slide_from_right' }} />
-        <Stack.Screen name="PaywallPro"        component={PaywallProScreen}        options={{ animation: 'slide_from_bottom', presentation: 'modal' }} />
+        <Stack.Screen name="Notifications"          component={NotificationsScreen}         options={{ animation: 'slide_from_right' }} />
+        <Stack.Screen name="PersonnaliserHoraires"  component={PersonnaliserHorairesScreen}  options={{ animation: 'slide_from_right' }} />
+        <Stack.Screen name="PaywallPro"       component={PaywallProScreen}       options={{ animation: 'slide_from_bottom', presentation: 'modal' }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

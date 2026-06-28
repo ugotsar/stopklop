@@ -212,7 +212,9 @@ export default function JaiFumeScreen({ navigation }) {
     else if (count <= objectifJour) jouerSon('enregistrer_objectif');
     else jouerSon('enregistrer_depasse');
 
-    await updateProfile({ cigarettesToday: count });
+    const todayKey = new Date().toISOString().slice(0, 10); // "YYYY-MM-DD"
+    const historique = { ...(profile?.historique ?? {}), [todayKey]: count };
+    await updateProfile({ cigarettesToday: count, lastSavedDate: todayKey, historique });
     setModal(true);
   }
 
