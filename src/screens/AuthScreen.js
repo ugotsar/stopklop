@@ -3,36 +3,20 @@ import {
   View, Text, StyleSheet, TouchableOpacity,
   SafeAreaView, ActivityIndicator, Platform,
 } from 'react-native';
-import * as AppleAuthentication from 'expo-apple-authentication';
-import { useGoogleAuth, signInWithApple } from '../services/authService';
+import { signInAsGuest } from '../services/authService';
 import { colors, spacing, font } from '../theme';
 
 export default function AuthScreen() {
   const [loading, setLoading] = useState(false);
   const [error, setError]     = useState(null);
-  const { request, signInWithGoogle } = useGoogleAuth();
 
-  async function handleGoogle() {
+  async function handleGuest() {
     try {
       setLoading(true);
       setError(null);
-      await signInWithGoogle();
+      await signInAsGuest();
     } catch (e) {
-      setError('Connexion Google échouée. Réessaie.');
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function handleApple() {
-    try {
-      setLoading(true);
-      setError(null);
-      await signInWithApple();
-    } catch (e) {
-      if (e.code !== 'ERR_REQUEST_CANCELED') {
-        setError('Connexion Apple échouée. Réessaie.');
-      }
+      setError('Erreur de connexion. Réessaie.');
     } finally {
       setLoading(false);
     }
@@ -53,24 +37,28 @@ export default function AuthScreen() {
             <ActivityIndicator size="large" color={colors.primary} />
           ) : (
             <>
-              <TouchableOpacity
-                style={s.btnGoogle}
-                onPress={handleGoogle}
-                disabled={!request}
-              >
+              {/* Boutons Google + Apple — activés sur build natif EAS */}
+              <TouchableOpacity style={[s.btnGoogle, s.btnDisabled]} disabled>
                 <Text style={s.btnGoogleIcon}>G</Text>
-                <Text style={s.btnGoogleText}>Continuer avec Google</Text>
+                <Text style={[s.btnGoogleText, { color: '#999' }]}>Continuer avec Google</Text>
               </TouchableOpacity>
 
               {Platform.OS === 'ios' && (
-                <AppleAuthentication.AppleAuthenticationButton
-                  buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
-                  buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
-                  cornerRadius={30}
-                  style={s.btnApple}
-                  onPress={handleApple}
-                />
+                <TouchableOpacity style={[s.btnAppleCustom, s.btnDisabled]} disabled>
+                  <Text style={{ color: '#999', fontSize: font.md, fontWeight: '600' }}>Continuer avec Apple</Text>
+                </TouchableOpacity>
               )}
+
+              <View style={s.divider}>
+                <View style={s.divLine} />
+                <Text style={s.divText}>ou</Text>
+                <View style={s.divLine} />
+              </View>
+
+              {/* Mode invité — disponible dans Expo Go */}
+              <TouchableOpacity style={s.btnGuest} onPress={handleGuest}>
+                <Text style={s.btnGuestText}>Continuer sans compte</Text>
+              </TouchableOpacity>
             </>
           )}
           {error && <Text style={s.errorText}>{error}</Text>}
@@ -103,7 +91,16 @@ const s = StyleSheet.create({
   },
   btnGoogleIcon: { fontSize: 18, fontWeight: '700', color: '#4285F4' },
   btnGoogleText: { fontSize: font.md, fontWeight: '600', color: colors.black },
-  btnApple:      { height: 50, width: '100%' },
+  btnAppleCustom: { height: 50, width: '100%', backgroundColor: '#000', borderRadius: 30, alignItems: 'center', justifyContent: 'center' },
+  btnDisabled:   { opacity: 0.35 },
+  divider:       { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  divLine:       { flex: 1, height: 1, backgroundColor: '#E5E7EB' },
+  divText:       { fontSize: 12, color: colors.gray },
+  btnGuest: {
+    backgroundColor: colors.primary, borderRadius: 30,
+    paddingVertical: 14, alignItems: 'center',
+  },
+  btnGuestText:  { color: '#fff', fontSize: font.md, fontWeight: '700' },
   errorText:     { color: '#EF4444', fontSize: font.sm, textAlign: 'center', marginTop: 8 },
   legal:         { fontSize: 11, color: colors.gray, textAlign: 'center', lineHeight: 16 },
   legalLink:     { color: colors.primary, fontWeight: '600' },

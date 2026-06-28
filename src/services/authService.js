@@ -3,6 +3,7 @@ import {
   GoogleAuthProvider,
   OAuthProvider,
   signInWithCredential,
+  signInAnonymously,
   signOut as firebaseSignOut,
   onAuthStateChanged,
 } from 'firebase/auth';
@@ -18,6 +19,11 @@ export function subscribeToAuth(callback) {
 // ── Déconnexion ───────────────────────────────────────────────────────────────
 export async function signOut() {
   await firebaseSignOut(auth);
+}
+
+// ── Auth anonyme (test / dev) ─────────────────────────────────────────────────
+export async function signInAsGuest() {
+  return signInAnonymously(auth);
 }
 
 // ── Connexion Google ──────────────────────────────────────────────────────────
