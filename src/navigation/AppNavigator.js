@@ -6,6 +6,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useUser } from '../context/UserContext';
 import { colors } from '../theme';
 
+import AuthScreen       from '../screens/AuthScreen';
 import WelcomeScreen    from '../screens/onboarding/WelcomeScreen';
 import RegisterScreen   from '../screens/onboarding/RegisterScreen';
 import LoginScreen      from '../screens/onboarding/LoginScreen';
@@ -33,13 +34,25 @@ const AppTheme = {
 const Stack = createNativeStackNavigator();
 
 export default function AppNavigator({ navigationRef }) {
-  const { profile, loading } = useUser();
+  const { profile, loading, firebaseUser } = useUser();
 
-  if (loading) {
+  // Spinner pendant la vérification auth + chargement profil
+  if (loading || firebaseUser === undefined) {
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.white }}>
         <ActivityIndicator size="large" color={colors.primary} />
       </View>
+    );
+  }
+
+  // Non connecté → écran d'auth Firebase
+  if (!firebaseUser) {
+    return (
+      <NavigationContainer theme={AppTheme}>
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="Auth" component={AuthScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
     );
   }
 

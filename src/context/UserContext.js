@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { loadProfile, saveProfile, clearProfile } from '../store/onboardingStore';
+import { subscribeToAuth, signOut as firebaseSignOut } from '../services/authService';
 
 // ─── Contexte ────────────────────────────────────────────────────────────────
 const UserContext = createContext(null);
@@ -8,15 +9,25 @@ const UserContext = createContext(null);
 export function UserProvider({ children }) {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [firebaseUser, setFirebaseUser] = useState(undefined); // undefined = pas encore connu
 
-  // Charge le profil au démarrage de l'app
+  // Écoute l'état Firebase auth
   useEffect(() => {
+    const unsub = subscribeToAuth((user) => {
+      setFirebaseUser(user ?? null);
+    });
+    return unsub;
+  }, []);
+
+  // Charge le profil local quand l'auth est connue
+  useEffect(() => {
+    if (firebaseUser === undefined) return; // en attente
     (async () => {
       const saved = await loadProfile();
       setProfile(saved);
       setLoading(false);
     })();
-  }, []);
+  }, [firebaseUser]);
 
   // Met à jour une ou plusieurs clés du profil + persiste
   async function updateProfile(changes) {
@@ -29,13 +40,14 @@ export function UserProvider({ children }) {
   async function resetProfile() {
     await clearProfile();
     setProfile(null);
+    await firebaseSignOut();
   }
 
   // ── Calculs dérivés (accessibles partout dans l'app) ──────────────────────
   const stats = profile ? computeStats(profile) : null;
 
   return (
-    <UserContext.Provider value={{ profile, loading, updateProfile, resetProfile, stats }}>
+    <UserContext.Provider value={{ profile, loading, firebaseUser, updateProfile, resetProfile, stats }}>
       {children}
     </UserContext.Provider>
   );
