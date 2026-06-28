@@ -22,30 +22,35 @@ export function UserProvider({ children }) {
 
   // Charge le profil quand l'auth est connue
   useEffect(() => {
-    if (firebaseUser === undefined) return; // en attente
+    if (firebaseUser === undefined) return;
+    setLoading(true);
     (async () => {
-      let loaded = null;
+      try {
+        let loaded = null;
 
-      if (firebaseUser) {
-        // 1. Essayer Firestore en priorité
-        try {
-          loaded = await getProfile(firebaseUser.uid);
-        } catch (_) {}
+        if (firebaseUser) {
+          // 1. Essayer Firestore (timeout 5s pour ne pas bloquer)
+          try {
+            const firestorePromise = getProfile(firebaseUser.uid);
+            const timeout = new Promise(r => setTimeout(() => r(null), 5000));
+            loaded = await Promise.race([firestorePromise, timeout]);
+          } catch (_) {}
 
-        // 2. Si rien dans Firestore, charger le local et le migrer
-        if (!loaded) {
-          loaded = await loadProfile();
-          if (loaded && firebaseUser) {
-            // Migration locale → cloud
-            await saveFirestore(firebaseUser.uid, loaded).catch(() => {});
+          // 2. Fallback local + migration vers cloud
+          if (!loaded) {
+            loaded = await loadProfile();
+            if (loaded) saveFirestore(firebaseUser.uid, loaded).catch(() => {});
           }
+        } else {
+          loaded = await loadProfile();
         }
-      } else {
-        loaded = await loadProfile();
-      }
 
-      setProfile(loaded);
-      setLoading(false);
+        setProfile(loaded);
+      } catch (_) {
+        setProfile(null);
+      } finally {
+        setLoading(false);
+      }
     })();
   }, [firebaseUser]);
 
