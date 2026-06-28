@@ -8,7 +8,13 @@ import {
 export async function getProfile(uid) {
   const ref  = doc(db, 'users', uid);
   const snap = await getDoc(ref);
-  return snap.exists() ? snap.data() : null;
+  if (!snap.exists()) return null;
+  const data = snap.data();
+  // Convertir les Timestamps Firestore en Date JS
+  ['createdAt', 'startDate', 'dateArretSouhaitee', 'updatedAt'].forEach(k => {
+    if (data[k]?.toDate) data[k] = data[k].toDate();
+  });
+  return data;
 }
 
 export async function saveProfile(uid, data) {

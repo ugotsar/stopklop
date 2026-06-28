@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { loadProfile, saveProfile, clearProfile } from '../store/onboardingStore';
 import { subscribeToAuth, signOut as firebaseSignOut } from '../services/authService';
+import { getProfile, saveProfile as saveFirestore } from '../services/firestore';
 
 // ─── Contexte ────────────────────────────────────────────────────────────────
 const UserContext = createContext(null);
@@ -19,28 +20,52 @@ export function UserProvider({ children }) {
     return unsub;
   }, []);
 
-  // Charge le profil local quand l'auth est connue
+  // Charge le profil quand l'auth est connue
   useEffect(() => {
     if (firebaseUser === undefined) return; // en attente
     (async () => {
-      const saved = await loadProfile();
-      setProfile(saved);
+      let loaded = null;
+
+      if (firebaseUser) {
+        // 1. Essayer Firestore en priorité
+        try {
+          loaded = await getProfile(firebaseUser.uid);
+        } catch (_) {}
+
+        // 2. Si rien dans Firestore, charger le local et le migrer
+        if (!loaded) {
+          loaded = await loadProfile();
+          if (loaded && firebaseUser) {
+            // Migration locale → cloud
+            await saveFirestore(firebaseUser.uid, loaded).catch(() => {});
+          }
+        }
+      } else {
+        loaded = await loadProfile();
+      }
+
+      setProfile(loaded);
       setLoading(false);
     })();
   }, [firebaseUser]);
 
-  // Met à jour une ou plusieurs clés du profil + persiste
+  // Met à jour une ou plusieurs clés du profil + persiste (local + cloud)
   async function updateProfile(changes) {
     const updated = { ...profile, ...changes };
     setProfile(updated);
+    // Sauvegarde locale (cache offline)
     await saveProfile(updated);
+    // Sauvegarde cloud si connecté
+    if (firebaseUser) {
+      await saveFirestore(firebaseUser.uid, updated).catch(() => {});
+    }
   }
 
   // Réinitialise tout (déconnexion / reset)
   async function resetProfile() {
     await clearProfile();
     setProfile(null);
-    await firebaseSignOut();
+    if (firebaseUser) await firebaseSignOut();
   }
 
   // ── Calculs dérivés (accessibles partout dans l'app) ──────────────────────
