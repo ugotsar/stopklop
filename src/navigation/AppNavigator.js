@@ -6,19 +6,19 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useUser } from '../context/UserContext';
 import { colors } from '../theme';
 
-import AuthScreen       from '../screens/AuthScreen';
-import PaywallScreen    from '../screens/PaywallScreen';
-import WelcomeScreen    from '../screens/onboarding/WelcomeScreen';
-import RegisterScreen   from '../screens/onboarding/RegisterScreen';
-import LoginScreen      from '../screens/onboarding/LoginScreen';
-import Step1Screen      from '../screens/onboarding/Step1Screen';
-import Step2Screen      from '../screens/onboarding/Step2Screen';
-import Step3Screen      from '../screens/onboarding/Step3Screen';
-import Step4Screen      from '../screens/onboarding/Step4Screen';
-import Step5Screen      from '../screens/onboarding/Step5Screen';
-import Step6Screen      from '../screens/onboarding/Step6Screen';
-import Step7Screen      from '../screens/onboarding/Step7Screen';
-import PaywallScreen    from '../screens/onboarding/PaywallScreen';
+import AuthScreen            from '../screens/AuthScreen';
+import PaywallProScreen      from '../screens/PaywallScreen';
+import WelcomeScreen         from '../screens/onboarding/WelcomeScreen';
+import RegisterScreen        from '../screens/onboarding/RegisterScreen';
+import LoginScreen           from '../screens/onboarding/LoginScreen';
+import Step1Screen           from '../screens/onboarding/Step1Screen';
+import Step2Screen           from '../screens/onboarding/Step2Screen';
+import Step3Screen           from '../screens/onboarding/Step3Screen';
+import Step4Screen           from '../screens/onboarding/Step4Screen';
+import Step5Screen           from '../screens/onboarding/Step5Screen';
+import Step6Screen           from '../screens/onboarding/Step6Screen';
+import Step7Screen           from '../screens/onboarding/Step7Screen';
+import OnboardingPaywall     from '../screens/onboarding/PaywallScreen';
 
 // ── App principale (tabs) ──────────────────────────────────────────────────
 import MainTabNavigator from './MainTabNavigator';
@@ -76,7 +76,7 @@ export default function AppNavigator({ navigationRef }) {
         <Stack.Screen name="Step5"     component={Step5Screen} />
         <Stack.Screen name="Step6"     component={Step6Screen} />
         <Stack.Screen name="Step7"     component={Step7Screen} />
-        <Stack.Screen name="Paywall"   component={PaywallScreen} />
+        <Stack.Screen name="Paywall"   component={OnboardingPaywall} />
 
         {/* ── App principale (Bottom Tabs) ── */}
         <Stack.Screen name="MainTabs"  component={MainTabNavigator} />
@@ -86,7 +86,7 @@ export default function AppNavigator({ navigationRef }) {
         <Stack.Screen name="ModifierObjectif" component={ModifierObjectifScreen} options={{ animation: 'slide_from_right' }} />
         <Stack.Screen name="UniteMonnaie"     component={UniteMonnaieScreen}     options={{ animation: 'slide_from_right' }} />
         <Stack.Screen name="NousContacter"    component={NousContacterScreen}    options={{ animation: 'slide_from_right' }} />
-        <Stack.Screen name="Paywall"           component={PaywallScreen}           options={{ animation: 'slide_from_bottom', presentation: 'modal' }} />
+        <Stack.Screen name="PaywallPro"        component={PaywallProScreen}        options={{ animation: 'slide_from_bottom', presentation: 'modal' }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
