@@ -7,6 +7,7 @@ import { useUser } from '../context/UserContext';
 import { colors } from '../theme';
 
 import AuthScreen       from '../screens/AuthScreen';
+import PaywallScreen    from '../screens/PaywallScreen';
 import WelcomeScreen    from '../screens/onboarding/WelcomeScreen';
 import RegisterScreen   from '../screens/onboarding/RegisterScreen';
 import LoginScreen      from '../screens/onboarding/LoginScreen';
@@ -85,6 +86,7 @@ export default function AppNavigator({ navigationRef }) {
         <Stack.Screen name="ModifierObjectif" component={ModifierObjectifScreen} options={{ animation: 'slide_from_right' }} />
         <Stack.Screen name="UniteMonnaie"     component={UniteMonnaieScreen}     options={{ animation: 'slide_from_right' }} />
         <Stack.Screen name="NousContacter"    component={NousContacterScreen}    options={{ animation: 'slide_from_right' }} />
+        <Stack.Screen name="Paywall"           component={PaywallScreen}           options={{ animation: 'slide_from_bottom', presentation: 'modal' }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

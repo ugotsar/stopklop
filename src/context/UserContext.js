@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { loadProfile, saveProfile, clearProfile } from '../store/onboardingStore';
 import { subscribeToAuth, signOut as firebaseSignOut } from '../services/authService';
 import { getProfile, saveProfile as saveFirestore } from '../services/firestore';
+import { configurePurchases } from '../services/purchases';
 
 // ─── Contexte ────────────────────────────────────────────────────────────────
 const UserContext = createContext(null);
@@ -16,6 +17,7 @@ export function UserProvider({ children }) {
   useEffect(() => {
     const unsub = subscribeToAuth((user) => {
       setFirebaseUser(user ?? null);
+      if (user) configurePurchases(user.uid);
     });
     return unsub;
   }, []);
