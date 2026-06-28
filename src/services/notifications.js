@@ -8,8 +8,9 @@ Notifications.setNotificationHandler({
   }),
 });
 
-const NOTIF_ID_MIDI = 'stopklop-midi';
-const NOTIF_ID_SOIR = 'stopklop-soir';
+const NOTIF_MATIN = 'stopklop-matin';
+const NOTIF_MIDI  = 'stopklop-midi';
+const NOTIF_SOIR  = 'stopklop-soir';
 
 let _responseListener = null;
 
@@ -23,11 +24,28 @@ export async function demanderPermissionNotifications() {
 export async function programmerNotificationsQuotidiennes() {
   await annulerToutesNotifications();
 
+  // ── Matin : motivation pour bien démarrer ──
   await Notifications.scheduleNotificationAsync({
-    identifier: NOTIF_ID_MIDI,
+    identifier: NOTIF_MATIN,
     content: {
-      title: 'Un clic. Une réponse.',
-      body: "Tu as fumé aujourd'hui ?",
+      title: '☀️ Nouvelle journée, nouveau départ',
+      body: "Aujourd'hui, tu peux faire mieux qu'hier. Note tes cigarettes ce soir.",
+      data: { screen: 'JaiFume' },
+      sound: true,
+    },
+    trigger: {
+      type: Notifications.SchedulableTriggerInputTypes.DAILY,
+      hour: 9,
+      minute: 0,
+    },
+  });
+
+  // ── Midi : rappel discret ──
+  await Notifications.scheduleNotificationAsync({
+    identifier: NOTIF_MIDI,
+    content: {
+      title: '🚬 Comment ça se passe aujourd\'hui ?',
+      body: "Pense à noter tes cigarettes. Chaque chiffre compte.",
       data: { screen: 'JaiFume' },
       sound: true,
     },
@@ -38,11 +56,12 @@ export async function programmerNotificationsQuotidiennes() {
     },
   });
 
+  // ── Soir : bilan de la journée ──
   await Notifications.scheduleNotificationAsync({
-    identifier: NOTIF_ID_SOIR,
+    identifier: NOTIF_SOIR,
     content: {
-      title: 'Un clic. Une réponse.',
-      body: "Tu as fumé aujourd'hui ?",
+      title: '📊 Bilan de ta journée',
+      body: "Tu as fumé combien aujourd'hui ? Note-le avant de dormir.",
       data: { screen: 'JaiFume' },
       sound: true,
     },
@@ -55,12 +74,13 @@ export async function programmerNotificationsQuotidiennes() {
 }
 
 export async function annulerNotificationSoir() {
-  await Notifications.cancelScheduledNotificationAsync(NOTIF_ID_SOIR);
+  await Notifications.cancelScheduledNotificationAsync(NOTIF_SOIR);
 }
 
 export async function annulerToutesNotifications() {
-  await Notifications.cancelScheduledNotificationAsync(NOTIF_ID_MIDI);
-  await Notifications.cancelScheduledNotificationAsync(NOTIF_ID_SOIR);
+  await Notifications.cancelScheduledNotificationAsync(NOTIF_MATIN);
+  await Notifications.cancelScheduledNotificationAsync(NOTIF_MIDI);
+  await Notifications.cancelScheduledNotificationAsync(NOTIF_SOIR);
 }
 
 export async function initialiserNotifications(navigationRef) {
