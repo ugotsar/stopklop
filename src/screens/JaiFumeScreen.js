@@ -114,23 +114,41 @@ function FeedbackModal({ visible, count, objectif, prixCigarette, diffJours, onC
               );
             })()}
 
-            {/* Cas dépassé : conseil + argent dépensé */}
-            {isDepasse && (
-              <>
-                <View style={modal.statsRow}>
-                  <StatItem valeur={`${count}`} label="fumées" color="#D97706" />
-                  <View style={modal.statDiv} />
-                  <StatItem valeur={`${objectif}`} label="objectif" color={colors.gray} />
-                  <View style={modal.statDiv} />
-                  <StatItem valeur={`${argentDepense} €`} label="dépensé" color="#EF4444" />
-                </View>
-                <View style={modal.tipBox}>
-                  <Text style={modal.tipText}>
-                    Chaque jour est une nouvelle chance. Demain, vous pouvez le faire. 💪
-                  </Text>
-                </View>
-              </>
-            )}
+            {/* Cas dépassé : barre overflow + chips + message */}
+            {isDepasse && (() => {
+              const exces     = count - objectif;
+              const viePerdue = count * 5;
+              const totalBar  = objectif + exces;
+              const pctObj    = Math.round((objectif / totalBar) * 100);
+              return (
+                <>
+                  <View style={modal.okBarRow}>
+                    <Text style={modal.depBarLabel}>objectif : {objectif}</Text>
+                    <Text style={[modal.depBarLabel, { color: '#DC2626' }]}>+{exces} de trop</Text>
+                  </View>
+                  <View style={modal.depBarTrack}>
+                    <View style={[modal.depBarObj, { width: `${pctObj}%` }]} />
+                    <View style={[modal.depBarExces, { width: `${100 - pctObj}%` }]} />
+                  </View>
+                  <Text style={modal.depBarSub}>{count} cigarettes fumées aujourd'hui</Text>
+                  <View style={modal.okChips}>
+                    <View style={[modal.okChip, modal.depChip]}>
+                      <Text style={[modal.okChipVal, { color: '#92400E' }]}>{argentDepense} €</Text>
+                      <Text style={[modal.okChipLbl, { color: '#B45309' }]}>dépensé</Text>
+                    </View>
+                    <View style={[modal.okChip, modal.depChip]}>
+                      <Text style={[modal.okChipVal, { color: '#92400E' }]}>{viePerdue} min</Text>
+                      <Text style={[modal.okChipLbl, { color: '#B45309' }]}>de vie</Text>
+                    </View>
+                  </View>
+                  <View style={modal.depMsg}>
+                    <Text style={modal.depMsgText}>
+                      Chaque jour est une nouvelle chance.{'\n'}Demain, vous pouvez le faire. 💪
+                    </Text>
+                  </View>
+                </>
+              );
+            })()}
 
             {/* Boutons */}
             <View style={modal.btnRow}>
@@ -415,11 +433,17 @@ const modal = StyleSheet.create({
   okChip:     { flex: 1, backgroundColor: '#EAF3DE', borderRadius: 10, paddingVertical: 8, alignItems: 'center' },
   okChipVal:  { fontSize: 13, fontWeight: '700', color: '#27500A' },
   okChipLbl:  { fontSize: 10, color: '#3B6D11', marginTop: 1 },
-  tipBox: {
-    backgroundColor: '#FEF3C7', borderRadius: 10,
+  depBarLabel:  { fontSize: 11, color: '#92400E' },
+  depBarTrack:  { height: 7, borderRadius: 6, overflow: 'hidden', flexDirection: 'row', marginBottom: 4 },
+  depBarObj:    { height: '100%', backgroundColor: '#F59E0B' },
+  depBarExces:  { height: '100%', backgroundColor: '#DC2626' },
+  depBarSub:    { fontSize: 10, color: '#B45309', textAlign: 'center', marginBottom: 12 },
+  depChip:      { backgroundColor: '#FEF3C7' },
+  depMsg: {
+    backgroundColor: '#FFF7ED', borderRadius: 10, borderWidth: 1, borderColor: '#FDE68A',
     padding: 12, marginBottom: 14,
   },
-  tipText: { fontSize: 13, color: '#92400E', lineHeight: 18 },
+  depMsgText:   { fontSize: 13, color: '#92400E', lineHeight: 19, textAlign: 'center' },
   btnRow:  { flexDirection: 'row', gap: 10 },
   btn:     { flex: 1, paddingVertical: 13, borderRadius: 30, alignItems: 'center' },
   btnPrimary:     { backgroundColor: colors.primary },
