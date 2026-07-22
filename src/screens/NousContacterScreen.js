@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import {
   View, Text, StyleSheet, SafeAreaView, ScrollView,
-  TouchableOpacity, TextInput, Alert,
+  TouchableOpacity, TextInput, Alert, Linking,
 } from 'react-native';
 import { colors, spacing, font, radius } from '../theme';
+
+const SUPPORT_EMAIL = 'ugosimonmailpro34@gmail.com';
 
 const SUJETS = [
   { icon: '👤', titre: 'Compte et profil',          desc: 'Problème de compte, connexion, données...' },
@@ -17,8 +19,8 @@ export default function NousContacterScreen({ navigation }) {
   const [sujet,   setSujet]   = useState(null);
   const [message, setMessage] = useState('');
 
-  function handleEnvoyer() {
-    if (!sujet) {
+  async function handleEnvoyer() {
+    if (sujet == null) {
       Alert.alert('Sujet requis', 'Veuillez choisir un sujet avant d\'envoyer.');
       return;
     }
@@ -26,9 +28,18 @@ export default function NousContacterScreen({ navigation }) {
       Alert.alert('Message trop court', 'Décrivez votre demande en quelques mots.');
       return;
     }
-    Alert.alert('Message envoyé !', 'Notre équipe vous répondra dans les 24-48h ouvrées. 💚', [
-      { text: 'OK', onPress: () => navigation.goBack() },
-    ]);
+    // Ouvre l'app mail de l'utilisateur avec le message pré-rempli
+    const sujetTitre = SUJETS[sujet]?.titre ?? 'Demande';
+    const url = `mailto:${SUPPORT_EMAIL}`
+      + `?subject=${encodeURIComponent(`[Stopklop] ${sujetTitre}`)}`
+      + `&body=${encodeURIComponent(message.trim())}`;
+    const ok = await Linking.canOpenURL(url).catch(() => false);
+    if (ok) {
+      await Linking.openURL(url);
+      navigation.goBack();
+    } else {
+      Alert.alert('Impossible d\'ouvrir votre app mail', `Écrivez-nous directement à :\n${SUPPORT_EMAIL}`);
+    }
   }
 
   return (
@@ -40,7 +51,7 @@ export default function NousContacterScreen({ navigation }) {
           <Text style={styles.backText}>←</Text>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Nous contacter</Text>
-        <View style={{ width: 40 }}><Text style={{ textAlign: 'right', fontSize: 18 }}>ⓘ</Text></View>
+        <View style={{ width: 40 }} />
       </View>
 
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>

@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View, Text, StyleSheet, SafeAreaView, ScrollView,
-  TouchableOpacity, Dimensions,
+  TouchableOpacity, Dimensions, Modal,
 } from 'react-native';
-import Svg, { Path, Circle } from 'react-native-svg';
+import Svg, { Path, Circle, Text as SvgText } from 'react-native-svg';
 import { useUser } from '../context/UserContext';
 import { colors, spacing, font, radius } from '../theme';
 
@@ -11,35 +11,96 @@ const { width: SCREEN_W } = Dimensions.get('window');
 const CHART_W = SCREEN_W - spacing.md * 4;
 const CHART_H = 80;
 
-// ── Graphique projection (2 lignes) ─────────────────────────────────────────
-function ProjectionChart({ width = CHART_W, height = CHART_H }) {
-  // Ligne rouge (si vous continuez) : décroissante
-  const bad  = [0, -200, -400, -600, -900, -1200, -1500, -1842];
-  // Ligne verte (si vous réduisez) : croissante
-  const good = [0,  80,  180,  300,  420,   520,   590,   612];
+// ── Graphique projection "zone de gain" ─────────────────────────────────────
+// Deux courbes qui mesurent la MÊME chose (argent brûlé cumulé) : la rouge
+// plonge si on continue, la verte s'aplatit quand le plan atteint 0 cigarette.
+// L'espace entre les deux = l'argent qui reste dans la poche.
+function ProjectionChart({ badSerie, planSerie, gain, width = CHART_W, height = 120 }) {
+  const bad  = badSerie  ?? [0, -100];
+  const plan = planSerie ?? [0, -40];
 
-  const allVals = [...bad, ...good];
-  const min = Math.min(...allVals);
-  const max = Math.max(...allVals);
-  const range = max - min || 1;
+  const min = Math.min(...bad, ...plan);
+  const range = -min || 1;
   const step = width / (bad.length - 1);
 
   function toY(v) {
-    return height - ((v - min) / range) * (height - 8) - 4;
+    return 8 + ((-v) / range) * (height - 16);
   }
+  const toPath = serie => serie
+    .map((v, i) => `${i === 0 ? 'M' : 'L'}${(i * step).toFixed(1)},${toY(v).toFixed(1)}`)
+    .join(' ');
 
-  const badPath  = bad.map((v, i)  => `${i === 0 ? 'M' : 'L'}${(i * step).toFixed(1)},${toY(v).toFixed(1)}`).join(' ');
-  const goodPath = good.map((v, i) => `${i === 0 ? 'M' : 'L'}${(i * step).toFixed(1)},${toY(v).toFixed(1)}`).join(' ');
+  const badPath  = toPath(bad);
+  const planPath = toPath(plan);
+  const lastX    = (bad.length - 1) * step;
+  const zeroY    = toY(0);
+
+  // Zone de gain : entre la courbe du plan (haut) et celle du laisser-aller (bas)
+  const planPts = plan.map((v, i) => `${(i * step).toFixed(1)},${toY(v).toFixed(1)}`);
+  const badPts  = [...bad].reverse().map((v, i) => `${((bad.length - 1 - i) * step).toFixed(1)},${toY(v).toFixed(1)}`);
+  const zonePath = `M${planPts.join(' L')} L${badPts.join(' L')} Z`;
+
+  // Position du libellé au centre de la zone
+  const midIdx = Math.floor(bad.length * 0.62);
+  const midY   = (toY(bad[midIdx]) + toY(plan[midIdx])) / 2;
 
   return (
-    <Svg width={width} height={height}>
-      <Path d={badPath}  stroke="#EF4444" strokeWidth={2} fill="none" strokeLinecap="round" strokeLinejoin="round" opacity={0.8} />
-      <Path d={goodPath} stroke={colors.primary} strokeWidth={2} fill="none" strokeLinecap="round" strokeLinejoin="round" />
-      {/* Points extrêmes */}
-      <Circle cx={0}                    cy={toY(0)}    r={4} fill={colors.gray} />
-      <Circle cx={(bad.length-1)*step}  cy={toY(-1842)} r={4} fill="#EF4444" />
-      <Circle cx={(good.length-1)*step} cy={toY(612)}  r={4} fill={colors.primary} />
+    <Svg width={width} height={height + 18}>
+      {/* Ligne du départ (0 € brûlé) */}
+      <Path d={`M0,${zeroY} L${width},${zeroY}`} stroke="#E5E7EB" strokeWidth={1} strokeDasharray="4 4" />
+
+      {/* Zone de gain peinte en vert */}
+      <Path d={zonePath} fill={colors.primary} opacity={0.14} />
+
+      {/* Courbes */}
+      <Path d={badPath}  stroke="#EF4444" strokeWidth={2.5} fill="none" strokeLinecap="round" strokeLinejoin="round" opacity={0.85} />
+      <Path d={planPath} stroke={colors.primary} strokeWidth={2.5} fill="none" strokeLinecap="round" strokeLinejoin="round" />
+
+      {/* Libellé du gain, au cœur de la zone */}
+      <SvgText x={width * 0.60} y={midY} fontSize={12} fontWeight="700" fill="#166534" textAnchor="middle">
+        {`💚 ${gain.toLocaleString('fr-FR')} € restent`}
+      </SvgText>
+      <SvgText x={width * 0.60} y={midY + 13} fontSize={11} fontWeight="700" fill="#166534" textAnchor="middle">
+        dans ta poche
+      </SvgText>
+
+      {/* Points de départ et d'arrivée */}
+      <Circle cx={0}     cy={zeroY}                      r={4}   fill={colors.gray} />
+      <Circle cx={lastX} cy={toY(bad[bad.length - 1])}   r={4.5} fill="#EF4444" />
+      <Circle cx={lastX} cy={toY(plan[plan.length - 1])} r={4.5} fill={colors.primary} />
+
+      {/* Repères temporels */}
+      <SvgText x={0}         y={height + 14} fontSize={9} fill="#9E9E9E" textAnchor="start">Auj.</SvgText>
+      <SvgText x={width / 2} y={height + 14} fontSize={9} fill="#9E9E9E" textAnchor="middle">6 mois</SvgText>
+      <SvgText x={width}     y={height + 14} fontSize={9} fill="#9E9E9E" textAnchor="end">1 an</SvgText>
     </Svg>
+  );
+}
+
+// ── Équivalence concrète du gain ────────────────────────────────────────────
+function equivalenceGain(gain) {
+  if (gain >= 3000) return 'Un grand voyage + 6 mois de courses';
+  if (gain >= 2000) return 'Un vol long-courrier pour deux, ou 5 mois de courses';
+  if (gain >= 1200) return 'Une semaine de vacances, ou 3 mois de courses';
+  if (gain >= 600)  return 'Un smartphone neuf, ou 6 week-ends';
+  if (gain >= 250)  return '12 restaurants, ou un week-end en amoureux';
+  if (gain > 0)     return 'De quoi vous faire plusieurs vrais plaisirs';
+  return null;
+}
+
+// ── Ligne du bilan de projection ────────────────────────────────────────────
+function LigneProjection({ icone, iconeBg, iconeCouleur, titre, sous, valeur, valeurCouleur }) {
+  return (
+    <View style={styles.ligneProj}>
+      <View style={[styles.ligneProjIcone, { backgroundColor: iconeBg }]}>
+        <Text style={{ fontSize: 16, fontWeight: '800', color: iconeCouleur }}>{icone}</Text>
+      </View>
+      <View style={{ flex: 1 }}>
+        <Text style={styles.ligneProjTitre}>{titre}</Text>
+        <Text style={styles.ligneProjSous}>{sous}</Text>
+      </View>
+      <Text style={[styles.ligneProjValeur, { color: valeurCouleur }]}>{valeur}</Text>
+    </View>
   );
 }
 
@@ -73,17 +134,144 @@ function PlanChart({ data, labels, width = CHART_W, height = 80 }) {
   );
 }
 
+// ── Libellés des déclencheurs d'envie ────────────────────────────────────────
+const TRIGGER_LABELS = {
+  stress:   { emoji: '😰', label: 'Stress' },
+  ennui:    { emoji: '😴', label: 'Ennui' },
+  cafe:     { emoji: '☕', label: 'Café / pause' },
+  repas:    { emoji: '🍽', label: 'Après repas' },
+  social:   { emoji: '👥', label: 'Entourage' },
+  alcool:   { emoji: '🍺', label: 'Soirée / alcool' },
+  habitude: { emoji: '🚬', label: 'Habitude' },
+  autre:    { emoji: '🤷', label: 'Autre' },
+};
+
+// ── Modal explicative d'une carte impact ────────────────────────────────────
+function ImpactModal({ info, onClose }) {
+  return (
+    <Modal visible={!!info} transparent animationType="fade" onRequestClose={onClose}>
+      <View style={im.overlay}>
+        <View style={im.card}>
+          <View style={im.header}>
+            <Text style={{ fontSize: 26 }}>{info?.icon}</Text>
+            <Text style={im.titre}>{info?.titre}</Text>
+          </View>
+
+          <Text style={im.explication}>{info?.explication}</Text>
+
+          {info?.projections && (
+            <View style={im.cols}>
+              {info.projections.map((pr, i) => (
+                <View key={i} style={im.colBox}>
+                  <Text style={im.colVal}>{pr.valeur}</Text>
+                  <Text style={im.colLbl}>{pr.label}</Text>
+                </View>
+              ))}
+            </View>
+          )}
+
+          {info?.note && <Text style={im.note}>{info.note}</Text>}
+
+          <TouchableOpacity style={im.btn} onPress={onClose}>
+            <Text style={im.btnText}>Compris !</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </Modal>
+  );
+}
+
+const im = StyleSheet.create({
+  overlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 24 },
+  card:    { width: '100%', backgroundColor: colors.white, borderRadius: 20, padding: 20 },
+  header:  { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 12 },
+  titre:   { fontSize: 16, fontWeight: '800', color: colors.black, flex: 1 },
+  explication: { fontSize: 13, color: colors.black, lineHeight: 20, marginBottom: 14 },
+  cols:    { flexDirection: 'row', gap: 8, marginBottom: 14 },
+  colBox:  { flex: 1, backgroundColor: colors.primaryLight, borderRadius: 12, paddingVertical: 10, alignItems: 'center' },
+  colVal:  { fontSize: 14, fontWeight: '800', color: colors.primary },
+  colLbl:  { fontSize: 10, color: colors.gray, marginTop: 2 },
+  note:    { fontSize: 11, color: colors.gray, fontStyle: 'italic', marginBottom: 14, lineHeight: 16 },
+  btn:     { backgroundColor: colors.primary, borderRadius: 30, paddingVertical: 12, alignItems: 'center' },
+  btnText: { color: colors.white, fontSize: 14, fontWeight: '700' },
+});
+
+// ── Libellés des motivations (identifiants stables de l'onboarding) ─────────
+const MOTIV_LABELS = {
+  health:     { emoji: '❤️', label: 'Ma santé' },
+  family:     { emoji: '👨‍👩‍👧', label: 'Ma famille' },
+  appearance: { emoji: '✨', label: 'Mon apparence' },
+  money:      { emoji: '💰', label: "Économiser de l'argent" },
+  breathing:  { emoji: '🫁', label: 'Un meilleur souffle' },
+  fitness:    { emoji: '🏃', label: 'Retrouver ma condition' },
+};
+
 // ── Écran principal ──────────────────────────────────────────────────────────
 export default function PlanScreen({ navigation }) {
-  const { profile, stats } = useUser();
+  const { stats, profile } = useUser();
+  const [impactModal, setImpactModal] = useState(null);
 
-  const argentEco = stats?.argentEconomise ?? 38.40;
-  const vieGagneeH = Math.floor((stats?.cigarettesNonFumees ?? 0) * 20 / 60);
-  const vieGagneeJ = Math.max(14, Math.floor(vieGagneeH / 24));
+  // Motivations issues de l'onboarding, rappelées comme encouragement
+  const mesMotivations = (Array.isArray(profile?.motivations) ? profile.motivations : [])
+    .map(k => MOTIV_LABELS[k]).filter(Boolean);
+  const motivationPerso = profile?.motivationPerso ?? null;
 
-  // Plan recommandé : 6 semaines de réduction
-  const planData   = [8, 6, 6, 4, 2, 0];
-  const planLabels = ["Auj.'", 'S1', 'S2', 'S3', 'S4', 'S5'];
+  const objectifJour   = stats?.objectifJour   ?? 8;
+  const argentEcoMois  = stats?.argentEcoPlanMois ?? 0;
+  const vieGagneeHMois = stats?.vieGagneeHPlanMois ?? 0;
+  const vieGagneeJAn   = stats?.vieGagneeJPlanAn  ?? 0;
+  const planData       = stats?.planData ?? [objectifJour, 0, 0, 0, 0, 0];
+  const prochainPalier = stats?.prochainPalier ?? 0;
+
+  // Plan de réduction réel
+  const reductionSem     = stats?.reductionSem ?? 0;
+  const joursAvantPalier = stats?.joursAvantPalier;
+  const semainesRest     = stats?.semainesRestantes;
+  const dateZeroStr      = stats?.dateZeroStr;
+
+  // Projection annuelle basée sur le plan réellement choisi
+  const proj = stats?.projAnnuelle ?? {
+    cout: 0, coutPlan: 0, gain: 0, coutReel: 0,
+    badSerie: [0, 0], planSerie: [0, 0], consoRecente: 0, planActif: false,
+  };
+  const fmtEur = n => n.toLocaleString('fr-FR') + ' €';
+  const equivalence = equivalenceGain(proj.gain);
+  // Économies réelles depuis le début (jours enregistrés, vs conso d'avant)
+  const argentDejaEco = stats?.argentEcoCumul ?? 0;
+
+  // Détails pour les fiches explicatives "Votre impact"
+  const consoAvantAff  = stats?.consoAvant ?? 10;
+  const prixCigAff     = (stats?.prixCig ?? 0.5).toFixed(2);
+  const cigEviteesJour = Math.max(0, consoAvantAff - objectifJour);
+  const ecoAnAff  = Math.round(cigEviteesJour * (stats?.prixCig ?? 0.5) * 365).toLocaleString('fr-FR');
+  const eco10Aff  = Math.round(cigEviteesJour * (stats?.prixCig ?? 0.5) * 3650).toLocaleString('fr-FR');
+  const vie10Aff  = Math.round(cigEviteesJour * 5 / 60 / 24 * 3650);
+
+  // Habitudes réelles (issues des envies enregistrées)
+  const habitudes      = stats?.habitudes;
+  // Habitudes personnalisées créées par l'utilisateur ("Maman m'a énervé"…)
+  const persoMap = Object.fromEntries(
+    (Array.isArray(profile?.declencheursPerso) ? profile.declencheursPerso : [])
+      .map(d => [d.key, { emoji: '📝', label: d.label }])
+  );
+  const resoudreTrig   = k => TRIGGER_LABELS[k] ?? persoMap[k] ?? TRIGGER_LABELS.autre;
+  const trigInfo       = habitudes ? resoudreTrig(habitudes.declencheur) : null;
+  const enviesRecentes = stats?.enviesRecentes ?? [];
+  // Tous les déclencheurs (standards + personnalisés utilisés), zéros inclus
+  const parDeclencheur = habitudes
+    ? [...new Set([...Object.keys(TRIGGER_LABELS), ...Object.keys(habitudes.parDeclencheur)])]
+        .map(k => [k, habitudes.parDeclencheur[k] ?? 0])
+        .sort((a, b) => b[1] - a[1])
+    : [];
+
+  function fmtEnvie(e) {
+    const d = new Date(e.ts);
+    const jour  = d.toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' });
+    const heure = `${String(d.getHours()).padStart(2, '0')}h${String(d.getMinutes()).padStart(2, '0')}`;
+    return { jour: jour.charAt(0).toUpperCase() + jour.slice(1), heure };
+  }
+
+  const planLabels = ['Auj.', 'S+1', 'S+2', 'S+3', 'S+4', 'S+5'];
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -91,10 +279,9 @@ export default function PlanScreen({ navigation }) {
       {/* ── Header ── */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Plan d'arrêt</Text>
-        <TouchableOpacity style={styles.settingsBtn}>
-          <Text style={styles.settingsIcon}>⚙️</Text>
-        </TouchableOpacity>
       </View>
+
+      <ImpactModal info={impactModal} onClose={() => setImpactModal(null)} />
 
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
 
@@ -104,39 +291,121 @@ export default function PlanScreen({ navigation }) {
             <Text style={styles.sectionNum}>1</Text>
           </View>
           <Text style={styles.sectionTitle}>Votre impact</Text>
-          <TouchableOpacity>
-            <Text style={styles.voirPlus}>Voir plus</Text>
-          </TouchableOpacity>
         </View>
 
         <View style={styles.card}>
           <View style={styles.impactGrid}>
-            <ImpactCard icon="💰" valeur={`+${argentEco.toFixed(2)} €`} label="Argent économisé" sublabel="par jour" />
-            <ImpactCard icon="⏱" valeur={`+${vieGagneeJ > 0 ? vieGagneeJ + 'j' : ''} 14h 32`} label="Temps gagné" sublabel="par semaine" valeurColor={colors.primary} />
-            <ImpactCard icon="❤️" valeur={`+${vieGagneeJ} jours`} label="Vie gagnée" sublabel="par an" valeurColor="#EF4444" />
-            <ImpactCard icon="🫁" valeur="Meilleure" label="santé" sublabel="chaque jour" valeurColor={colors.primary} />
+            <ImpactCard
+              icon="💰" valeur={`+${argentEcoMois.toFixed(0)} €`} label="Argent économisé" sublabel="par mois"
+              onPress={() => setImpactModal({
+                icon: '💰',
+                titre: 'Argent économisé',
+                explication:
+                  `Avant l'app, vous fumiez ${consoAvantAff} cigarettes par jour. Votre objectif actuel est de ${objectifJour} par jour : `
+                  + `cela fait ${cigEviteesJour} cigarette${cigEviteesJour > 1 ? 's' : ''} évitée${cigEviteesJour > 1 ? 's' : ''} chaque jour.\n\n`
+                  + `Chaque cigarette coûte ${prixCigAff} € (prix du paquet ÷ cigarettes par paquet).\n`
+                  + `${cigEviteesJour} × ${prixCigAff} € × 30 jours = ${argentEcoMois.toFixed(0)} € par mois.`,
+                projections: [
+                  { valeur: `+${argentEcoMois.toFixed(0)} €`, label: 'par mois' },
+                  { valeur: `+${ecoAnAff} €`, label: 'par an' },
+                  { valeur: `+${eco10Aff} €`, label: 'sur 10 ans' },
+                ],
+                note: 'Vous pouvez ajuster le prix du paquet dans Profil → Paramètres de consommation.',
+              })}
+            />
+            <ImpactCard
+              icon="⏱" valeur={`+${vieGagneeHMois}h`} label="Vie récupérée" sublabel="par mois" valeurColor={colors.primary}
+              onPress={() => setImpactModal({
+                icon: '⏱',
+                titre: 'Vie récupérée par mois',
+                explication:
+                  `Les études médicales estiment qu'une cigarette réduit l'espérance de vie d'environ 5 minutes.\n\n`
+                  + `En évitant ${cigEviteesJour} cigarette${cigEviteesJour > 1 ? 's' : ''} par jour, vous récupérez `
+                  + `${cigEviteesJour * 5} minutes de vie chaque jour, soit environ ${vieGagneeHMois}h par mois.`,
+                projections: [
+                  { valeur: `+${vieGagneeHMois}h`, label: 'par mois' },
+                  { valeur: `+${vieGagneeJAn}j`, label: 'par an' },
+                  { valeur: `+${vie10Aff}j`, label: 'sur 10 ans' },
+                ],
+              })}
+            />
+            <ImpactCard
+              icon="❤️" valeur={`+${vieGagneeJAn}j`} label="Vie récupérée" sublabel="par an" valeurColor={colors.primary}
+              onPress={() => setImpactModal({
+                icon: '❤️',
+                titre: 'Vie récupérée par an',
+                explication:
+                  `Sur une année entière, les 5 minutes récupérées par cigarette évitée s'accumulent :\n\n`
+                  + `${cigEviteesJour} cigarette${cigEviteesJour > 1 ? 's' : ''} évitée${cigEviteesJour > 1 ? 's' : ''} × 5 min × 365 jours `
+                  + `= environ ${vieGagneeJAn} jour${vieGagneeJAn > 1 ? 's' : ''} d'espérance de vie regagnés chaque année.`,
+                projections: [
+                  { valeur: `+${vieGagneeJAn}j`, label: 'par an' },
+                  { valeur: `+${vie10Aff}j`, label: 'sur 10 ans' },
+                  { valeur: `≈ ${Math.round(vie10Aff / 30)} mois`, label: 'de vie en plus' },
+                ],
+              })}
+            />
+            <ImpactCard
+              icon="🫁" valeur="Meilleure" label="santé" sublabel="chaque jour" valeurColor={colors.primary}
+              onPress={() => setImpactModal({
+                icon: '🫁',
+                titre: 'Meilleure santé chaque jour',
+                explication:
+                  `Votre corps se répare dès que vous réduisez :\n\n`
+                  + `• 20 min : la tension artérielle redevient normale\n`
+                  + `• 8 h : le monoxyde de carbone dans le sang diminue de moitié\n`
+                  + `• 24 h : le risque de crise cardiaque commence à baisser\n`
+                  + `• 48 h : le goût et l'odorat s'améliorent\n`
+                  + `• 72 h : la respiration devient plus facile\n`
+                  + `• 1 an : le risque d'AVC rejoint celui d'un non-fumeur`,
+                note: 'Retrouvez votre progression santé détaillée dans le tableau de bord.',
+              })}
+            />
           </View>
         </View>
 
         {/* ── Projection annuelle ── */}
         <Text style={styles.subSectionTitle}>Projection annuelle</Text>
         <View style={styles.card}>
-          <View style={styles.projRow}>
-            <View style={styles.projCol}>
-              <Text style={styles.projLabel}>Si vous continuez</Text>
-              <Text style={styles.projBad}>-1 842,60 €</Text>
-            </View>
-            <View style={styles.vsCircle}>
-              <Text style={styles.vsText}>VS</Text>
-            </View>
-            <View style={[styles.projCol, { alignItems: 'flex-end' }]}>
-              <Text style={styles.projLabel}>Si vous réduisez</Text>
-              <Text style={styles.projGood}>+1 842,60 €</Text>
-            </View>
+          {/* ── Le chiffre héros ── */}
+          <View style={{ alignItems: 'center', marginTop: spacing.sm, marginBottom: spacing.md }}>
+            <Text style={styles.projHeros}>{fmtEur(proj.gain)}</Text>
+            <Text style={styles.projHerosSous}>resteront dans votre poche en 1 an</Text>
+            <Text style={styles.projHerosHint}>en suivant votre plan</Text>
           </View>
-          <View style={styles.chartBox}>
-            <ProjectionChart />
-          </View>
+
+          {/* ── 3 lignes de bilan ── */}
+          <LigneProjection
+            icone="↓" iconeBg="#FEE2E2" iconeCouleur="#DC2626"
+            titre="Avant l'app"
+            sous="dépensés en cigarettes chaque année"
+            valeur={`−${fmtEur(proj.cout)} / an`}
+            valeurCouleur="#DC2626"
+          />
+          <LigneProjection
+            icone="↑" iconeBg="#DCFCE7" iconeCouleur="#166534"
+            titre="Déjà économisé"
+            sous="depuis le début"
+            valeur={`+${fmtEur(Math.round(argentDejaEco))}`}
+            valeurCouleur="#166534"
+          />
+          <LigneProjection
+            icone="✓" iconeBg="#DCFCE7" iconeCouleur="#166534"
+            titre="Plan respecté à 100 %"
+            sous="si vous continuez"
+            valeur={`+${fmtEur(proj.gain)} / an`}
+            valeurCouleur="#166534"
+          />
+
+          {/* ── Équivalence concrète ── */}
+          {equivalence && (
+            <View style={styles.projEquivPill}>
+              <Text style={styles.projEquivLabel}>
+                Ce que vous pourriez vous offrir avec ces {fmtEur(proj.gain)} :
+              </Text>
+              <Text style={styles.projEquivText}>💚  {equivalence}</Text>
+            </View>
+          )}
         </View>
 
         {/* ── Section 2 : Analyse des habitudes ── */}
@@ -145,17 +414,114 @@ export default function PlanScreen({ navigation }) {
             <Text style={styles.sectionNum}>2</Text>
           </View>
           <Text style={styles.sectionTitle}>Analyse de vos habitudes</Text>
-          <TouchableOpacity>
-            <Text style={styles.voirPlus}>Voir l'analyse</Text>
-          </TouchableOpacity>
+          {habitudes && (
+            <View style={styles.tagBadge}>
+              <Text style={styles.tagText}>{habitudes.total} envie{habitudes.total > 1 ? 's' : ''} analysée{habitudes.total > 1 ? 's' : ''}</Text>
+            </View>
+          )}
         </View>
 
         <View style={styles.card}>
-          <View style={styles.habitudesRow}>
-            <HabitudeChip icon="🕐" titre="19h – 22h" desc="Heure la plus critique" sub="40% de vos cigarettes" />
-            <HabitudeChip icon="📅" titre="Vendredi" desc="Jour le plus difficile" sub="Jour le plus compliqué" />
-            <HabitudeChip icon="🌿" titre="Stress" desc="Déclencheur n°1" sub="Déclencheur principal" />
-          </View>
+          {habitudes ? (
+            <>
+              <View style={styles.habitudesRow}>
+                <HabitudeChip
+                  icon="🕐"
+                  titre={habitudes.heurePic}
+                  desc="Créneau le plus critique"
+                  sub={`${habitudes.pctHeure}% de vos envies`}
+                />
+                <HabitudeChip
+                  icon="📅"
+                  titre={habitudes.jourPic}
+                  desc="Jour le plus difficile"
+                  sub={`${habitudes.pctJour}% de vos envies`}
+                />
+                <HabitudeChip
+                  icon={trigInfo.emoji}
+                  titre={trigInfo.label}
+                  desc="Déclencheur n°1"
+                  sub={`${habitudes.pctTrig}% de vos envies`}
+                />
+              </View>
+
+              {/* Répartition par déclencheur */}
+              <Text style={styles.habSousTitre}>Répartition par déclencheur</Text>
+              {parDeclencheur.map(([key, count]) => {
+                const info  = resoudreTrig(key);
+                const pct   = habitudes.total > 0 ? Math.round((count / habitudes.total) * 100) : 0;
+                const vide  = count === 0;
+                return (
+                  <View key={key} style={[styles.trigRow, vide && { opacity: 0.35 }]}>
+                    <Text style={{ fontSize: 15, width: 24, textAlign: 'center' }}>{info.emoji}</Text>
+                    <Text style={styles.trigLabel}>{info.label}</Text>
+                    <View style={styles.trigBarTrack}>
+                      <View style={[styles.trigBarFill, { width: `${pct}%` }]} />
+                    </View>
+                    <Text style={styles.trigCount}>×{count}</Text>
+                  </View>
+                );
+              })}
+
+              <TouchableOpacity
+                style={[styles.journalBtn, { marginTop: spacing.sm }]}
+                onPress={() => navigation.navigate('JournalEnvies', { mode: 'declencheur' })}
+              >
+                <Text style={styles.journalBtnText}>Voir le détail par déclencheur  ›</Text>
+              </TouchableOpacity>
+
+              {/* Bilan résisté / fumé */}
+              <View style={styles.bilanRow}>
+                <View style={[styles.bilanChip, { backgroundColor: colors.primaryLight }]}>
+                  <Text style={[styles.bilanVal, { color: colors.primary }]}>💪 {habitudes.nbResistees}</Text>
+                  <Text style={styles.bilanLabel}>envies surmontées</Text>
+                </View>
+                <View style={[styles.bilanChip, { backgroundColor: '#FEE2E2' }]}>
+                  <Text style={[styles.bilanVal, { color: '#DC2626' }]}>🚬 {habitudes.nbFumees}</Text>
+                  <Text style={styles.bilanLabel}>envies fumées</Text>
+                </View>
+              </View>
+
+              {/* Dernières envies */}
+              <Text style={styles.habSousTitre}>Dernières envies</Text>
+              {enviesRecentes.map((e, i) => {
+                const info = resoudreTrig(e.trigger);
+                const { jour, heure } = fmtEnvie(e);
+                return (
+                  <View key={i} style={styles.envieLogRow}>
+                    <Text style={{ fontSize: 14 }}>{info.emoji}</Text>
+                    <View style={{ flex: 1 }}>
+                      <Text style={styles.envieLogMain}>
+                        {jour} · {heure} · {info.label}
+                      </Text>
+                      {e.note ? <Text style={styles.envieLogNote} numberOfLines={2}>« {e.note} »</Text> : null}
+                    </View>
+                    <Text style={[styles.envieLogIssue, { color: e.fume ? '#DC2626' : colors.primary }]}>
+                      {e.fume ? '🚬 fumé' : '💪 résisté'}
+                    </Text>
+                  </View>
+                );
+              })}
+
+              {/* Journal complet */}
+              <TouchableOpacity
+                style={styles.journalBtn}
+                onPress={() => navigation.navigate('JournalEnvies')}
+              >
+                <Text style={styles.journalBtnText}>Voir le journal complet, jour par jour  ›</Text>
+              </TouchableOpacity>
+            </>
+          ) : (
+            <View style={styles.habitudesVide}>
+              <Text style={{ fontSize: 28, marginBottom: 6 }}>🔥</Text>
+              <Text style={styles.habitudesVideTitre}>Pas encore de données</Text>
+              <Text style={styles.habitudesVideTexte}>
+                Quand une envie de fumer arrive, appuyez sur le bouton{' '}
+                <Text style={{ fontWeight: '700' }}>« J'ai envie de fumer »</Text> dans l'Accueil.
+                {'\n'}On analysera vos heures, jours et déclencheurs critiques pour vous aider à les anticiper.
+              </Text>
+            </View>
+          )}
         </View>
 
         {/* ── Section 3 : Plan recommandé ── */}
@@ -163,9 +529,11 @@ export default function PlanScreen({ navigation }) {
           <View style={styles.sectionNumBadge}>
             <Text style={styles.sectionNum}>3</Text>
           </View>
-          <Text style={styles.sectionTitle}>Plan recommandé</Text>
+          <Text style={styles.sectionTitle}>Mon plan</Text>
           <View style={styles.tagBadge}>
-            <Text style={styles.tagText}>Réduction progressive</Text>
+            <Text style={styles.tagText}>
+              {reductionSem > 0 ? `−${reductionSem} cig / semaine` : 'Réduction progressive'}
+            </Text>
           </View>
         </View>
 
@@ -174,7 +542,7 @@ export default function PlanScreen({ navigation }) {
             {/* Objectif quotidien */}
             <View style={styles.planLeft}>
               <Text style={styles.planLabel}>Objectif quotidien</Text>
-              <Text style={styles.planNumber}>8</Text>
+              <Text style={styles.planNumber}>{objectifJour}</Text>
               <Text style={styles.planUnit}>cigarettes max</Text>
             </View>
 
@@ -194,9 +562,21 @@ export default function PlanScreen({ navigation }) {
           </View>
 
           <View style={styles.prochainPalier}>
-            <Text style={styles.prochainText}>
-              Prochain palier : <Text style={{ fontWeight: '700' }}>6 cigarettes</Text>  dans 7 jours
-            </Text>
+            {objectifJour === 0 ? (
+              <Text style={styles.prochainText}>
+                🎉 <Text style={{ fontWeight: '700' }}>Objectif 0 cigarette atteint !</Text> Maintenez le cap.
+              </Text>
+            ) : reductionSem > 0 && joursAvantPalier != null ? (
+              <Text style={styles.prochainText}>
+                Prochain palier : <Text style={{ fontWeight: '700' }}>{prochainPalier} cigarette{prochainPalier > 1 ? 's' : ''} max</Text>
+                {' '}dans <Text style={{ fontWeight: '700' }}>{joursAvantPalier} jour{joursAvantPalier > 1 ? 's' : ''}</Text>
+                {dateZeroStr ? `\n🏁 0 cigarette prévu vers le ${dateZeroStr}` : ''}
+              </Text>
+            ) : (
+              <Text style={styles.prochainText}>
+                Choisissez <Text style={{ fontWeight: '700' }}>« Réduire progressivement »</Text> pour activer un plan semaine par semaine.
+              </Text>
+            )}
           </View>
 
           <TouchableOpacity
@@ -207,20 +587,43 @@ export default function PlanScreen({ navigation }) {
           </TouchableOpacity>
         </View>
 
+        {/* ── Vos motivations (rappel d'encouragement) ── */}
+        {(mesMotivations.length > 0 || motivationPerso) && (
+          <View style={[styles.card, { marginTop: spacing.sm }]}>
+            <Text style={{ fontSize: font.sm, fontWeight: '700', color: colors.black, marginBottom: spacing.sm }}>
+              💚 Pourquoi vous faites ça
+            </Text>
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+              {mesMotivations.map(m => (
+                <View key={m.label} style={styles.motivChip}>
+                  <Text style={{ fontSize: 14 }}>{m.emoji}</Text>
+                  <Text style={styles.motivChipText}>{m.label}</Text>
+                </View>
+              ))}
+            </View>
+            {motivationPerso && (
+              <Text style={styles.motivPerso}>« {motivationPerso} »</Text>
+            )}
+          </View>
+        )}
+
       </ScrollView>
     </SafeAreaView>
   );
 }
 
 // ── Sous-composants ───────────────────────────────────────────────────────────
-function ImpactCard({ icon, valeur, label, sublabel, valeurColor = colors.black }) {
+function ImpactCard({ icon, valeur, label, sublabel, valeurColor = colors.black, onPress }) {
   return (
-    <View style={styles.impactCard}>
-      <Text style={styles.impactIcon}>{icon}</Text>
+    <TouchableOpacity style={styles.impactCard} onPress={onPress} activeOpacity={0.7}>
+      <View style={{ flexDirection: 'row', width: '100%', justifyContent: 'space-between' }}>
+        <Text style={styles.impactIcon}>{icon}</Text>
+        <Text style={{ fontSize: 13, color: colors.gray }}>ⓘ</Text>
+      </View>
       <Text style={[styles.impactValeur, { color: valeurColor }]}>{valeur}</Text>
       <Text style={styles.impactLabel}>{label}</Text>
       <Text style={styles.impactSub}>{sublabel}</Text>
-    </View>
+    </TouchableOpacity>
   );
 }
 
@@ -296,6 +699,39 @@ const styles = StyleSheet.create({
   },
   vsText: { fontSize: 11, fontWeight: '700', color: colors.gray },
   chartBox: { marginTop: spacing.sm },
+  projLegende: { marginTop: spacing.sm, gap: 4 },
+  projLegItem: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  projLegDot:  { width: 8, height: 8, borderRadius: 4 },
+  projLegText: { fontSize: 11, color: colors.gray },
+
+  // Projection annuelle (bilan simple)
+  projHeros:     { fontSize: 40, fontWeight: '900', color: '#166534', lineHeight: 46 },
+  projHerosSous: { fontSize: 14, fontWeight: '700', color: '#166534', marginTop: 2 },
+  projHerosHint: { fontSize: 12, color: colors.gray, marginTop: 2 },
+  ligneProj: {
+    flexDirection: 'row', alignItems: 'center', gap: spacing.sm,
+    backgroundColor: '#FAFAFA', borderRadius: radius.lg,
+    padding: spacing.sm, marginBottom: spacing.xs,
+    borderWidth: 1, borderColor: '#F0F0F0',
+  },
+  ligneProjIcone: {
+    width: 36, height: 36, borderRadius: 18,
+    alignItems: 'center', justifyContent: 'center',
+  },
+  ligneProjTitre:  { fontSize: 13, fontWeight: '700', color: colors.black },
+  ligneProjSous:   { fontSize: 11, color: colors.gray, marginTop: 1 },
+  ligneProjValeur: { fontSize: 15, fontWeight: '800' },
+  projEquivPill: {
+    backgroundColor: '#DCFCE7', borderRadius: radius.md,
+    paddingVertical: 10, alignItems: 'center', marginTop: spacing.sm,
+  },
+  projEquivLabel: { fontSize: 11, color: '#3B6D11', marginBottom: 3 },
+  projEquivText:  { fontSize: 13, fontWeight: '700', color: '#166534' },
+  projNote: {
+    fontSize: 11, color: colors.black, lineHeight: 16,
+    backgroundColor: colors.primaryLight, borderRadius: radius.md,
+    padding: spacing.sm, marginTop: spacing.sm,
+  },
 
   // Habitudes
   habitudesRow: { flexDirection: 'row', gap: spacing.sm },
@@ -307,6 +743,39 @@ const styles = StyleSheet.create({
   habitudeTitre: { fontSize: 12, fontWeight: '800', color: colors.black },
   habitudeDesc:  { fontSize: 10, color: colors.gray, marginTop: 2 },
   habitudeSub:   { fontSize: 10, color: colors.gray },
+  habitudesVide: { alignItems: 'center', paddingVertical: spacing.sm },
+  habitudesVideTitre: { fontSize: font.sm, fontWeight: '700', color: colors.black, marginBottom: 4 },
+  habitudesVideTexte: { fontSize: 12, color: colors.gray, textAlign: 'center', lineHeight: 18 },
+
+  // Détail habitudes
+  habSousTitre: {
+    fontSize: 12, fontWeight: '700', color: colors.black,
+    marginTop: spacing.md, marginBottom: spacing.sm,
+  },
+  trigRow:      { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 6 },
+  trigLabel:    { fontSize: 12, color: colors.black, width: 92 },
+  trigBarTrack: { flex: 1, height: 8, backgroundColor: '#F0F0F0', borderRadius: 4, overflow: 'hidden' },
+  trigBarFill:  { height: '100%', backgroundColor: colors.primary, borderRadius: 4 },
+  trigCount:    { fontSize: 12, fontWeight: '700', color: colors.black, width: 30, textAlign: 'right' },
+
+  bilanRow:  { flexDirection: 'row', gap: spacing.sm, marginTop: spacing.md },
+  bilanChip: { flex: 1, borderRadius: radius.md, paddingVertical: 10, alignItems: 'center' },
+  bilanVal:  { fontSize: 15, fontWeight: '800' },
+  bilanLabel: { fontSize: 10, color: colors.gray, marginTop: 2 },
+
+  envieLogRow: {
+    flexDirection: 'row', alignItems: 'center', gap: 8,
+    paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: '#F5F5F5',
+  },
+  envieLogMain:  { fontSize: 12, color: colors.black },
+  envieLogNote:  { fontSize: 11, color: colors.gray, fontStyle: 'italic', marginTop: 2 },
+  envieLogIssue: { fontSize: 11, fontWeight: '700' },
+
+  journalBtn: {
+    borderWidth: 1.5, borderColor: colors.primary, borderRadius: radius.full,
+    paddingVertical: 10, alignItems: 'center', marginTop: spacing.md,
+  },
+  journalBtnText: { color: colors.primary, fontSize: 12, fontWeight: '700' },
 
   // Tag
   tagBadge: {
@@ -339,4 +808,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modifierBtnText: { color: colors.primary, fontSize: font.md, fontWeight: '700' },
+
+  // Motivations
+  motivChip: {
+    flexDirection: 'row', alignItems: 'center', gap: 5,
+    backgroundColor: colors.primaryLight, borderRadius: radius.full,
+    paddingHorizontal: 10, paddingVertical: 6,
+  },
+  motivChipText: { fontSize: 11, fontWeight: '600', color: colors.primary },
+  motivPerso: {
+    fontSize: 12, color: colors.gray, fontStyle: 'italic',
+    marginTop: spacing.sm, textAlign: 'center',
+  },
 });

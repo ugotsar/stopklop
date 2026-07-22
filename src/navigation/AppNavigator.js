@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, ActivityIndicator } from 'react-native';
+import { signInAsGuest } from '../services/authService';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
@@ -19,6 +20,7 @@ import Step5Screen           from '../screens/onboarding/Step5Screen';
 import Step6Screen           from '../screens/onboarding/Step6Screen';
 import Step7Screen           from '../screens/onboarding/Step7Screen';
 import OnboardingPaywall     from '../screens/onboarding/PaywallScreen';
+import OnboardingFlow        from '../screens/onboarding/OnboardingFlow';
 
 // ── App principale (tabs) ──────────────────────────────────────────────────
 import MainTabNavigator from './MainTabNavigator';
@@ -26,6 +28,8 @@ import JaiFumeScreen           from '../screens/JaiFumeScreen';
 import ModifierObjectifScreen  from '../screens/ModifierObjectifScreen';
 import UniteMonnaieScreen      from '../screens/UniteMonnaieScreen';
 import NousContacterScreen     from '../screens/NousContacterScreen';
+import CentreAideScreen        from '../screens/CentreAideScreen';
+import JournalEnviesScreen     from '../screens/JournalEnviesScreen';
 import NotificationsScreen          from '../screens/NotificationsScreen';
 import PersonnaliserHorairesScreen  from '../screens/PersonnaliserHorairesScreen';
 
@@ -39,8 +43,16 @@ const Stack = createNativeStackNavigator();
 export default function AppNavigator({ navigationRef }) {
   const { profile, loading, firebaseUser } = useUser();
 
-  // Spinner pendant la vérification auth + chargement profil
-  if (loading || firebaseUser === undefined) {
+  // Connexion invitée automatique : plus d'écran d'auth intermédiaire,
+  // l'utilisateur arrive directement sur l'onboarding.
+  useEffect(() => {
+    if (firebaseUser === null) {
+      signInAsGuest().catch(() => {});
+    }
+  }, [firebaseUser]);
+
+  // Spinner pendant la vérification auth + chargement profil + connexion invitée
+  if (loading || firebaseUser === undefined || firebaseUser === null) {
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.white }}>
         <ActivityIndicator size="large" color={colors.primary} />
@@ -48,18 +60,7 @@ export default function AppNavigator({ navigationRef }) {
     );
   }
 
-  // Non connecté → écran d'auth Firebase
-  if (!firebaseUser) {
-    return (
-      <NavigationContainer theme={AppTheme}>
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="Auth" component={AuthScreen} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    );
-  }
-
-  const initialRoute = profile?.onboardingComplete ? 'MainTabs' : 'Welcome';
+  const initialRoute = profile?.onboardingComplete ? 'MainTabs' : 'Onboarding';
 
   return (
     <NavigationContainer theme={AppTheme} ref={navigationRef}>
@@ -68,6 +69,7 @@ export default function AppNavigator({ navigationRef }) {
         screenOptions={{ headerShown: false, animation: 'slide_from_right' }}
       >
         {/* ── Onboarding ── */}
+        <Stack.Screen name="Onboarding" component={OnboardingFlow} />
         <Stack.Screen name="Welcome"   component={WelcomeScreen} />
         <Stack.Screen name="Register"  component={RegisterScreen} />
         <Stack.Screen name="Login"     component={LoginScreen} />
@@ -88,6 +90,8 @@ export default function AppNavigator({ navigationRef }) {
         <Stack.Screen name="ModifierObjectif" component={ModifierObjectifScreen} options={{ animation: 'slide_from_right' }} />
         <Stack.Screen name="UniteMonnaie"     component={UniteMonnaieScreen}     options={{ animation: 'slide_from_right' }} />
         <Stack.Screen name="NousContacter"    component={NousContacterScreen}    options={{ animation: 'slide_from_right' }} />
+        <Stack.Screen name="CentreAide"       component={CentreAideScreen}       options={{ animation: 'slide_from_right' }} />
+        <Stack.Screen name="JournalEnvies"    component={JournalEnviesScreen}    options={{ animation: 'slide_from_right' }} />
         <Stack.Screen name="Notifications"          component={NotificationsScreen}         options={{ animation: 'slide_from_right' }} />
         <Stack.Screen name="PersonnaliserHoraires"  component={PersonnaliserHorairesScreen}  options={{ animation: 'slide_from_right' }} />
         <Stack.Screen name="PaywallPro"       component={PaywallProScreen}       options={{ animation: 'slide_from_bottom', presentation: 'modal' }} />

@@ -100,7 +100,7 @@ export default function UniteMonnaieScreen({ navigation }) {
           <Text style={styles.apercuTitle}>Aperçu</Text>
           <View style={styles.apercuRow}>
             <View style={[styles.flagCircle, { backgroundColor: colors.primaryLight, width: 40, height: 40 }]}>
-              <Text style={{ fontSize: 20 }}>🐷</Text>
+              <Text style={{ fontSize: 20 }}>💰</Text>
             </View>
             <Text style={styles.apercuText}>
               Vos données seront automatiquement{'\n'}mises à jour avec la nouvelle monnaie.

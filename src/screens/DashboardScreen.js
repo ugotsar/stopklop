@@ -1,20 +1,32 @@
 import React, { useEffect, useState } from 'react';
 import {
   View, Text, StyleSheet, SafeAreaView, ScrollView,
-  TouchableOpacity, Dimensions, Modal,
+  TouchableOpacity, Dimensions, Modal, TextInput, KeyboardAvoidingView, Platform,
 } from 'react-native';
 import Svg, { Circle, Path } from 'react-native-svg';
+import { Image } from 'react-native';
+
+const PICTOS = {
+  temps:    require('../../assets/onboarding/stopklop-illustrations-hd/pictogrammes/10-dashboard-temps.jpg'),
+  evitees:  require('../../assets/onboarding/stopklop-illustrations-hd/pictogrammes/11-dashboard-cigarettes-evitees.jpg'),
+  objectif: require('../../assets/onboarding/stopklop-illustrations-hd/pictogrammes/12-dashboard-objectif.jpg'),
+  economie: require('../../assets/onboarding/stopklop-illustrations-hd/pictogrammes/13-dashboard-economies.jpg'),
+};
 import { useUser } from '../context/UserContext';
 import { colors, spacing, font, radius } from '../theme';
 import { annulerNotificationSoir } from '../services/notifications';
 import { jouerSon } from '../services/sounds';
+import { buildDemoProfile } from '../utils/demoData';
 
 const { width: SCREEN_W } = Dimensions.get('window');
 
 // ── Modal journée parfaite ──────────────────────────────────────────────────
-function ModalParfait({ visible, diffJours, objectifJour, onClose }) {
+function ModalParfait({ visible, diffJours, objectifJour, prixCig, onClose }) {
   const streak = diffJours || 0;
-  const vieGagnee = objectifJour * 20;
+  const vieGagneeMins = objectifJour * 5;
+  const vieGagneeStr = vieGagneeMins >= 60
+    ? `+${Math.floor(vieGagneeMins/60)}h ${vieGagneeMins%60}min`
+    : `+${vieGagneeMins}min`;
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <View style={mp.overlay}>
@@ -28,7 +40,7 @@ function ModalParfait({ visible, diffJours, objectifJour, onClose }) {
           </View>
           <View style={mp.body}>
             <View style={mp.statsRow}>
-              <StatColonne valeur={`+${vieGagnee} min`} label="vie gagnée" color="#1B6B3A" />
+              <StatColonne valeur={vieGagneeStr} label="vie récupérée" color="#1B6B3A" />
               <View style={mp.div} />
               <StatColonne valeur="0,00 €" label="dépensé" color="#1B6B3A" />
               <View style={mp.div} />
@@ -175,6 +187,157 @@ function ModalObjectif({ visible, count, objectif, prixCigarette, onClose }) {
   );
 }
 
+// ── Déclencheurs d'envie de fumer ───────────────────────────────────────────
+const DECLENCHEURS = [
+  { key: 'stress',   emoji: '😰', label: 'Stress' },
+  { key: 'ennui',    emoji: '😴', label: 'Ennui' },
+  { key: 'cafe',     emoji: '☕', label: 'Café / pause' },
+  { key: 'repas',    emoji: '🍽', label: 'Après repas' },
+  { key: 'social',   emoji: '👥', label: 'Entourage' },
+  { key: 'alcool',   emoji: '🍺', label: 'Soirée / alcool' },
+  { key: 'habitude', emoji: '🚬', label: 'Habitude' },
+  { key: 'autre',    emoji: '🤷', label: 'Autre' },
+];
+
+// ── Modal "J'ai envie de fumer" ─────────────────────────────────────────────
+// Étapes : pick (choisir le déclencheur) → note (si "autre" : texte libre)
+//          → result (conseils + issue : "j'ai tenu bon" ou "j'ai fumé")
+function ModalEnvie({ visible, onSave, onClose }) {
+  const [step, setStep]       = useState('pick');
+  const [trigger, setTrigger] = useState(null);
+  const [note, setNote]       = useState('');
+  const [ts, setTs]           = useState(null);
+
+  function reset() {
+    setStep('pick'); setTrigger(null); setNote(''); setTs(null);
+  }
+  function handleClose() { reset(); onClose(); }
+
+  function handleSelect(key) {
+    setTrigger(key);
+    setTs(new Date().toISOString()); // heure + jour de l'envie
+    setStep(key === 'autre' ? 'note' : 'result');
+  }
+
+  async function handleOutcome(fume) {
+    await onSave({ ts, trigger, note: note.trim() || null, fume });
+    handleClose();
+  }
+
+  return (
+    <Modal visible={visible} transparent animationType="fade" onRequestClose={handleClose}>
+      <KeyboardAvoidingView
+        style={mp.overlay}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      >
+        <View style={mp.card}>
+
+          {step === 'pick' && (
+            <>
+              <View style={[mp.banner, { backgroundColor: '#B45309' }]}>
+                <Text style={mp.emoji}>🔥</Text>
+                <View style={{ flex: 1 }}>
+                  <Text style={mp.titre}>Une envie de fumer ?</Text>
+                  <Text style={mp.sous}>Qu'est-ce qui la déclenche ?</Text>
+                </View>
+              </View>
+              <View style={mp.body}>
+                <View style={env.grid}>
+                  {DECLENCHEURS.map(d => (
+                    <TouchableOpacity key={d.key} style={env.chip} onPress={() => handleSelect(d.key)}>
+                      <Text style={{ fontSize: 22 }}>{d.emoji}</Text>
+                      <Text style={env.chipLabel}>{d.label}</Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+                <TouchableOpacity onPress={handleClose} style={{ alignItems: 'center', paddingVertical: 8 }}>
+                  <Text style={{ color: colors.gray, fontSize: 13 }}>Annuler</Text>
+                </TouchableOpacity>
+              </View>
+            </>
+          )}
+
+          {step === 'note' && (
+            <>
+              <View style={[mp.banner, { backgroundColor: '#B45309' }]}>
+                <Text style={mp.emoji}>✍️</Text>
+                <View style={{ flex: 1 }}>
+                  <Text style={mp.titre}>Dites-nous en plus</Text>
+                  <Text style={mp.sous}>Que ressentez-vous ? Pourquoi cette envie ?</Text>
+                </View>
+              </View>
+              <View style={mp.body}>
+                <TextInput
+                  style={env.noteInput}
+                  value={note}
+                  onChangeText={setNote}
+                  placeholder="Ex : je viens de raccrocher un appel stressant…"
+                  placeholderTextColor="#B0B0B0"
+                  multiline
+                  autoFocus
+                  maxLength={200}
+                />
+                <TouchableOpacity style={mp.btn} onPress={() => setStep('result')}>
+                  <Text style={mp.btnText}>Continuer</Text>
+                </TouchableOpacity>
+              </View>
+            </>
+          )}
+
+          {step === 'result' && (
+            <>
+              <View style={mp.banner}>
+                <Text style={mp.emoji}>💪</Text>
+                <View style={{ flex: 1 }}>
+                  <Text style={mp.titre}>C'est noté !</Text>
+                  <Text style={mp.sous}>Envie enregistrée dans vos habitudes</Text>
+                </View>
+              </View>
+              <View style={mp.body}>
+                <Text style={env.conseil}>
+                  Une envie dure en moyenne <Text style={{ fontWeight: '800' }}>3 à 5 minutes</Text>.{'\n\n'}
+                  💧 Buvez un verre d'eau{'\n'}
+                  🫁 Respirez profondément 5 fois{'\n'}
+                  🚶 Changez de pièce ou d'activité{'\n\n'}
+                  Elle va passer — tenez bon !
+                </Text>
+                <TouchableOpacity style={mp.btn} onPress={() => handleOutcome(false)}>
+                  <Text style={mp.btnText}>J'ai tenu bon 💪</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={env.btnFume} onPress={() => handleOutcome(true)}>
+                  <Text style={env.btnFumeText}>J'ai fumé  🚬  (+1 cigarette)</Text>
+                </TouchableOpacity>
+              </View>
+            </>
+          )}
+
+        </View>
+      </KeyboardAvoidingView>
+    </Modal>
+  );
+}
+
+const env = StyleSheet.create({
+  grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 10 },
+  chip: {
+    width: '48%', flexGrow: 1, backgroundColor: '#F7F8FA',
+    borderRadius: 12, borderWidth: 1, borderColor: '#EEE',
+    paddingVertical: 12, alignItems: 'center', gap: 4,
+  },
+  chipLabel: { fontSize: 12, fontWeight: '600', color: colors.black },
+  conseil:   { fontSize: 14, color: colors.black, lineHeight: 22, textAlign: 'center', marginBottom: 16 },
+  noteInput: {
+    borderWidth: 1, borderColor: colors.grayBorder, borderRadius: 12,
+    padding: 12, minHeight: 90, fontSize: 14, color: colors.black,
+    textAlignVertical: 'top', marginBottom: 14,
+  },
+  btnFume: {
+    borderWidth: 1.5, borderColor: '#FCA5A5', borderRadius: 30,
+    paddingVertical: 12, alignItems: 'center', marginTop: 8,
+  },
+  btnFumeText: { color: '#DC2626', fontSize: 13, fontWeight: '700' },
+});
+
 // ── Citations motivation ────────────────────────────────────────────────────
 const MOTIVATIONS = [
   "Chaque heure sans cigarette est une victoire pour votre santé.",
@@ -185,17 +348,21 @@ const MOTIVATIONS = [
 ];
 
 // ── Arc circulaire de progression ───────────────────────────────────────────
+// Règle simple : sous l'objectif = vert · pile à l'objectif = orange ·
+// dépassé = cercle ENTIÈREMENT rouge.
 function CircularProgress({ current, total, size = 110 }) {
   const strokeWidth = 10;
   const r = (size - strokeWidth) / 2;
   const cx = size / 2;
   const cy = size / 2;
   const circumference = 2 * Math.PI * r;
-  const depasse = current > total;
-  const ratio = total > 0 ? Math.min(current / total, 1) : 0;
-  const dash = circumference * ratio;
-  const gap  = circumference - dash;
-  const strokeColor = depasse ? colors.red : colors.primary;
+  const depasse  = current > total;
+  const limite   = current === total && current > 0;
+  const ratio    = total > 0 ? Math.min(current / total, 1) : 0;
+  const dash     = circumference * ratio;
+  const gap      = circumference - dash;
+  const strokeColor = depasse ? '#DC2626' : limite ? '#F59E0B' : colors.primary;
+  const trackColor  = depasse ? '#FECACA' : limite ? '#FEF3C7' : '#E5E7EB';
 
   // Arc starts at top (rotate -90deg)
   return (
@@ -203,7 +370,7 @@ function CircularProgress({ current, total, size = 110 }) {
       {/* Track */}
       <Circle
         cx={cx} cy={cy} r={r}
-        stroke={depasse ? '#FECACA' : '#E5E7EB'}
+        stroke={trackColor}
         strokeWidth={strokeWidth}
         fill="none"
       />
@@ -224,12 +391,31 @@ function CircularProgress({ current, total, size = 110 }) {
 
 // ── Composant principal ─────────────────────────────────────────────────────
 export default function DashboardScreen({ navigation }) {
-  const { profile, stats, resetProfile } = useUser();
+  const { profile, stats, resetProfile, updateProfile } = useUser();
   const [, setTick]          = useState(0);
   const [quoteIdx]           = useState(() => Math.floor(Math.random() * MOTIVATIONS.length));
   const [liked, setLiked]    = useState(false);
   const [modalParfait, setModalParfait]   = useState(false);
   const [modalObjectif, setModalObjectif] = useState(false);
+  const [modalEnvie, setModalEnvie]       = useState(false);
+
+  // Enregistre une envie de fumer (heure + jour + déclencheur + note + issue).
+  // Si l'utilisateur a fumé, la cigarette est aussi comptée partout (compteur + historique + cloud).
+  async function handleEnvie({ ts, trigger, note, fume }) {
+    const envies = Array.isArray(profile?.envies) ? profile.envies : [];
+    const changes = {
+      envies: [...envies, { ts, trigger, ...(note ? { note } : {}), fume: !!fume }],
+    };
+    if (fume) {
+      const todayKey = new Date().toISOString().slice(0, 10);
+      const current  = profile?.lastSavedDate === todayKey ? (profile.cigarettesToday ?? 0) : 0;
+      changes.cigarettesToday = current + 1;
+      changes.lastSavedDate   = todayKey;
+      changes.historique      = { ...(profile?.historique ?? {}), [todayKey]: current + 1 };
+      changes.cigLog          = [...(Array.isArray(profile?.cigLog) ? profile.cigLog : []), ts];
+    }
+    await updateProfile(changes);
+  }
   const milestonesJoues      = React.useRef(new Set());
 
   // Rafraîchir chaque seconde pour le compteur live
@@ -267,28 +453,16 @@ export default function DashboardScreen({ navigation }) {
     );
   }
 
-  const { diffJours, diffHeures, diffMinutes, cigarettesNonFumees, argentEconomise } = stats;
+  const {
+    diffJours, dureeStr, dureeSansCigStr, aDejaFume,
+    objectifJour, cigarettesToday,
+    ecartPlanJour, argentVsPlanJour, vieVsPlanJour,
+    progressionJour: progression,
+    prixCig,
+  } = stats;
 
-  // Objectif cigarettes / jour (depuis le profil ou 10 par défaut)
-  const objectifJour   = profile.objectifCigarettes ?? Math.max(1, Math.floor((profile.consoAvantApp || 10) * 0.8));
-  const cigarettesToday = profile.cigarettesToday ?? 0;
-
-  // Vie gagnée : 20 min / cigarette non fumée
-  const vieGagneeMin  = cigarettesNonFumees * 20;
-  const vieGagneeH    = Math.floor(vieGagneeMin / 60);
-  const vieGagneeJ    = Math.floor(vieGagneeH / 24);
-  const vieGagneeStr  = vieGagneeJ > 0
-    ? `${vieGagneeJ}j ${vieGagneeH % 24}h`
-    : `${vieGagneeH}h`;
-
-  // Progression (% réduction vs avant)
-  const consoAvant   = profile.consoAvantApp || 10;
-  const progression  = Math.min(100, Math.round(((consoAvant - cigarettesToday) / consoAvant) * 100));
-
-  // Durée formatée : Xj XXh XXm
-  const dureeStr = diffJours > 0
-    ? `${diffJours}j ${String(diffHeures % 24).padStart(2,'0')}h ${String(diffMinutes % 60).padStart(2,'0')}m`
-    : `${String(diffHeures % 24).padStart(2,'0')}h ${String(diffMinutes % 60).padStart(2,'0')}m`;
+  const progressionPositif = progression >= 0;
+  const sousObjectif = ecartPlanJour <= 0;
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -303,8 +477,13 @@ export default function DashboardScreen({ navigation }) {
         visible={modalObjectif}
         count={cigarettesToday}
         objectif={objectifJour}
-        prixCigarette={stats?.prixCigarette ?? 0.55}
+        prixCigarette={prixCig}
         onClose={() => setModalObjectif(false)}
+      />
+      <ModalEnvie
+        visible={modalEnvie}
+        onSave={handleEnvie}
+        onClose={() => setModalEnvie(false)}
       />
 
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
@@ -322,13 +501,16 @@ export default function DashboardScreen({ navigation }) {
           </TouchableOpacity>
         </View>
 
-        {/* ── Carte verte "Temps sans fumer" ── */}
+        {/* ── Carte verte "Temps sans cigarette" (remise à zéro à chaque cigarette) ── */}
         <View style={styles.heroCard}>
           <View style={styles.heroRow}>
-            <Text style={styles.heroLabel}>Temps sans fumer</Text>
+            <Text style={styles.heroLabel}>Temps sans cigarette</Text>
             <Text style={styles.heroMedal}>🏅</Text>
           </View>
-          <Text style={styles.heroTimer}>{dureeStr}</Text>
+          <Text style={styles.heroTimer}>{dureeSansCigStr}</Text>
+          <Text style={styles.heroSub}>
+            {aDejaFume ? 'depuis votre dernière cigarette' : `depuis le début (${dureeStr})`}
+          </Text>
         </View>
 
         {/* ── Section Aujourd'hui ── */}
@@ -340,7 +522,11 @@ export default function DashboardScreen({ navigation }) {
             <View style={styles.arcContainer}>
               <CircularProgress current={cigarettesToday} total={objectifJour} size={110} />
               <View style={styles.arcInner}>
-                <Text style={[styles.arcCurrent, cigarettesToday > objectifJour && { color: colors.red }]}>{cigarettesToday}</Text>
+                <Text style={[
+                  styles.arcCurrent,
+                  cigarettesToday > objectifJour && { color: '#DC2626' },
+                  cigarettesToday === objectifJour && cigarettesToday > 0 && { color: '#F59E0B' },
+                ]}>{cigarettesToday}</Text>
                 <Text style={styles.arcSep}>/</Text>
                 <Text style={styles.arcTotal}>{objectifJour}</Text>
               </View>
@@ -375,31 +561,53 @@ export default function DashboardScreen({ navigation }) {
           </TouchableOpacity>
         </View>
 
-        {/* ── Grille stats 2×2 ── */}
+        {/* ── Grille stats 2×2 — tout est comparé au PLAN du jour ── */}
         <View style={styles.statsGrid}>
           <StatBox
-            emoji="🚬"
-            valeur={cigarettesNonFumees}
-            label="Cigarettes évitées"
+            img={PICTOS.objectif}
+            valeur={ecartPlanJour > 0 ? `+${ecartPlanJour} de trop` : `${Math.abs(ecartPlanJour)} de marge`}
+            label={`vs objectif du jour (${objectifJour})`}
+            valeurColor={sousObjectif ? colors.primary : '#DC2626'}
           />
           <StatBox
-            emoji="💰"
-            valeur={`${argentEconomise.toFixed(2)}€`}
-            label="Argent économisé"
-            valeurColor="#F59E0B"
+            img={PICTOS.economie}
+            valeur={`${argentVsPlanJour >= 0 ? '+' : '-'}${Math.abs(argentVsPlanJour).toFixed(2)}€`}
+            label={argentVsPlanJour >= 0 ? 'Argent préservé\nvs votre plan' : 'Surcoût\nvs votre plan'}
+            valeurColor={argentVsPlanJour >= 0 ? colors.primary : '#DC2626'}
           />
           <StatBox
-            emoji="⏱"
-            valeur={vieGagneeStr}
-            label="Vie gagnée"
-            valeurColor={colors.primary}
+            img={PICTOS.temps}
+            valeur={`${vieVsPlanJour >= 0 ? '+' : '-'}${Math.abs(vieVsPlanJour)} min`}
+            label={vieVsPlanJour >= 0 ? `Vie préservée vs plan\n(5 min / cigarette)` : `Vie perdue vs plan\n(5 min / cigarette)`}
+            valeurColor={vieVsPlanJour >= 0 ? colors.primary : '#DC2626'}
           />
           <StatBox
-            emoji="📈"
-            valeur={`${progression}%`}
-            label="Progression"
-            valeurColor={colors.primary}
+            img={PICTOS.evitees}
+            valeur={`${progression > 0 ? '+' : ''}${progression}%`}
+            label={`Progression\nvs avant l'app`}
+            valeurColor={progressionPositif ? colors.primary : colors.red}
           />
+        </View>
+
+        {/* ── Envie de fumer ── */}
+        <View style={styles.envieCard}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: spacing.sm }}>
+            <Text style={{ fontSize: 24 }}>🔥</Text>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.envieTitle}>Une envie de fumer, là maintenant ?</Text>
+              <Text style={styles.envieSub}>
+                Enregistrez-la : on analyse vos déclencheurs pour vous aider à les anticiper.
+              </Text>
+            </View>
+          </View>
+          <TouchableOpacity style={styles.envieBtn} onPress={() => setModalEnvie(true)}>
+            <Text style={styles.envieBtnText}>J'ai envie de fumer</Text>
+          </TouchableOpacity>
+          {(profile?.envies?.length ?? 0) > 0 && (
+            <Text style={styles.envieCount}>
+              {profile.envies.length} envie{profile.envies.length > 1 ? 's' : ''} enregistrée{profile.envies.length > 1 ? 's' : ''} — analyse visible dans l'onglet Plan
+            </Text>
+          )}
         </View>
 
         {/* ── Motivation du jour ── */}
@@ -413,10 +621,16 @@ export default function DashboardScreen({ navigation }) {
           <Text style={styles.motivQuote}>"{MOTIVATIONS[quoteIdx]}"</Text>
         </View>
 
-        {/* ── Reset dev ── */}
+        {/* ── Boutons dev ── */}
         <TouchableOpacity
           style={styles.resetBtn}
-          onPress={async () => { await resetProfile(); navigation.replace('Welcome'); }}
+          onPress={async () => { await updateProfile(buildDemoProfile()); }}
+        >
+          <Text style={styles.resetText}>🎬 Charger la démo (5 semaines d'utilisation)</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.resetBtn}
+          onPress={async () => { await resetProfile(); }}
         >
           <Text style={styles.resetText}>↩ Recommencer l'onboarding</Text>
         </TouchableOpacity>
@@ -427,10 +641,12 @@ export default function DashboardScreen({ navigation }) {
 }
 
 // ── Composant StatBox ───────────────────────────────────────────────────────
-function StatBox({ emoji, valeur, label, valeurColor = colors.black }) {
+function StatBox({ emoji, img, valeur, label, valeurColor = colors.black }) {
   return (
     <View style={styles.statBox}>
-      <Text style={styles.statEmoji}>{emoji}</Text>
+      {img
+        ? <Image source={img} style={{ width: 34, height: 34, marginBottom: 6 }} resizeMode="contain" />
+        : <Text style={styles.statEmoji}>{emoji}</Text>}
       <Text style={[styles.statValeur, { color: valeurColor }]}>{valeur}</Text>
       <Text style={styles.statLabel}>{label}</Text>
     </View>
@@ -468,6 +684,7 @@ const styles = StyleSheet.create({
   heroLabel: { color: 'rgba(255,255,255,0.85)', fontSize: font.sm, fontWeight: '600' },
   heroMedal: { fontSize: 22 },
   heroTimer: { color: colors.white, fontSize: 30, fontWeight: '900', letterSpacing: 1 },
+  heroSub:   { color: 'rgba(255,255,255,0.7)', fontSize: 11, marginTop: 4 },
 
   // Aujourd'hui
   todayCard: {
@@ -521,6 +738,21 @@ const styles = StyleSheet.create({
   motivTitle:  { fontSize: font.sm, fontWeight: '700', color: colors.black },
   motivHeart:  { fontSize: 22 },
   motivQuote:  { fontSize: font.sm, color: colors.gray, lineHeight: 22, fontStyle: 'italic' },
+
+  // Envie de fumer
+  envieCard: {
+    backgroundColor: '#FFF7ED', borderRadius: radius.xl,
+    borderWidth: 1, borderColor: '#FED7AA',
+    padding: spacing.md, marginBottom: spacing.md,
+  },
+  envieTitle: { fontSize: font.sm, fontWeight: '700', color: '#92400E' },
+  envieSub:   { fontSize: 11, color: '#B45309', marginTop: 2, lineHeight: 15 },
+  envieBtn: {
+    backgroundColor: '#B45309', borderRadius: radius.full,
+    paddingVertical: 12, alignItems: 'center',
+  },
+  envieBtnText: { color: colors.white, fontSize: font.sm, fontWeight: '700' },
+  envieCount:   { fontSize: 10, color: '#B45309', textAlign: 'center', marginTop: 8 },
 
   // Reset
   resetBtn:  { alignItems: 'center', paddingVertical: spacing.md },

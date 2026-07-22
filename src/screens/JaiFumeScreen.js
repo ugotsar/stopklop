@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
   View, Text, StyleSheet, SafeAreaView, TouchableOpacity,
-  ScrollView, Modal,
+  ScrollView, Modal, TextInput, KeyboardAvoidingView, Platform,
 } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
 import { useUser } from '../context/UserContext';
@@ -9,6 +9,8 @@ import { colors, spacing, font, radius } from '../theme';
 import { jouerSon } from '../services/sounds';
 
 // ── Arc circulaire ──────────────────────────────────────────────────────────
+// Règle simple : sous l'objectif = vert · pile à l'objectif = orange ·
+// dépassé = cercle ENTIÈREMENT rouge.
 function CircularDial({ current, total, size = 200 }) {
   const strokeWidth = 14;
   const r = (size - strokeWidth) / 2;
@@ -19,11 +21,11 @@ function CircularDial({ current, total, size = 200 }) {
   const dash = circumference * ratio;
   const gap  = circumference - dash;
 
-  const arcColor = ratio >= 1 ? '#D97706' : ratio >= 0.7 ? '#F59E0B' : colors.primary;
+  const arcColor = current > total ? '#DC2626' : current === total ? '#F59E0B' : colors.primary;
 
   return (
     <Svg width={size} height={size}>
-      <Circle cx={cx} cy={cy} r={r} stroke="#E5E7EB" strokeWidth={strokeWidth} fill="none" />
+      <Circle cx={cx} cy={cy} r={r} stroke={current > total ? '#FECACA' : '#E5E7EB'} strokeWidth={strokeWidth} fill="none" />
       {current > 0 && (
         <Circle
           cx={cx} cy={cy} r={r}
@@ -35,6 +37,143 @@ function CircularDial({ current, total, size = 200 }) {
     </Svg>
   );
 }
+
+// ── Déclencheurs (habitudes) ────────────────────────────────────────────────
+const DECLENCHEURS = [
+  { key: 'stress',   emoji: '😰', label: 'Stress' },
+  { key: 'ennui',    emoji: '😴', label: 'Ennui' },
+  { key: 'cafe',     emoji: '☕', label: 'Café / pause' },
+  { key: 'repas',    emoji: '🍽', label: 'Après repas' },
+  { key: 'social',   emoji: '👥', label: 'Entourage' },
+  { key: 'alcool',   emoji: '🍺', label: 'Soirée / alcool' },
+  { key: 'habitude', emoji: '🚬', label: 'Habitude' },
+];
+
+// ── Modal "Pourquoi cette cigarette ?" ──────────────────────────────────────
+function RaisonModal({ visible, persoList, onPick, onCreatePerso, onSkip }) {
+  const [mode, setMode]   = useState('pick'); // 'pick' | 'note' | 'creer'
+  const [texte, setTexte] = useState('');
+
+  function reset() { setMode('pick'); setTexte(''); }
+
+  return (
+    <Modal visible={visible} transparent animationType="fade" onRequestClose={() => { reset(); onSkip(); }}>
+      <KeyboardAvoidingView
+        style={rm.overlay}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      >
+        <View style={rm.card}>
+          <Text style={rm.titre}>Pourquoi cette cigarette ?</Text>
+          <Text style={rm.sous}>Comprendre tes déclencheurs t'aide à les anticiper</Text>
+
+          {mode === 'pick' && (
+            <>
+              <View style={rm.grid}>
+                {DECLENCHEURS.map(d => (
+                  <TouchableOpacity key={d.key} style={rm.chip} onPress={() => { reset(); onPick(d.key, null); }}>
+                    <Text style={{ fontSize: 18 }}>{d.emoji}</Text>
+                    <Text style={rm.chipLabel}>{d.label}</Text>
+                  </TouchableOpacity>
+                ))}
+                {persoList.map(d => (
+                  <TouchableOpacity key={d.key} style={[rm.chip, rm.chipPerso]} onPress={() => { reset(); onPick(d.key, null); }}>
+                    <Text style={{ fontSize: 18 }}>📝</Text>
+                    <Text style={rm.chipLabel} numberOfLines={2}>{d.label}</Text>
+                  </TouchableOpacity>
+                ))}
+                <TouchableOpacity style={[rm.chip, rm.chipAction]} onPress={() => setMode('note')}>
+                  <Text style={{ fontSize: 18 }}>✍️</Text>
+                  <Text style={rm.chipLabel}>Autre (noter)</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={[rm.chip, rm.chipAction]} onPress={() => setMode('creer')}>
+                  <Text style={{ fontSize: 18 }}>➕</Text>
+                  <Text style={rm.chipLabel}>Créer une habitude</Text>
+                </TouchableOpacity>
+              </View>
+              <TouchableOpacity onPress={() => { reset(); onSkip(); }} style={{ alignItems: 'center', paddingVertical: 8 }}>
+                <Text style={{ color: colors.gray, fontSize: 13 }}>Passer</Text>
+              </TouchableOpacity>
+            </>
+          )}
+
+          {mode === 'note' && (
+            <>
+              <TextInput
+                style={rm.input}
+                value={texte}
+                onChangeText={setTexte}
+                placeholder="Ex : dispute au téléphone…"
+                placeholderTextColor="#B0B0B0"
+                autoFocus
+                maxLength={120}
+              />
+              <TouchableOpacity
+                style={[rm.btn, !texte.trim() && { opacity: 0.5 }]}
+                disabled={!texte.trim()}
+                onPress={() => { const t = texte.trim(); reset(); onPick('autre', t); }}
+              >
+                <Text style={rm.btnText}>Valider</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => setMode('pick')} style={{ alignItems: 'center', paddingVertical: 8 }}>
+                <Text style={{ color: colors.gray, fontSize: 13 }}>← Retour</Text>
+              </TouchableOpacity>
+            </>
+          )}
+
+          {mode === 'creer' && (
+            <>
+              <Text style={rm.creerHint}>
+                Cette habitude sera enregistrée : la prochaine fois, un seul appui suffira.
+              </Text>
+              <TextInput
+                style={rm.input}
+                value={texte}
+                onChangeText={setTexte}
+                placeholder="Ex : Maman m'a énervé"
+                placeholderTextColor="#B0B0B0"
+                autoFocus
+                maxLength={40}
+              />
+              <TouchableOpacity
+                style={[rm.btn, !texte.trim() && { opacity: 0.5 }]}
+                disabled={!texte.trim()}
+                onPress={() => { const t = texte.trim(); reset(); onCreatePerso(t); }}
+              >
+                <Text style={rm.btnText}>Créer et sélectionner</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => setMode('pick')} style={{ alignItems: 'center', paddingVertical: 8 }}>
+                <Text style={{ color: colors.gray, fontSize: 13 }}>← Retour</Text>
+              </TouchableOpacity>
+            </>
+          )}
+        </View>
+      </KeyboardAvoidingView>
+    </Modal>
+  );
+}
+
+const rm = StyleSheet.create({
+  overlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 24 },
+  card:    { width: '100%', backgroundColor: colors.white, borderRadius: 20, padding: 18 },
+  titre:   { fontSize: 16, fontWeight: '800', color: colors.black, textAlign: 'center' },
+  sous:    { fontSize: 11, color: colors.gray, textAlign: 'center', marginTop: 2, marginBottom: 12 },
+  grid:    { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
+  chip: {
+    width: '31%', flexGrow: 1, backgroundColor: '#F7F8FA',
+    borderRadius: 12, borderWidth: 1, borderColor: '#EEE',
+    paddingVertical: 10, paddingHorizontal: 4, alignItems: 'center', gap: 3,
+  },
+  chipPerso:  { backgroundColor: '#EEF6F0', borderColor: '#C8E2CF' },
+  chipAction: { borderStyle: 'dashed', borderColor: '#CCC', backgroundColor: colors.white },
+  chipLabel:  { fontSize: 10, fontWeight: '600', color: colors.black, textAlign: 'center' },
+  input: {
+    borderWidth: 1, borderColor: colors.grayBorder, borderRadius: 12,
+    padding: 12, fontSize: 14, color: colors.black, marginBottom: 10,
+  },
+  creerHint: { fontSize: 11, color: colors.gray, marginBottom: 8, textAlign: 'center', lineHeight: 16 },
+  btn:     { backgroundColor: colors.primary, borderRadius: 30, paddingVertical: 12, alignItems: 'center' },
+  btnText: { color: colors.white, fontSize: 14, fontWeight: '700' },
+});
 
 // ── Modal feedback ──────────────────────────────────────────────────────────
 function FeedbackModal({ visible, count, objectif, prixCigarette, diffJours, onClose, onNavigate }) {
@@ -187,12 +326,19 @@ function StatItem({ valeur, label, color }) {
 export default function JaiFumeScreen({ navigation }) {
   const { profile, updateProfile, stats } = useUser();
 
-  const objectifJour    = profile?.objectifCigarettes
-    ?? Math.max(1, Math.floor((profile?.consoAvantApp || 10) * 0.8));
-  const prixCigarette   = stats?.prixCigarette ?? 0.55;
+  const objectifJour  = stats?.objectifJour ?? 8;
+  const prixCigarette = stats?.prixCig ?? 0.5;
 
   const [count, setCount]           = useState(profile?.cigarettesToday ?? 0);
   const [modalVisible, setModal]    = useState(false);
+  // Heures des cigarettes ajoutées pendant cette session (pour le journal horaire)
+  const [addedTimes, setAddedTimes] = useState([]);
+  // Raisons associées aux cigarettes ajoutées ({ ts, trigger, note })
+  const [raisons, setRaisons]       = useState([]);
+  const [raisonModal, setRaisonModal] = useState(false);
+  const [raisonTs, setRaisonTs]       = useState(null);
+
+  const persoList = Array.isArray(profile?.declencheursPerso) ? profile.declencheursPerso : [];
 
   const argentDepense = (count * prixCigarette).toFixed(2);
   const viePerdue     = count * 5;
@@ -201,10 +347,31 @@ export default function JaiFumeScreen({ navigation }) {
     if (count === 0) return;
     jouerSon('click_decrement');
     setCount(c => Math.max(0, c - 1));
+    const derniere = addedTimes[addedTimes.length - 1];
+    setAddedTimes(t => t.slice(0, -1));
+    if (derniere) setRaisons(r => r.filter(x => x.ts !== derniere));
   }
   function increment() {
     jouerSon('click_increment');
+    const ts = new Date().toISOString();
     setCount(c => c + 1);
+    setAddedTimes(t => [...t, ts]);
+    // On demande la raison de CETTE cigarette
+    setRaisonTs(ts);
+    setRaisonModal(true);
+  }
+
+  function handleRaison(trigger, note) {
+    if (raisonTs) setRaisons(r => [...r, { ts: raisonTs, trigger, ...(note ? { note } : {}) }]);
+    setRaisonModal(false);
+    setRaisonTs(null);
+  }
+
+  async function handleCreerPerso(label) {
+    // Crée une habitude personnalisée réutilisable, puis la sélectionne
+    const key = 'perso_' + Date.now();
+    await updateProfile({ declencheursPerso: [...persoList, { key, label }] });
+    handleRaison(key, null);
   }
 
   async function handleEnregistrer() {
@@ -214,7 +381,31 @@ export default function JaiFumeScreen({ navigation }) {
 
     const todayKey = new Date().toISOString().slice(0, 10); // "YYYY-MM-DD"
     const historique = { ...(profile?.historique ?? {}), [todayKey]: count };
-    await updateProfile({ cigarettesToday: count, lastSavedDate: todayKey, historique });
+
+    // cigLog : une entrée horodatée par cigarette. On reconstruit celles du jour
+    // pour rester cohérent avec le compteur (ajouts et retraits compris).
+    const cigLog     = Array.isArray(profile?.cigLog) ? profile.cigLog : [];
+    const autresJours = cigLog.filter(ts => ts.slice(0, 10) !== todayKey);
+    let aujourdhui    = cigLog.filter(ts => ts.slice(0, 10) === todayKey).sort();
+    aujourdhui = [...aujourdhui, ...addedTimes];
+    if (aujourdhui.length > count) aujourdhui = aujourdhui.slice(0, count);
+    while (aujourdhui.length < count) aujourdhui.push(new Date().toISOString());
+
+    // Les raisons rejoignent le journal des envies (fume: true) pour l'analyse
+    // des habitudes — uniquement celles des cigarettes encore comptées.
+    const enviesExistantes = Array.isArray(profile?.envies) ? profile.envies : [];
+    const raisonsValides = raisons.filter(r => aujourdhui.includes(r.ts));
+    const nouvellesEnvies = raisonsValides.map(r => ({
+      ts: r.ts, trigger: r.trigger, ...(r.note ? { note: r.note } : {}), fume: true,
+    }));
+
+    await updateProfile({
+      cigarettesToday: count,
+      lastSavedDate: todayKey,
+      historique,
+      cigLog: [...autresJours, ...aujourdhui],
+      envies: [...enviesExistantes, ...nouvellesEnvies],
+    });
     setModal(true);
   }
 
@@ -240,6 +431,13 @@ export default function JaiFumeScreen({ navigation }) {
         diffJours={stats?.diffJours ?? 0}
         onClose={handleCloseModal}
         onNavigate={handleNavigate}
+      />
+      <RaisonModal
+        visible={raisonModal}
+        persoList={persoList}
+        onPick={handleRaison}
+        onCreatePerso={handleCreerPerso}
+        onSkip={() => { setRaisonModal(false); setRaisonTs(null); }}
       />
 
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
@@ -296,11 +494,20 @@ export default function JaiFumeScreen({ navigation }) {
             </Text>
           </View>
         )}
-        {count >= objectifJour && count > 0 && (
+        {count === objectifJour && count > 0 && (
+          <View style={[styles.tipCard, { backgroundColor: '#FEF9C3', borderColor: '#FDE047' }]}>
+            <Text style={styles.tipEmoji}>🎯</Text>
+            <Text style={styles.tipText}>
+              Limite atteinte — ne dépasse pas !{'\n'}
+              Tu es exactement à ton objectif de {objectifJour}.
+            </Text>
+          </View>
+        )}
+        {count > objectifJour && (
           <View style={[styles.tipCard, styles.tipCardWarning]}>
             <Text style={styles.tipEmoji}>⚠️</Text>
             <Text style={styles.tipText}>
-              Vous avez dépassé votre objectif de {objectifJour} cigarettes.{'\n'}
+              Objectif dépassé de {count - objectifJour} cigarette{count - objectifJour > 1 ? 's' : ''}.{'\n'}
               Demain est un nouveau départ !
             </Text>
           </View>
@@ -319,8 +526,18 @@ export default function JaiFumeScreen({ navigation }) {
             <View style={styles.recapDivider} />
             <RecapItem emoji="💸" valeur={`${argentDepense}€`} label="dépensés" valeurColor="#EF4444" />
             <View style={styles.recapDivider} />
-            <RecapItem emoji="⏱" valeur={`${viePerdue} min`} label="de vie" valeurColor="#F59E0B" />
+            <RecapItem
+              emoji="⏳"
+              valeur={viePerdue >= 60
+                ? `${Math.floor(viePerdue/60)}h${viePerdue%60>0 ? ` ${viePerdue%60}m` : ''}`
+                : `${viePerdue}min`}
+              label="d'espérance de vie"
+              valeurColor="#F59E0B"
+            />
           </View>
+          <Text style={styles.recapNote}>
+            ⓘ  Chaque cigarette coûte ~5 min d'espérance de vie
+          </Text>
         </View>
 
       </ScrollView>
@@ -398,6 +615,7 @@ const styles = StyleSheet.create({
   recapValeur:  { fontSize: font.md, fontWeight: '800', color: colors.black },
   recapLabel:   { fontSize: 11, color: colors.gray, marginTop: 2 },
   recapDivider: { width: 1, height: 40, backgroundColor: colors.grayBorder },
+  recapNote:    { fontSize: 10, color: colors.gray, textAlign: 'center', marginTop: spacing.sm, fontStyle: 'italic' },
 });
 
 // ── Styles modal ────────────────────────────────────────────────────────────
