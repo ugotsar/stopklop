@@ -1,9 +1,14 @@
 import React, { useState } from 'react';
 import {
-  View, Text, StyleSheet, SafeAreaView, TouchableOpacity,
+  View, Text, StyleSheet, SafeAreaView, TouchableOpacity, Alert, Linking,
 } from 'react-native';
 import { colors, spacing, font, radius } from '../../theme';
 import PrimaryButton from '../../components/PrimaryButton';
+import { restorePurchases, isPro } from '../../services/purchases';
+
+// TODO ship v1 : héberger ces pages et mettre les vraies URLs
+const PRIVACY_URL = 'https://stopklop.app/confidentialite';
+const TERMS_URL   = 'https://stopklop.app/conditions';
 
 const PLANS = [
   {
@@ -26,6 +31,25 @@ const PLANS = [
 
 export default function PaywallScreen({ navigation }) {
   const [selectedPlan, setSelectedPlan] = useState('annual');
+  const [restoring, setRestoring] = useState(false);
+
+  async function handleRestore() {
+    setRestoring(true);
+    try {
+      const info = await restorePurchases();
+      if (isPro(info)) {
+        Alert.alert('Achats restaurés', 'Ton abonnement a bien été retrouvé.', [
+          { text: 'OK', onPress: () => navigation.navigate('MainTabs') },
+        ]);
+      } else {
+        Alert.alert('Aucun achat', "Aucun abonnement actif n'a été trouvé sur ce compte.");
+      }
+    } catch (e) {
+      Alert.alert('Erreur', "La restauration a échoué. Réessaie plus tard.");
+    } finally {
+      setRestoring(false);
+    }
+  }
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -84,7 +108,27 @@ export default function PaywallScreen({ navigation }) {
           <Text style={styles.skip}>Continuer sans abonnement</Text>
         </TouchableOpacity>
 
-        <Text style={styles.legal}>Sans engagement • Annulation à tout moment</Text>
+        <TouchableOpacity onPress={handleRestore} disabled={restoring}>
+          <Text style={styles.restore}>
+            {restoring ? 'Restauration…' : 'Restaurer mes achats'}
+          </Text>
+        </TouchableOpacity>
+
+        {/* Mentions d'abonnement exigées par l'App Store */}
+        <Text style={styles.legal}>
+          Abonnement à renouvellement automatique. Le paiement est prélevé à la confirmation
+          de l'achat. L'abonnement se renouvelle sauf annulation au moins 24 h avant la fin de
+          la période en cours, gérable dans les réglages de ton compte.
+        </Text>
+        <View style={styles.legalLinks}>
+          <Text style={styles.legalLink} onPress={() => Linking.openURL(TERMS_URL)}>
+            Conditions d'utilisation
+          </Text>
+          <Text style={styles.legalDot}>•</Text>
+          <Text style={styles.legalLink} onPress={() => Linking.openURL(PRIVACY_URL)}>
+            Politique de confidentialité
+          </Text>
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -134,5 +178,9 @@ const styles = StyleSheet.create({
   planPerMonth: { fontSize: 12, color: colors.gray },
   cta: { marginBottom: spacing.md },
   skip: { textAlign: 'center', color: colors.gray, fontSize: font.sm, marginBottom: spacing.sm },
-  legal: { textAlign: 'center', color: colors.gray, fontSize: 12 },
+  restore: { textAlign: 'center', color: colors.primary, fontSize: font.sm, fontWeight: '600', textDecorationLine: 'underline', marginBottom: spacing.md },
+  legal: { textAlign: 'center', color: colors.gray, fontSize: 11, lineHeight: 15 },
+  legalLinks: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 6, marginTop: 6 },
+  legalLink: { color: colors.gray, fontSize: 11, textDecorationLine: 'underline' },
+  legalDot: { color: colors.gray, fontSize: 11 },
 });
