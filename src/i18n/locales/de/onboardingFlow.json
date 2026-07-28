@@ -1,0 +1,126 @@
+{
+  "welcome": {
+    "titlePrefix": "Willkommen bei",
+    "subtitle": "Dein Begleiter, um mit dem Rauchen\naufzuhören und die Kontrolle\nüber dein Leben zurückzugewinnen.",
+    "startButton": "Starten  →",
+    "alreadyHaveAccount": "Ich habe bereits ein Konto"
+  },
+  "affirmations": {
+    "title": "Erkennst du dich\nin dieser Situation wieder?",
+    "quoted": "„{{text}}“",
+    "items": [
+      "Ich habe schon versucht, das Rauchen zu reduzieren oder aufzuhören, aber ich habe es nicht durchgehend geschafft.",
+      "Manchmal zünde ich mir automatisch eine Zigarette an, ohne wirklich Lust darauf zu haben.",
+      "Ich weiß nicht wirklich, wie ich schrittweise reduzieren kann, ohne in meine alten Gewohnheiten zurückzufallen."
+    ]
+  },
+  "deculpabilisation": {
+    "title": "Keine Sorge, es ist nicht\neinfach nur mangelnde Willenskraft",
+    "subtitle": "Die Abhängigkeit basiert auf Gewohnheiten, Auslösern und Automatismen. Wenn du sie verstehst, kannst du nach und nach die Kontrolle zurückgewinnen.",
+    "withoutSupport": "Ohne Begleitung",
+    "withStopklop": "Mit Stopklop",
+    "note": "Veranschaulichung des Prinzips — dein Weg wird einzigartig sein."
+  },
+  "solution": {
+    "title": "Geh in deinem eigenen Tempo voran,\nmit einem passenden Plan",
+    "subtitle": "Jeder Raucher ist anders. Stopklop erstellt einen individuellen Plan basierend auf deinem Konsum, deinen Gewohnheiten und deinem Ziel: schrittweise reduzieren oder komplett aufhören."
+  },
+  "benefits": {
+    "items": [
+      { "emoji": "🚬", "title": "Jede Zigarette wird zu einer Entscheidung", "text": "Erfasse deine Zigaretten ganz einfach und entdecke, welche du aus Verlangen rauchst… und welche einfach aus Gewohnheit." },
+      { "emoji": "🔍", "title": "Erkenne, was dein Rauchverlangen auslöst", "text": "Stopklop analysiert die Momente, Situationen und Emotionen, die mit deinem Konsum verbunden sind, damit du Verlangen besser vorhersehen kannst." },
+      { "emoji": "📉", "title": "Reduziere in deinem Tempo, ohne unnötigen Druck", "text": "Dein Ziel entwickelt sich entsprechend deinem Konsum und deinen Fortschritten. Jeder Schritt bleibt realistisch, messbar und an deinen Alltag angepasst." },
+      { "emoji": "💚", "title": "Jede vermiedene Zigarette zählt wirklich", "text": "Verfolge in Echtzeit die vermiedenen Zigaretten, das gesparte Geld und die schrittweise zurückgewonnene Zeit." }
+    ]
+  },
+  "goalType": {
+    "title": "Was ist dein Ziel?",
+    "subtitle": "Wähle das Ziel, das dich heute am meisten motiviert.",
+    "options": {
+      "reduce": { "title": "Schrittweise reduzieren", "desc": "Schritt für Schritt reduzieren, in deinem eigenen Tempo" },
+      "stop": { "title": "Komplett aufhören", "desc": "0 Zigaretten, ab deinem Startdatum" }
+    }
+  },
+  "consumption": {
+    "title": "Wie viele Zigaretten\nrauchst du derzeit?",
+    "subtitle": "Sei ehrlich, das bleibt zu 100 % vertraulich.",
+    "cigarettesPerUnit": "Zigaretten / {{unit}}",
+    "unit": { "jour": "Tag", "semaine": "Woche" },
+    "toggle": { "jour": "Pro Tag", "semaine": "Pro Woche" },
+    "estimatedPerDay": "≈ {{count}} Zigaretten pro Tag"
+  },
+  "packSize": {
+    "title": "Wie viele Zigaretten\nenthält deine Packung?",
+    "subtitle": "Eine wichtige Information, um dein Budget besser im Blick zu behalten.",
+    "unit": "Zigaretten pro Packung"
+  },
+  "packPrice": {
+    "title": "Was kostet\ndeine Packung?",
+    "subtitle": "So können wir deine tatsächlichen Ersparnisse berechnen.",
+    "priceLabel": "Packungspreis",
+    "error": "Gib einen gültigen Preis über 0 ein."
+  },
+  "startDate": {
+    "title": "Wann möchtest du\nstarten?",
+    "subtitle": "Wähle das Datum, das dir am besten passt.",
+    "hint": "Beginn: {{date}}",
+    "calendarWeekdays": ["M", "D", "M", "D", "F", "S", "S"]
+  },
+  "dailyGoal": {
+    "title": "Welches Ziel\nmöchtest du erreichen?",
+    "subtitle": "Lege dein Tagesziel für den Start fest. Es wird danach schrittweise gesenkt.",
+    "unit": "Zigaretten / Tag max.",
+    "error": "Dein Ziel muss unter deinem aktuellen Konsum liegen ({{count}} / Tag)."
+  },
+  "currency": {
+    "title": "Wähle deine Währung",
+    "subtitle": "Um deine Ersparnisse genau zu verfolgen.",
+    "options": { "EUR": "Euro", "CHF": "Schweizer Franken", "GBP": "Britisches Pfund" }
+  },
+  "motivations": {
+    "title": "Was sind deine\nHauptmotivationen?",
+    "subtitle": "Wähle bis zu 3 Motivationen aus, die dir am wichtigsten sind.",
+    "options": {
+      "health": "Meine Gesundheit",
+      "family": "Meine Familie",
+      "appearance": "Mein Aussehen",
+      "money": "Geld sparen",
+      "breathing": "Bessere Atmung",
+      "fitness": "Fitness zurückgewinnen"
+    },
+    "personalTitle": "✏️  Meine eigene Motivation schreiben",
+    "personalPlaceholder": "Deine Motivation…",
+    "personalA11y": "Persönliche Motivation"
+  },
+  "motivationLevel": {
+    "title": "Wie hoch ist deine\nMotivation?",
+    "subtitle": "Sei ehrlich zu dir selbst.",
+    "low": "Niedrig",
+    "high": "Hoch",
+    "levelA11y": "Stufe {{n}}",
+    "sliderA11y": "Motivationsniveau von 1 bis 10"
+  },
+  "summary": {
+    "title": "Dein Weg ist bereit 🎉",
+    "subtitle": "Hier ist eine Zusammenfassung deines persönlichen Plans.",
+    "labels": {
+      "goal": "Ziel",
+      "currentConsumption": "Aktueller Konsum",
+      "dailyGoal": "Tagesziel",
+      "packPrice": "Packungspreis",
+      "start": "Beginn",
+      "estimatedSavings": "Geschätzte Ersparnis",
+      "motivations": "Motivationen",
+      "personalNote": "Deine Nachricht",
+      "motivationLevel": "Motivation"
+    },
+    "cigPerDayValue": "{{count}} Zig. / Tag",
+    "cigPerDayMaxValue": "max. {{count}} Zig. / Tag",
+    "packPriceValue": "{{price}} {{currency}} ({{count}} Zig.)",
+    "savingsValue": "≈ {{monthly}} {{currency}} / Monat\n≈ {{yearly}} {{currency}} / Jahr",
+    "quoted": "„{{text}}“",
+    "savingIndicator": "Dein Weg wird gespeichert…",
+    "saveError": "Speichern nicht möglich. Überprüfe deine Verbindung und versuche es erneut.",
+    "startButton": "Starten  🚀"
+  }
+}

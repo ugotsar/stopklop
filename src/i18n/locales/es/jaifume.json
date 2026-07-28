@@ -1,0 +1,65 @@
+{
+  "header": { "title": "Hoy he fumado" },
+  "subtitle": {
+    "none": "Ningún cigarrillo hoy 🎉",
+    "some_one": "{{count}} cigarrillo hoy",
+    "some_other": "{{count}} cigarrillos hoy"
+  },
+  "tip": {
+    "underGoal": "¡Cada cigarrillo menos cuenta!\nEstás a {{remaining}} de tu objetivo.",
+    "atGoal": "Límite alcanzado — ¡no lo superes!\nEstás exactamente en tu objetivo de {{goal}}.",
+    "overGoal_one": "Objetivo superado en {{count}} cigarrillo.\n¡Mañana es un nuevo comienzo!",
+    "overGoal_other": "Objetivo superado en {{count}} cigarrillos.\n¡Mañana es un nuevo comienzo!"
+  },
+  "recap": {
+    "title": "Resumen de hoy",
+    "spent": "gastados",
+    "lifeExpectancy": "de esperanza de vida",
+    "note": "ⓘ  Cada cigarrillo cuesta ~5 min de esperanza de vida"
+  },
+  "triggers": {
+    "stress": "Estrés",
+    "ennui": "Aburrimiento",
+    "cafe": "Café / pausa",
+    "repas": "Después de comer",
+    "social": "Entorno social",
+    "alcool": "Salida nocturna / alcohol",
+    "habitude": "Costumbre"
+  },
+  "raisonModal": {
+    "title": "¿Por qué este cigarrillo?",
+    "subtitle": "Entender tus desencadenantes te ayuda a anticiparlos",
+    "otherNote": "Otro (anotar)",
+    "createHabit": "Crear una costumbre",
+    "skip": "Omitir",
+    "backArrow": "← Atrás",
+    "notePlaceholder": "Ej.: discusión por teléfono…",
+    "validate": "Confirmar",
+    "createHint": "Esta costumbre se guardará: la próxima vez, bastará con un solo toque.",
+    "createPlaceholder": "Ej.: Mamá me puso de los nervios",
+    "createAndSelect": "Crear y seleccionar"
+  },
+  "feedbackModal": {
+    "perfectTitle": "¡Día sin tabaco!",
+    "okTitle": "¡Bien hecho!",
+    "exceededTitle": "Objetivo superado",
+    "perfectSub": "0 cigarrillos hoy",
+    "okSub": "Objetivo cumplido hoy",
+    "exceededSub": "{{count}} cig · +{{diff}} de más",
+    "lifeGained": "vida ganada",
+    "spent": "gastado",
+    "streak": "racha",
+    "goalLabel": "objetivo: {{goal}}",
+    "margin": "{{pct}}% de margen",
+    "lifePreserved": "vida preservada",
+    "tooMuch": "+{{exces}} de más",
+    "smokedToday_one": "{{count}} cigarrillo fumado hoy",
+    "smokedToday_other": "{{count}} cigarrillos fumados hoy",
+    "lifeLost": "de vida",
+    "message": "Cada día es una nueva oportunidad.\nMañana puedes lograrlo. 💪",
+    "modifyGoal": "Editar objetivo",
+    "btnPerfect": "¡Genial, gracias!",
+    "btnOk": "¡Anotado!",
+    "btnExceeded": "¡Entendido!"
+  }
+}

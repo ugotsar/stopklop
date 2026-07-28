@@ -1,0 +1,26 @@
+{
+  "headerTitle": "Personalizar los horarios",
+  "subtitle": "Toca un recordatorio para cambiar su hora.",
+  "reminderLabel": "Recordatorio {{index}}",
+  "infoText": "💡 Estas notificaciones se activan cada día a la hora elegida, incluso si la aplicación está cerrada.",
+  "saveButton": "Guardar horarios",
+  "savingButton": "Guardando…",
+  "picker": {
+    "hourLabel": "hora",
+    "minuteLabel": "minutos"
+  },
+  "alerts": {
+    "permissionDeniedTitle": "Permiso denegado",
+    "permissionDeniedBody": "Activa las notificaciones en los Ajustes de iOS.",
+    "savedTitle": "Horarios guardados ✓",
+    "savedLine": "Recordatorio {{index}}: {{time}}"
+  },
+  "messages": {
+    "morning": { "title": "☀️ Nuevo día, nuevo comienzo", "body": "Hoy puedes hacerlo mejor que ayer. Anota tus cigarrillos." },
+    "afternoon": { "title": "🚬 ¿Cómo va el día?", "body": "Recuerda anotar tus cigarrillos. Cada número cuenta." },
+    "evening": { "title": "📊 Balance de tu día", "body": "¿Cuántos has fumado hoy? Anótalo antes de dormir." },
+    "encouragement": { "title": "💪 ¿Aguantando?", "body": "Un pequeño recordatorio para anotar tus cigarrillos." },
+    "extra": { "title": "⏰ Recordatorio adicional", "body": "Tómate 10 segundos para anotar tus cigarrillos." },
+    "night": { "title": "🌙 Fin del día", "body": "Última oportunidad para anotar tu consumo de hoy." }
+  }
+}

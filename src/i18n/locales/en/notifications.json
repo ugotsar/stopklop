@@ -1,0 +1,56 @@
+{
+  "screen": {
+    "headerTitle": "Notifications",
+    "subtitle": "Choose how many times a day the app asks whether you've smoked.",
+    "countCard": {
+      "title": "Notifications per day",
+      "unitLabel": "notifications per day",
+      "infoText": "We'll ask you up to {{count}} times a day if you've smoked."
+    },
+    "distributionCard": {
+      "title": "Automatic distribution",
+      "sub": "Notifications will be spread out automatically and evenly throughout the day.",
+      "previewTitle": "Schedule preview",
+      "previewSub": "The times adjust automatically to your settings."
+    },
+    "tipLabel": "Tip",
+    "tips": {
+      "1": "One notification a day is enough to start tracking.",
+      "2": "Morning and evening: the minimum for effective tracking.",
+      "3": "3 reminders a day for balanced tracking.",
+      "4": "4 reminders: ideal for the first few weeks.",
+      "5": "5 reminders keep you aware of your consumption throughout the day.",
+      "6": "6 notifications a day is ideal to stay motivated without being disturbed."
+    },
+    "saveButton": "Save",
+    "rows": {
+      "customizeTitle": "Customize times",
+      "customizeSub": "Choose specific times",
+      "disableTitle": "Disable notifications",
+      "disableSub": "Stop receiving reminders"
+    },
+    "alerts": {
+      "permissionDeniedTitle": "Permission denied",
+      "permissionDeniedBody": "Enable notifications in iOS Settings to receive reminders.",
+      "savedTitle": "Saved",
+      "savedBody_one": "{{count}} notification per day scheduled.",
+      "savedBody_other": "{{count}} notifications per day scheduled.",
+      "disableConfirmTitle": "Disable notifications",
+      "disableConfirmBody": "You'll no longer receive reminders to log your cigarettes.",
+      "disableButton": "Disable"
+    },
+    "messages": {
+      "morning": { "title": "☀️ New day, new start", "body": "Today, you can do better than yesterday. Log your cigarettes." },
+      "afternoon": { "title": "🚬 How's it going today?", "body": "Remember to log your cigarettes. Every number counts." },
+      "evening": { "title": "📊 Your day's summary", "body": "How many did you smoke today? Log it before you sleep." },
+      "encouragement": { "title": "💪 Hanging in there?", "body": "A quick reminder to log your cigarettes." },
+      "midday": { "title": "⏰ Midday reminder", "body": "Take 10 seconds to log your cigarettes." },
+      "night": { "title": "🌙 End of day", "body": "Last chance to log today's consumption." }
+    }
+  },
+  "scheduled": {
+    "morning": { "title": "☀️ New day, new start", "body": "Today, you can do better than yesterday. Log your cigarettes tonight." },
+    "noon": { "title": "🚬 How's it going today?", "body": "Remember to log your cigarettes. Every number counts." },
+    "evening": { "title": "📊 Your day's summary", "body": "How many did you smoke today? Log it before you sleep." }
+  }
+}

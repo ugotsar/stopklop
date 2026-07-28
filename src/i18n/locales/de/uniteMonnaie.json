@@ -1,0 +1,23 @@
+{
+  "headerTitle": "Währung",
+  "intro": "Wähle die Währung, die für\ndeine Ausgaben und Prognosen verwendet wird.",
+  "currentLabel": "Aktuelle Währung",
+  "recommended": "Empfohlen",
+  "sectionTitle": "Eine Währung wählen",
+  "currencies": {
+    "EUR": { "label": "Euro (€)" },
+    "USD": { "label": "US-Dollar ($)", "example": "11,00 $" },
+    "GBP": { "label": "Britisches Pfund (£)", "example": "9,50 £" },
+    "CHF": { "label": "Schweizer Franken (CHF)", "example": "10,30 CHF" },
+    "CAD": { "label": "Kanadischer Dollar (C$)", "example": "14,80 C$" },
+    "AUD": { "label": "Australischer Dollar (A$)", "example": "16,90 A$" },
+    "OTHER": { "label": "Andere Währung", "example": "Andere Währung wählen" }
+  },
+  "preview": {
+    "title": "Vorschau",
+    "text": "Deine Daten werden automatisch\nmit der neuen Währung aktualisiert.",
+    "currentSpendingLabel": "Aktuelle Ausgaben"
+  },
+  "saveButton": "Währung speichern",
+  "footerNote": "Diese Einstellung kann jederzeit geändert werden."
+}

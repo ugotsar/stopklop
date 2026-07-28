@@ -3,40 +3,21 @@ import {
   View, Text, StyleSheet, SafeAreaView, ScrollView,
   TouchableOpacity,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { colors, spacing, font, radius } from '../theme';
 
-const FAQ = [
-  {
-    q: "Comment fonctionne le plan de réduction progressive ?",
-    r: "Vous choisissez un point de départ (votre consommation actuelle) et un rythme, par exemple 2 cigarettes en moins par semaine. Chaque semaine, votre objectif quotidien baisse automatiquement jusqu'à atteindre 0. Vous pouvez modifier le rythme à tout moment depuis l'onglet Plan.",
-  },
-  {
-    q: "À quoi sert le bouton « J'ai envie de fumer » ?",
-    r: "Il enregistre le moment et la cause de vos envies (stress, café, soirée…). L'application analyse ensuite vos heures critiques, vos jours difficiles et vos déclencheurs principaux dans l'onglet Plan, pour vous aider à les anticiper.",
-  },
-  {
-    q: "Que signifie « Vie récupérée » ?",
-    r: "Les études médicales estiment qu'une cigarette réduit l'espérance de vie d'environ 5 minutes. Chaque cigarette non fumée par rapport à votre ancienne consommation vous « rend » donc 5 minutes de vie.",
-  },
-  {
-    q: "Comment est calculé l'argent économisé ?",
-    r: "On compare votre consommation actuelle à celle d'avant l'application, multipliée par le prix d'une cigarette (prix du paquet ÷ nombre de cigarettes). Vous pouvez ajuster ces valeurs dans Profil → Paramètres de consommation.",
-  },
-  {
-    q: "J'ai dépassé mon objectif, que se passe-t-il ?",
-    r: "Rien de grave ! Le cercle passe en rouge pour vous l'indiquer, mais chaque jour est un nouveau départ. L'important est la tendance sur la durée, pas une journée isolée.",
-  },
-  {
-    q: "Mes données sont-elles sauvegardées ?",
-    r: "Oui. Vos données sont stockées localement sur votre téléphone et synchronisées dans le cloud. Vous les retrouvez si vous changez d'appareil.",
-  },
-  {
-    q: "Comment modifier mon objectif ?",
-    r: "Allez dans l'onglet Plan → « Modifier le plan », ou dans Profil → « Mon objectif actuel ». Vous pouvez choisir l'arrêt complet, la réduction progressive ou un objectif libre.",
-  },
+const FAQ_KEYS = [
+  'reductionPlan',
+  'cravingButton',
+  'lifeGained',
+  'moneySaved',
+  'exceededGoal',
+  'dataSaved',
+  'editGoal',
 ];
 
 export default function CentreAideScreen({ navigation }) {
+  const { t } = useTranslation('centreAide');
   const [openIdx, setOpenIdx] = useState(null);
 
   return (
@@ -47,36 +28,36 @@ export default function CentreAideScreen({ navigation }) {
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
           <Text style={styles.backText}>←</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Centre d'aide</Text>
+        <Text style={styles.headerTitle}>{t('header.title')}</Text>
         <View style={{ width: 40 }} />
       </View>
 
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
-        <Text style={styles.intro}>Questions fréquentes</Text>
+        <Text style={styles.intro}>{t('intro')}</Text>
 
-        {FAQ.map((item, i) => (
+        {FAQ_KEYS.map((key, i) => (
           <TouchableOpacity
-            key={i}
+            key={key}
             style={styles.faqCard}
             activeOpacity={0.8}
             onPress={() => setOpenIdx(openIdx === i ? null : i)}
           >
             <View style={styles.faqRow}>
-              <Text style={styles.faqQ}>{item.q}</Text>
+              <Text style={styles.faqQ}>{t(`faq.${key}.question`)}</Text>
               <Text style={styles.faqChevron}>{openIdx === i ? '−' : '+'}</Text>
             </View>
-            {openIdx === i && <Text style={styles.faqR}>{item.r}</Text>}
+            {openIdx === i && <Text style={styles.faqR}>{t(`faq.${key}.answer`)}</Text>}
           </TouchableOpacity>
         ))}
 
         <View style={styles.contactCard}>
           <Text style={{ fontSize: 22, marginBottom: 4 }}>💬</Text>
-          <Text style={styles.contactTitle}>Vous n'avez pas trouvé votre réponse ?</Text>
+          <Text style={styles.contactTitle}>{t('contact.title')}</Text>
           <TouchableOpacity
             style={styles.contactBtn}
             onPress={() => navigation.navigate('NousContacter')}
           >
-            <Text style={styles.contactBtnText}>Nous contacter</Text>
+            <Text style={styles.contactBtnText}>{t('contact.button')}</Text>
           </TouchableOpacity>
         </View>
 

@@ -1,0 +1,26 @@
+{
+  "headerTitle": "Uhrzeiten anpassen",
+  "subtitle": "Tippe auf eine Erinnerung, um ihre Uhrzeit zu ändern.",
+  "reminderLabel": "Erinnerung {{index}}",
+  "infoText": "💡 Diese Benachrichtigungen werden jeden Tag zur gewählten Uhrzeit ausgelöst, auch wenn die App geschlossen ist.",
+  "saveButton": "Uhrzeiten speichern",
+  "savingButton": "Wird gespeichert…",
+  "picker": {
+    "hourLabel": "Stunde",
+    "minuteLabel": "Minuten"
+  },
+  "alerts": {
+    "permissionDeniedTitle": "Berechtigung verweigert",
+    "permissionDeniedBody": "Aktiviere Benachrichtigungen in den iOS-Einstellungen.",
+    "savedTitle": "Uhrzeiten gespeichert ✓",
+    "savedLine": "Erinnerung {{index}}: {{time}}"
+  },
+  "messages": {
+    "morning": { "title": "☀️ Neuer Tag, neuer Anfang", "body": "Heute kannst du es besser machen als gestern. Trage deine Zigaretten ein." },
+    "afternoon": { "title": "🚬 Wie läuft's heute?", "body": "Denk daran, deine Zigaretten einzutragen. Jede Zahl zählt." },
+    "evening": { "title": "📊 Deine Tagesbilanz", "body": "Wie viele hast du heute geraucht? Trage es vor dem Schlafengehen ein." },
+    "encouragement": { "title": "💪 Hältst du durch?", "body": "Eine kurze Erinnerung, deine Zigaretten einzutragen." },
+    "extra": { "title": "⏰ Zusätzliche Erinnerung", "body": "Nimm dir 10 Sekunden, um deine Zigaretten einzutragen." },
+    "night": { "title": "🌙 Tagesende", "body": "Letzte Chance, deinen heutigen Konsum einzutragen." }
+  }
+}

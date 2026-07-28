@@ -2,21 +2,24 @@ import React, { useState } from 'react';
 import {
   View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, TextInput,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { colors, spacing, font, radius } from '../../theme';
 import { jouerSon } from '../../services/sounds';
 import StepHeader from '../../components/StepHeader';
 import PrimaryButton from '../../components/PrimaryButton';
 
-const MOTIVATIONS = [
-  { id: 'sante', label: 'Ma santé', icon: '❤️' },
-  { id: 'famille', label: 'Ma famille', icon: '👨‍👩‍👧' },
-  { id: 'apparence', label: 'Mon apparence', icon: '✨' },
-  { id: 'economiser', label: "Économiser\nde l'argent", icon: '💰' },
-  { id: 'souffle', label: 'Un meilleur\nsouffle', icon: '💨' },
-  { id: 'condition', label: 'Retrouver ma\ncondition', icon: '🏃' },
+const MOTIVATION_KEYS = [
+  { id: 'sante', icon: '❤️' },
+  { id: 'famille', icon: '👨‍👩‍👧' },
+  { id: 'apparence', icon: '✨' },
+  { id: 'economiser', icon: '💰' },
+  { id: 'souffle', icon: '💨' },
+  { id: 'condition', icon: '🏃' },
 ];
 
 export default function Step6Screen({ navigation, route }) {
+  const { t } = useTranslation('onboardingLegacy');
+  const MOTIVATIONS = MOTIVATION_KEYS.map(m => ({ ...m, label: t(`step6.motivations.${m.id}`) }));
   const [selected, setSelected] = useState([]);
   const [freeValue, setFreeValue] = useState('');
 
@@ -39,8 +42,8 @@ export default function Step6Screen({ navigation, route }) {
     <SafeAreaView style={styles.safe}>
       <StepHeader step={6} onBack={() => navigation.goBack()} />
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-        <Text style={styles.title}>Quelles sont vos principales{'\n'}motivations ?</Text>
-        <Text style={styles.subtitle}>Sélectionnez jusqu'à 3 motivations{'\n'}qui comptent le plus pour vous.</Text>
+        <Text style={styles.title}>{t('step6.title')}</Text>
+        <Text style={styles.subtitle}>{t('step6.subtitle')}</Text>
 
         <View style={styles.grid}>
           {MOTIVATIONS.map(m => {
@@ -63,18 +66,18 @@ export default function Step6Screen({ navigation, route }) {
         </View>
 
         <View style={styles.dividerRow}>
-          <View style={styles.divider} /><Text style={styles.dividerText}>ou</Text><View style={styles.divider} />
+          <View style={styles.divider} /><Text style={styles.dividerText}>{t('shared.dividerOr')}</Text><View style={styles.divider} />
         </View>
 
         <View style={styles.freeCard}>
           <View style={styles.freeIconCircle}><Text>✏️</Text></View>
           <View style={styles.freeTextBlock}>
-            <Text style={styles.freeTitle}>Écrire ma propre motivation</Text>
-            <Text style={styles.freeDesc}>Saisissez une motivation qui compte pour vous.</Text>
+            <Text style={styles.freeTitle}>{t('step6.freeTitle')}</Text>
+            <Text style={styles.freeDesc}>{t('step6.freeDescription')}</Text>
           </View>
           <TextInput
             style={styles.freeInput}
-            placeholder="Votre motivation"
+            placeholder={t('step6.freePlaceholder')}
             placeholderTextColor={colors.gray}
             value={freeValue}
             onChangeText={setFreeValue}
@@ -83,7 +86,7 @@ export default function Step6Screen({ navigation, route }) {
       </ScrollView>
 
       <View style={styles.bottom}>
-        <PrimaryButton title="Continuer  →" onPress={handleContinue} />
+        <PrimaryButton title={t('common:continue')} onPress={handleContinue} />
       </View>
     </SafeAreaView>
   );

@@ -1,0 +1,23 @@
+{
+  "headerTitle": "Currency",
+  "intro": "Select the currency used for\nyour expenses and projections.",
+  "currentLabel": "Current currency",
+  "recommended": "Recommended",
+  "sectionTitle": "Choose a currency",
+  "currencies": {
+    "EUR": { "label": "Euro (€)" },
+    "USD": { "label": "US Dollar ($)", "example": "11.00 $" },
+    "GBP": { "label": "British Pound (£)", "example": "9.50 £" },
+    "CHF": { "label": "Swiss Franc (CHF)", "example": "10.30 CHF" },
+    "CAD": { "label": "Canadian Dollar (C$)", "example": "14.80 C$" },
+    "AUD": { "label": "Australian Dollar (A$)", "example": "16.90 A$" },
+    "OTHER": { "label": "Other currency", "example": "Choose another currency" }
+  },
+  "preview": {
+    "title": "Preview",
+    "text": "Your data will automatically\nbe updated with the new currency.",
+    "currentSpendingLabel": "Current spending"
+  },
+  "saveButton": "Save currency",
+  "footerNote": "This setting can be changed at any time."
+}

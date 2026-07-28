@@ -1,0 +1,143 @@
+{
+  "header": {
+    "title": "Ausstiegsplan"
+  },
+  "labels": {
+    "perMonth": "pro Monat",
+    "perYear": "pro Jahr",
+    "per10Years": "über 10 Jahre"
+  },
+  "impact": {
+    "sectionTitle": "Deine Wirkung",
+    "gotIt": "Verstanden!",
+    "savings": {
+      "label": "Gespartes Geld",
+      "modalTitle": "Gespartes Geld",
+      "explanationIntro_one": "Vor der App hast du {{consoAvant}} Zigaretten pro Tag geraucht. Dein aktuelles Ziel liegt bei {{objectif}} pro Tag: Das sind {{count}} vermiedene Zigarette pro Tag.",
+      "explanationIntro_other": "Vor der App hast du {{consoAvant}} Zigaretten pro Tag geraucht. Dein aktuelles Ziel liegt bei {{objectif}} pro Tag: Das sind {{count}} vermiedene Zigaretten pro Tag.",
+      "explanationDetail": "\n\nJede Zigarette kostet {{prixCig}} € (Packungspreis ÷ Zigaretten pro Packung).\n{{count}} × {{prixCig}} € × 30 Tage = {{ecoMois}} € pro Monat.",
+      "note": "Du kannst den Packungspreis in Profil → Konsumeinstellungen anpassen."
+    },
+    "life": {
+      "label": "Gewonnene Lebenszeit"
+    },
+    "lifeMonth": {
+      "modalTitle": "Gewonnene Lebenszeit pro Monat",
+      "explanation_one": "Medizinische Studien schätzen, dass eine Zigarette die Lebenserwartung um etwa 5 Minuten verkürzt.\n\nDurch das Vermeiden von {{count}} Zigarette pro Tag gewinnst du täglich {{minutes}} Minuten Lebenszeit zurück, also etwa {{hours}} Std. pro Monat.",
+      "explanation_other": "Medizinische Studien schätzen, dass eine Zigarette die Lebenserwartung um etwa 5 Minuten verkürzt.\n\nDurch das Vermeiden von {{count}} Zigaretten pro Tag gewinnst du täglich {{minutes}} Minuten Lebenszeit zurück, also etwa {{hours}} Std. pro Monat."
+    },
+    "lifeYear": {
+      "modalTitle": "Gewonnene Lebenszeit pro Jahr",
+      "explanation_one": "Über ein ganzes Jahr summieren sich die 5 Minuten pro vermiedener Zigarette:\n\n{{count}} vermiedene Zigarette × 5 Min × 365 Tage = etwa {{days}} Tage zusätzliche Lebenserwartung pro Jahr.",
+      "explanation_other": "Über ein ganzes Jahr summieren sich die 5 Minuten pro vermiedener Zigarette:\n\n{{count}} vermiedene Zigaretten × 5 Min × 365 Tage = etwa {{days}} Tage zusätzliche Lebenserwartung pro Jahr.",
+      "moreLifeLabel": "mehr Lebenszeit",
+      "monthsValue": "≈ {{count}} Monate"
+    },
+    "health": {
+      "value": "Bessere",
+      "label": "Gesundheit",
+      "sublabel": "jeden Tag",
+      "modalTitle": "Bessere Gesundheit jeden Tag",
+      "explanation": "Dein Körper beginnt sich zu erholen, sobald du reduzierst:\n\n• 20 Min: der Blutdruck normalisiert sich\n• 8 Std: der Kohlenmonoxidgehalt im Blut sinkt um die Hälfte\n• 24 Std: das Herzinfarktrisiko beginnt zu sinken\n• 48 Std: Geschmacks- und Geruchssinn verbessern sich\n• 72 Std: das Atmen fällt leichter\n• 1 Jahr: das Schlaganfallrisiko entspricht dem eines Nichtrauchers",
+      "note": "Deinen detaillierten Gesundheitsfortschritt findest du im Dashboard."
+    }
+  },
+  "projection": {
+    "sectionTitle": "Jahresprognose",
+    "herosSub": "bleiben in einem Jahr in deiner Tasche",
+    "herosHint": "wenn du deinem Plan folgst",
+    "beforeApp": {
+      "title": "Vor der App",
+      "sub": "jährlich für Zigaretten ausgegeben",
+      "value": "−{{amount}} / Jahr"
+    },
+    "alreadySaved": {
+      "title": "Bereits gespart",
+      "sub": "seit Beginn",
+      "value": "+{{amount}}"
+    },
+    "planRespected": {
+      "title": "Plan zu 100 % eingehalten",
+      "sub": "wenn du weitermachst",
+      "value": "+{{amount}} / Jahr"
+    },
+    "equivalenceLabel": "Das könntest du dir mit diesen {{amount}} gönnen:",
+    "chartRemaining": "bleiben übrig",
+    "chartInPocket": "in deiner Tasche",
+    "chartSixMonths": "6 Monate",
+    "chartOneYear": "1 Jahr"
+  },
+  "equivalence": {
+    "trip": "Eine große Reise + 6 Monate Einkäufe",
+    "flight": "Ein Langstreckenflug für zwei, oder 5 Monate Einkäufe",
+    "vacation": "Eine Woche Urlaub, oder 3 Monate Einkäufe",
+    "smartphone": "Ein neues Smartphone, oder 6 Wochenendtrips",
+    "restaurants": "12 Restaurantbesuche, oder ein romantisches Wochenende",
+    "small": "Genug für ein paar echte Freuden"
+  },
+  "habits": {
+    "sectionTitle": "Analyse deiner Gewohnheiten",
+    "analyzedCount_one": "{{count}} analysiertes Verlangen",
+    "analyzedCount_other": "{{count}} analysierte Verlangen",
+    "peakHour": { "desc": "Kritischster Zeitraum" },
+    "peakDay": { "desc": "Schwierigster Tag" },
+    "topTrigger": { "desc": "Auslöser Nr. 1" },
+    "pctOfCravings": "{{pct}} % deiner Verlangen",
+    "breakdownTitle": "Verteilung nach Auslöser",
+    "viewBreakdownDetail": "Details nach Auslöser ansehen  ›",
+    "resistedCount": "💪 {{count}}",
+    "resistedLabel": "widerstandene Verlangen",
+    "smokedCount": "🚬 {{count}}",
+    "smokedLabel": "gerauchte Verlangen",
+    "recentCravingsTitle": "Letzte Verlangen",
+    "viewFullJournal": "Vollständiges Tagebuch ansehen, Tag für Tag  ›",
+    "smokedIssue": "🚬 geraucht",
+    "resistedIssue": "💪 widerstanden",
+    "emptyTitle": "Noch keine Daten",
+    "emptyTextBefore": "Wenn ein Verlangen zu rauchen aufkommt, tippe auf den Button",
+    "emptyTextButton": "„Ich habe Lust zu rauchen“",
+    "emptyTextAfter": " auf der Startseite.\nWir analysieren deine Uhrzeiten, Tage und kritischen Auslöser, um sie besser vorherzusehen."
+  },
+  "triggers": {
+    "stress": "Stress",
+    "ennui": "Langeweile",
+    "cafe": "Kaffee / Pause",
+    "repas": "Nach dem Essen",
+    "social": "Umfeld",
+    "alcool": "Abend / Alkohol",
+    "habitude": "Gewohnheit",
+    "autre": "Sonstiges"
+  },
+  "recommendedPlan": {
+    "sectionTitle": "Mein Plan",
+    "rateTag_one": "−{{count}} Zig. / Woche",
+    "rateTag_other": "−{{count}} Zig. / Woche",
+    "progressiveTag": "Schrittweise Reduktion",
+    "dailyGoal": "Tagesziel",
+    "cigarettesMax": "Zigaretten max.",
+    "today": "Heute",
+    "weekLabel": "W+{{n}}",
+    "goalReached": "🎉 Ziel von 0 Zigaretten erreicht!",
+    "goalReachedSuffix": " Halte den Kurs.",
+    "nextMilestonePrefix": "Nächste Etappe: ",
+    "nextMilestoneCig_one": "{{count}} Zigarette max.",
+    "nextMilestoneCig_other": "{{count}} Zigaretten max.",
+    "nextMilestoneInLabel": " in ",
+    "nextMilestoneDays_one": "{{count}} Tag",
+    "nextMilestoneDays_other": "{{count}} Tagen",
+    "zeroDatePrefix": "\n🏁 0 Zigaretten voraussichtlich ab ",
+    "chooseProgressivePrefix": "Wähle ",
+    "chooseProgressiveLabel": "„Schrittweise reduzieren“",
+    "chooseProgressiveSuffix": ", um einen wochenweisen Plan zu aktivieren.",
+    "modifyButton": "Plan bearbeiten"
+  },
+  "motivations": {
+    "title": "💚 Warum du das tust",
+    "health": "Meine Gesundheit",
+    "family": "Meine Familie",
+    "appearance": "Mein Aussehen",
+    "money": "Geld sparen",
+    "breathing": "Besser atmen",
+    "fitness": "Wieder in Form kommen"
+  }
+}

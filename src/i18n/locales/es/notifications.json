@@ -1,0 +1,56 @@
+{
+  "screen": {
+    "headerTitle": "Notificaciones",
+    "subtitle": "Elige cuántas veces al día la aplicación te pregunta si has fumado.",
+    "countCard": {
+      "title": "Número de notificaciones por día",
+      "unitLabel": "notificaciones por día",
+      "infoText": "Te preguntaremos hasta {{count}} veces al día si has fumado."
+    },
+    "distributionCard": {
+      "title": "Distribución automática",
+      "sub": "Las notificaciones se repartirán automáticamente y de forma equilibrada a lo largo del día.",
+      "previewTitle": "Vista previa de los horarios",
+      "previewSub": "Los horarios se adaptan automáticamente a tu configuración."
+    },
+    "tipLabel": "Consejo",
+    "tips": {
+      "1": "Una notificación al día es suficiente para empezar a hacer seguimiento.",
+      "2": "Mañana y noche: el mínimo para un seguimiento eficaz.",
+      "3": "3 recordatorios al día para un seguimiento equilibrado.",
+      "4": "4 recordatorios: ideal para las primeras semanas.",
+      "5": "5 recordatorios mantienen la conciencia de tu consumo durante todo el día.",
+      "6": "6 notificaciones al día es ideal para mantenerte motivado sin ser molestado."
+    },
+    "saveButton": "Guardar",
+    "rows": {
+      "customizeTitle": "Personalizar los horarios",
+      "customizeSub": "Elegir horarios específicos",
+      "disableTitle": "Desactivar las notificaciones",
+      "disableSub": "Dejar de recibir recordatorios"
+    },
+    "alerts": {
+      "permissionDeniedTitle": "Permiso denegado",
+      "permissionDeniedBody": "Activa las notificaciones en los Ajustes de iOS para recibir recordatorios.",
+      "savedTitle": "Guardado",
+      "savedBody_one": "{{count}} notificación al día programada.",
+      "savedBody_other": "{{count}} notificaciones al día programadas.",
+      "disableConfirmTitle": "Desactivar las notificaciones",
+      "disableConfirmBody": "Ya no recibirás recordatorios para anotar tus cigarrillos.",
+      "disableButton": "Desactivar"
+    },
+    "messages": {
+      "morning": { "title": "☀️ Nuevo día, nuevo comienzo", "body": "Hoy puedes hacerlo mejor que ayer. Anota tus cigarrillos." },
+      "afternoon": { "title": "🚬 ¿Cómo va el día?", "body": "Recuerda anotar tus cigarrillos. Cada número cuenta." },
+      "evening": { "title": "📊 Balance de tu día", "body": "¿Cuántos has fumado hoy? Anótalo antes de dormir." },
+      "encouragement": { "title": "💪 ¿Aguantando?", "body": "Un pequeño recordatorio para anotar tus cigarrillos." },
+      "midday": { "title": "⏰ Recordatorio de mediodía", "body": "Tómate 10 segundos para anotar tus cigarrillos." },
+      "night": { "title": "🌙 Fin del día", "body": "Última oportunidad para anotar tu consumo de hoy." }
+    }
+  },
+  "scheduled": {
+    "morning": { "title": "☀️ Nuevo día, nuevo comienzo", "body": "Hoy puedes hacerlo mejor que ayer. Anota tus cigarrillos esta noche." },
+    "noon": { "title": "🚬 ¿Cómo va el día?", "body": "Recuerda anotar tus cigarrillos. Cada número cuenta." },
+    "evening": { "title": "📊 Balance de tu día", "body": "¿Cuántos has fumado hoy? Anótalo antes de dormir." }
+  }
+}

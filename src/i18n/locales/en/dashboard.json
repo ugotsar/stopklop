@@ -1,0 +1,101 @@
+{
+  "header": {
+    "greeting": "Hello 👋",
+    "defaultName": "Champion"
+  },
+  "hero": {
+    "label": "Smoke-free time",
+    "sinceLastCig": "since your last cigarette",
+    "sinceStart": "since the start ({{duration}})"
+  },
+  "today": {
+    "sectionTitle": "Today",
+    "subtitle": "cigarettes\ntoday",
+    "goal": "Goal: {{count}} max",
+    "validateButton": "✓  Log my day",
+    "smokedLink": "I smoked today  ›"
+  },
+  "perfectDayModal": {
+    "title": "Smoke-free day!",
+    "subtitle": "0 cigarettes today",
+    "lifeRegained": "life regained",
+    "spent": "spent",
+    "streak": "streak",
+    "closeButton": "Awesome, thanks!"
+  },
+  "goalModal": {
+    "successTitle": "Well done!",
+    "successSubtitle": "Goal met today",
+    "exceededTitle": "Goal exceeded",
+    "exceededSubtitle": "{{count}} cig · +{{exceeded}} over",
+    "goalLabel": "goal: {{count}}",
+    "marginLabel": "{{percent}}% to spare",
+    "spent": "spent",
+    "lifePreserved": "life preserved",
+    "lifeLost": "of life",
+    "successButton": "Got it!",
+    "cigsSmokedToday_one": "{{count}} cigarette smoked today",
+    "cigsSmokedToday_other": "{{count}} cigarettes smoked today",
+    "tooMany": "+{{count}} too many",
+    "encouragement": "Every day is a new chance.\nTomorrow, you can do it. 💪",
+    "exceededButton": "Got it!"
+  },
+  "triggers": {
+    "stress": "Stress",
+    "ennui": "Boredom",
+    "cafe": "Coffee / break",
+    "repas": "After a meal",
+    "social": "Social circle",
+    "alcool": "Party / alcohol",
+    "habitude": "Habit",
+    "autre": "Other"
+  },
+  "envieModal": {
+    "pickTitle": "Craving a cigarette?",
+    "pickSubtitle": "What's triggering it?",
+    "noteTitle": "Tell us more",
+    "noteSubtitle": "How are you feeling? Why this craving?",
+    "notePlaceholder": "E.g.: I just hung up a stressful call…",
+    "continueButton": "Continue",
+    "resultTitle": "Got it!",
+    "resultSubtitle": "Craving logged in your habits",
+    "conseilPrefix": "A craving lasts on average ",
+    "conseilBold": "3 to 5 minutes",
+    "conseilSuffix": ".\n\n💧 Drink a glass of water\n🫁 Take 5 deep breaths\n🚶 Change rooms or activity\n\nIt will pass — hang in there!",
+    "keptButton": "I held on 💪",
+    "smokedButton": "I smoked  🚬  (+1 cigarette)"
+  },
+  "motivation": {
+    "sectionTitle": "✨  Today's motivation",
+    "quotes": [
+      "Every smoke-free hour is a win for your health.",
+      "You're not giving something up — you're gaining a better life.",
+      "The strength you show today builds tomorrow's health.",
+      "One day at a time. You've got this! 💪",
+      "Your body thanks you every minute you stay smoke-free."
+    ]
+  },
+  "stats": {
+    "aboveGoal": "+{{count}} over",
+    "belowGoal": "{{count}} to spare",
+    "vsGoalLabel": "vs today's goal ({{count}})",
+    "moneyPreserved": "Money saved\nvs your plan",
+    "moneyOver": "Overspend\nvs your plan",
+    "minutesVsPlan": "{{sign}}{{count}} min",
+    "lifePreservedVsPlan": "Life preserved vs plan\n(5 min / cigarette)",
+    "lifeLostVsPlan": "Life lost vs plan\n(5 min / cigarette)",
+    "progressionValue": "{{sign}}{{count}}%",
+    "progressionLabel": "Progress\nvs before the app"
+  },
+  "envieCard": {
+    "title": "Craving a cigarette right now?",
+    "subtitle": "Log it: we analyze your triggers to help you anticipate them.",
+    "button": "I'm craving a cigarette",
+    "count_one": "{{count}} craving logged — analysis available in the Plan tab",
+    "count_other": "{{count}} cravings logged — analysis available in the Plan tab"
+  },
+  "devButtons": {
+    "loadDemo": "🎬 Load demo (5 weeks of usage)",
+    "resetOnboarding": "↩ Restart onboarding"
+  }
+}

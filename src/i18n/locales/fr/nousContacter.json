@@ -1,0 +1,37 @@
+{
+  "header": { "title": "Nous contacter" },
+  "hero": {
+    "title": "Nous sommes là pour vous",
+    "subtitle": "Une question, un problème ou une suggestion ?\nNotre équipe vous répondra dans les\nplus brefs délais."
+  },
+  "sections": {
+    "subjectTitle": "Choisissez un sujet",
+    "messageTitle": "Envoyez-nous un message"
+  },
+  "subjects": {
+    "account": { "title": "Compte et profil", "desc": "Problème de compte, connexion, données..." },
+    "tracking": { "title": "Suivi et statistiques", "desc": "Données, objectifs, projections..." },
+    "payments": { "title": "Paiements et abonnements", "desc": "Facturation, abonnement, remboursement..." },
+    "usage": { "title": "Utilisation de l'app", "desc": "Fonctionnalités, fonctionnement, bugs..." },
+    "suggestion": { "title": "Suggestion", "desc": "Partagez vos idées pour améliorer Stopklop" }
+  },
+  "messagePlaceholder": "Décrivez votre demande ici...",
+  "charCount": "{{count}}/1000",
+  "otherWays": {
+    "title": "Autres moyens de nous joindre",
+    "emailLabel": "Email :",
+    "responseTimeLabel": "Délai de réponse : sous",
+    "responseTimeValue": "24 à 48h ouvrées"
+  },
+  "send": { "button": "✈  Envoyer le message" },
+  "footer": { "note": "🔒  Vos données sont traitées en toute confidentialité." },
+  "alerts": {
+    "subjectRequiredTitle": "Sujet requis",
+    "subjectRequiredBody": "Veuillez choisir un sujet avant d'envoyer.",
+    "messageTooShortTitle": "Message trop court",
+    "messageTooShortBody": "Décrivez votre demande en quelques mots.",
+    "cantOpenMailTitle": "Impossible d'ouvrir votre app mail",
+    "cantOpenMailBody": "Écrivez-nous directement à :\n{{email}}"
+  },
+  "subjectFallback": "Demande"
+}

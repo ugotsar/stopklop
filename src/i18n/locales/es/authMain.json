@@ -1,0 +1,18 @@
+{
+  "tagline": "Deja de fumar, un día a la vez.",
+  "google": { "button": "Continuar con Google" },
+  "apple": { "button": "Continuar con Apple" },
+  "divider": { "or": "o" },
+  "guest": { "button": "Continuar sin cuenta" },
+  "errors": {
+    "google": "Error al iniciar sesión con Google. Inténtalo de nuevo.",
+    "apple": "Error al iniciar sesión con Apple. Inténtalo de nuevo.",
+    "guest": "Error de conexión. Inténtalo de nuevo."
+  },
+  "legal": {
+    "prefix": "Al continuar, aceptas nuestros",
+    "terms": "Términos de servicio",
+    "middle": "y nuestra",
+    "privacy": "Política de privacidad"
+  }
+}

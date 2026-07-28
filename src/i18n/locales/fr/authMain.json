@@ -1,0 +1,18 @@
+{
+  "tagline": "Arrête de fumer, un jour à la fois.",
+  "google": { "button": "Continuer avec Google" },
+  "apple": { "button": "Continuer avec Apple" },
+  "divider": { "or": "ou" },
+  "guest": { "button": "Continuer sans compte" },
+  "errors": {
+    "google": "Connexion Google échouée. Réessaie.",
+    "apple": "Connexion Apple échouée. Réessaie.",
+    "guest": "Erreur de connexion. Réessaie."
+  },
+  "legal": {
+    "prefix": "En continuant, tu acceptes nos",
+    "terms": "CGU",
+    "middle": "et notre",
+    "privacy": "Politique de confidentialité"
+  }
+}

@@ -3,18 +3,19 @@ import {
   View, Text, StyleSheet, SafeAreaView, ScrollView,
   TouchableOpacity,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { useUser } from '../context/UserContext';
 import { colors, spacing, font, radius } from '../theme';
 
-const TRIGGER_LABELS = {
-  stress:   { emoji: '😰', label: 'Stress' },
-  ennui:    { emoji: '😴', label: 'Ennui' },
-  cafe:     { emoji: '☕', label: 'Café / pause' },
-  repas:    { emoji: '🍽', label: 'Après repas' },
-  social:   { emoji: '👥', label: 'Entourage' },
-  alcool:   { emoji: '🍺', label: 'Soirée / alcool' },
-  habitude: { emoji: '🚬', label: 'Habitude' },
-  autre:    { emoji: '🤷', label: 'Autre' },
+const TRIGGER_EMOJIS = {
+  stress:   '😰',
+  ennui:    '😴',
+  cafe:     '☕',
+  repas:    '🍽',
+  social:   '👥',
+  alcool:   '🍺',
+  habitude: '🚬',
+  autre:    '🤷',
 };
 
 // Regroupe les envies par jour (clé YYYY-MM-DD), du plus récent au plus ancien
@@ -36,13 +37,13 @@ function grouperParJour(envies) {
     }));
 }
 
-function labelJour(key) {
+function labelJour(key, t, lang) {
   const d = new Date(key + 'T12:00:00');
   const todayKey = new Date().toISOString().slice(0, 10);
   const hierKey  = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
-  if (key === todayKey) return "Aujourd'hui";
-  if (key === hierKey)  return 'Hier';
-  const s = d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+  if (key === todayKey) return t('day.today');
+  if (key === hierKey)  return t('day.yesterday');
+  const s = d.toLocaleDateString(lang, { weekday: 'long', day: 'numeric', month: 'long' });
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
@@ -63,22 +64,27 @@ function grouperParDeclencheur(envies) {
     }));
 }
 
-function fmtDateHeure(ts) {
+function fmtDateHeure(ts, lang) {
   const d = new Date(ts);
-  const jour = d.toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' });
+  const jour = d.toLocaleDateString(lang, { weekday: 'short', day: 'numeric', month: 'short' });
   const heure = `${String(d.getHours()).padStart(2, '0')}h${String(d.getMinutes()).padStart(2, '0')}`;
   return `${jour.charAt(0).toUpperCase() + jour.slice(1)} · ${heure}`;
 }
 
 export default function JournalEnviesScreen({ navigation, route }) {
+  const { t, i18n } = useTranslation('journalEnvies');
   const { profile } = useUser();
   const envies = Array.isArray(profile?.envies) ? profile.envies : [];
   // Habitudes personnalisées : résolution des clés "perso_*" vers leur libellé
   const persoMap = Object.fromEntries(
     (Array.isArray(profile?.declencheursPerso) ? profile.declencheursPerso : [])
-      .map(d => [d.key, { emoji: '📝', label: d.label }])
+      .map(d => [d.key, d.label])
   );
-  const resoudreTrig = k => TRIGGER_LABELS[k] ?? persoMap[k] ?? TRIGGER_LABELS.autre;
+  const resoudreTrig = k => {
+    if (TRIGGER_EMOJIS[k]) return { emoji: TRIGGER_EMOJIS[k], label: t(`triggers.${k}`) };
+    if (persoMap[k]) return { emoji: '📝', label: persoMap[k] };
+    return { emoji: TRIGGER_EMOJIS.autre, label: t('triggers.autre') };
+  };
   const jours  = grouperParJour(envies);
   const trigs  = grouperParDeclencheur(envies);
   const total  = envies.length;
@@ -95,7 +101,7 @@ export default function JournalEnviesScreen({ navigation, route }) {
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
           <Text style={styles.backText}>←</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Journal des envies</Text>
+        <Text style={styles.headerTitle}>{t('header.title')}</Text>
         <View style={{ width: 40 }} />
       </View>
 
@@ -105,13 +111,13 @@ export default function JournalEnviesScreen({ navigation, route }) {
           style={[styles.tab, mode === 'jour' && styles.tabActive]}
           onPress={() => setMode('jour')}
         >
-          <Text style={[styles.tabText, mode === 'jour' && styles.tabTextActive]}>Par jour</Text>
+          <Text style={[styles.tabText, mode === 'jour' && styles.tabTextActive]}>{t('tabs.byDay')}</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.tab, mode === 'declencheur' && styles.tabActive]}
           onPress={() => setMode('declencheur')}
         >
-          <Text style={[styles.tabText, mode === 'declencheur' && styles.tabTextActive]}>Par déclencheur</Text>
+          <Text style={[styles.tabText, mode === 'declencheur' && styles.tabTextActive]}>{t('tabs.byTrigger')}</Text>
         </TouchableOpacity>
       </View>
 
@@ -120,9 +126,9 @@ export default function JournalEnviesScreen({ navigation, route }) {
         {jours.length === 0 && (
           <View style={styles.vide}>
             <Text style={{ fontSize: 32, marginBottom: 8 }}>🔥</Text>
-            <Text style={styles.videTitre}>Aucune envie enregistrée</Text>
+            <Text style={styles.videTitre}>{t('empty.title')}</Text>
             <Text style={styles.videTexte}>
-              Utilisez le bouton « J'ai envie de fumer » dans l'Accueil : chaque envie sera notée ici avec son heure et son déclencheur.
+              {t('empty.text')}
             </Text>
           </View>
         )}
@@ -139,11 +145,11 @@ export default function JournalEnviesScreen({ navigation, route }) {
                 onPress={() => setOpenKey(open ? null : jour.key)}
               >
                 <View style={{ flex: 1 }}>
-                  <Text style={styles.jourTitre}>{labelJour(jour.key)}</Text>
+                  <Text style={styles.jourTitre}>{labelJour(jour.key, t, i18n.language)}</Text>
                   <Text style={styles.jourSous}>
-                    {jour.list.length} envie{jour.list.length > 1 ? 's' : ''}
-                    {'  ·  '}💪 {jour.nbResistees} résistée{jour.nbResistees > 1 ? 's' : ''}
-                    {'  ·  '}🚬 {jour.nbFumees} fumée{jour.nbFumees > 1 ? 's' : ''}
+                    {t('day.enviesCount', { count: jour.list.length })}
+                    {'  ·  '}{t('day.resistedCount', { count: jour.nbResistees })}
+                    {'  ·  '}{t('day.smokedCount', { count: jour.nbFumees })}
                   </Text>
                 </View>
                 <Text style={styles.jourChevron}>{open ? '▾' : '▸'}</Text>
@@ -162,10 +168,10 @@ export default function JournalEnviesScreen({ navigation, route }) {
                         <Text style={{ fontSize: 15 }}>{info.emoji}</Text>
                         <View style={{ flex: 1 }}>
                           <Text style={styles.envieLabel}>{info.label}</Text>
-                          {e.note ? <Text style={styles.envieNote} numberOfLines={3}>« {e.note} »</Text> : null}
+                          {e.note ? <Text style={styles.envieNote} numberOfLines={3}>{t('quotedNote', { note: e.note })}</Text> : null}
                         </View>
                         <Text style={[styles.envieIssue, { color: e.fume ? '#DC2626' : colors.primary }]}>
-                          {e.fume ? '🚬 fumé' : '💪 résisté'}
+                          {e.fume ? t('issue.smoked') : t('issue.resisted')}
                         </Text>
                       </View>
                     );
@@ -177,25 +183,25 @@ export default function JournalEnviesScreen({ navigation, route }) {
         })}
 
         {/* ── Vue par déclencheur ── */}
-        {mode === 'declencheur' && trigs.map(t => {
-          const info = resoudreTrig(t.key);
-          const open = openTrig === t.key;
-          const pct  = total > 0 ? Math.round((t.list.length / total) * 100) : 0;
+        {mode === 'declencheur' && trigs.map(trig => {
+          const info = resoudreTrig(trig.key);
+          const open = openTrig === trig.key;
+          const pct  = total > 0 ? Math.round((trig.list.length / total) * 100) : 0;
           return (
-            <View key={t.key} style={styles.jourCard}>
+            <View key={trig.key} style={styles.jourCard}>
 
               <TouchableOpacity
                 style={styles.jourRow}
                 activeOpacity={0.7}
-                onPress={() => setOpenTrig(open ? null : t.key)}
+                onPress={() => setOpenTrig(open ? null : trig.key)}
               >
                 <Text style={{ fontSize: 22 }}>{info.emoji}</Text>
                 <View style={{ flex: 1 }}>
                   <Text style={styles.jourTitre}>{info.label}</Text>
                   <Text style={styles.jourSous}>
-                    {t.list.length} envie{t.list.length > 1 ? 's' : ''} ({pct}%)
-                    {'  ·  '}💪 {t.nbResistees}
-                    {'  ·  '}🚬 {t.nbFumees}
+                    {t('trigger.enviesCountPct', { count: trig.list.length, pct })}
+                    {'  ·  '}💪 {trig.nbResistees}
+                    {'  ·  '}🚬 {trig.nbFumees}
                   </Text>
                   <View style={styles.trigBarTrack}>
                     <View style={[styles.trigBarFill, { width: `${pct}%` }]} />
@@ -206,14 +212,14 @@ export default function JournalEnviesScreen({ navigation, route }) {
 
               {open && (
                 <View style={styles.detail}>
-                  {t.list.map((e, i) => (
+                  {trig.list.map((e, i) => (
                     <View key={i} style={styles.envieRow}>
                       <View style={{ flex: 1 }}>
-                        <Text style={styles.envieLabel}>{fmtDateHeure(e.ts)}</Text>
-                        {e.note ? <Text style={styles.envieNote} numberOfLines={3}>« {e.note} »</Text> : null}
+                        <Text style={styles.envieLabel}>{fmtDateHeure(e.ts, i18n.language)}</Text>
+                        {e.note ? <Text style={styles.envieNote} numberOfLines={3}>{t('quotedNote', { note: e.note })}</Text> : null}
                       </View>
                       <Text style={[styles.envieIssue, { color: e.fume ? '#DC2626' : colors.primary }]}>
-                        {e.fume ? '🚬 fumé' : '💪 résisté'}
+                        {e.fume ? t('issue.smoked') : t('issue.resisted')}
                       </Text>
                     </View>
                   ))}

@@ -1,0 +1,65 @@
+{
+  "header": { "title": "Ich habe heute geraucht" },
+  "subtitle": {
+    "none": "Keine Zigarette heute 🎉",
+    "some_one": "{{count}} Zigarette heute",
+    "some_other": "{{count}} Zigaretten heute"
+  },
+  "tip": {
+    "underGoal": "Jede Zigarette weniger zählt!\nDu bist noch {{remaining}} von deinem Ziel entfernt.",
+    "atGoal": "Grenze erreicht — nicht überschreiten!\nDu bist genau bei deinem Ziel von {{goal}}.",
+    "overGoal_one": "Ziel um {{count}} Zigarette überschritten.\nMorgen ist ein neuer Anfang!",
+    "overGoal_other": "Ziel um {{count}} Zigaretten überschritten.\nMorgen ist ein neuer Anfang!"
+  },
+  "recap": {
+    "title": "Zusammenfassung heute",
+    "spent": "ausgegeben",
+    "lifeExpectancy": "Lebenserwartung",
+    "note": "ⓘ  Jede Zigarette kostet ~5 Min Lebenserwartung"
+  },
+  "triggers": {
+    "stress": "Stress",
+    "ennui": "Langeweile",
+    "cafe": "Kaffee / Pause",
+    "repas": "Nach dem Essen",
+    "social": "Geselligkeit",
+    "alcool": "Ausgehen / Alkohol",
+    "habitude": "Gewohnheit"
+  },
+  "raisonModal": {
+    "title": "Warum diese Zigarette?",
+    "subtitle": "Deine Auslöser zu verstehen hilft dir, ihnen zuvorzukommen",
+    "otherNote": "Andere (notieren)",
+    "createHabit": "Gewohnheit erstellen",
+    "skip": "Überspringen",
+    "backArrow": "← Zurück",
+    "notePlaceholder": "Z. B.: Streit am Telefon…",
+    "validate": "Bestätigen",
+    "createHint": "Diese Gewohnheit wird gespeichert: nächstes Mal genügt ein einziger Tipp.",
+    "createPlaceholder": "Z. B.: Mama hat mich genervt",
+    "createAndSelect": "Erstellen und auswählen"
+  },
+  "feedbackModal": {
+    "perfectTitle": "Rauchfreier Tag!",
+    "okTitle": "Gut gemacht!",
+    "exceededTitle": "Ziel überschritten",
+    "perfectSub": "0 Zigaretten heute",
+    "okSub": "Ziel heute eingehalten",
+    "exceededSub": "{{count}} Zig. · +{{diff}} zu viel",
+    "lifeGained": "gewonnene Lebenszeit",
+    "spent": "ausgegeben",
+    "streak": "Serie",
+    "goalLabel": "Ziel: {{goal}}",
+    "margin": "{{pct}}% Spielraum",
+    "lifePreserved": "bewahrte Lebenszeit",
+    "tooMuch": "+{{exces}} zu viel",
+    "smokedToday_one": "{{count}} Zigarette heute geraucht",
+    "smokedToday_other": "{{count}} Zigaretten heute geraucht",
+    "lifeLost": "Lebenszeit",
+    "message": "Jeder Tag ist eine neue Chance.\nMorgen schaffst du es. 💪",
+    "modifyGoal": "Ziel ändern",
+    "btnPerfect": "Super, danke!",
+    "btnOk": "Notiert!",
+    "btnExceeded": "Verstanden!"
+  }
+}

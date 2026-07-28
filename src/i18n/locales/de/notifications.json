@@ -1,0 +1,56 @@
+{
+  "screen": {
+    "headerTitle": "Benachrichtigungen",
+    "subtitle": "Wähle, wie oft am Tag die App dich fragt, ob du geraucht hast.",
+    "countCard": {
+      "title": "Anzahl der Benachrichtigungen pro Tag",
+      "unitLabel": "Benachrichtigungen pro Tag",
+      "infoText": "Wir fragen dich bis zu {{count}} Mal am Tag, ob du geraucht hast."
+    },
+    "distributionCard": {
+      "title": "Automatische Verteilung",
+      "sub": "Die Benachrichtigungen werden automatisch und gleichmäßig über den Tag verteilt.",
+      "previewTitle": "Vorschau der Uhrzeiten",
+      "previewSub": "Die Uhrzeiten passen sich automatisch an deine Einstellungen an."
+    },
+    "tipLabel": "Tipp",
+    "tips": {
+      "1": "Eine Benachrichtigung pro Tag reicht aus, um mit der Verfolgung zu beginnen.",
+      "2": "Morgens und abends: das Minimum für eine effektive Verfolgung.",
+      "3": "3 Erinnerungen pro Tag für eine ausgewogene Verfolgung.",
+      "4": "4 Erinnerungen: ideal für die ersten Wochen.",
+      "5": "5 Erinnerungen halten dich den ganzen Tag über bewusst für deinen Konsum.",
+      "6": "6 Benachrichtigungen pro Tag sind ideal, um motiviert zu bleiben, ohne gestört zu werden."
+    },
+    "saveButton": "Speichern",
+    "rows": {
+      "customizeTitle": "Uhrzeiten anpassen",
+      "customizeSub": "Bestimmte Uhrzeiten wählen",
+      "disableTitle": "Benachrichtigungen deaktivieren",
+      "disableSub": "Keine Erinnerungen mehr erhalten"
+    },
+    "alerts": {
+      "permissionDeniedTitle": "Berechtigung verweigert",
+      "permissionDeniedBody": "Aktiviere Benachrichtigungen in den iOS-Einstellungen, um Erinnerungen zu erhalten.",
+      "savedTitle": "Gespeichert",
+      "savedBody_one": "{{count}} Benachrichtigung pro Tag geplant.",
+      "savedBody_other": "{{count}} Benachrichtigungen pro Tag geplant.",
+      "disableConfirmTitle": "Benachrichtigungen deaktivieren",
+      "disableConfirmBody": "Du erhältst keine Erinnerungen mehr, um deine Zigaretten einzutragen.",
+      "disableButton": "Deaktivieren"
+    },
+    "messages": {
+      "morning": { "title": "☀️ Neuer Tag, neuer Anfang", "body": "Heute kannst du es besser machen als gestern. Trage deine Zigaretten ein." },
+      "afternoon": { "title": "🚬 Wie läuft's heute?", "body": "Denk daran, deine Zigaretten einzutragen. Jede Zahl zählt." },
+      "evening": { "title": "📊 Deine Tagesbilanz", "body": "Wie viele hast du heute geraucht? Trage es vor dem Schlafengehen ein." },
+      "encouragement": { "title": "💪 Hältst du durch?", "body": "Eine kurze Erinnerung, deine Zigaretten einzutragen." },
+      "midday": { "title": "⏰ Erinnerung zur Mittagszeit", "body": "Nimm dir 10 Sekunden, um deine Zigaretten einzutragen." },
+      "night": { "title": "🌙 Tagesende", "body": "Letzte Chance, deinen heutigen Konsum einzutragen." }
+    }
+  },
+  "scheduled": {
+    "morning": { "title": "☀️ Neuer Tag, neuer Anfang", "body": "Heute kannst du es besser machen als gestern. Trage deine Zigaretten heute Abend ein." },
+    "noon": { "title": "🚬 Wie läuft's heute?", "body": "Denk daran, deine Zigaretten einzutragen. Jede Zahl zählt." },
+    "evening": { "title": "📊 Deine Tagesbilanz", "body": "Wie viele hast du heute geraucht? Trage es vor dem Schlafengehen ein." }
+  }
+}

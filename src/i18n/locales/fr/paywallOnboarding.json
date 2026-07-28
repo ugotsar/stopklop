@@ -1,0 +1,40 @@
+{
+  "header": {
+    "title": "Commencez votre\nparcours sans tabac",
+    "subtitle": "Accédez à toutes les fonctionnalités\npour maximiser vos chances de réussite."
+  },
+  "features": [
+    "Suivi quotidien personnalisé",
+    "Calcul des économies en temps réel",
+    "Conseils et défis quotidiens",
+    "Statistiques détaillées de santé"
+  ],
+  "plans": {
+    "annual": {
+      "label": "Annuel",
+      "price": "49,99 €",
+      "pricePerMonth": "4,17 € / mois",
+      "badge": "MEILLEURE OFFRE",
+      "trial": "7 jours gratuits"
+    },
+    "monthly": {
+      "label": "Mensuel",
+      "price": "9,99 €",
+      "pricePerMonth": "9,99 € / mois",
+      "trial": "3 jours gratuits"
+    }
+  },
+  "ctaButton": "Commencer mon essai →",
+  "skipButton": "Continuer sans abonnement",
+  "restoreButton": "Restaurer mes achats",
+  "restoringLabel": "Restauration…",
+  "restoreSuccessTitle": "Achats restaurés",
+  "restoreSuccessBody": "Ton abonnement a bien été retrouvé.",
+  "restoreNoneTitle": "Aucun achat",
+  "restoreNoneBody": "Aucun abonnement actif n'a été trouvé sur ce compte.",
+  "restoreErrorTitle": "Erreur",
+  "restoreErrorBody": "La restauration a échoué. Réessaie plus tard.",
+  "legalDisclosure": "Abonnement à renouvellement automatique. Le paiement est prélevé à la confirmation de l'achat. L'abonnement se renouvelle sauf annulation au moins 24 h avant la fin de la période en cours, gérable dans les réglages de ton compte.",
+  "termsLink": "Conditions d'utilisation",
+  "privacyLink": "Politique de confidentialité"
+}

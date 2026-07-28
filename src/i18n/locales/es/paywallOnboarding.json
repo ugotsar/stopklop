@@ -1,0 +1,40 @@
+{
+  "header": {
+    "title": "Comienza tu\ncamino sin tabaco",
+    "subtitle": "Accede a todas las funciones\npara maximizar tus posibilidades de éxito."
+  },
+  "features": [
+    "Seguimiento diario personalizado",
+    "Cálculo de ahorros en tiempo real",
+    "Consejos y retos diarios",
+    "Estadísticas de salud detalladas"
+  ],
+  "plans": {
+    "annual": {
+      "label": "Anual",
+      "price": "49,99 €",
+      "pricePerMonth": "4,17 € / mes",
+      "badge": "MEJOR OFERTA",
+      "trial": "7 días gratis"
+    },
+    "monthly": {
+      "label": "Mensual",
+      "price": "9,99 €",
+      "pricePerMonth": "9,99 € / mes",
+      "trial": "3 días gratis"
+    }
+  },
+  "ctaButton": "Comenzar mi prueba →",
+  "skipButton": "Continuar sin suscripción",
+  "restoreButton": "Restaurar mis compras",
+  "restoringLabel": "Restaurando…",
+  "restoreSuccessTitle": "Compras restauradas",
+  "restoreSuccessBody": "Tu suscripción se ha encontrado correctamente.",
+  "restoreNoneTitle": "Ninguna compra encontrada",
+  "restoreNoneBody": "No se encontró ninguna suscripción activa en esta cuenta.",
+  "restoreErrorTitle": "Error",
+  "restoreErrorBody": "La restauración ha fallado. Inténtalo de nuevo más tarde.",
+  "legalDisclosure": "Suscripción de renovación automática. El pago se realiza al confirmar la compra. La suscripción se renueva automáticamente salvo cancelación al menos 24 horas antes del final del período actual, gestionable en los ajustes de tu cuenta.",
+  "termsLink": "Términos de uso",
+  "privacyLink": "Política de privacidad"
+}

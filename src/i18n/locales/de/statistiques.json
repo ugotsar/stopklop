@@ -1,0 +1,73 @@
+{
+  "tabs": {
+    "day": "Tag",
+    "week": "Woche",
+    "month": "Monat",
+    "period": "Zeitraum"
+  },
+  "vsBeforeApp": "vs. vor der App",
+  "dates": {
+    "today": "Heute",
+    "yesterday": "Gestern"
+  },
+  "week": {
+    "rangeLabel": "Vom {{start}} bis {{end}}"
+  },
+  "tapHint": {
+    "day": "Tippe auf einen Tag, um die stündliche Übersicht zu sehen",
+    "month": "Tippe auf einen Monat, um die tägliche Übersicht zu sehen"
+  },
+  "month": {
+    "comparison": "{{month}}: {{count}} Zig. · {{arrow}} {{percent}}% diesen Monat"
+  },
+  "range": {
+    "from": "Von",
+    "to": "Bis"
+  },
+  "smokedCard": {
+    "title": "Gerauchte Zigaretten",
+    "unit": "Zigaretten",
+    "vsBeforeAppValue": "{{arrow}} {{percent}} %",
+    "hoursTitle": "Uhrzeiten der Zigaretten",
+    "hoursNotRecorded": "Für diesen Tag keine Uhrzeiten erfasst.",
+    "noCigarettesToday": "An diesem Tag keine Zigarette 🎉",
+    "withoutHourCount": "+ {{count}} ohne erfasste Uhrzeit"
+  },
+  "moneyCard": {
+    "title": "Geld",
+    "spentReal": "ausgegeben (tatsächlich)",
+    "net": "netto",
+    "calculatedOn_one": "Berechnet über {{count}} erfassten Tag",
+    "calculatedOn_other": "Berechnet über {{count}} erfasste Tage",
+    "missingDays_one": " — {{count}} nicht erfasst",
+    "missingDays_other": " — {{count}} nicht erfasst"
+  },
+  "lifeCard": {
+    "title": "Gewonnenes Leben",
+    "rate": "5 Min / nicht gerauchte Zigarette"
+  },
+  "progressionCard": {
+    "title": "Entwicklung",
+    "subtitle": "Konsum",
+    "streak": "🔥 {{count}} T im Ziel"
+  },
+  "summaryCard": {
+    "title": "Zusammenfassung",
+    "smokedCount_one": "{{count}} Zigarette geraucht",
+    "smokedCount_other": "{{count}} Zigaretten geraucht",
+    "onDaysRecorded_one": "an {{count}} erfasstem Tag",
+    "onDaysRecorded_other": "an {{count}} erfassten Tagen",
+    "missingParen_one": "({{count}} nicht erfasst)",
+    "missingParen_other": "({{count}} nicht erfasst)",
+    "average": "Durchschnitt: {{avg}} Zig. / Tag — Ziel: {{count}} / Tag",
+    "overPlan_one": "⚠️ {{count}} Zigarette über deinem Plan für diesen Zeitraum",
+    "overPlan_other": "⚠️ {{count}} Zigaretten über deinem Plan für diesen Zeitraum",
+    "underPlan_one": "✅ Plan eingehalten: {{count}} Zigarette unter dem Ziel",
+    "underPlan_other": "✅ Plan eingehalten: {{count}} Zigaretten unter dem Ziel",
+    "moneyPositive": "+{{amount}} € vs. vor der App",
+    "moneyNegative": "{{amount}} € vs. vor der App (du rauchst mehr als vorher)",
+    "messagePositive": "↓ {{percent}}% vs. vor der App 💚",
+    "messageNegative": "↑ {{percent}}% vs. vor der App — halt durch 💪",
+    "messageNeutral": "Jeder erfasste Tag zählt."
+  }
+}

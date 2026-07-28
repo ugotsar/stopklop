@@ -3,33 +3,35 @@ import {
   View, Text, StyleSheet, SafeAreaView, ScrollView,
   TouchableOpacity, TextInput, Alert, Linking,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { colors, spacing, font, radius } from '../theme';
 
 const SUPPORT_EMAIL = 'ugosimonmailpro34@gmail.com';
 
 const SUJETS = [
-  { icon: '👤', titre: 'Compte et profil',          desc: 'Problème de compte, connexion, données...' },
-  { icon: '📊', titre: 'Suivi et statistiques',     desc: 'Données, objectifs, projections...' },
-  { icon: '€',  titre: 'Paiements et abonnements',  desc: 'Facturation, abonnement, remboursement...' },
-  { icon: '❓', titre: "Utilisation de l'app",      desc: 'Fonctionnalités, fonctionnement, bugs...' },
-  { icon: '💡', titre: 'Suggestion',                desc: 'Partagez vos idées pour améliorer Stopklop' },
+  { icon: '👤', key: 'account' },
+  { icon: '📊', key: 'tracking' },
+  { icon: '€',  key: 'payments' },
+  { icon: '❓', key: 'usage' },
+  { icon: '💡', key: 'suggestion' },
 ];
 
 export default function NousContacterScreen({ navigation }) {
+  const { t } = useTranslation('nousContacter');
   const [sujet,   setSujet]   = useState(null);
   const [message, setMessage] = useState('');
 
   async function handleEnvoyer() {
     if (sujet == null) {
-      Alert.alert('Sujet requis', 'Veuillez choisir un sujet avant d\'envoyer.');
+      Alert.alert(t('alerts.subjectRequiredTitle'), t('alerts.subjectRequiredBody'));
       return;
     }
     if (message.trim().length < 10) {
-      Alert.alert('Message trop court', 'Décrivez votre demande en quelques mots.');
+      Alert.alert(t('alerts.messageTooShortTitle'), t('alerts.messageTooShortBody'));
       return;
     }
     // Ouvre l'app mail de l'utilisateur avec le message pré-rempli
-    const sujetTitre = SUJETS[sujet]?.titre ?? 'Demande';
+    const sujetTitre = t(`subjects.${SUJETS[sujet]?.key}.title`, { defaultValue: t('subjectFallback') });
     const url = `mailto:${SUPPORT_EMAIL}`
       + `?subject=${encodeURIComponent(`[Stopklop] ${sujetTitre}`)}`
       + `&body=${encodeURIComponent(message.trim())}`;
@@ -38,7 +40,7 @@ export default function NousContacterScreen({ navigation }) {
       await Linking.openURL(url);
       navigation.goBack();
     } else {
-      Alert.alert('Impossible d\'ouvrir votre app mail', `Écrivez-nous directement à :\n${SUPPORT_EMAIL}`);
+      Alert.alert(t('alerts.cantOpenMailTitle'), t('alerts.cantOpenMailBody', { email: SUPPORT_EMAIL }));
     }
   }
 
@@ -50,7 +52,7 @@ export default function NousContacterScreen({ navigation }) {
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
           <Text style={styles.backText}>←</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Nous contacter</Text>
+        <Text style={styles.headerTitle}>{t('header.title')}</Text>
         <View style={{ width: 40 }} />
       </View>
 
@@ -62,18 +64,17 @@ export default function NousContacterScreen({ navigation }) {
             <Text style={{ fontSize: 32 }}>💬</Text>
           </View>
           <View style={{ flex: 1 }}>
-            <Text style={styles.heroTitle}>Nous sommes là pour vous</Text>
+            <Text style={styles.heroTitle}>{t('hero.title')}</Text>
             <Text style={styles.heroSub}>
-              Une question, un problème ou une suggestion ?{'\n'}
-              Notre équipe vous répondra dans les{'\n'}plus brefs délais.
+              {t('hero.subtitle')}
             </Text>
           </View>
         </View>
 
         {/* Choisir un sujet */}
-        <Text style={styles.sectionTitle}>Choisissez un sujet</Text>
+        <Text style={styles.sectionTitle}>{t('sections.subjectTitle')}</Text>
         <View style={styles.listCard}>
-          {SUJETS.map((s, i) => (
+          {SUJETS.map((sub, i) => (
             <TouchableOpacity
               key={i}
               style={[
@@ -84,11 +85,11 @@ export default function NousContacterScreen({ navigation }) {
               onPress={() => setSujet(i)}
             >
               <View style={[styles.sujetIconCircle, sujet === i && { backgroundColor: colors.primary }]}>
-                <Text style={{ fontSize: 18, color: sujet === i ? '#fff' : colors.primary }}>{s.icon}</Text>
+                <Text style={{ fontSize: 18, color: sujet === i ? '#fff' : colors.primary }}>{sub.icon}</Text>
               </View>
               <View style={{ flex: 1 }}>
-                <Text style={styles.sujetTitre}>{s.titre}</Text>
-                <Text style={styles.sujetDesc}>{s.desc}</Text>
+                <Text style={styles.sujetTitre}>{t(`subjects.${sub.key}.title`)}</Text>
+                <Text style={styles.sujetDesc}>{t(`subjects.${sub.key}.desc`)}</Text>
               </View>
               <Text style={styles.chevron}>›</Text>
             </TouchableOpacity>
@@ -96,18 +97,18 @@ export default function NousContacterScreen({ navigation }) {
         </View>
 
         {/* Zone de message */}
-        <Text style={styles.sectionTitle}>Envoyez-nous un message</Text>
+        <Text style={styles.sectionTitle}>{t('sections.messageTitle')}</Text>
         <View style={styles.textAreaCard}>
           <TextInput
             style={styles.textArea}
-            placeholder="Décrivez votre demande ici..."
+            placeholder={t('messagePlaceholder')}
             placeholderTextColor={colors.gray}
             multiline
             value={message}
             onChangeText={setMessage}
             maxLength={1000}
           />
-          <Text style={styles.charCount}>{message.length}/1000</Text>
+          <Text style={styles.charCount}>{t('charCount', { count: message.length })}</Text>
         </View>
 
         {/* Autres moyens */}
@@ -116,18 +117,18 @@ export default function NousContacterScreen({ navigation }) {
             <Text style={{ fontSize: 22 }}>✉️</Text>
           </View>
           <View style={{ flex: 1 }}>
-            <Text style={styles.autresTitre}>Autres moyens de nous joindre</Text>
-            <Text style={styles.autresText}>Email : <Text style={styles.autresLink}>support@stopklop.app</Text></Text>
-            <Text style={styles.autresText}>Délai de réponse : sous <Text style={styles.autresLink}>24 à 48h ouvrées</Text></Text>
+            <Text style={styles.autresTitre}>{t('otherWays.title')}</Text>
+            <Text style={styles.autresText}>{t('otherWays.emailLabel')} <Text style={styles.autresLink}>support@stopklop.app</Text></Text>
+            <Text style={styles.autresText}>{t('otherWays.responseTimeLabel')} <Text style={styles.autresLink}>{t('otherWays.responseTimeValue')}</Text></Text>
           </View>
         </View>
 
         {/* Bouton */}
         <TouchableOpacity style={styles.sendBtn} onPress={handleEnvoyer}>
-          <Text style={styles.sendBtnText}>✈  Envoyer le message</Text>
+          <Text style={styles.sendBtnText}>{t('send.button')}</Text>
         </TouchableOpacity>
 
-        <Text style={styles.footerNote}>🔒  Vos données sont traitées en toute confidentialité.</Text>
+        <Text style={styles.footerNote}>{t('footer.note')}</Text>
 
       </ScrollView>
     </SafeAreaView>

@@ -2,22 +2,30 @@ import React, { useState } from 'react';
 import {
   View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { useUser } from '../context/UserContext';
 import { colors, spacing, font, radius } from '../theme';
 
-const MONNAIES = [
-  { code: 'EUR', label: 'Euro (€)',            flag: '🇪🇺', exemple: null,        recommande: true },
-  { code: 'USD', label: 'Dollar américain ($)', flag: '🇺🇸', exemple: '11,00 $' },
-  { code: 'GBP', label: 'Livre sterling (£)',   flag: '🇬🇧', exemple: '9,50 £'  },
-  { code: 'CHF', label: 'Franc suisse (CHF)',   flag: '🇨🇭', exemple: '10,30 CHF'},
-  { code: 'CAD', label: 'Dollar canadien (C$)', flag: '🇨🇦', exemple: '14,80 C$'},
-  { code: 'AUD', label: 'Dollar australien (A$)',flag: '🇦🇺', exemple: '16,90 A$'},
-  { code: 'OTHER', label: 'Autre monnaie',      flag: '···', exemple: 'Choisir une autre devise' },
+const MONNAIES_META = [
+  { code: 'EUR',   flag: '🇪🇺', recommande: true },
+  { code: 'USD',   flag: '🇺🇸' },
+  { code: 'GBP',   flag: '🇬🇧' },
+  { code: 'CHF',   flag: '🇨🇭' },
+  { code: 'CAD',   flag: '🇨🇦' },
+  { code: 'AUD',   flag: '🇦🇺' },
+  { code: 'OTHER', flag: '···' },
 ];
 
 export default function UniteMonnaieScreen({ navigation }) {
+  const { t } = useTranslation('uniteMonnaie');
   const { profile, updateProfile } = useUser();
   const [selected, setSelected] = useState(profile?.monnaie ?? 'EUR');
+
+  const MONNAIES = MONNAIES_META.map(m => ({
+    ...m,
+    label: t(`currencies.${m.code}.label`),
+    exemple: m.code === 'EUR' ? null : t(`currencies.${m.code}.example`),
+  }));
 
   async function handleSave() {
     await updateProfile({ monnaie: selected });
@@ -35,14 +43,14 @@ export default function UniteMonnaieScreen({ navigation }) {
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
           <Text style={styles.backText}>←</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Unité de monnaie</Text>
+        <Text style={styles.headerTitle}>{t('headerTitle')}</Text>
         <View style={{ width: 40 }}><Text style={{ textAlign: 'right', fontSize: 18 }}>ⓘ</Text></View>
       </View>
 
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
 
         <Text style={styles.intro}>
-          Sélectionnez la monnaie utilisée pour{'\n'}vos dépenses et vos projections.
+          {t('intro')}
         </Text>
 
         {/* Monnaie actuelle */}
@@ -51,17 +59,17 @@ export default function UniteMonnaieScreen({ navigation }) {
             <Text style={styles.flagText}>💶</Text>
           </View>
           <View style={{ flex: 1 }}>
-            <Text style={styles.currentLabel}>Monnaie actuelle</Text>
+            <Text style={styles.currentLabel}>{t('currentLabel')}</Text>
             <Text style={styles.currentValue}>{currentMonnaie.label}</Text>
           </View>
           {currentMonnaie.recommande && (
             <View style={styles.recommandeBadge}>
-              <Text style={styles.recommandeText}>Recommandé</Text>
+              <Text style={styles.recommandeText}>{t('recommended')}</Text>
             </View>
           )}
         </View>
 
-        <Text style={styles.sectionTitle}>Choisir une monnaie</Text>
+        <Text style={styles.sectionTitle}>{t('sectionTitle')}</Text>
 
         {/* Liste */}
         <View style={styles.listCard}>
@@ -97,27 +105,27 @@ export default function UniteMonnaieScreen({ navigation }) {
 
         {/* Aperçu */}
         <View style={styles.apercuCard}>
-          <Text style={styles.apercuTitle}>Aperçu</Text>
+          <Text style={styles.apercuTitle}>{t('preview.title')}</Text>
           <View style={styles.apercuRow}>
             <View style={[styles.flagCircle, { backgroundColor: colors.primaryLight, width: 40, height: 40 }]}>
               <Text style={{ fontSize: 20 }}>💰</Text>
             </View>
             <Text style={styles.apercuText}>
-              Vos données seront automatiquement{'\n'}mises à jour avec la nouvelle monnaie.
+              {t('preview.text')}
             </Text>
             <View style={{ alignItems: 'flex-end' }}>
-              <Text style={styles.apercuLabel}>Dépense actuelle</Text>
+              <Text style={styles.apercuLabel}>{t('preview.currentSpendingLabel')}</Text>
               <Text style={styles.apercuValue}>{prixParJour} €</Text>
-              <Text style={styles.apercuSub}>par jour</Text>
+              <Text style={styles.apercuSub}>{t('common:perDay')}</Text>
             </View>
           </View>
         </View>
 
         {/* Bouton */}
         <TouchableOpacity style={styles.saveBtn} onPress={handleSave}>
-          <Text style={styles.saveBtnText}>Enregistrer la monnaie</Text>
+          <Text style={styles.saveBtnText}>{t('saveButton')}</Text>
         </TouchableOpacity>
-        <Text style={styles.footerNote}>ⓘ  Ce paramètre peut être modifié à tout moment.</Text>
+        <Text style={styles.footerNote}>ⓘ  {t('footerNote')}</Text>
 
       </ScrollView>
     </SafeAreaView>

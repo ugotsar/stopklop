@@ -1,0 +1,101 @@
+{
+  "header": {
+    "greeting": "Hallo 👋",
+    "defaultName": "Champion"
+  },
+  "hero": {
+    "label": "Rauchfreie Zeit",
+    "sinceLastCig": "seit deiner letzten Zigarette",
+    "sinceStart": "seit dem Start ({{duration}})"
+  },
+  "today": {
+    "sectionTitle": "Heute",
+    "subtitle": "Zigaretten\nheute",
+    "goal": "Ziel: max. {{count}}",
+    "validateButton": "✓  Tag bestätigen",
+    "smokedLink": "Ich habe heute geraucht  ›"
+  },
+  "perfectDayModal": {
+    "title": "Rauchfreier Tag!",
+    "subtitle": "0 Zigaretten heute",
+    "lifeRegained": "gewonnenes Leben",
+    "spent": "ausgegeben",
+    "streak": "Serie",
+    "closeButton": "Super, danke!"
+  },
+  "goalModal": {
+    "successTitle": "Gut gemacht!",
+    "successSubtitle": "Ziel heute erreicht",
+    "exceededTitle": "Ziel überschritten",
+    "exceededSubtitle": "{{count}} Zig. · +{{exceeded}} zu viel",
+    "goalLabel": "Ziel: {{count}}",
+    "marginLabel": "{{percent}}% Spielraum",
+    "spent": "ausgegeben",
+    "lifePreserved": "Leben bewahrt",
+    "lifeLost": "Lebenszeit",
+    "successButton": "Notiert!",
+    "cigsSmokedToday_one": "{{count}} Zigarette heute geraucht",
+    "cigsSmokedToday_other": "{{count}} Zigaretten heute geraucht",
+    "tooMany": "+{{count}} zu viel",
+    "encouragement": "Jeder Tag ist eine neue Chance.\nMorgen schaffst du es. 💪",
+    "exceededButton": "Verstanden!"
+  },
+  "triggers": {
+    "stress": "Stress",
+    "ennui": "Langeweile",
+    "cafe": "Kaffee / Pause",
+    "repas": "Nach dem Essen",
+    "social": "Umfeld",
+    "alcool": "Feier / Alkohol",
+    "habitude": "Gewohnheit",
+    "autre": "Sonstiges"
+  },
+  "envieModal": {
+    "pickTitle": "Lust auf eine Zigarette?",
+    "pickSubtitle": "Was löst das aus?",
+    "noteTitle": "Erzähl uns mehr",
+    "noteSubtitle": "Wie fühlst du dich? Warum dieses Verlangen?",
+    "notePlaceholder": "Z. B.: Ich habe gerade ein stressiges Telefonat beendet…",
+    "continueButton": "Weiter",
+    "resultTitle": "Notiert!",
+    "resultSubtitle": "Verlangen in deinen Gewohnheiten gespeichert",
+    "conseilPrefix": "Ein Verlangen dauert im Durchschnitt ",
+    "conseilBold": "3 bis 5 Minuten",
+    "conseilSuffix": ".\n\n💧 Trink ein Glas Wasser\n🫁 Atme 5-mal tief durch\n🚶 Wechsle den Raum oder die Aktivität\n\nEs geht vorbei — halt durch!",
+    "keptButton": "Ich habe durchgehalten 💪",
+    "smokedButton": "Ich habe geraucht  🚬  (+1 Zigarette)"
+  },
+  "motivation": {
+    "sectionTitle": "✨  Motivation des Tages",
+    "quotes": [
+      "Jede rauchfreie Stunde ist ein Sieg für deine Gesundheit.",
+      "Du gibst nichts auf — du gewinnst ein besseres Leben.",
+      "Die Kraft, die du heute zeigst, baut deine Gesundheit von morgen auf.",
+      "Ein Tag nach dem anderen. Du schaffst das! 💪",
+      "Dein Körper dankt dir für jede rauchfreie Minute."
+    ]
+  },
+  "stats": {
+    "aboveGoal": "+{{count}} zu viel",
+    "belowGoal": "{{count}} Spielraum",
+    "vsGoalLabel": "vs. Tagesziel ({{count}})",
+    "moneyPreserved": "Gespartes Geld\nvs. dein Plan",
+    "moneyOver": "Mehrkosten\nvs. dein Plan",
+    "minutesVsPlan": "{{sign}}{{count}} Min",
+    "lifePreservedVsPlan": "Leben bewahrt vs. Plan\n(5 Min / Zigarette)",
+    "lifeLostVsPlan": "Leben verloren vs. Plan\n(5 Min / Zigarette)",
+    "progressionValue": "{{sign}}{{count}}%",
+    "progressionLabel": "Entwicklung\nvs. vor der App"
+  },
+  "envieCard": {
+    "title": "Gerade Lust auf eine Zigarette?",
+    "subtitle": "Erfasse es: Wir analysieren deine Auslöser, damit du ihnen zuvorkommen kannst.",
+    "button": "Ich habe Lust auf eine Zigarette",
+    "count_one": "{{count}} Verlangen erfasst — Analyse im Tab „Plan” verfügbar",
+    "count_other": "{{count}} Verlangen erfasst — Analyse im Tab „Plan” verfügbar"
+  },
+  "devButtons": {
+    "loadDemo": "🎬 Demo laden (5 Wochen Nutzung)",
+    "resetOnboarding": "↩ Onboarding neu starten"
+  }
+}

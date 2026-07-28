@@ -1,0 +1,23 @@
+{
+  "headerTitle": "Unité de monnaie",
+  "intro": "Sélectionnez la monnaie utilisée pour\nvos dépenses et vos projections.",
+  "currentLabel": "Monnaie actuelle",
+  "recommended": "Recommandé",
+  "sectionTitle": "Choisir une monnaie",
+  "currencies": {
+    "EUR": { "label": "Euro (€)" },
+    "USD": { "label": "Dollar américain ($)", "example": "11,00 $" },
+    "GBP": { "label": "Livre sterling (£)", "example": "9,50 £" },
+    "CHF": { "label": "Franc suisse (CHF)", "example": "10,30 CHF" },
+    "CAD": { "label": "Dollar canadien (C$)", "example": "14,80 C$" },
+    "AUD": { "label": "Dollar australien (A$)", "example": "16,90 A$" },
+    "OTHER": { "label": "Autre monnaie", "example": "Choisir une autre devise" }
+  },
+  "preview": {
+    "title": "Aperçu",
+    "text": "Vos données seront automatiquement\nmises à jour avec la nouvelle monnaie.",
+    "currentSpendingLabel": "Dépense actuelle"
+  },
+  "saveButton": "Enregistrer la monnaie",
+  "footerNote": "Ce paramètre peut être modifié à tout moment."
+}

@@ -1,0 +1,38 @@
+{
+  "header": { "title": "Centro de ayuda" },
+  "intro": "Preguntas frecuentes",
+  "faq": {
+    "reductionPlan": {
+      "question": "¿Cómo funciona el plan de reducción progresiva?",
+      "answer": "Eliges un punto de partida (tu consumo actual) y un ritmo, por ejemplo 2 cigarrillos menos por semana. Cada semana, tu objetivo diario baja automáticamente hasta llegar a 0. Puedes cambiar el ritmo en cualquier momento desde la pestaña Plan."
+    },
+    "cravingButton": {
+      "question": "¿Para qué sirve el botón «Tengo ganas de fumar»?",
+      "answer": "Registra el momento y la causa de tus ganas (estrés, café, salida nocturna…). La aplicación analiza después tus horas críticas, tus días difíciles y tus principales desencadenantes en la pestaña Plan, para ayudarte a anticiparlos."
+    },
+    "lifeGained": {
+      "question": "¿Qué significa «Vida recuperada»?",
+      "answer": "Los estudios médicos estiman que un cigarrillo reduce la esperanza de vida en unos 5 minutos. Cada cigarrillo no fumado respecto a tu consumo anterior te «devuelve» por tanto 5 minutos de vida."
+    },
+    "moneySaved": {
+      "question": "¿Cómo se calcula el dinero ahorrado?",
+      "answer": "Se compara tu consumo actual con el de antes de la aplicación, multiplicado por el precio de un cigarrillo (precio del paquete ÷ número de cigarrillos). Puedes ajustar estos valores en Perfil → Ajustes de consumo."
+    },
+    "exceededGoal": {
+      "question": "He superado mi objetivo, ¿qué pasa ahora?",
+      "answer": "¡Nada grave! El círculo se pone rojo para indicártelo, pero cada día es un nuevo comienzo. Lo importante es la tendencia a largo plazo, no un día aislado."
+    },
+    "dataSaved": {
+      "question": "¿Se guardan mis datos?",
+      "answer": "Sí. Tus datos se almacenan localmente en tu teléfono y se sincronizan en la nube. Los encontrarás de nuevo si cambias de dispositivo."
+    },
+    "editGoal": {
+      "question": "¿Cómo modifico mi objetivo?",
+      "answer": "Ve a la pestaña Plan → «Modificar el plan», o a Perfil → «Mi objetivo actual». Puedes elegir dejarlo por completo, la reducción progresiva o un objetivo libre."
+    }
+  },
+  "contact": {
+    "title": "¿No encontraste tu respuesta?",
+    "button": "Contáctanos"
+  }
+}

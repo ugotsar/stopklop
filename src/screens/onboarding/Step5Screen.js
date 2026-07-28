@@ -3,13 +3,11 @@ import {
   View, Text, StyleSheet, SafeAreaView, ScrollView,
   TouchableOpacity, TextInput,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { colors, spacing, font, radius } from '../../theme';
 import { jouerSon } from '../../services/sounds';
 import StepHeader from '../../components/StepHeader';
 import PrimaryButton from '../../components/PrimaryButton';
-
-const MONTHS_FR = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
-const DAYS_FR = ['L','M','M','J','V','S','D'];
 
 function getDaysInMonth(year, month) {
   return new Date(year, month + 1, 0).getDate();
@@ -21,6 +19,9 @@ function getFirstDayOfWeek(year, month) {
 }
 
 export default function Step5Screen({ navigation, route }) {
+  const { t } = useTranslation('onboardingLegacy');
+  const MONTHS = t('step5.months', { returnObjects: true });
+  const DAYS = t('step5.daysShort', { returnObjects: true });
   const today = new Date();
   const [viewYear, setViewYear] = useState(today.getFullYear());
   const [viewMonth, setViewMonth] = useState(today.getMonth());
@@ -57,22 +58,22 @@ export default function Step5Screen({ navigation, route }) {
     <SafeAreaView style={styles.safe}>
       <StepHeader step={5} onBack={() => navigation.goBack()} />
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-        <Text style={styles.title}>Quelle est votre date{"\n"}d'arrêt souhaitée ?</Text>
-        <Text style={styles.subtitle}>Choisissez le jour où vous voulez{"\n"}arrêter de fumer.</Text>
+        <Text style={styles.title}>{t('step5.title')}</Text>
+        <Text style={styles.subtitle}>{t('step5.subtitle')}</Text>
 
         <View style={styles.calendar}>
           <View style={styles.calHeader}>
             <TouchableOpacity onPress={prevMonth} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
               <Text style={styles.calArrow}>‹</Text>
             </TouchableOpacity>
-            <Text style={styles.calMonth}>{MONTHS_FR[viewMonth]} {viewYear}</Text>
+            <Text style={styles.calMonth}>{MONTHS[viewMonth]} {viewYear}</Text>
             <TouchableOpacity onPress={nextMonth} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
               <Text style={styles.calArrow}>›</Text>
             </TouchableOpacity>
           </View>
 
           <View style={styles.calDayNames}>
-            {DAYS_FR.map((d, i) => (
+            {DAYS.map((d, i) => (
               <Text key={i} style={styles.calDayName}>{d}</Text>
             ))}
           </View>
@@ -101,19 +102,19 @@ export default function Step5Screen({ navigation, route }) {
         </View>
 
         <View style={styles.dividerRow}>
-          <View style={styles.divider} /><Text style={styles.dividerText}>ou</Text><View style={styles.divider} />
+          <View style={styles.divider} /><Text style={styles.dividerText}>{t('shared.dividerOr')}</Text><View style={styles.divider} />
         </View>
 
         <View style={styles.freeCard}>
           <View style={styles.freeIconCircle}><Text>✏️</Text></View>
           <View style={styles.freeTextBlock}>
-            <Text style={styles.freeTitle}>Écrire ma propre date</Text>
-            <Text style={styles.freeDesc}>Saisissez la date à laquelle vous souhaitez arrêter.</Text>
+            <Text style={styles.freeTitle}>{t('step5.freeTitle')}</Text>
+            <Text style={styles.freeDesc}>{t('step5.freeDescription')}</Text>
           </View>
           <View style={styles.dateInputWrap}>
             <TextInput
               style={styles.dateInput}
-              placeholder="JJ / MM / AAAA"
+              placeholder={t('step5.datePlaceholder')}
               placeholderTextColor={colors.gray}
               value={freeDate}
               onChangeText={setFreeDate}
@@ -126,7 +127,7 @@ export default function Step5Screen({ navigation, route }) {
       </ScrollView>
 
       <View style={styles.bottom}>
-        <PrimaryButton title="Continuer  →" onPress={handleContinue} />
+        <PrimaryButton title={t('common:continue')} onPress={handleContinue} />
       </View>
     </SafeAreaView>
   );

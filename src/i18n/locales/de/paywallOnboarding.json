@@ -1,0 +1,40 @@
+{
+  "header": {
+    "title": "Beginne deine\nrauchfreie Reise",
+    "subtitle": "Erhalte Zugriff auf alle Funktionen,\num deine Erfolgschancen zu maximieren."
+  },
+  "features": [
+    "Personalisiertes tägliches Tracking",
+    "Berechnung der Ersparnisse in Echtzeit",
+    "Tägliche Tipps und Herausforderungen",
+    "Detaillierte Gesundheitsstatistiken"
+  ],
+  "plans": {
+    "annual": {
+      "label": "Jährlich",
+      "price": "49,99 €",
+      "pricePerMonth": "4,17 € / Monat",
+      "badge": "BESTES ANGEBOT",
+      "trial": "7 Tage kostenlos"
+    },
+    "monthly": {
+      "label": "Monatlich",
+      "price": "9,99 €",
+      "pricePerMonth": "9,99 € / Monat",
+      "trial": "3 Tage kostenlos"
+    }
+  },
+  "ctaButton": "Testphase starten →",
+  "skipButton": "Ohne Abonnement fortfahren",
+  "restoreButton": "Käufe wiederherstellen",
+  "restoringLabel": "Wiederherstellung…",
+  "restoreSuccessTitle": "Käufe wiederhergestellt",
+  "restoreSuccessBody": "Dein Abonnement wurde erfolgreich gefunden.",
+  "restoreNoneTitle": "Kein Kauf gefunden",
+  "restoreNoneBody": "Für dieses Konto wurde kein aktives Abonnement gefunden.",
+  "restoreErrorTitle": "Fehler",
+  "restoreErrorBody": "Die Wiederherstellung ist fehlgeschlagen. Versuche es später erneut.",
+  "legalDisclosure": "Abonnement mit automatischer Verlängerung. Die Zahlung wird bei Bestätigung des Kaufs abgebucht. Das Abonnement verlängert sich automatisch, sofern es nicht mindestens 24 Stunden vor Ende des aktuellen Zeitraums gekündigt wird; verwaltbar in den Kontoeinstellungen.",
+  "termsLink": "Nutzungsbedingungen",
+  "privacyLink": "Datenschutzrichtlinie"
+}

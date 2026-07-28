@@ -1,0 +1,143 @@
+{
+  "header": {
+    "title": "Quit Plan"
+  },
+  "labels": {
+    "perMonth": "per month",
+    "perYear": "per year",
+    "per10Years": "over 10 years"
+  },
+  "impact": {
+    "sectionTitle": "Your impact",
+    "gotIt": "Got it!",
+    "savings": {
+      "label": "Money saved",
+      "modalTitle": "Money saved",
+      "explanationIntro_one": "Before the app, you smoked {{consoAvant}} cigarettes a day. Your current goal is {{objectif}} a day: that's {{count}} cigarette avoided every day.",
+      "explanationIntro_other": "Before the app, you smoked {{consoAvant}} cigarettes a day. Your current goal is {{objectif}} a day: that's {{count}} cigarettes avoided every day.",
+      "explanationDetail": "\n\nEach cigarette costs €{{prixCig}} (pack price ÷ cigarettes per pack).\n{{count}} × €{{prixCig}} × 30 days = €{{ecoMois}} per month.",
+      "note": "You can adjust the pack price in Profile → Consumption settings."
+    },
+    "life": {
+      "label": "Life gained"
+    },
+    "lifeMonth": {
+      "modalTitle": "Life gained per month",
+      "explanation_one": "Medical studies estimate that one cigarette reduces life expectancy by about 5 minutes.\n\nBy avoiding {{count}} cigarette a day, you gain back {{minutes}} minutes of life every day, or about {{hours}}h per month.",
+      "explanation_other": "Medical studies estimate that one cigarette reduces life expectancy by about 5 minutes.\n\nBy avoiding {{count}} cigarettes a day, you gain back {{minutes}} minutes of life every day, or about {{hours}}h per month."
+    },
+    "lifeYear": {
+      "modalTitle": "Life gained per year",
+      "explanation_one": "Over a full year, the 5 minutes gained per cigarette avoided add up:\n\n{{count}} cigarette avoided × 5 min × 365 days = about {{days}} days of life expectancy gained every year.",
+      "explanation_other": "Over a full year, the 5 minutes gained per cigarette avoided add up:\n\n{{count}} cigarettes avoided × 5 min × 365 days = about {{days}} days of life expectancy gained every year.",
+      "moreLifeLabel": "more life",
+      "monthsValue": "≈ {{count}} months"
+    },
+    "health": {
+      "value": "Better",
+      "label": "health",
+      "sublabel": "every day",
+      "modalTitle": "Better health every day",
+      "explanation": "Your body starts repairing itself as soon as you cut back:\n\n• 20 min: blood pressure returns to normal\n• 8 h: carbon monoxide in your blood drops by half\n• 24 h: heart attack risk starts to decrease\n• 48 h: taste and smell improve\n• 72 h: breathing becomes easier\n• 1 year: stroke risk matches that of a non-smoker",
+      "note": "Find your detailed health progress on the dashboard."
+    }
+  },
+  "projection": {
+    "sectionTitle": "Yearly projection",
+    "herosSub": "will stay in your pocket in 1 year",
+    "herosHint": "by following your plan",
+    "beforeApp": {
+      "title": "Before the app",
+      "sub": "spent on cigarettes every year",
+      "value": "−{{amount}} / year"
+    },
+    "alreadySaved": {
+      "title": "Already saved",
+      "sub": "since you started",
+      "value": "+{{amount}}"
+    },
+    "planRespected": {
+      "title": "100% on plan",
+      "sub": "if you keep going",
+      "value": "+{{amount}} / year"
+    },
+    "equivalenceLabel": "What you could treat yourself to with those {{amount}}:",
+    "chartRemaining": "remain",
+    "chartInPocket": "in your pocket",
+    "chartSixMonths": "6 months",
+    "chartOneYear": "1 year"
+  },
+  "equivalence": {
+    "trip": "A big trip + 6 months of groceries",
+    "flight": "A long-haul flight for two, or 5 months of groceries",
+    "vacation": "A week's vacation, or 3 months of groceries",
+    "smartphone": "A brand-new smartphone, or 6 weekends away",
+    "restaurants": "12 restaurant dinners, or a romantic weekend",
+    "small": "Enough for a few real treats"
+  },
+  "habits": {
+    "sectionTitle": "Your habits analysis",
+    "analyzedCount_one": "{{count}} craving analyzed",
+    "analyzedCount_other": "{{count}} cravings analyzed",
+    "peakHour": { "desc": "Most critical time slot" },
+    "peakDay": { "desc": "Hardest day" },
+    "topTrigger": { "desc": "Top trigger" },
+    "pctOfCravings": "{{pct}}% of your cravings",
+    "breakdownTitle": "Breakdown by trigger",
+    "viewBreakdownDetail": "See the detail by trigger  ›",
+    "resistedCount": "💪 {{count}}",
+    "resistedLabel": "cravings resisted",
+    "smokedCount": "🚬 {{count}}",
+    "smokedLabel": "cravings smoked",
+    "recentCravingsTitle": "Recent cravings",
+    "viewFullJournal": "See the full journal, day by day  ›",
+    "smokedIssue": "🚬 smoked",
+    "resistedIssue": "💪 resisted",
+    "emptyTitle": "No data yet",
+    "emptyTextBefore": "When a craving to smoke hits, tap the",
+    "emptyTextButton": "\"I want to smoke\"",
+    "emptyTextAfter": " button on Home.\nWe'll analyze your hours, days and critical triggers to help you anticipate them."
+  },
+  "triggers": {
+    "stress": "Stress",
+    "ennui": "Boredom",
+    "cafe": "Coffee / break",
+    "repas": "After meals",
+    "social": "Social circle",
+    "alcool": "Evening out / alcohol",
+    "habitude": "Habit",
+    "autre": "Other"
+  },
+  "recommendedPlan": {
+    "sectionTitle": "My plan",
+    "rateTag_one": "−{{count}} cig / week",
+    "rateTag_other": "−{{count}} cig / week",
+    "progressiveTag": "Gradual reduction",
+    "dailyGoal": "Daily goal",
+    "cigarettesMax": "cigarettes max",
+    "today": "Today",
+    "weekLabel": "W+{{n}}",
+    "goalReached": "🎉 Goal of 0 cigarettes reached!",
+    "goalReachedSuffix": " Keep it up.",
+    "nextMilestonePrefix": "Next milestone: ",
+    "nextMilestoneCig_one": "{{count}} cigarette max",
+    "nextMilestoneCig_other": "{{count}} cigarettes max",
+    "nextMilestoneInLabel": " in ",
+    "nextMilestoneDays_one": "{{count}} day",
+    "nextMilestoneDays_other": "{{count}} days",
+    "zeroDatePrefix": "\n🏁 0 cigarettes expected around ",
+    "chooseProgressivePrefix": "Choose ",
+    "chooseProgressiveLabel": "\"Reduce gradually\"",
+    "chooseProgressiveSuffix": " to activate a week-by-week plan.",
+    "modifyButton": "Edit the plan"
+  },
+  "motivations": {
+    "title": "💚 Why you're doing this",
+    "health": "My health",
+    "family": "My family",
+    "appearance": "My appearance",
+    "money": "Saving money",
+    "breathing": "Breathing better",
+    "fitness": "Getting back in shape"
+  }
+}

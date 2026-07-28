@@ -1,0 +1,18 @@
+{
+  "tagline": "Quit smoking, one day at a time.",
+  "google": { "button": "Continue with Google" },
+  "apple": { "button": "Continue with Apple" },
+  "divider": { "or": "or" },
+  "guest": { "button": "Continue without an account" },
+  "errors": {
+    "google": "Google sign-in failed. Try again.",
+    "apple": "Apple sign-in failed. Try again.",
+    "guest": "Connection error. Try again."
+  },
+  "legal": {
+    "prefix": "By continuing, you accept our",
+    "terms": "Terms of Service",
+    "middle": "and our",
+    "privacy": "Privacy Policy"
+  }
+}

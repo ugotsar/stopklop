@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import {
   View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, TextInput,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { colors, spacing, font, radius } from '../../theme';
 import { jouerSon } from '../../services/sounds';
 import StepHeader from '../../components/StepHeader';
@@ -11,6 +12,7 @@ import FreeTextCard from '../../components/FreeTextCard';
 const OPTIONS = [8, 9, 10, 11, 12];
 
 export default function Step1Screen({ navigation, route }) {
+  const { t } = useTranslation('onboardingLegacy');
   const [selected, setSelected] = useState(10);
   const [freeValue, setFreeValue] = useState('');
 
@@ -24,8 +26,8 @@ export default function Step1Screen({ navigation, route }) {
     <SafeAreaView style={styles.safe}>
       <StepHeader step={1} onBack={() => navigation.goBack()} />
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-        <Text style={styles.title}>Combien de cigarettes{'\n'}fumez-vous par jour ?</Text>
-        <Text style={styles.subtitle}>Soyez honnête, cela nous aide{'\n'}à personnaliser votre expérience.</Text>
+        <Text style={styles.title}>{t('step1.title')}</Text>
+        <Text style={styles.subtitle}>{t('step1.subtitle')}</Text>
 
         <View style={styles.list}>
           {OPTIONS.map(n => {
@@ -38,7 +40,7 @@ export default function Step1Screen({ navigation, route }) {
                 activeOpacity={0.7}
               >
                 <Text style={[styles.cardNumber, isSelected && styles.cardNumberSelected]}>{n}</Text>
-                {isSelected && <Text style={styles.cardUnit}>cigarettes / jour</Text>}
+                {isSelected && <Text style={styles.cardUnit}>{t('step1.unitLabel')}</Text>}
                 {isSelected && (
                   <View style={styles.checkBadge}>
                     <Text style={styles.checkMark}>✓</Text>
@@ -50,9 +52,9 @@ export default function Step1Screen({ navigation, route }) {
         </View>
 
         <FreeTextCard
-          title="Écrire mon propre nombre"
-          description="Saisissez le nombre de cigarettes que vous fumez par jour."
-          placeholder="Ex. 15"
+          title={t('step1.freeTitle')}
+          description={t('step1.freeDescription')}
+          placeholder={t('step1.freePlaceholder')}
           value={freeValue}
           onChangeText={setFreeValue}
           keyboardType="number-pad"
@@ -60,7 +62,7 @@ export default function Step1Screen({ navigation, route }) {
       </ScrollView>
 
       <View style={styles.bottom}>
-        <PrimaryButton title="Continuer  →" onPress={handleContinue} />
+        <PrimaryButton title={t('common:continue')} onPress={handleContinue} />
       </View>
     </SafeAreaView>
   );

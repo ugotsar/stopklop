@@ -1,0 +1,38 @@
+{
+  "header": { "title": "Help Center" },
+  "intro": "Frequently asked questions",
+  "faq": {
+    "reductionPlan": {
+      "question": "How does the gradual reduction plan work?",
+      "answer": "You choose a starting point (your current consumption) and a pace, for example 2 fewer cigarettes per week. Each week, your daily goal automatically decreases until it reaches 0. You can change the pace at any time from the Plan tab."
+    },
+    "cravingButton": {
+      "question": "What is the \"I want to smoke\" button for?",
+      "answer": "It records the time and cause of your cravings (stress, coffee, evening out…). The app then analyzes your critical hours, difficult days, and main triggers in the Plan tab, to help you anticipate them."
+    },
+    "lifeGained": {
+      "question": "What does \"Life gained\" mean?",
+      "answer": "Medical studies estimate that one cigarette reduces life expectancy by about 5 minutes. Each cigarette not smoked compared to your previous consumption therefore \"gives you back\" 5 minutes of life."
+    },
+    "moneySaved": {
+      "question": "How is the money saved calculated?",
+      "answer": "We compare your current consumption to your consumption before the app, multiplied by the price of a cigarette (pack price ÷ number of cigarettes). You can adjust these values in Profile → Consumption settings."
+    },
+    "exceededGoal": {
+      "question": "I exceeded my goal, what happens now?",
+      "answer": "Nothing serious! The circle turns red to let you know, but every day is a fresh start. What matters is the trend over time, not a single day."
+    },
+    "dataSaved": {
+      "question": "Is my data saved?",
+      "answer": "Yes. Your data is stored locally on your phone and synced to the cloud. You'll find it again if you change devices."
+    },
+    "editGoal": {
+      "question": "How do I change my goal?",
+      "answer": "Go to the Plan tab → \"Edit plan\", or to Profile → \"My current goal\". You can choose to quit completely, reduce gradually, or set a free-form goal."
+    }
+  },
+  "contact": {
+    "title": "Didn't find your answer?",
+    "button": "Contact us"
+  }
+}

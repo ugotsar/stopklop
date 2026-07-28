@@ -3,6 +3,7 @@ import {
   View, Text, StyleSheet, SafeAreaView, ScrollView,
   TouchableOpacity, Animated, TextInput,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { colors, spacing, font, radius } from '../../theme';
 import { jouerSon } from '../../services/sounds';
 import StepHeader from '../../components/StepHeader';
@@ -10,23 +11,11 @@ import PrimaryButton from '../../components/PrimaryButton';
 import { saveProfile } from '../../store/onboardingStore';
 import { useUser } from '../../context/UserContext';
 
-const DESCRIPTIONS = [
-  '', // 0 unused
-  "Vous débutez ce chemin. Chaque pas compte.",
-  "Vous y pensez. C'est déjà un début.",
-  "La motivation grandit en vous.",
-  "Vous commencez à y croire.",
-  "Vous êtes prêt(e) à vous engager.",
-  "Bonne détermination. Continuez !",
-  "Vous êtes bien décidé(e).",
-  "Votre volonté est forte.",
-  "Vous êtes presque inarrêtable !",
-  "Vous êtes totalement déterminé(e) ! 🏆",
-];
-
 const LEVEL_COLORS = ['','#EF4444','#F97316','#F59E0B','#EAB308','#84CC16','#22C55E','#10B981','#14B8A6','#06B6D4','#1B6B3A'];
 
 export default function Step7Screen({ navigation, route }) {
+  const { t } = useTranslation('onboardingLegacy');
+  const DESCRIPTIONS = t('step7.descriptions', { returnObjects: true });
   const { updateProfile } = useUser();
   const [level, setLevel] = useState(5);
   const [freeValue, setFreeValue] = useState('');
@@ -57,8 +46,8 @@ export default function Step7Screen({ navigation, route }) {
     <SafeAreaView style={styles.safe}>
       <StepHeader step={7} onBack={() => navigation.goBack()} />
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-        <Text style={styles.title}>Quel est votre niveau{'\n'}de motivation ?</Text>
-        <Text style={styles.subtitle}>Soyez honnête avec vous-même.</Text>
+        <Text style={styles.title}>{t('step7.title')}</Text>
+        <Text style={styles.subtitle}>{t('step7.subtitle')}</Text>
 
         <Animated.View style={[styles.circleWrap, { transform: [{ scale: animScale }] }]}>
           <View style={[styles.circle, { borderColor: color, shadowColor: color }]}>
@@ -80,23 +69,23 @@ export default function Step7Screen({ navigation, route }) {
           ))}
         </View>
         <View style={styles.selectorLabels}>
-          <Text style={styles.selectorLabel}>Faible</Text>
-          <Text style={styles.selectorLabel}>Élevé</Text>
+          <Text style={styles.selectorLabel}>{t('step7.lowLabel')}</Text>
+          <Text style={styles.selectorLabel}>{t('step7.highLabel')}</Text>
         </View>
 
         <View style={styles.dividerRow}>
-          <View style={styles.divider} /><Text style={styles.dividerText}>ou</Text><View style={styles.divider} />
+          <View style={styles.divider} /><Text style={styles.dividerText}>{t('shared.dividerOr')}</Text><View style={styles.divider} />
         </View>
 
         <View style={styles.freeCard}>
           <View style={styles.freeIconCircle}><Text>✏️</Text></View>
           <View style={styles.freeTextBlock}>
-            <Text style={styles.freeTitle}>Saisir manuellement</Text>
-            <Text style={styles.freeDesc}>Entrez votre niveau de 1 à 10.</Text>
+            <Text style={styles.freeTitle}>{t('step7.manualTitle')}</Text>
+            <Text style={styles.freeDesc}>{t('step7.manualDescription')}</Text>
           </View>
           <TextInput
             style={styles.freeInput}
-            placeholder="1-10"
+            placeholder={t('step7.manualPlaceholder')}
             placeholderTextColor={colors.gray}
             value={freeValue}
             onChangeText={v => { setFreeValue(v); const n = parseInt(v, 10); if (n >= 1 && n <= 10) setLevel(n); }}
@@ -107,7 +96,7 @@ export default function Step7Screen({ navigation, route }) {
       </ScrollView>
 
       <View style={styles.bottom}>
-        <PrimaryButton title="Terminer →" onPress={handleFinish} />
+        <PrimaryButton title={t('step7.finishButton')} onPress={handleFinish} />
       </View>
     </SafeAreaView>
   );

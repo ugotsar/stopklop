@@ -1,0 +1,35 @@
+{
+  "title": "Stopklop Pro",
+  "subtitle": "Alle Funktionen, um endgültig aufzuhören",
+  "features": {
+    "stats": "Unbegrenzte erweiterte Statistiken",
+    "badges": "Alle Abzeichen & Meilensteine",
+    "cloud": "Automatische Cloud-Sicherung",
+    "reminders": "Personalisierte Erinnerungen",
+    "export": "Export deiner Daten"
+  },
+  "plans": {
+    "lifetime": "Lebenslang",
+    "annual": "Jährlich",
+    "monthly": "Monatlich",
+    "popular": "Beliebt",
+    "save50": "50% sparen",
+    "perYear": "/Jahr",
+    "perMonth": "/Monat"
+  },
+  "cta": {
+    "start": "Jetzt starten",
+    "trial": "7 Tage kostenlos testen · Jederzeit kündbar",
+    "restore": "Käufe wiederherstellen"
+  },
+  "alerts": {
+    "welcomeTitle": "🎉 Willkommen bei Stopklop Pro!",
+    "welcomeBody": "Alle Funktionen sind jetzt freigeschaltet.",
+    "welcomeButton": "Super!",
+    "restoredTitle": "✅ Abonnement wiederhergestellt!",
+    "noSubscriptionTitle": "Kein Abonnement gefunden",
+    "noSubscriptionBody": "Kein Kauf zum Wiederherstellen.",
+    "purchaseErrorBody": "Kauf fehlgeschlagen. Versuch es erneut.",
+    "restoreErrorBody": "Wiederherstellung fehlgeschlagen."
+  }
+}

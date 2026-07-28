@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Dimensions } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { colors, spacing, font, radius } from '../../theme';
 import PrimaryButton from '../../components/PrimaryButton';
 import NatureBackground from '../../components/NatureBackground';
@@ -7,6 +8,8 @@ import NatureBackground from '../../components/NatureBackground';
 const { height: SCREEN_H } = Dimensions.get('window');
 
 export default function WelcomeScreen({ navigation }) {
+  const { t } = useTranslation('onboardingLegacy');
+
   return (
     <SafeAreaView style={styles.safe}>
       <View style={styles.bgContainer}>
@@ -15,11 +18,11 @@ export default function WelcomeScreen({ navigation }) {
 
       <View style={styles.bottomCard}>
         <Text style={styles.title}>
-          Bienvenue sur{'\n'}
+          {t('welcome.title')}{'\n'}
           <Text style={styles.titleGreen}>Stopklop</Text>
         </Text>
         <Text style={styles.subtitle}>
-          Votre compagnon pour arrêter{'\n'}de fumer et reprendre le contrôle{'\n'}de votre vie.
+          {t('welcome.subtitle')}
         </Text>
 
         <View style={styles.dots}>
@@ -28,9 +31,9 @@ export default function WelcomeScreen({ navigation }) {
           <View style={styles.dot} />
         </View>
 
-        <PrimaryButton title="Commencer  →" onPress={() => navigation.navigate('Register')} />
+        <PrimaryButton title={t('welcome.startButton')} onPress={() => navigation.navigate('Register')} />
         <TouchableOpacity onPress={() => navigation.navigate('Login')} style={styles.loginLink}>
-          <Text style={styles.loginText}>J'ai déjà un compte</Text>
+          <Text style={styles.loginText}>{t('welcome.haveAccount')}</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>

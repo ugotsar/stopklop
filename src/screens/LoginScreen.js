@@ -4,10 +4,12 @@ import {
   SafeAreaView, ActivityIndicator, Platform,
 } from 'react-native';
 import * as AppleAuthentication from 'expo-apple-authentication';
+import { useTranslation } from 'react-i18next';
 import { useGoogleAuth, signInWithApple } from '../services/authService';
 import { colors, spacing, font, radius } from '../theme';
 
 export default function LoginScreen() {
+  const { t } = useTranslation('authMain');
   const [loading, setLoading] = useState(false);
   const [error, setError]     = useState(null);
   const { request, signInWithGoogle } = useGoogleAuth();
@@ -18,7 +20,7 @@ export default function LoginScreen() {
       setError(null);
       await signInWithGoogle();
     } catch (e) {
-      setError('Connexion Google échouée. Réessaie.');
+      setError(t('errors.google'));
     } finally {
       setLoading(false);
     }
@@ -31,7 +33,7 @@ export default function LoginScreen() {
       await signInWithApple();
     } catch (e) {
       if (e.code !== 'ERR_REQUEST_CANCELED') {
-        setError('Connexion Apple échouée. Réessaie.');
+        setError(t('errors.apple'));
       }
     } finally {
       setLoading(false);
@@ -46,7 +48,7 @@ export default function LoginScreen() {
         <View style={s.hero}>
           <Text style={s.logo}>🚭</Text>
           <Text style={s.appName}>Stopklop</Text>
-          <Text style={s.tagline}>Arrête de fumer, un jour à la fois.</Text>
+          <Text style={s.tagline}>{t('tagline')}</Text>
         </View>
 
         {/* Boutons connexion */}
@@ -63,7 +65,7 @@ export default function LoginScreen() {
                 disabled={!request}
               >
                 <Text style={s.btnGoogleIcon}>G</Text>
-                <Text style={s.btnGoogleText}>Continuer avec Google</Text>
+                <Text style={s.btnGoogleText}>{t('google.button')}</Text>
               </TouchableOpacity>
 
               {/* Apple — affiché seulement sur iOS */}
@@ -83,9 +85,10 @@ export default function LoginScreen() {
         </View>
 
         <Text style={s.legal}>
-          En continuant, tu acceptes nos{' '}
-          <Text style={s.legalLink}>CGU</Text> et notre{' '}
-          <Text style={s.legalLink}>Politique de confidentialité</Text>.
+          {t('legal.prefix')}{' '}
+          <Text style={s.legalLink}>{t('legal.terms')}</Text>{' '}
+          {t('legal.middle')}{' '}
+          <Text style={s.legalLink}>{t('legal.privacy')}</Text>.
         </Text>
 
       </View>

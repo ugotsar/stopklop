@@ -1,0 +1,40 @@
+{
+  "header": { "title": "Craving journal" },
+  "tabs": {
+    "byDay": "By day",
+    "byTrigger": "By trigger"
+  },
+  "empty": {
+    "title": "No cravings logged",
+    "text": "Use the \"I feel like smoking\" button on the Home screen: every craving will be logged here with its time and trigger."
+  },
+  "day": {
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "enviesCount_one": "{{count}} craving",
+    "enviesCount_other": "{{count}} cravings",
+    "resistedCount_one": "💪 {{count}} resisted",
+    "resistedCount_other": "💪 {{count}} resisted",
+    "smokedCount_one": "🚬 {{count}} smoked",
+    "smokedCount_other": "🚬 {{count}} smoked"
+  },
+  "trigger": {
+    "enviesCountPct_one": "{{count}} craving ({{pct}}%)",
+    "enviesCountPct_other": "{{count}} cravings ({{pct}}%)"
+  },
+  "issue": {
+    "smoked": "🚬 smoked",
+    "resisted": "💪 resisted"
+  },
+  "quotedNote": "“{{note}}”",
+  "triggers": {
+    "stress": "Stress",
+    "ennui": "Boredom",
+    "cafe": "Coffee / break",
+    "repas": "After a meal",
+    "social": "Social circle",
+    "alcool": "Night out / alcohol",
+    "habitude": "Habit",
+    "autre": "Other"
+  }
+}

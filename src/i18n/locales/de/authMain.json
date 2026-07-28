@@ -1,0 +1,18 @@
+{
+  "tagline": "Hör auf zu rauchen, einen Tag nach dem anderen.",
+  "google": { "button": "Weiter mit Google" },
+  "apple": { "button": "Weiter mit Apple" },
+  "divider": { "or": "oder" },
+  "guest": { "button": "Ohne Konto fortfahren" },
+  "errors": {
+    "google": "Google-Anmeldung fehlgeschlagen. Versuch es erneut.",
+    "apple": "Apple-Anmeldung fehlgeschlagen. Versuch es erneut.",
+    "guest": "Verbindungsfehler. Versuch es erneut."
+  },
+  "legal": {
+    "prefix": "Indem du fortfährst, akzeptierst du unsere",
+    "terms": "AGB",
+    "middle": "und unsere",
+    "privacy": "Datenschutzrichtlinie"
+  }
+}

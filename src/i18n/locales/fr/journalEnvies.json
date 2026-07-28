@@ -1,0 +1,40 @@
+{
+  "header": { "title": "Journal des envies" },
+  "tabs": {
+    "byDay": "Par jour",
+    "byTrigger": "Par déclencheur"
+  },
+  "empty": {
+    "title": "Aucune envie enregistrée",
+    "text": "Utilisez le bouton « J'ai envie de fumer » dans l'Accueil : chaque envie sera notée ici avec son heure et son déclencheur."
+  },
+  "day": {
+    "today": "Aujourd'hui",
+    "yesterday": "Hier",
+    "enviesCount_one": "{{count}} envie",
+    "enviesCount_other": "{{count}} envies",
+    "resistedCount_one": "💪 {{count}} résistée",
+    "resistedCount_other": "💪 {{count}} résistées",
+    "smokedCount_one": "🚬 {{count}} fumée",
+    "smokedCount_other": "🚬 {{count}} fumées"
+  },
+  "trigger": {
+    "enviesCountPct_one": "{{count}} envie ({{pct}}%)",
+    "enviesCountPct_other": "{{count}} envies ({{pct}}%)"
+  },
+  "issue": {
+    "smoked": "🚬 fumé",
+    "resisted": "💪 résisté"
+  },
+  "quotedNote": "« {{note}} »",
+  "triggers": {
+    "stress": "Stress",
+    "ennui": "Ennui",
+    "cafe": "Café / pause",
+    "repas": "Après repas",
+    "social": "Entourage",
+    "alcool": "Soirée / alcool",
+    "habitude": "Habitude",
+    "autre": "Autre"
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "header": { "title": "Diario de antojos" },
+  "tabs": {
+    "byDay": "Por día",
+    "byTrigger": "Por desencadenante"
+  },
+  "empty": {
+    "title": "Ningún antojo registrado",
+    "text": "Usa el botón «Tengo ganas de fumar» en Inicio: cada antojo quedará registrado aquí con su hora y su desencadenante."
+  },
+  "day": {
+    "today": "Hoy",
+    "yesterday": "Ayer",
+    "enviesCount_one": "{{count}} antojo",
+    "enviesCount_other": "{{count}} antojos",
+    "resistedCount_one": "💪 {{count}} resistido",
+    "resistedCount_other": "💪 {{count}} resistidos",
+    "smokedCount_one": "🚬 {{count}} fumado",
+    "smokedCount_other": "🚬 {{count}} fumados"
+  },
+  "trigger": {
+    "enviesCountPct_one": "{{count}} antojo ({{pct}}%)",
+    "enviesCountPct_other": "{{count}} antojos ({{pct}}%)"
+  },
+  "issue": {
+    "smoked": "🚬 fumado",
+    "resisted": "💪 resistido"
+  },
+  "quotedNote": "«{{note}}»",
+  "triggers": {
+    "stress": "Estrés",
+    "ennui": "Aburrimiento",
+    "cafe": "Café / pausa",
+    "repas": "Después de comer",
+    "social": "Entorno social",
+    "alcool": "Salida nocturna / alcohol",
+    "habitude": "Costumbre",
+    "autre": "Otro"
+  }
+}

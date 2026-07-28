@@ -1,0 +1,101 @@
+{
+  "header": {
+    "greeting": "Bonjour 👋",
+    "defaultName": "Champion"
+  },
+  "hero": {
+    "label": "Temps sans cigarette",
+    "sinceLastCig": "depuis votre dernière cigarette",
+    "sinceStart": "depuis le début ({{duration}})"
+  },
+  "today": {
+    "sectionTitle": "Aujourd'hui",
+    "subtitle": "cigarettes\naujourd'hui",
+    "goal": "Objectif : {{count}} max",
+    "validateButton": "✓  Valider ma journée",
+    "smokedLink": "J'ai fumé aujourd'hui  ›"
+  },
+  "perfectDayModal": {
+    "title": "Journée sans tabac !",
+    "subtitle": "0 cigarette aujourd'hui",
+    "lifeRegained": "vie récupérée",
+    "spent": "dépensé",
+    "streak": "streak",
+    "closeButton": "Super, merci !"
+  },
+  "goalModal": {
+    "successTitle": "Bien joué !",
+    "successSubtitle": "Objectif respecté aujourd'hui",
+    "exceededTitle": "Objectif dépassé",
+    "exceededSubtitle": "{{count}} cig · +{{exceeded}} au-dessus",
+    "goalLabel": "objectif : {{count}}",
+    "marginLabel": "{{percent}}% de marge",
+    "spent": "dépensé",
+    "lifePreserved": "vie préservée",
+    "lifeLost": "de vie",
+    "successButton": "C'est noté !",
+    "cigsSmokedToday_one": "{{count}} cigarette fumée aujourd'hui",
+    "cigsSmokedToday_other": "{{count}} cigarettes fumées aujourd'hui",
+    "tooMany": "+{{count}} de trop",
+    "encouragement": "Chaque jour est une nouvelle chance.\nDemain, vous pouvez le faire. 💪",
+    "exceededButton": "Compris !"
+  },
+  "triggers": {
+    "stress": "Stress",
+    "ennui": "Ennui",
+    "cafe": "Café / pause",
+    "repas": "Après repas",
+    "social": "Entourage",
+    "alcool": "Soirée / alcool",
+    "habitude": "Habitude",
+    "autre": "Autre"
+  },
+  "envieModal": {
+    "pickTitle": "Une envie de fumer ?",
+    "pickSubtitle": "Qu'est-ce qui la déclenche ?",
+    "noteTitle": "Dites-nous en plus",
+    "noteSubtitle": "Que ressentez-vous ? Pourquoi cette envie ?",
+    "notePlaceholder": "Ex : je viens de raccrocher un appel stressant…",
+    "continueButton": "Continuer",
+    "resultTitle": "C'est noté !",
+    "resultSubtitle": "Envie enregistrée dans vos habitudes",
+    "conseilPrefix": "Une envie dure en moyenne ",
+    "conseilBold": "3 à 5 minutes",
+    "conseilSuffix": ".\n\n💧 Buvez un verre d'eau\n🫁 Respirez profondément 5 fois\n🚶 Changez de pièce ou d'activité\n\nElle va passer — tenez bon !",
+    "keptButton": "J'ai tenu bon 💪",
+    "smokedButton": "J'ai fumé  🚬  (+1 cigarette)"
+  },
+  "motivation": {
+    "sectionTitle": "✨  Motivation du jour",
+    "quotes": [
+      "Chaque heure sans cigarette est une victoire pour votre santé.",
+      "Vous n'abandonnez pas quelque chose, vous gagnez une vie meilleure.",
+      "La force que vous montrez aujourd'hui construit votre santé de demain.",
+      "Un jour à la fois. Vous y arrivez ! 💪",
+      "Votre corps vous remercie à chaque minute sans tabac."
+    ]
+  },
+  "stats": {
+    "aboveGoal": "+{{count}} de trop",
+    "belowGoal": "{{count}} de marge",
+    "vsGoalLabel": "vs objectif du jour ({{count}})",
+    "moneyPreserved": "Argent préservé\nvs votre plan",
+    "moneyOver": "Surcoût\nvs votre plan",
+    "minutesVsPlan": "{{sign}}{{count}} min",
+    "lifePreservedVsPlan": "Vie préservée vs plan\n(5 min / cigarette)",
+    "lifeLostVsPlan": "Vie perdue vs plan\n(5 min / cigarette)",
+    "progressionValue": "{{sign}}{{count}}%",
+    "progressionLabel": "Progression\nvs avant l'app"
+  },
+  "envieCard": {
+    "title": "Une envie de fumer, là maintenant ?",
+    "subtitle": "Enregistrez-la : on analyse vos déclencheurs pour vous aider à les anticiper.",
+    "button": "J'ai envie de fumer",
+    "count_one": "{{count}} envie enregistrée — analyse visible dans l'onglet Plan",
+    "count_other": "{{count}} envies enregistrées — analyse visible dans l'onglet Plan"
+  },
+  "devButtons": {
+    "loadDemo": "🎬 Charger la démo (5 semaines d'utilisation)",
+    "resetOnboarding": "↩ Recommencer l'onboarding"
+  }
+}

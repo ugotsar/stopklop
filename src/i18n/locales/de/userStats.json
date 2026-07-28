@@ -1,0 +1,17 @@
+{
+  "msgJour": {
+    "smokeFree": "🎉 Rauchfreier Tag!",
+    "onTrack": "✅ Im Ziel — gut gemacht!",
+    "over": "💪 {{count}} mehr als dein Ziel, morgen wird es besser."
+  },
+  "benefits": {
+    "bloodPressure": { "label": "Blutdruck", "description": "Dein Blutdruck normalisiert sich" },
+    "oxygen":        { "label": "Sauerstoff", "description": "Der CO-Gehalt im Blut sinkt um die Hälfte" },
+    "heart":         { "label": "Herz", "description": "Geringeres Risiko für Herzinfarkt" },
+    "senses":        { "label": "Geschmack & Geruch", "description": "Dein Geschmacks- und Geruchssinn verbessern sich" },
+    "breathing":     { "label": "Atmung", "description": "Leichteres Atmen, entspannte Atemwege" },
+    "circulation":   { "label": "Durchblutung", "description": "Verbesserte Durchblutung" },
+    "lungs":         { "label": "Lunge", "description": "Lungenkapazität steigt um 30%" },
+    "strokeRisk":    { "label": "Schlaganfallrisiko", "description": "Schlaganfallrisiko wie bei einem Nichtraucher" }
+  }
+}

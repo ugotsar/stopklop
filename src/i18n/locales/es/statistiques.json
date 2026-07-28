@@ -1,0 +1,73 @@
+{
+  "tabs": {
+    "day": "Día",
+    "week": "Semana",
+    "month": "Mes",
+    "period": "Período"
+  },
+  "vsBeforeApp": "vs. antes de la app",
+  "dates": {
+    "today": "Hoy",
+    "yesterday": "Ayer"
+  },
+  "week": {
+    "rangeLabel": "Del {{start}} al {{end}}"
+  },
+  "tapHint": {
+    "day": "Toca un día para ver el detalle hora por hora",
+    "month": "Toca un mes para ver el detalle día por día"
+  },
+  "month": {
+    "comparison": "{{month}}: {{count}} cig · {{arrow}} {{percent}}% este mes"
+  },
+  "range": {
+    "from": "Desde",
+    "to": "Hasta"
+  },
+  "smokedCard": {
+    "title": "Cigarrillos fumados",
+    "unit": "cigarrillos",
+    "vsBeforeAppValue": "{{arrow}} {{percent}} %",
+    "hoursTitle": "Horas de los cigarrillos",
+    "hoursNotRecorded": "No se registraron horas para este día.",
+    "noCigarettesToday": "Ningún cigarrillo este día 🎉",
+    "withoutHourCount": "+ {{count}} sin hora registrada"
+  },
+  "moneyCard": {
+    "title": "Dinero",
+    "spentReal": "gastado (real)",
+    "net": "neto",
+    "calculatedOn_one": "Calculado sobre {{count}} día registrado",
+    "calculatedOn_other": "Calculado sobre {{count}} días registrados",
+    "missingDays_one": " — {{count}} sin registrar",
+    "missingDays_other": " — {{count}} sin registrar"
+  },
+  "lifeCard": {
+    "title": "Vida recuperada",
+    "rate": "5 min / cigarrillo no fumado"
+  },
+  "progressionCard": {
+    "title": "Progreso",
+    "subtitle": "consumo",
+    "streak": "🔥 {{count}} d dentro del objetivo"
+  },
+  "summaryCard": {
+    "title": "Resumen",
+    "smokedCount_one": "{{count}} cigarrillo fumado",
+    "smokedCount_other": "{{count}} cigarrillos fumados",
+    "onDaysRecorded_one": "en {{count}} día registrado",
+    "onDaysRecorded_other": "en {{count}} días registrados",
+    "missingParen_one": "({{count}} sin registrar)",
+    "missingParen_other": "({{count}} sin registrar)",
+    "average": "Promedio: {{avg}} cig / día — objetivo: {{count}} / día",
+    "overPlan_one": "⚠️ {{count}} cigarrillo por encima de tu plan en el período",
+    "overPlan_other": "⚠️ {{count}} cigarrillos por encima de tu plan en el período",
+    "underPlan_one": "✅ Plan cumplido: {{count}} cigarrillo por debajo del objetivo",
+    "underPlan_other": "✅ Plan cumplido: {{count}} cigarrillos por debajo del objetivo",
+    "moneyPositive": "+{{amount}} € vs. antes de la app",
+    "moneyNegative": "{{amount}} € vs. antes de la app (fumas más que antes)",
+    "messagePositive": "↓ {{percent}}% vs. antes de la app 💚",
+    "messageNegative": "↑ {{percent}}% vs. antes de la app — aguanta 💪",
+    "messageNeutral": "Cada día registrado cuenta."
+  }
+}

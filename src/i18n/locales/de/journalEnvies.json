@@ -1,0 +1,40 @@
+{
+  "header": { "title": "Verlangen-Tagebuch" },
+  "tabs": {
+    "byDay": "Nach Tag",
+    "byTrigger": "Nach Auslöser"
+  },
+  "empty": {
+    "title": "Kein Verlangen erfasst",
+    "text": "Nutze die Schaltfläche „Ich habe Lust zu rauchen“ auf dem Start-Bildschirm: Jedes Verlangen wird hier mit Uhrzeit und Auslöser festgehalten."
+  },
+  "day": {
+    "today": "Heute",
+    "yesterday": "Gestern",
+    "enviesCount_one": "{{count}} Verlangen",
+    "enviesCount_other": "{{count}} Verlangen",
+    "resistedCount_one": "💪 {{count}} widerstanden",
+    "resistedCount_other": "💪 {{count}} widerstanden",
+    "smokedCount_one": "🚬 {{count}} geraucht",
+    "smokedCount_other": "🚬 {{count}} geraucht"
+  },
+  "trigger": {
+    "enviesCountPct_one": "{{count}} Verlangen ({{pct}}%)",
+    "enviesCountPct_other": "{{count}} Verlangen ({{pct}}%)"
+  },
+  "issue": {
+    "smoked": "🚬 geraucht",
+    "resisted": "💪 widerstanden"
+  },
+  "quotedNote": "„{{note}}“",
+  "triggers": {
+    "stress": "Stress",
+    "ennui": "Langeweile",
+    "cafe": "Kaffee / Pause",
+    "repas": "Nach dem Essen",
+    "social": "Geselligkeit",
+    "alcool": "Ausgehen / Alkohol",
+    "habitude": "Gewohnheit",
+    "autre": "Andere"
+  }
+}

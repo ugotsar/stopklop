@@ -1,0 +1,131 @@
+{
+  "shared": {
+    "dividerOr": "or"
+  },
+  "welcome": {
+    "title": "Welcome to",
+    "subtitle": "Your companion to quit\nsmoking and take back control\nof your life.",
+    "startButton": "Get Started  →",
+    "haveAccount": "I already have an account"
+  },
+  "register": {
+    "title": "Sign Up",
+    "subtitle": "Create your account to start\nyour journey to a smoke-free life.",
+    "googleButton": "Sign up with Google",
+    "appleButton": "Sign up with Apple",
+    "emailPlaceholder": "Email address",
+    "passwordPlaceholder": "Password",
+    "confirmPasswordPlaceholder": "Confirm password",
+    "checkLength": "At least 8 characters",
+    "checkLower": "At least one lowercase letter",
+    "checkUpper": "At least one uppercase letter",
+    "checkDigit": "At least one digit",
+    "submitButton": "Sign Up",
+    "haveAccountText": "Already have an account?",
+    "loginLink": "Log in",
+    "termsPrefix": "By signing up, you agree to our",
+    "termsLink": "Terms of Use",
+    "termsMiddle": "and our",
+    "privacyLink": "Privacy Policy",
+    "errorInvalidEmail": "Invalid email.",
+    "errorInvalidPassword": "Invalid password.",
+    "errorPasswordMismatch": "Passwords do not match."
+  },
+  "login": {
+    "title": "Log In",
+    "subtitle": "Welcome back!",
+    "googleButton": "Continue with Google",
+    "appleButton": "Continue with Apple",
+    "emailPlaceholder": "Email address",
+    "passwordPlaceholder": "Password",
+    "forgotPassword": "Forgot password?",
+    "submitButton": "Log In",
+    "noAccountText": "Don't have an account?",
+    "createAccountLink": "Create an account",
+    "errorFillFields": "Please fill in all fields."
+  },
+  "step1": {
+    "title": "How many cigarettes\ndo you smoke per day?",
+    "subtitle": "Be honest, this helps us\npersonalize your experience.",
+    "unitLabel": "cigarettes / day",
+    "freeTitle": "Enter my own number",
+    "freeDescription": "Enter the number of cigarettes you smoke per day.",
+    "freePlaceholder": "E.g. 15"
+  },
+  "step2": {
+    "title": "What is the price\nof your pack?",
+    "subtitle": "Enter the price you usually pay.",
+    "freeTitle": "Enter my own price",
+    "freeDescription": "Enter the price of your pack.",
+    "freePlaceholder": "11.50"
+  },
+  "step3": {
+    "title": "How many cigarettes\ndoes your pack contain?",
+    "subtitle": "Select the number of cigarettes\nin your usual pack.",
+    "unitLabel": "cigarettes",
+    "freeTitle": "Enter my own number",
+    "freeDescription": "Enter the number of cigarettes your pack contains.",
+    "freePlaceholder": "E.g. 25"
+  },
+  "step4": {
+    "title": "How long have you\nbeen smoking?",
+    "subtitle": "This helps us estimate the benefits\nof quitting.",
+    "options": {
+      "lessThanOne": "Less than 1 year",
+      "oneToFive": "1 to 5 years",
+      "fiveToTen": "5 to 10 years",
+      "tenToTwenty": "10 to 20 years",
+      "moreThanTwenty": "More than 20 years"
+    },
+    "freeTitle": "Enter my own duration",
+    "freeDescription": "Enter the number of years\nor months.",
+    "freePlaceholder": "E.g. 7 years"
+  },
+  "step5": {
+    "title": "What is your desired\nquit date?",
+    "subtitle": "Choose the day you want\nto quit smoking.",
+    "months": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+    "daysShort": ["M", "T", "W", "T", "F", "S", "S"],
+    "freeTitle": "Enter my own date",
+    "freeDescription": "Enter the date you want to quit.",
+    "datePlaceholder": "DD / MM / YYYY"
+  },
+  "step6": {
+    "title": "What are your main\nmotivations?",
+    "subtitle": "Select up to 3 motivations\nthat matter most to you.",
+    "motivations": {
+      "sante": "My health",
+      "famille": "My family",
+      "apparence": "My appearance",
+      "economiser": "Save\nmoney",
+      "souffle": "Better\nbreathing",
+      "condition": "Get back in\nshape"
+    },
+    "freeTitle": "Enter my own motivation",
+    "freeDescription": "Enter a motivation that matters to you.",
+    "freePlaceholder": "Your motivation"
+  },
+  "step7": {
+    "title": "What is your\nmotivation level?",
+    "subtitle": "Be honest with yourself.",
+    "descriptions": [
+      "",
+      "You're starting this path. Every step counts.",
+      "You're thinking about it. That's already a start.",
+      "Your motivation is growing.",
+      "You're starting to believe in it.",
+      "You're ready to commit.",
+      "Good determination. Keep going!",
+      "You're truly decided.",
+      "Your willpower is strong.",
+      "You're almost unstoppable!",
+      "You're fully determined! 🏆"
+    ],
+    "lowLabel": "Low",
+    "highLabel": "High",
+    "manualTitle": "Enter manually",
+    "manualDescription": "Enter your level from 1 to 10.",
+    "manualPlaceholder": "1-10",
+    "finishButton": "Finish →"
+  }
+}

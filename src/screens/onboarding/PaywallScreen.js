@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import {
   View, Text, StyleSheet, SafeAreaView, TouchableOpacity, Alert, Linking,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { colors, spacing, font, radius } from '../../theme';
 import PrimaryButton from '../../components/PrimaryButton';
 import { restorePurchases, isPro } from '../../services/purchases';
@@ -10,26 +11,10 @@ import { restorePurchases, isPro } from '../../services/purchases';
 const PRIVACY_URL = 'https://stopklop.app/confidentialite';
 const TERMS_URL   = 'https://stopklop.app/conditions';
 
-const PLANS = [
-  {
-    id: 'annual',
-    label: 'Annuel',
-    price: '49,99 €',
-    pricePerMonth: '4,17 € / mois',
-    badge: 'MEILLEURE OFFRE',
-    trial: '7 jours gratuits',
-  },
-  {
-    id: 'monthly',
-    label: 'Mensuel',
-    price: '9,99 €',
-    pricePerMonth: '9,99 € / mois',
-    badge: null,
-    trial: '3 jours gratuits',
-  },
-];
+const PLAN_IDS = ['annual', 'monthly'];
 
 export default function PaywallScreen({ navigation }) {
+  const { t } = useTranslation('paywallOnboarding');
   const [selectedPlan, setSelectedPlan] = useState('annual');
   const [restoring, setRestoring] = useState(false);
 
@@ -38,30 +23,32 @@ export default function PaywallScreen({ navigation }) {
     try {
       const info = await restorePurchases();
       if (isPro(info)) {
-        Alert.alert('Achats restaurés', 'Ton abonnement a bien été retrouvé.', [
-          { text: 'OK', onPress: () => navigation.navigate('MainTabs') },
+        Alert.alert(t('restoreSuccessTitle'), t('restoreSuccessBody'), [
+          { text: t('common:ok'), onPress: () => navigation.navigate('MainTabs') },
         ]);
       } else {
-        Alert.alert('Aucun achat', "Aucun abonnement actif n'a été trouvé sur ce compte.");
+        Alert.alert(t('restoreNoneTitle'), t('restoreNoneBody'));
       }
     } catch (e) {
-      Alert.alert('Erreur', "La restauration a échoué. Réessaie plus tard.");
+      Alert.alert(t('restoreErrorTitle'), t('restoreErrorBody'));
     } finally {
       setRestoring(false);
     }
   }
+
+  const features = t('features', { returnObjects: true }) || [];
 
   return (
     <SafeAreaView style={styles.safe}>
       <View style={styles.container}>
         <View style={styles.header}>
           <Text style={styles.emoji}>🌿</Text>
-          <Text style={styles.title}>Commencez votre{'\n'}parcours sans tabac</Text>
-          <Text style={styles.subtitle}>Accédez à toutes les fonctionnalités{'\n'}pour maximiser vos chances de réussite.</Text>
+          <Text style={styles.title}>{t('header.title')}</Text>
+          <Text style={styles.subtitle}>{t('header.subtitle')}</Text>
         </View>
 
         <View style={styles.features}>
-          {['Suivi quotidien personnalisé', 'Calcul des économies en temps réel', 'Conseils et défis quotidiens', 'Statistiques détaillées de santé'].map((f, i) => (
+          {(Array.isArray(features) ? features : []).map((f, i) => (
             <View key={i} style={styles.featureRow}>
               <View style={styles.featureCheck}><Text style={styles.featureCheckText}>✓</Text></View>
               <Text style={styles.featureText}>{f}</Text>
@@ -70,63 +57,60 @@ export default function PaywallScreen({ navigation }) {
         </View>
 
         <View style={styles.plans}>
-          {PLANS.map(plan => {
-            const isSelected = plan.id === selectedPlan;
+          {PLAN_IDS.map(id => {
+            const isSelected = id === selectedPlan;
+            const badge = t(`plans.${id}.badge`, { defaultValue: '' });
             return (
               <TouchableOpacity
-                key={plan.id}
+                key={id}
                 style={[styles.planCard, isSelected && styles.planCardSelected]}
-                onPress={() => setSelectedPlan(plan.id)}
+                onPress={() => setSelectedPlan(id)}
                 activeOpacity={0.8}
               >
-                {plan.badge && (
+                {badge ? (
                   <View style={styles.badge}>
-                    <Text style={styles.badgeText}>{plan.badge}</Text>
+                    <Text style={styles.badgeText}>{badge}</Text>
                   </View>
-                )}
+                ) : null}
                 <View style={styles.planLeft}>
                   <View style={[styles.planRadio, isSelected && styles.planRadioSelected]}>
                     {isSelected && <View style={styles.planRadioDot} />}
                   </View>
                   <View>
-                    <Text style={[styles.planLabel, isSelected && styles.planLabelSelected]}>{plan.label}</Text>
-                    <Text style={styles.planTrial}>{plan.trial}</Text>
+                    <Text style={[styles.planLabel, isSelected && styles.planLabelSelected]}>{t(`plans.${id}.label`)}</Text>
+                    <Text style={styles.planTrial}>{t(`plans.${id}.trial`)}</Text>
                   </View>
                 </View>
                 <View style={styles.planRight}>
-                  <Text style={[styles.planPrice, isSelected && styles.planPriceSelected]}>{plan.price}</Text>
-                  <Text style={styles.planPerMonth}>{plan.pricePerMonth}</Text>
+                  <Text style={[styles.planPrice, isSelected && styles.planPriceSelected]}>{t(`plans.${id}.price`)}</Text>
+                  <Text style={styles.planPerMonth}>{t(`plans.${id}.pricePerMonth`)}</Text>
                 </View>
               </TouchableOpacity>
             );
           })}
         </View>
 
-        <PrimaryButton title="Commencer mon essai →" onPress={() => navigation.navigate('MainTabs')} style={styles.cta} />
+        <PrimaryButton title={t('ctaButton')} onPress={() => navigation.navigate('MainTabs')} style={styles.cta} />
 
         <TouchableOpacity onPress={() => navigation.navigate('MainTabs')}>
-          <Text style={styles.skip}>Continuer sans abonnement</Text>
+          <Text style={styles.skip}>{t('skipButton')}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity onPress={handleRestore} disabled={restoring}>
           <Text style={styles.restore}>
-            {restoring ? 'Restauration…' : 'Restaurer mes achats'}
+            {restoring ? t('restoringLabel') : t('restoreButton')}
           </Text>
         </TouchableOpacity>
 
         {/* Mentions d'abonnement exigées par l'App Store */}
-        <Text style={styles.legal}>
-          Abonnement à renouvellement automatique. Le paiement est prélevé à la confirmation
-          de l'achat. L'abonnement se renouvelle sauf annulation au moins 24 h avant la fin de
-          la période en cours, gérable dans les réglages de ton compte.
-        </Text>
+        <Text style={styles.legal}>{t('legalDisclosure')}</Text>
         <View style={styles.legalLinks}>
           <Text style={styles.legalLink} onPress={() => Linking.openURL(TERMS_URL)}>
-            Conditions d'utilisation
+            {t('termsLink')}
           </Text>
           <Text style={styles.legalDot}>•</Text>
           <Text style={styles.legalLink} onPress={() => Linking.openURL(PRIVACY_URL)}>
-            Politique de confidentialité
+            {t('privacyLink')}
           </Text>
         </View>
       </View>

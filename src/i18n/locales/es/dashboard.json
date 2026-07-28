@@ -1,0 +1,101 @@
+{
+  "header": {
+    "greeting": "Hola 👋",
+    "defaultName": "Campeón"
+  },
+  "hero": {
+    "label": "Tiempo sin fumar",
+    "sinceLastCig": "desde tu último cigarrillo",
+    "sinceStart": "desde el inicio ({{duration}})"
+  },
+  "today": {
+    "sectionTitle": "Hoy",
+    "subtitle": "cigarrillos\nhoy",
+    "goal": "Objetivo: {{count}} máx.",
+    "validateButton": "✓  Confirmar mi día",
+    "smokedLink": "Hoy he fumado  ›"
+  },
+  "perfectDayModal": {
+    "title": "¡Día sin tabaco!",
+    "subtitle": "0 cigarrillos hoy",
+    "lifeRegained": "vida recuperada",
+    "spent": "gastado",
+    "streak": "racha",
+    "closeButton": "¡Genial, gracias!"
+  },
+  "goalModal": {
+    "successTitle": "¡Bien hecho!",
+    "successSubtitle": "Objetivo cumplido hoy",
+    "exceededTitle": "Objetivo superado",
+    "exceededSubtitle": "{{count}} cig · +{{exceeded}} de más",
+    "goalLabel": "objetivo: {{count}}",
+    "marginLabel": "{{percent}}% de margen",
+    "spent": "gastado",
+    "lifePreserved": "vida preservada",
+    "lifeLost": "de vida",
+    "successButton": "¡Anotado!",
+    "cigsSmokedToday_one": "{{count}} cigarrillo fumado hoy",
+    "cigsSmokedToday_other": "{{count}} cigarrillos fumados hoy",
+    "tooMany": "+{{count}} de más",
+    "encouragement": "Cada día es una nueva oportunidad.\nMañana puedes lograrlo. 💪",
+    "exceededButton": "¡Entendido!"
+  },
+  "triggers": {
+    "stress": "Estrés",
+    "ennui": "Aburrimiento",
+    "cafe": "Café / descanso",
+    "repas": "Después de comer",
+    "social": "Entorno social",
+    "alcool": "Fiesta / alcohol",
+    "habitude": "Costumbre",
+    "autre": "Otro"
+  },
+  "envieModal": {
+    "pickTitle": "¿Ganas de fumar?",
+    "pickSubtitle": "¿Qué lo provoca?",
+    "noteTitle": "Cuéntanos más",
+    "noteSubtitle": "¿Cómo te sientes? ¿Por qué estas ganas?",
+    "notePlaceholder": "Ej.: acabo de colgar una llamada estresante…",
+    "continueButton": "Continuar",
+    "resultTitle": "¡Anotado!",
+    "resultSubtitle": "Ganas registradas en tus hábitos",
+    "conseilPrefix": "Unas ganas duran en promedio ",
+    "conseilBold": "de 3 a 5 minutos",
+    "conseilSuffix": ".\n\n💧 Bebe un vaso de agua\n🫁 Respira profundamente 5 veces\n🚶 Cambia de habitación o de actividad\n\nVa a pasar — ¡aguanta!",
+    "keptButton": "Aguanté 💪",
+    "smokedButton": "Fumé  🚬  (+1 cigarrillo)"
+  },
+  "motivation": {
+    "sectionTitle": "✨  Motivación del día",
+    "quotes": [
+      "Cada hora sin fumar es una victoria para tu salud.",
+      "No estás renunciando a algo, estás ganando una vida mejor.",
+      "La fuerza que muestras hoy construye tu salud de mañana.",
+      "Un día a la vez. ¡Lo estás logrando! 💪",
+      "Tu cuerpo te lo agradece en cada minuto sin tabaco."
+    ]
+  },
+  "stats": {
+    "aboveGoal": "+{{count}} de más",
+    "belowGoal": "{{count}} de margen",
+    "vsGoalLabel": "vs. objetivo del día ({{count}})",
+    "moneyPreserved": "Dinero ahorrado\nvs. tu plan",
+    "moneyOver": "Sobrecoste\nvs. tu plan",
+    "minutesVsPlan": "{{sign}}{{count}} min",
+    "lifePreservedVsPlan": "Vida preservada vs. plan\n(5 min / cigarrillo)",
+    "lifeLostVsPlan": "Vida perdida vs. plan\n(5 min / cigarrillo)",
+    "progressionValue": "{{sign}}{{count}}%",
+    "progressionLabel": "Progreso\nvs. antes de la app"
+  },
+  "envieCard": {
+    "title": "¿Ganas de fumar ahora mismo?",
+    "subtitle": "Regístralo: analizamos tus detonantes para ayudarte a anticiparlos.",
+    "button": "Tengo ganas de fumar",
+    "count_one": "{{count}} ganas registradas — análisis disponible en la pestaña Plan",
+    "count_other": "{{count}} ganas registradas — análisis disponible en la pestaña Plan"
+  },
+  "devButtons": {
+    "loadDemo": "🎬 Cargar demo (5 semanas de uso)",
+    "resetOnboarding": "↩ Reiniciar incorporación"
+  }
+}

@@ -1,4 +1,5 @@
 import * as Notifications from 'expo-notifications';
+import i18n from '../i18n';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -28,8 +29,8 @@ export async function programmerNotificationsQuotidiennes() {
   await Notifications.scheduleNotificationAsync({
     identifier: NOTIF_MATIN,
     content: {
-      title: '☀️ Nouvelle journée, nouveau départ',
-      body: "Aujourd'hui, tu peux faire mieux qu'hier. Note tes cigarettes ce soir.",
+      title: i18n.t('notifications:scheduled.morning.title'),
+      body: i18n.t('notifications:scheduled.morning.body'),
       data: { screen: 'JaiFume' },
       sound: true,
     },
@@ -44,8 +45,8 @@ export async function programmerNotificationsQuotidiennes() {
   await Notifications.scheduleNotificationAsync({
     identifier: NOTIF_MIDI,
     content: {
-      title: '🚬 Comment ça se passe aujourd\'hui ?',
-      body: "Pense à noter tes cigarettes. Chaque chiffre compte.",
+      title: i18n.t('notifications:scheduled.noon.title'),
+      body: i18n.t('notifications:scheduled.noon.body'),
       data: { screen: 'JaiFume' },
       sound: true,
     },
@@ -60,8 +61,8 @@ export async function programmerNotificationsQuotidiennes() {
   await Notifications.scheduleNotificationAsync({
     identifier: NOTIF_SOIR,
     content: {
-      title: '📊 Bilan de ta journée',
-      body: "Tu as fumé combien aujourd'hui ? Note-le avant de dormir.",
+      title: i18n.t('notifications:scheduled.evening.title'),
+      body: i18n.t('notifications:scheduled.evening.body'),
       data: { screen: 'JaiFume' },
       sound: true,
     },

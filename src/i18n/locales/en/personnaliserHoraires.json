@@ -1,0 +1,26 @@
+{
+  "headerTitle": "Customize times",
+  "subtitle": "Tap a reminder to change its time.",
+  "reminderLabel": "Reminder {{index}}",
+  "infoText": "💡 These notifications fire every day at the chosen time, even if the app is closed.",
+  "saveButton": "Save times",
+  "savingButton": "Saving…",
+  "picker": {
+    "hourLabel": "hour",
+    "minuteLabel": "minutes"
+  },
+  "alerts": {
+    "permissionDeniedTitle": "Permission denied",
+    "permissionDeniedBody": "Enable notifications in iOS Settings.",
+    "savedTitle": "Times saved ✓",
+    "savedLine": "Reminder {{index}}: {{time}}"
+  },
+  "messages": {
+    "morning": { "title": "☀️ New day, new start", "body": "Today, you can do better than yesterday. Log your cigarettes." },
+    "afternoon": { "title": "🚬 How's it going today?", "body": "Remember to log your cigarettes. Every number counts." },
+    "evening": { "title": "📊 Your day's summary", "body": "How many did you smoke today? Log it before you sleep." },
+    "encouragement": { "title": "💪 Hanging in there?", "body": "A quick reminder to log your cigarettes." },
+    "extra": { "title": "⏰ Extra reminder", "body": "Take 10 seconds to log your cigarettes." },
+    "night": { "title": "🌙 End of day", "body": "Last chance to log today's consumption." }
+  }
+}

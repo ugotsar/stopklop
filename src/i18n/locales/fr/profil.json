@@ -1,0 +1,92 @@
+{
+  "title": "Profil",
+  "memberSince": "Membre depuis {{date}}",
+  "sansCigarette": "sans cigarette",
+  "stats": {
+    "savings": "Économies réalisées",
+    "savingsUnit": "économisés",
+    "lifeGained": "Temps de vie gagné",
+    "lifeGainedUnit": "de vie gagnées",
+    "motivation": "Motivation",
+    "motivationUnit": "motivation",
+    "currentStreak": "Suivi actuel",
+    "currentStreakUnit": "sans cigarette",
+    "daysUnit_one": "{{count}} jour",
+    "daysUnit_other": "{{count}} jours"
+  },
+  "goal": {
+    "sectionTitle": "Mon objectif actuel",
+    "typeStop": "Arrêt complet",
+    "typeFree": "Objectif libre",
+    "typeReduce": "Réduction progressive",
+    "detailReduce": "{{count}} cig./jour max. · −{{reduction}} par semaine",
+    "detailSimple_one": "Objectif : {{count}} cigarette / jour",
+    "detailSimple_other": "Objectif : {{count}} cigarettes / jour"
+  },
+  "consumption": {
+    "sectionTitle": "Paramètres de consommation",
+    "packPrice": "Prix du paquet",
+    "cigsPerPack": "Cigarettes par paquet",
+    "cigsPerPackUnit_one": "{{count}} cigarette",
+    "cigsPerPackUnit_other": "{{count}} cigarettes",
+    "before": "Ma consommation avant l'app",
+    "beforeUnit": "{{count}} cig./jour",
+    "estimated": "⚠️ valeur estimée",
+    "beforeNote": "Référence de toutes vos économies — vérifiez qu'elle est juste"
+  },
+  "motivations": {
+    "sectionTitle": "Mes motivations",
+    "placeholder": "Définir mes motivations",
+    "label": "Motivation {{level}}/10",
+    "personal": "« {{text}} »",
+    "modalTitle": "Mes motivations",
+    "personalPlaceholder": "Votre motivation personnelle…",
+    "levelLabel": "Niveau de motivation : {{level}} / 10",
+    "options": {
+      "health": "Ma santé",
+      "family": "Ma famille",
+      "appearance": "Mon apparence",
+      "money": "Économiser de l'argent",
+      "breathing": "Un meilleur souffle",
+      "fitness": "Retrouver ma condition"
+    }
+  },
+  "preferences": {
+    "sectionTitle": "Préférences",
+    "notifications": "Notifications",
+    "notificationsSub": "Rappels, motivation, conseils",
+    "units": "Unités",
+    "unitsSub": "Euro (€) · Heures · Cigarettes",
+    "language": "Langue",
+    "languageSub": "Changer la langue de l'application"
+  },
+  "help": {
+    "sectionTitle": "Aide & support",
+    "helpCenter": "Centre d'aide",
+    "helpCenterSub": "FAQ, guides et ressources",
+    "contactUs": "Nous contacter",
+    "contactUsSub": "Une question ? On est là pour vous",
+    "about": "À propos de Stopklop",
+    "aboutSub": "Version {{version}}",
+    "aboutTitle": "Stopklop v{{version}}",
+    "aboutBody": "Stopklop vous accompagne pour réduire puis arrêter la cigarette, à votre rythme.\n\n🌿 Suivi quotidien et statistiques détaillées\n📉 Plan de réduction progressive personnalisé\n🔥 Analyse de vos envies et déclencheurs\n\nFait avec 💚 pour votre santé."
+  },
+  "deleteAccount": {
+    "button": "Supprimer mon compte",
+    "confirmTitle": "Supprimer mon compte",
+    "confirmBody": "Cette action est irréversible. Toutes vos données seront supprimées."
+  },
+  "editModal": {
+    "currentValue": "Valeur actuelle",
+    "updateProjections": "Mettre à jour mes projections",
+    "updateProjectionsSub": "Les statistiques seront recalculées avec cette nouvelle valeur.",
+    "packPriceTitle": "Modifier le prix du paquet",
+    "cigsPerPackTitle": "Modifier le nombre de cigarettes par paquet",
+    "beforeTitle": "Ma consommation avant l'app",
+    "unitCigarettes": "cigarettes",
+    "unitCigPerDay": "cig / jour"
+  },
+  "languageModal": {
+    "title": "Choisir la langue"
+  }
+}

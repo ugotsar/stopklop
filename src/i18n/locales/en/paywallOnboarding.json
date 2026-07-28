@@ -1,0 +1,40 @@
+{
+  "header": {
+    "title": "Start your\nsmoke-free journey",
+    "subtitle": "Access all the features\nto maximize your chances of success."
+  },
+  "features": [
+    "Personalized daily tracking",
+    "Real-time savings calculation",
+    "Daily tips and challenges",
+    "Detailed health statistics"
+  ],
+  "plans": {
+    "annual": {
+      "label": "Annual",
+      "price": "€49.99",
+      "pricePerMonth": "€4.17 / month",
+      "badge": "BEST VALUE",
+      "trial": "7-day free trial"
+    },
+    "monthly": {
+      "label": "Monthly",
+      "price": "€9.99",
+      "pricePerMonth": "€9.99 / month",
+      "trial": "3-day free trial"
+    }
+  },
+  "ctaButton": "Start my trial →",
+  "skipButton": "Continue without subscription",
+  "restoreButton": "Restore purchases",
+  "restoringLabel": "Restoring…",
+  "restoreSuccessTitle": "Purchases restored",
+  "restoreSuccessBody": "Your subscription has been successfully found.",
+  "restoreNoneTitle": "No purchase found",
+  "restoreNoneBody": "No active subscription was found on this account.",
+  "restoreErrorTitle": "Error",
+  "restoreErrorBody": "Restoration failed. Please try again later.",
+  "legalDisclosure": "Auto-renewing subscription. Payment is charged upon confirmation of purchase. The subscription automatically renews unless cancelled at least 24 hours before the end of the current period, manageable in your account settings.",
+  "termsLink": "Terms of Use",
+  "privacyLink": "Privacy Policy"
+}

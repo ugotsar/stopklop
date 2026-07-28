@@ -4,6 +4,7 @@ import {
   ScrollView, Modal, TextInput, KeyboardAvoidingView, Platform,
 } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
+import { useTranslation } from 'react-i18next';
 import { useUser } from '../context/UserContext';
 import { colors, spacing, font, radius } from '../theme';
 import { jouerSon } from '../services/sounds';
@@ -40,17 +41,18 @@ function CircularDial({ current, total, size = 200 }) {
 
 // ── Déclencheurs (habitudes) ────────────────────────────────────────────────
 const DECLENCHEURS = [
-  { key: 'stress',   emoji: '😰', label: 'Stress' },
-  { key: 'ennui',    emoji: '😴', label: 'Ennui' },
-  { key: 'cafe',     emoji: '☕', label: 'Café / pause' },
-  { key: 'repas',    emoji: '🍽', label: 'Après repas' },
-  { key: 'social',   emoji: '👥', label: 'Entourage' },
-  { key: 'alcool',   emoji: '🍺', label: 'Soirée / alcool' },
-  { key: 'habitude', emoji: '🚬', label: 'Habitude' },
+  { key: 'stress',   emoji: '😰' },
+  { key: 'ennui',    emoji: '😴' },
+  { key: 'cafe',     emoji: '☕' },
+  { key: 'repas',    emoji: '🍽' },
+  { key: 'social',   emoji: '👥' },
+  { key: 'alcool',   emoji: '🍺' },
+  { key: 'habitude', emoji: '🚬' },
 ];
 
 // ── Modal "Pourquoi cette cigarette ?" ──────────────────────────────────────
 function RaisonModal({ visible, persoList, onPick, onCreatePerso, onSkip }) {
+  const { t } = useTranslation('jaifume');
   const [mode, setMode]   = useState('pick'); // 'pick' | 'note' | 'creer'
   const [texte, setTexte] = useState('');
 
@@ -63,8 +65,8 @@ function RaisonModal({ visible, persoList, onPick, onCreatePerso, onSkip }) {
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
         <View style={rm.card}>
-          <Text style={rm.titre}>Pourquoi cette cigarette ?</Text>
-          <Text style={rm.sous}>Comprendre tes déclencheurs t'aide à les anticiper</Text>
+          <Text style={rm.titre}>{t('raisonModal.title')}</Text>
+          <Text style={rm.sous}>{t('raisonModal.subtitle')}</Text>
 
           {mode === 'pick' && (
             <>
@@ -72,7 +74,7 @@ function RaisonModal({ visible, persoList, onPick, onCreatePerso, onSkip }) {
                 {DECLENCHEURS.map(d => (
                   <TouchableOpacity key={d.key} style={rm.chip} onPress={() => { reset(); onPick(d.key, null); }}>
                     <Text style={{ fontSize: 18 }}>{d.emoji}</Text>
-                    <Text style={rm.chipLabel}>{d.label}</Text>
+                    <Text style={rm.chipLabel}>{t(`triggers.${d.key}`)}</Text>
                   </TouchableOpacity>
                 ))}
                 {persoList.map(d => (
@@ -83,15 +85,15 @@ function RaisonModal({ visible, persoList, onPick, onCreatePerso, onSkip }) {
                 ))}
                 <TouchableOpacity style={[rm.chip, rm.chipAction]} onPress={() => setMode('note')}>
                   <Text style={{ fontSize: 18 }}>✍️</Text>
-                  <Text style={rm.chipLabel}>Autre (noter)</Text>
+                  <Text style={rm.chipLabel}>{t('raisonModal.otherNote')}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={[rm.chip, rm.chipAction]} onPress={() => setMode('creer')}>
                   <Text style={{ fontSize: 18 }}>➕</Text>
-                  <Text style={rm.chipLabel}>Créer une habitude</Text>
+                  <Text style={rm.chipLabel}>{t('raisonModal.createHabit')}</Text>
                 </TouchableOpacity>
               </View>
               <TouchableOpacity onPress={() => { reset(); onSkip(); }} style={{ alignItems: 'center', paddingVertical: 8 }}>
-                <Text style={{ color: colors.gray, fontSize: 13 }}>Passer</Text>
+                <Text style={{ color: colors.gray, fontSize: 13 }}>{t('raisonModal.skip')}</Text>
               </TouchableOpacity>
             </>
           )}
@@ -102,7 +104,7 @@ function RaisonModal({ visible, persoList, onPick, onCreatePerso, onSkip }) {
                 style={rm.input}
                 value={texte}
                 onChangeText={setTexte}
-                placeholder="Ex : dispute au téléphone…"
+                placeholder={t('raisonModal.notePlaceholder')}
                 placeholderTextColor="#B0B0B0"
                 autoFocus
                 maxLength={120}
@@ -110,12 +112,12 @@ function RaisonModal({ visible, persoList, onPick, onCreatePerso, onSkip }) {
               <TouchableOpacity
                 style={[rm.btn, !texte.trim() && { opacity: 0.5 }]}
                 disabled={!texte.trim()}
-                onPress={() => { const t = texte.trim(); reset(); onPick('autre', t); }}
+                onPress={() => { const txt = texte.trim(); reset(); onPick('autre', txt); }}
               >
-                <Text style={rm.btnText}>Valider</Text>
+                <Text style={rm.btnText}>{t('raisonModal.validate')}</Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={() => setMode('pick')} style={{ alignItems: 'center', paddingVertical: 8 }}>
-                <Text style={{ color: colors.gray, fontSize: 13 }}>← Retour</Text>
+                <Text style={{ color: colors.gray, fontSize: 13 }}>{t('raisonModal.backArrow')}</Text>
               </TouchableOpacity>
             </>
           )}
@@ -123,13 +125,13 @@ function RaisonModal({ visible, persoList, onPick, onCreatePerso, onSkip }) {
           {mode === 'creer' && (
             <>
               <Text style={rm.creerHint}>
-                Cette habitude sera enregistrée : la prochaine fois, un seul appui suffira.
+                {t('raisonModal.createHint')}
               </Text>
               <TextInput
                 style={rm.input}
                 value={texte}
                 onChangeText={setTexte}
-                placeholder="Ex : Maman m'a énervé"
+                placeholder={t('raisonModal.createPlaceholder')}
                 placeholderTextColor="#B0B0B0"
                 autoFocus
                 maxLength={40}
@@ -137,12 +139,12 @@ function RaisonModal({ visible, persoList, onPick, onCreatePerso, onSkip }) {
               <TouchableOpacity
                 style={[rm.btn, !texte.trim() && { opacity: 0.5 }]}
                 disabled={!texte.trim()}
-                onPress={() => { const t = texte.trim(); reset(); onCreatePerso(t); }}
+                onPress={() => { const txt = texte.trim(); reset(); onCreatePerso(txt); }}
               >
-                <Text style={rm.btnText}>Créer et sélectionner</Text>
+                <Text style={rm.btnText}>{t('raisonModal.createAndSelect')}</Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={() => setMode('pick')} style={{ alignItems: 'center', paddingVertical: 8 }}>
-                <Text style={{ color: colors.gray, fontSize: 13 }}>← Retour</Text>
+                <Text style={{ color: colors.gray, fontSize: 13 }}>{t('raisonModal.backArrow')}</Text>
               </TouchableOpacity>
             </>
           )}
@@ -177,6 +179,7 @@ const rm = StyleSheet.create({
 
 // ── Modal feedback ──────────────────────────────────────────────────────────
 function FeedbackModal({ visible, count, objectif, prixCigarette, diffJours, onClose, onNavigate }) {
+  const { t } = useTranslation('jaifume');
   const isParfait  = count === 0;
   const isOk       = count > 0 && count <= objectif;
   const isDepasse  = count > objectif;
@@ -184,14 +187,14 @@ function FeedbackModal({ visible, count, objectif, prixCigarette, diffJours, onC
   const bannerColor    = isParfait ? '#1B6B3A' : isOk ? '#EAF3DE' : '#92400E';
   const bannerBorder   = isOk ? '#C0DD97' : 'transparent';
   const emoji          = isParfait ? '🏆' : isOk ? '✅' : '⚠️';
-  const titre          = isParfait ? 'Journée sans tabac !' : isOk ? 'Bien joué !' : 'Objectif dépassé';
+  const titre          = isParfait ? t('feedbackModal.perfectTitle') : isOk ? t('feedbackModal.okTitle') : t('feedbackModal.exceededTitle');
   const titreColor     = isOk ? '#27500A' : '#fff';
   const sousTitreColor = isOk ? '#3B6D11' : 'rgba(255,255,255,0.8)';
   const sousTitre   = isParfait
-    ? '0 cigarette aujourd\'hui'
+    ? t('feedbackModal.perfectSub')
     : isOk
-    ? 'Objectif respecté aujourd\'hui'
-    : `${count} cig · +${count - objectif} au-dessus`;
+    ? t('feedbackModal.okSub')
+    : t('feedbackModal.exceededSub', { count, diff: count - objectif });
 
   const argentDepense = (count * prixCigarette).toFixed(2);
   const vieGagnee     = isParfait ? objectif * 20 : null;
@@ -216,11 +219,11 @@ function FeedbackModal({ visible, count, objectif, prixCigarette, diffJours, onC
             {/* Cas parfait : 3 métriques */}
             {isParfait && (
               <View style={modal.statsRow}>
-                <StatItem valeur={`+${vieGagnee} min`} label="vie gagnée" color="#1B6B3A" />
+                <StatItem valeur={`+${vieGagnee} min`} label={t('feedbackModal.lifeGained')} color="#1B6B3A" />
                 <View style={modal.statDiv} />
-                <StatItem valeur="0,00 €" label="dépensé" color="#1B6B3A" />
+                <StatItem valeur={`0,00 €`} label={t('feedbackModal.spent')} color="#1B6B3A" />
                 <View style={modal.statDiv} />
-                <StatItem valeur={`🔥 ${streak}j`} label="streak" color="#F59E0B" />
+                <StatItem valeur={`🔥 ${streak}${t('common:dayShort')}`} label={t('feedbackModal.streak')} color="#F59E0B" />
               </View>
             )}
 
@@ -232,21 +235,21 @@ function FeedbackModal({ visible, count, objectif, prixCigarette, diffJours, onC
               return (
                 <>
                   <View style={modal.okBarRow}>
-                    <Text style={modal.okBarLabel}>{count} cigarette{count > 1 ? 's' : ''}</Text>
-                    <Text style={modal.okBarLabel}>objectif : {objectif}</Text>
+                    <Text style={modal.okBarLabel}>{count} {t('common:cigarette', { count })}</Text>
+                    <Text style={modal.okBarLabel}>{t('feedbackModal.goalLabel', { goal: objectif })}</Text>
                   </View>
                   <View style={modal.okBarTrack}>
                     <View style={[modal.okBarFill, { width: `${pct}%` }]} />
                   </View>
-                  <Text style={modal.okBarMarge}>{marge}% de marge</Text>
+                  <Text style={modal.okBarMarge}>{t('feedbackModal.margin', { pct: marge })}</Text>
                   <View style={modal.okChips}>
                     <View style={modal.okChip}>
                       <Text style={modal.okChipVal}>{argentDepense} €</Text>
-                      <Text style={modal.okChipLbl}>dépensé</Text>
+                      <Text style={modal.okChipLbl}>{t('feedbackModal.spent')}</Text>
                     </View>
                     <View style={modal.okChip}>
                       <Text style={modal.okChipVal}>{viePreservee} min</Text>
-                      <Text style={modal.okChipLbl}>vie préservée</Text>
+                      <Text style={modal.okChipLbl}>{t('feedbackModal.lifePreserved')}</Text>
                     </View>
                   </View>
                 </>
@@ -262,27 +265,27 @@ function FeedbackModal({ visible, count, objectif, prixCigarette, diffJours, onC
               return (
                 <>
                   <View style={modal.okBarRow}>
-                    <Text style={modal.depBarLabel}>objectif : {objectif}</Text>
-                    <Text style={[modal.depBarLabel, { color: '#DC2626' }]}>+{exces} de trop</Text>
+                    <Text style={modal.depBarLabel}>{t('feedbackModal.goalLabel', { goal: objectif })}</Text>
+                    <Text style={[modal.depBarLabel, { color: '#DC2626' }]}>{t('feedbackModal.tooMuch', { exces })}</Text>
                   </View>
                   <View style={modal.depBarTrack}>
                     <View style={[modal.depBarObj, { width: `${pctObj}%` }]} />
                     <View style={[modal.depBarExces, { width: `${100 - pctObj}%` }]} />
                   </View>
-                  <Text style={modal.depBarSub}>{count} cigarettes fumées aujourd'hui</Text>
+                  <Text style={modal.depBarSub}>{t('feedbackModal.smokedToday', { count })}</Text>
                   <View style={modal.okChips}>
                     <View style={[modal.okChip, modal.depChip]}>
                       <Text style={[modal.okChipVal, { color: '#92400E' }]}>{argentDepense} €</Text>
-                      <Text style={[modal.okChipLbl, { color: '#B45309' }]}>dépensé</Text>
+                      <Text style={[modal.okChipLbl, { color: '#B45309' }]}>{t('feedbackModal.spent')}</Text>
                     </View>
                     <View style={[modal.okChip, modal.depChip]}>
                       <Text style={[modal.okChipVal, { color: '#92400E' }]}>{viePerdue} min</Text>
-                      <Text style={[modal.okChipLbl, { color: '#B45309' }]}>de vie</Text>
+                      <Text style={[modal.okChipLbl, { color: '#B45309' }]}>{t('feedbackModal.lifeLost')}</Text>
                     </View>
                   </View>
                   <View style={modal.depMsg}>
                     <Text style={modal.depMsgText}>
-                      Chaque jour est une nouvelle chance.{'\n'}Demain, vous pouvez le faire. 💪
+                      {t('feedbackModal.message')}
                     </Text>
                   </View>
                 </>
@@ -296,12 +299,12 @@ function FeedbackModal({ visible, count, objectif, prixCigarette, diffJours, onC
                   style={[modal.btn, modal.btnGhost]}
                   onPress={() => { onClose(); onNavigate('ModifierObjectif'); }}
                 >
-                  <Text style={modal.btnGhostText}>Modifier objectif</Text>
+                  <Text style={modal.btnGhostText}>{t('feedbackModal.modifyGoal')}</Text>
                 </TouchableOpacity>
               )}
               <TouchableOpacity style={[modal.btn, modal.btnPrimary]} onPress={onClose}>
                 <Text style={modal.btnPrimaryText}>
-                  {isParfait ? 'Super, merci !' : isOk ? 'C\'est noté !' : 'Compris !'}
+                  {isParfait ? t('feedbackModal.btnPerfect') : isOk ? t('feedbackModal.btnOk') : t('feedbackModal.btnExceeded')}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -324,6 +327,7 @@ function StatItem({ valeur, label, color }) {
 
 // ── Écran principal ─────────────────────────────────────────────────────────
 export default function JaiFumeScreen({ navigation }) {
+  const { t } = useTranslation('jaifume');
   const { profile, updateProfile, stats } = useUser();
 
   const objectifJour  = stats?.objectifJour ?? 8;
@@ -447,7 +451,7 @@ export default function JaiFumeScreen({ navigation }) {
           <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
             <Text style={styles.backText}>←</Text>
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>J'ai fumé aujourd'hui</Text>
+          <Text style={styles.headerTitle}>{t('header.title')}</Text>
           <View style={{ width: 40 }} />
         </View>
 
@@ -456,15 +460,15 @@ export default function JaiFumeScreen({ navigation }) {
           <CircularDial current={count} total={objectifJour} size={200} />
           <View style={styles.dialInner}>
             <Text style={styles.dialNumber}>{count}</Text>
-            <Text style={styles.dialLabel}>cigarette{count > 1 ? 's' : ''}</Text>
+            <Text style={styles.dialLabel}>{t('common:cigarette', { count })}</Text>
           </View>
         </View>
 
         {/* ── Sous-titre ── */}
         <Text style={styles.subTitle}>
           {count === 0
-            ? "Aucune cigarette aujourd'hui 🎉"
-            : `${count} cigarette${count > 1 ? 's' : ''} aujourd'hui`}
+            ? t('subtitle.none')
+            : t('subtitle.some', { count })}
         </Text>
 
         {/* ── Boutons − / + ── */}
@@ -489,8 +493,7 @@ export default function JaiFumeScreen({ navigation }) {
           <View style={styles.tipCard}>
             <Text style={styles.tipEmoji}>💡</Text>
             <Text style={styles.tipText}>
-              Chaque cigarette en moins compte !{'\n'}
-              Vous êtes à {objectifJour - count} de votre objectif.
+              {t('tip.underGoal', { remaining: objectifJour - count })}
             </Text>
           </View>
         )}
@@ -498,8 +501,7 @@ export default function JaiFumeScreen({ navigation }) {
           <View style={[styles.tipCard, { backgroundColor: '#FEF9C3', borderColor: '#FDE047' }]}>
             <Text style={styles.tipEmoji}>🎯</Text>
             <Text style={styles.tipText}>
-              Limite atteinte — ne dépasse pas !{'\n'}
-              Tu es exactement à ton objectif de {objectifJour}.
+              {t('tip.atGoal', { goal: objectifJour })}
             </Text>
           </View>
         )}
@@ -507,36 +509,35 @@ export default function JaiFumeScreen({ navigation }) {
           <View style={[styles.tipCard, styles.tipCardWarning]}>
             <Text style={styles.tipEmoji}>⚠️</Text>
             <Text style={styles.tipText}>
-              Objectif dépassé de {count - objectifJour} cigarette{count - objectifJour > 1 ? 's' : ''}.{'\n'}
-              Demain est un nouveau départ !
+              {t('tip.overGoal', { count: count - objectifJour })}
             </Text>
           </View>
         )}
 
         {/* ── Bouton Enregistrer ── */}
         <TouchableOpacity style={styles.saveBtn} onPress={handleEnregistrer}>
-          <Text style={styles.saveBtnText}>Enregistrer</Text>
+          <Text style={styles.saveBtnText}>{t('common:save')}</Text>
         </TouchableOpacity>
 
         {/* ── Récapitulatif ── */}
         <View style={styles.recapCard}>
-          <Text style={styles.recapTitle}>Récapitulatif aujourd'hui</Text>
+          <Text style={styles.recapTitle}>{t('recap.title')}</Text>
           <View style={styles.recapRow}>
-            <RecapItem emoji="🚬" valeur={`${count}`} label={`cigarette${count > 1 ? 's' : ''}`} />
+            <RecapItem emoji="🚬" valeur={`${count}`} label={t('common:cigarette', { count })} />
             <View style={styles.recapDivider} />
-            <RecapItem emoji="💸" valeur={`${argentDepense}€`} label="dépensés" valeurColor="#EF4444" />
+            <RecapItem emoji="💸" valeur={`${argentDepense}€`} label={t('recap.spent')} valeurColor="#EF4444" />
             <View style={styles.recapDivider} />
             <RecapItem
               emoji="⏳"
               valeur={viePerdue >= 60
                 ? `${Math.floor(viePerdue/60)}h${viePerdue%60>0 ? ` ${viePerdue%60}m` : ''}`
                 : `${viePerdue}min`}
-              label="d'espérance de vie"
+              label={t('recap.lifeExpectancy')}
               valeurColor="#F59E0B"
             />
           </View>
           <Text style={styles.recapNote}>
-            ⓘ  Chaque cigarette coûte ~5 min d'espérance de vie
+            {t('recap.note')}
           </Text>
         </View>
 

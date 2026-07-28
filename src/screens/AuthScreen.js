@@ -3,10 +3,12 @@ import {
   View, Text, StyleSheet, TouchableOpacity,
   SafeAreaView, ActivityIndicator, Platform,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { signInAsGuest } from '../services/authService';
 import { colors, spacing, font } from '../theme';
 
 export default function AuthScreen() {
+  const { t } = useTranslation('authMain');
   const [loading, setLoading] = useState(false);
   const [error, setError]     = useState(null);
 
@@ -16,7 +18,7 @@ export default function AuthScreen() {
       setError(null);
       await signInAsGuest();
     } catch (e) {
-      setError('Erreur de connexion. Réessaie.');
+      setError(t('errors.guest'));
     } finally {
       setLoading(false);
     }
@@ -29,7 +31,7 @@ export default function AuthScreen() {
         <View style={s.hero}>
           <Text style={s.logo}>🚭</Text>
           <Text style={s.appName}>Stopklop</Text>
-          <Text style={s.tagline}>Arrête de fumer, un jour à la fois.</Text>
+          <Text style={s.tagline}>{t('tagline')}</Text>
         </View>
 
         <View style={s.btnContainer}>
@@ -40,24 +42,24 @@ export default function AuthScreen() {
               {/* Boutons Google + Apple — activés sur build natif EAS */}
               <TouchableOpacity style={[s.btnGoogle, s.btnDisabled]} disabled>
                 <Text style={s.btnGoogleIcon}>G</Text>
-                <Text style={[s.btnGoogleText, { color: '#999' }]}>Continuer avec Google</Text>
+                <Text style={[s.btnGoogleText, { color: '#999' }]}>{t('google.button')}</Text>
               </TouchableOpacity>
 
               {Platform.OS === 'ios' && (
                 <TouchableOpacity style={[s.btnAppleCustom, s.btnDisabled]} disabled>
-                  <Text style={{ color: '#999', fontSize: font.md, fontWeight: '600' }}>Continuer avec Apple</Text>
+                  <Text style={{ color: '#999', fontSize: font.md, fontWeight: '600' }}>{t('apple.button')}</Text>
                 </TouchableOpacity>
               )}
 
               <View style={s.divider}>
                 <View style={s.divLine} />
-                <Text style={s.divText}>ou</Text>
+                <Text style={s.divText}>{t('divider.or')}</Text>
                 <View style={s.divLine} />
               </View>
 
               {/* Mode invité — disponible dans Expo Go */}
               <TouchableOpacity style={s.btnGuest} onPress={handleGuest}>
-                <Text style={s.btnGuestText}>Continuer sans compte</Text>
+                <Text style={s.btnGuestText}>{t('guest.button')}</Text>
               </TouchableOpacity>
             </>
           )}
@@ -65,9 +67,10 @@ export default function AuthScreen() {
         </View>
 
         <Text style={s.legal}>
-          En continuant, tu acceptes nos{' '}
-          <Text style={s.legalLink}>CGU</Text> et notre{' '}
-          <Text style={s.legalLink}>Politique de confidentialité</Text>.
+          {t('legal.prefix')}{' '}
+          <Text style={s.legalLink}>{t('legal.terms')}</Text>{' '}
+          {t('legal.middle')}{' '}
+          <Text style={s.legalLink}>{t('legal.privacy')}</Text>.
         </Text>
 
       </View>

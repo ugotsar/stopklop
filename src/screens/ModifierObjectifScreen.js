@@ -3,34 +3,18 @@ import {
   View, Text, StyleSheet, SafeAreaView, ScrollView,
   TouchableOpacity,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { useUser } from '../context/UserContext';
 import { colors, spacing, font, radius } from '../theme';
 
-const OBJECTIFS = [
-  {
-    key: 'stop',
-    titre: 'Arréter complètement',
-    desc: '0 cigarette',
-    icon: '🎯',
-    iconBg: colors.primaryLight,
-  },
-  {
-    key: 'reduce',
-    titre: 'Réduire progressivement',
-    desc: 'Diminuer étape par étape',
-    icon: '📉',
-    iconBg: '#FEF3C7',
-  },
-  {
-    key: 'libre',
-    titre: 'Objectif libre',
-    desc: 'Choisir vous-même',
-    icon: '✏️',
-    iconBg: '#EDE9FE',
-  },
+const OBJECTIFS_META = [
+  { key: 'stop',   icon: '🎯', iconBg: colors.primaryLight },
+  { key: 'reduce', icon: '📉', iconBg: '#FEF3C7' },
+  { key: 'libre',  icon: '✏️', iconBg: '#EDE9FE' },
 ];
 
 export default function ModifierObjectifScreen({ navigation }) {
+  const { t, i18n } = useTranslation('modifierObjectif');
   const { profile, stats, updateProfile } = useUser();
 
   const objectifActuel = stats?.objectifJour ?? 8;
@@ -62,7 +46,7 @@ export default function ModifierObjectifScreen({ navigation }) {
 
   const ecoMois = (eviteesMois * prixCig).toFixed(0);
   const ecoAn   = (eviteesAn   * prixCig).toFixed(0);
-  const eco10   = Math.round(evitees10 * prixCig).toLocaleString('fr-FR');
+  const eco10   = Math.round(evitees10 * prixCig).toLocaleString(i18n.language);
 
   // Temps de vie récupéré (5 min / cigarette évitée)
   const vieMoisH = Math.round(eviteesMois * 5 / 60);
@@ -76,7 +60,7 @@ export default function ModifierObjectifScreen({ navigation }) {
   // Aperçu du plan de réduction : paliers semaine par semaine
   const semainesTotal = rythme > 0 ? Math.ceil(quantite / rythme) : 0;
   const dateZero = new Date(Date.now() + semainesTotal * 7 * 86400000)
-    .toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' });
+    .toLocaleDateString(i18n.language, { day: 'numeric', month: 'long' });
   const paliers = Array.from({ length: Math.min(semainesTotal + 1, 6) },
     (_, i) => Math.max(0, quantite - rythme * i));
 
@@ -104,21 +88,21 @@ export default function ModifierObjectifScreen({ navigation }) {
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
           <Text style={styles.backText}>←</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Modifier mon objectif</Text>
+        <Text style={styles.headerTitle}>{t('header.title')}</Text>
         <View style={{ width: 40 }} />
       </View>
 
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
 
         {/* ── Choisir l'objectif ── */}
-        <Text style={styles.sectionTitle}>Choisissez votre objectif</Text>
+        <Text style={styles.sectionTitle}>{t('objectives.sectionTitle')}</Text>
         <View style={styles.card}>
-          {OBJECTIFS.map((obj, i) => (
+          {OBJECTIFS_META.map((obj, i) => (
             <TouchableOpacity
               key={obj.key}
               style={[
                 styles.optionRow,
-                i < OBJECTIFS.length - 1 && styles.optionRowBorder,
+                i < OBJECTIFS_META.length - 1 && styles.optionRowBorder,
                 selected === obj.key && styles.optionRowActive,
               ]}
               onPress={() => setSelected(obj.key)}
@@ -130,8 +114,8 @@ export default function ModifierObjectifScreen({ navigation }) {
 
               {/* Texte */}
               <View style={{ flex: 1 }}>
-                <Text style={styles.optionTitre}>{obj.titre}</Text>
-                <Text style={styles.optionDesc}>{obj.desc}</Text>
+                <Text style={styles.optionTitre}>{t(`objectives.${obj.key}.title`)}</Text>
+                <Text style={styles.optionDesc}>{t(`objectives.${obj.key}.desc`)}</Text>
               </View>
 
               {/* Icône */}
@@ -146,7 +130,7 @@ export default function ModifierObjectifScreen({ navigation }) {
         {selected !== 'stop' && (
           <>
             <Text style={styles.sectionTitle}>
-              {selected === 'reduce' ? 'Point de départ (aujourd\'hui)' : 'Objectif quotidien'}
+              {selected === 'reduce' ? t('dailyGoal.titleReduceMode') : t('dailyGoal.titleOtherMode')}
             </Text>
             <View style={styles.card}>
               <View style={styles.stepperRow}>
@@ -160,7 +144,7 @@ export default function ModifierObjectifScreen({ navigation }) {
 
                 <View style={styles.stepperCenter}>
                   <Text style={styles.stepperNumber}>{quantite}</Text>
-                  <Text style={styles.stepperUnit}>cigarettes / jour</Text>
+                  <Text style={styles.stepperUnit}>{t('dailyGoal.unit')}</Text>
                 </View>
 
                 <TouchableOpacity
@@ -177,7 +161,7 @@ export default function ModifierObjectifScreen({ navigation }) {
         {/* ── Rythme de réduction (uniquement mode "réduire") ── */}
         {selected === 'reduce' && (
           <>
-            <Text style={styles.sectionTitle}>Rythme de réduction</Text>
+            <Text style={styles.sectionTitle}>{t('pace.sectionTitle')}</Text>
             <View style={styles.card}>
               <View style={styles.stepperRow}>
                 <TouchableOpacity
@@ -190,7 +174,7 @@ export default function ModifierObjectifScreen({ navigation }) {
 
                 <View style={styles.stepperCenter}>
                   <Text style={[styles.stepperNumber, { fontSize: 36, lineHeight: 40 }]}>−{rythme}</Text>
-                  <Text style={styles.stepperUnit}>cigarette{rythme > 1 ? 's' : ''} par semaine</Text>
+                  <Text style={styles.stepperUnit}>{t('pace.perWeek', { count: rythme })}</Text>
                 </View>
 
                 <TouchableOpacity
@@ -206,7 +190,7 @@ export default function ModifierObjectifScreen({ navigation }) {
               <View style={styles.paliersRow}>
                 {paliers.map((v, i) => (
                   <View key={i} style={styles.palierChip}>
-                    <Text style={styles.palierSemaine}>{i === 0 ? 'Auj.' : `S+${i}`}</Text>
+                    <Text style={styles.palierSemaine}>{i === 0 ? t('planPreview.today') : t('planPreview.weekLabel', { n: i })}</Text>
                     <Text style={[styles.palierValeur, v === 0 && { color: colors.primary }]}>
                       {v === 0 ? '🎉 0' : v}
                     </Text>
@@ -222,9 +206,9 @@ export default function ModifierObjectifScreen({ navigation }) {
 
               <View style={styles.planResume}>
                 <Text style={styles.planResumeText}>
-                  🏁 À ce rythme, vous atteindrez <Text style={{ fontWeight: '800' }}>0 cigarette</Text> dans{' '}
-                  <Text style={{ fontWeight: '800' }}>{semainesTotal} semaine{semainesTotal > 1 ? 's' : ''}</Text>,
-                  {' '}vers le <Text style={{ fontWeight: '800' }}>{dateZero}</Text>.
+                  {t('planPreview.summaryPrefix')} <Text style={{ fontWeight: '800' }}>{t('planPreview.zeroCigarette')}</Text>{' '}
+                  <Text style={{ fontWeight: '800' }}>{t('planPreview.inWeeks', { count: semainesTotal })}</Text>
+                  <Text style={{ fontWeight: '800' }}>{t('planPreview.towardDate', { date: dateZero })}</Text>
                 </Text>
               </View>
             </View>
@@ -233,10 +217,10 @@ export default function ModifierObjectifScreen({ navigation }) {
 
         {/* ── Aperçu de l'objectif ── */}
         <View style={styles.apercuCard}>
-          <Text style={styles.apercuTitle}>Aperçu de votre objectif</Text>
+          <Text style={styles.apercuTitle}>{t('overview.title')}</Text>
           <Text style={styles.apercuRef}>
-            Référence : {consoAvant} cig / jour avant l'app
-            {stats?.consoEstimee ? ' (estimée — ajustez-la dans Profil → Paramètres de consommation)' : ''}
+            {t('overview.reference', { count: consoAvant })}
+            {stats?.consoEstimee ? t('overview.referenceEstimatedNote') : ''}
           </Text>
 
           {/* Économie estimée : mois / an / 10 ans */}
@@ -245,20 +229,20 @@ export default function ModifierObjectifScreen({ navigation }) {
               <View style={styles.apercuIconCircle}>
                 <Text style={{ fontSize: 18 }}>💰</Text>
               </View>
-              <Text style={styles.apercuBlocTitre}>Économie estimée</Text>
+              <Text style={styles.apercuBlocTitre}>{t('overview.estimatedSavings')}</Text>
             </View>
             <View style={styles.apercuCols}>
               <View style={styles.apercuColBox}>
                 <Text style={styles.apercuColVal}>+{ecoMois} €</Text>
-                <Text style={styles.apercuColLbl}>par mois</Text>
+                <Text style={styles.apercuColLbl}>{t('overview.perMonth')}</Text>
               </View>
               <View style={styles.apercuColBox}>
                 <Text style={styles.apercuColVal}>+{ecoAn} €</Text>
-                <Text style={styles.apercuColLbl}>par an</Text>
+                <Text style={styles.apercuColLbl}>{t('overview.perYear')}</Text>
               </View>
               <View style={styles.apercuColBox}>
                 <Text style={styles.apercuColVal}>+{eco10} €</Text>
-                <Text style={styles.apercuColLbl}>sur 10 ans</Text>
+                <Text style={styles.apercuColLbl}>{t('overview.per10Years')}</Text>
               </View>
             </View>
           </View>
@@ -269,20 +253,20 @@ export default function ModifierObjectifScreen({ navigation }) {
               <View style={[styles.apercuIconCircle, { backgroundColor: '#FEF3C7' }]}>
                 <Text style={{ fontSize: 18 }}>🕐</Text>
               </View>
-              <Text style={styles.apercuBlocTitre}>Temps de vie récupéré</Text>
+              <Text style={styles.apercuBlocTitre}>{t('overview.lifeRecovered')}</Text>
             </View>
             <View style={styles.apercuCols}>
               <View style={[styles.apercuColBox, { backgroundColor: '#FFFBEB' }]}>
                 <Text style={[styles.apercuColVal, { color: '#B45309' }]}>+{vieMoisH} h</Text>
-                <Text style={styles.apercuColLbl}>par mois</Text>
+                <Text style={styles.apercuColLbl}>{t('overview.perMonth')}</Text>
               </View>
               <View style={[styles.apercuColBox, { backgroundColor: '#FFFBEB' }]}>
                 <Text style={[styles.apercuColVal, { color: '#B45309' }]}>+{vieAnJ} j</Text>
-                <Text style={styles.apercuColLbl}>par an</Text>
+                <Text style={styles.apercuColLbl}>{t('overview.perYear')}</Text>
               </View>
               <View style={[styles.apercuColBox, { backgroundColor: '#FFFBEB' }]}>
                 <Text style={[styles.apercuColVal, { color: '#B45309' }]}>+{vie10J} j</Text>
-                <Text style={styles.apercuColLbl}>sur 10 ans</Text>
+                <Text style={styles.apercuColLbl}>{t('overview.per10Years')}</Text>
               </View>
             </View>
           </View>
@@ -292,18 +276,18 @@ export default function ModifierObjectifScreen({ navigation }) {
             <View style={[styles.apercuIconCircle, { backgroundColor: '#EDE9FE' }]}>
               <Text style={{ fontSize: 20 }}>📊</Text>
             </View>
-            <Text style={styles.apercuLabel}>Réduction de consommation{'\n'}(moyenne sur le 1er mois)</Text>
+            <Text style={styles.apercuLabel}>{t('overview.consumptionReduction')}</Text>
             <Text style={styles.apercuValPurple}>-{reduction} %</Text>
           </View>
         </View>
 
         {/* ── Bouton enregistrer ── */}
         <TouchableOpacity style={styles.saveBtn} onPress={handleEnregistrer}>
-          <Text style={styles.saveBtnText}>Enregistrer mon objectif</Text>
+          <Text style={styles.saveBtnText}>{t('saveButton')}</Text>
         </TouchableOpacity>
 
         <Text style={styles.footerNote}>
-          ⓘ  Vous pourrez modifier votre objectif à tout moment.
+          {t('footerNote')}
         </Text>
 
       </ScrollView>

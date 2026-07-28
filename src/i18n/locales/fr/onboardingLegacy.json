@@ -1,0 +1,131 @@
+{
+  "shared": {
+    "dividerOr": "ou"
+  },
+  "welcome": {
+    "title": "Bienvenue sur",
+    "subtitle": "Votre compagnon pour arrêter\nde fumer et reprendre le contrôle\nde votre vie.",
+    "startButton": "Commencer  →",
+    "haveAccount": "J'ai déjà un compte"
+  },
+  "register": {
+    "title": "S'inscrire",
+    "subtitle": "Créez votre compte pour commencer\nvotre parcours vers une vie sans tabac.",
+    "googleButton": "S'inscrire avec Google",
+    "appleButton": "S'inscrire avec Apple",
+    "emailPlaceholder": "Adresse e-mail",
+    "passwordPlaceholder": "Mot de passe",
+    "confirmPasswordPlaceholder": "Confirmer le mot de passe",
+    "checkLength": "8 caractères minimum",
+    "checkLower": "Au moins une minuscule",
+    "checkUpper": "Au moins une majuscule",
+    "checkDigit": "Au moins un chiffre",
+    "submitButton": "S'inscrire",
+    "haveAccountText": "Vous avez déjà un compte ?",
+    "loginLink": "Se connecter",
+    "termsPrefix": "En vous inscrivant, vous acceptez nos",
+    "termsLink": "Conditions d'utilisation",
+    "termsMiddle": "et notre",
+    "privacyLink": "Politique de confidentialité",
+    "errorInvalidEmail": "Email invalide.",
+    "errorInvalidPassword": "Mot de passe invalide.",
+    "errorPasswordMismatch": "Les mots de passe ne correspondent pas."
+  },
+  "login": {
+    "title": "Se connecter",
+    "subtitle": "Bienvenue de retour !",
+    "googleButton": "Continuer avec Google",
+    "appleButton": "Continuer avec Apple",
+    "emailPlaceholder": "Adresse e-mail",
+    "passwordPlaceholder": "Mot de passe",
+    "forgotPassword": "Mot de passe oublié ?",
+    "submitButton": "Se connecter",
+    "noAccountText": "Vous n'avez pas de compte ?",
+    "createAccountLink": "Créer un compte",
+    "errorFillFields": "Veuillez remplir tous les champs."
+  },
+  "step1": {
+    "title": "Combien de cigarettes\nfumez-vous par jour ?",
+    "subtitle": "Soyez honnête, cela nous aide\nà personnaliser votre expérience.",
+    "unitLabel": "cigarettes / jour",
+    "freeTitle": "Écrire mon propre nombre",
+    "freeDescription": "Saisissez le nombre de cigarettes que vous fumez par jour.",
+    "freePlaceholder": "Ex. 15"
+  },
+  "step2": {
+    "title": "Quel est le prix\nde votre paquet ?",
+    "subtitle": "Entrez le prix que vous payez habituellement.",
+    "freeTitle": "Écrire mon propre prix",
+    "freeDescription": "Saisissez le prix de votre paquet.",
+    "freePlaceholder": "11,50"
+  },
+  "step3": {
+    "title": "Combien de cigarettes\ncontient votre paquet ?",
+    "subtitle": "Sélectionnez le nombre de cigarettes\ndans votre paquet habituel.",
+    "unitLabel": "cigarettes",
+    "freeTitle": "Écrire mon propre nombre",
+    "freeDescription": "Saisissez le nombre de cigarettes que contient votre paquet.",
+    "freePlaceholder": "Ex. 25"
+  },
+  "step4": {
+    "title": "Depuis combien de temps\nfumez-vous ?",
+    "subtitle": "Cela nous permet d'estimer les bénéfices\nde votre arrêt.",
+    "options": {
+      "lessThanOne": "Moins d'1 an",
+      "oneToFive": "1 à 5 ans",
+      "fiveToTen": "5 à 10 ans",
+      "tenToTwenty": "10 à 20 ans",
+      "moreThanTwenty": "Plus de 20 ans"
+    },
+    "freeTitle": "Écrire ma propre durée",
+    "freeDescription": "Saisissez le nombre d'années\nou de mois.",
+    "freePlaceholder": "Ex. 7 ans"
+  },
+  "step5": {
+    "title": "Quelle est votre date\nd'arrêt souhaitée ?",
+    "subtitle": "Choisissez le jour où vous voulez\narrêter de fumer.",
+    "months": ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"],
+    "daysShort": ["L", "M", "M", "J", "V", "S", "D"],
+    "freeTitle": "Écrire ma propre date",
+    "freeDescription": "Saisissez la date à laquelle vous souhaitez arrêter.",
+    "datePlaceholder": "JJ / MM / AAAA"
+  },
+  "step6": {
+    "title": "Quelles sont vos principales\nmotivations ?",
+    "subtitle": "Sélectionnez jusqu'à 3 motivations\nqui comptent le plus pour vous.",
+    "motivations": {
+      "sante": "Ma santé",
+      "famille": "Ma famille",
+      "apparence": "Mon apparence",
+      "economiser": "Économiser\nde l'argent",
+      "souffle": "Un meilleur\nsouffle",
+      "condition": "Retrouver ma\ncondition"
+    },
+    "freeTitle": "Écrire ma propre motivation",
+    "freeDescription": "Saisissez une motivation qui compte pour vous.",
+    "freePlaceholder": "Votre motivation"
+  },
+  "step7": {
+    "title": "Quel est votre niveau\nde motivation ?",
+    "subtitle": "Soyez honnête avec vous-même.",
+    "descriptions": [
+      "",
+      "Vous débutez ce chemin. Chaque pas compte.",
+      "Vous y pensez. C'est déjà un début.",
+      "La motivation grandit en vous.",
+      "Vous commencez à y croire.",
+      "Vous êtes prêt(e) à vous engager.",
+      "Bonne détermination. Continuez !",
+      "Vous êtes bien décidé(e).",
+      "Votre volonté est forte.",
+      "Vous êtes presque inarrêtable !",
+      "Vous êtes totalement déterminé(e) ! 🏆"
+    ],
+    "lowLabel": "Faible",
+    "highLabel": "Élevé",
+    "manualTitle": "Saisir manuellement",
+    "manualDescription": "Entrez votre niveau de 1 à 10.",
+    "manualPlaceholder": "1-10",
+    "finishButton": "Terminer →"
+  }
+}

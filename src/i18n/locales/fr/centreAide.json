@@ -1,0 +1,38 @@
+{
+  "header": { "title": "Centre d'aide" },
+  "intro": "Questions fréquentes",
+  "faq": {
+    "reductionPlan": {
+      "question": "Comment fonctionne le plan de réduction progressive ?",
+      "answer": "Vous choisissez un point de départ (votre consommation actuelle) et un rythme, par exemple 2 cigarettes en moins par semaine. Chaque semaine, votre objectif quotidien baisse automatiquement jusqu'à atteindre 0. Vous pouvez modifier le rythme à tout moment depuis l'onglet Plan."
+    },
+    "cravingButton": {
+      "question": "À quoi sert le bouton « J'ai envie de fumer » ?",
+      "answer": "Il enregistre le moment et la cause de vos envies (stress, café, soirée…). L'application analyse ensuite vos heures critiques, vos jours difficiles et vos déclencheurs principaux dans l'onglet Plan, pour vous aider à les anticiper."
+    },
+    "lifeGained": {
+      "question": "Que signifie « Vie récupérée » ?",
+      "answer": "Les études médicales estiment qu'une cigarette réduit l'espérance de vie d'environ 5 minutes. Chaque cigarette non fumée par rapport à votre ancienne consommation vous « rend » donc 5 minutes de vie."
+    },
+    "moneySaved": {
+      "question": "Comment est calculé l'argent économisé ?",
+      "answer": "On compare votre consommation actuelle à celle d'avant l'application, multipliée par le prix d'une cigarette (prix du paquet ÷ nombre de cigarettes). Vous pouvez ajuster ces valeurs dans Profil → Paramètres de consommation."
+    },
+    "exceededGoal": {
+      "question": "J'ai dépassé mon objectif, que se passe-t-il ?",
+      "answer": "Rien de grave ! Le cercle passe en rouge pour vous l'indiquer, mais chaque jour est un nouveau départ. L'important est la tendance sur la durée, pas une journée isolée."
+    },
+    "dataSaved": {
+      "question": "Mes données sont-elles sauvegardées ?",
+      "answer": "Oui. Vos données sont stockées localement sur votre téléphone et synchronisées dans le cloud. Vous les retrouvez si vous changez d'appareil."
+    },
+    "editGoal": {
+      "question": "Comment modifier mon objectif ?",
+      "answer": "Allez dans l'onglet Plan → « Modifier le plan », ou dans Profil → « Mon objectif actuel ». Vous pouvez choisir l'arrêt complet, la réduction progressive ou un objectif libre."
+    }
+  },
+  "contact": {
+    "title": "Vous n'avez pas trouvé votre réponse ?",
+    "button": "Nous contacter"
+  }
+}

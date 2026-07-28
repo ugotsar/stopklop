@@ -1,0 +1,43 @@
+{
+  "header": {
+    "title": "Edit my goal"
+  },
+  "objectives": {
+    "sectionTitle": "Choose your goal",
+    "stop": { "title": "Quit completely", "desc": "0 cigarettes" },
+    "reduce": { "title": "Reduce gradually", "desc": "Cut down step by step" },
+    "libre": { "title": "Free goal", "desc": "Choose it yourself" }
+  },
+  "dailyGoal": {
+    "titleReduceMode": "Starting point (today)",
+    "titleOtherMode": "Daily goal",
+    "unit": "cigarettes / day"
+  },
+  "pace": {
+    "sectionTitle": "Reduction pace",
+    "perWeek_one": "cigarette per week",
+    "perWeek_other": "cigarettes per week"
+  },
+  "planPreview": {
+    "today": "Today",
+    "weekLabel": "W+{{n}}",
+    "summaryPrefix": "🏁 At this pace, you'll reach",
+    "zeroCigarette": "0 cigarettes",
+    "inWeeks_one": "in {{count}} week",
+    "inWeeks_other": "in {{count}} weeks",
+    "towardDate": ", around {{date}}."
+  },
+  "overview": {
+    "title": "Preview of your goal",
+    "reference": "Reference: {{count}} cig / day before the app",
+    "referenceEstimatedNote": " (estimated — adjust it in Profile → Consumption settings)",
+    "estimatedSavings": "Estimated savings",
+    "lifeRecovered": "Life recovered",
+    "perMonth": "per month",
+    "perYear": "per year",
+    "per10Years": "over 10 years",
+    "consumptionReduction": "Consumption reduction\n(average over the first month)"
+  },
+  "saveButton": "Save my goal",
+  "footerNote": "ⓘ  You can change your goal at any time."
+}

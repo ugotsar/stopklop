@@ -1,0 +1,35 @@
+{
+  "title": "Stopklop Pro",
+  "subtitle": "All the features to quit for good",
+  "features": {
+    "stats": "Unlimited advanced statistics",
+    "badges": "All badges & milestones",
+    "cloud": "Automatic cloud backup",
+    "reminders": "Personalized reminders",
+    "export": "Export your data"
+  },
+  "plans": {
+    "lifetime": "Lifetime",
+    "annual": "Yearly",
+    "monthly": "Monthly",
+    "popular": "Popular",
+    "save50": "Save 50%",
+    "perYear": "/year",
+    "perMonth": "/month"
+  },
+  "cta": {
+    "start": "Get started now",
+    "trial": "7-day free trial · Cancel anytime",
+    "restore": "Restore purchases"
+  },
+  "alerts": {
+    "welcomeTitle": "🎉 Welcome to Stopklop Pro!",
+    "welcomeBody": "All features are now unlocked.",
+    "welcomeButton": "Great!",
+    "restoredTitle": "✅ Subscription restored!",
+    "noSubscriptionTitle": "No subscription found",
+    "noSubscriptionBody": "No purchase to restore.",
+    "purchaseErrorBody": "Purchase failed. Try again.",
+    "restoreErrorBody": "Restore failed."
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "header": { "title": "Kontakt" },
+  "hero": {
+    "title": "Wir sind für dich da",
+    "subtitle": "Eine Frage, ein Problem oder ein Vorschlag?\nUnser Team antwortet dir\nso schnell wie möglich."
+  },
+  "sections": {
+    "subjectTitle": "Wähle ein Thema",
+    "messageTitle": "Sende uns eine Nachricht"
+  },
+  "subjects": {
+    "account": { "title": "Konto und Profil", "desc": "Kontoprobleme, Anmeldung, Daten..." },
+    "tracking": { "title": "Tracking und Statistiken", "desc": "Daten, Ziele, Prognosen..." },
+    "payments": { "title": "Zahlungen und Abonnements", "desc": "Abrechnung, Abonnement, Erstattung..." },
+    "usage": { "title": "Nutzung der App", "desc": "Funktionen, Bedienung, Fehler..." },
+    "suggestion": { "title": "Vorschlag", "desc": "Teile deine Ideen zur Verbesserung von Stopklop" }
+  },
+  "messagePlaceholder": "Beschreibe hier dein Anliegen...",
+  "charCount": "{{count}}/1000",
+  "otherWays": {
+    "title": "Weitere Kontaktmöglichkeiten",
+    "emailLabel": "E-Mail:",
+    "responseTimeLabel": "Antwortzeit: innerhalb von",
+    "responseTimeValue": "24 bis 48 Werkstunden"
+  },
+  "send": { "button": "✈  Nachricht senden" },
+  "footer": { "note": "🔒  Deine Daten werden vertraulich behandelt." },
+  "alerts": {
+    "subjectRequiredTitle": "Thema erforderlich",
+    "subjectRequiredBody": "Bitte wähle ein Thema, bevor du sendest.",
+    "messageTooShortTitle": "Nachricht zu kurz",
+    "messageTooShortBody": "Beschreibe dein Anliegen in ein paar Worten.",
+    "cantOpenMailTitle": "Deine Mail-App konnte nicht geöffnet werden",
+    "cantOpenMailBody": "Schreib uns direkt an:\n{{email}}"
+  },
+  "subjectFallback": "Anfrage"
+}

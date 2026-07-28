@@ -4,6 +4,7 @@ import {
   TouchableOpacity, Dimensions,
 } from 'react-native';
 import Svg, { Circle, Rect, Text as SvgText, G } from 'react-native-svg';
+import { useTranslation } from 'react-i18next';
 import { useUser } from '../context/UserContext';
 import { colors, spacing, font, radius } from '../theme';
 
@@ -20,16 +21,18 @@ function mondayOf(d) {
   const x = new Date(d); x.setHours(12, 0, 0, 0);
   return addDays(x, -((x.getDay() + 6) % 7));
 }
-function labelJourCourt(key) {
+// t / lang sont transmis par le composant (via useTranslation) car ces
+// fonctions utilitaires vivent en dehors du rendu du composant.
+function labelJourCourt(key, t, lang) {
   const todayKey = isoKey(new Date());
   const hierKey  = isoKey(addDays(new Date(), -1));
-  if (key === todayKey) return "Aujourd'hui";
-  if (key === hierKey)  return 'Hier';
-  const s = new Date(key + 'T12:00:00').toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' });
+  if (key === todayKey) return t('dates.today');
+  if (key === hierKey)  return t('dates.yesterday');
+  const s = new Date(key + 'T12:00:00').toLocaleDateString(lang, { weekday: 'short', day: 'numeric', month: 'short' });
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
-function labelMois(mKey) {
-  const s = new Date(mKey + '-15T12:00:00').toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+function labelMois(mKey, lang) {
+  const s = new Date(mKey + '-15T12:00:00').toLocaleDateString(lang, { month: 'long', year: 'numeric' });
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
 function monthsBetween(startKey, endKey) {
@@ -141,14 +144,17 @@ function PeriodNav({ label, onPrev, onNext, nextDisabled, prevDisabled }) {
 }
 
 // ── Écran ─────────────────────────────────────────────────────────────────────
+// Les clés (key) des onglets sont des identifiants internes utilisés dans la
+// logique de l'écran — seuls les libellés affichés sont traduits (tabs.*).
 const TABS = [
-  { key: 'jour',    label: 'Jour' },
-  { key: 'semaine', label: 'Semaine' },
-  { key: 'mois',    label: 'Mois' },
-  { key: 'debut',   label: 'Période' },
+  { key: 'jour' },
+  { key: 'semaine' },
+  { key: 'mois' },
+  { key: 'debut' },
 ];
 
 export default function StatistiquesScreen() {
+  const { t, i18n } = useTranslation('statistiques');
   const { stats, profile } = useUser();
 
   const [activeTab, setActiveTab]     = useState('jour');
@@ -158,13 +164,23 @@ export default function StatistiquesScreen() {
   const [rangeStart, setRangeStart]   = useState(null); // clé mois "YYYY-MM"
   const [rangeEnd, setRangeEnd]       = useState(null);
 
+  const TAB_LABELS = {
+    jour: t('tabs.day'),
+    semaine: t('tabs.week'),
+    mois: t('tabs.month'),
+    debut: t('tabs.period'),
+  };
+  const weekdaysShort = t('common:weekdaysShort', { returnObjects: true }).map(
+    d => d.charAt(0).toUpperCase() + d.slice(1)
+  );
+
   if (!stats) {
     return (
       <SafeAreaView style={styles.safe}>
-        <View style={styles.header}><Text style={styles.headerTitle}>Statistiques</Text></View>
+        <View style={styles.header}><Text style={styles.headerTitle}>{t('common:tabs.stats')}</Text></View>
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
           <Text style={{ fontSize: 40 }}>🌿</Text>
-          <Text style={{ color: colors.gray, marginTop: 8 }}>Chargement...</Text>
+          <Text style={{ color: colors.gray, marginTop: 8 }}>{t('common:loading')}</Text>
         </View>
       </SafeAreaView>
     );
@@ -197,13 +213,13 @@ export default function StatistiquesScreen() {
     const sansHeure = Math.max(0, countJour - times.length);
 
     view = {
-      navLabel: labelJourCourt(dayKey),
+      navLabel: labelJourCourt(dayKey, t, i18n.language),
       onPrev: () => setDayKey(isoKey(addDays(new Date(dayKey + 'T12:00:00'), -1))),
       onNext: () => setDayKey(isoKey(addDays(new Date(dayKey + 'T12:00:00'), 1))),
       nextDisabled: dayKey >= todayKey,
       dates: [dayKey],
       chartData: bins,
-      chartLabels: Array.from({ length: 24 }, (_, h) => h % 4 === 0 ? `${h}h` : ''),
+      chartLabels: Array.from({ length: 24 }, (_, h) => h % 4 === 0 ? `${h}${t('common:hourShort')}` : ''),
       heures: times.map(d => `${String(d.getHours()).padStart(2, '0')}h${String(d.getMinutes()).padStart(2, '0')}`),
       sansHeure,
     };
@@ -214,22 +230,22 @@ export default function StatistiquesScreen() {
     const days   = Array.from({ length: 7 }, (_, i) => addDays(monday, i));
     const keys   = days.map(isoKey).filter(k => k <= todayKey);
     const allKeys7 = days.map(isoKey);
-    const debut = monday.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
-    const fin   = addDays(monday, 6).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
+    const debut = monday.toLocaleDateString(i18n.language, { day: 'numeric', month: 'short' });
+    const fin   = addDays(monday, 6).toLocaleDateString(i18n.language, { day: 'numeric', month: 'short' });
 
     view = {
-      navLabel: `Du ${debut} au ${fin}`,
+      navLabel: t('week.rangeLabel', { start: debut, end: fin }),
       onPrev: () => setWeekOffset(o => o - 1),
       onNext: () => setWeekOffset(o => o + 1),
       nextDisabled: weekOffset >= 0,
       dates: keys,
       chartData: allKeys7.map(k => hist[k] ?? 0),
-      chartLabels: ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'],
+      chartLabels: weekdaysShort,
       onBarPress: i => {
         const k = allKeys7[i];
         if (k <= todayKey) { setDayKey(k); setActiveTab('jour'); }
       },
-      tapHint: 'Touchez un jour pour voir le détail heure par heure',
+      tapHint: t('tapHint.day'),
     };
   }
 
@@ -249,7 +265,7 @@ export default function StatistiquesScreen() {
     const sumCur  = keys.map(k => hist[k] ?? 0).reduce((s, v) => s + v, 0);
 
     view = {
-      navLabel: labelMois(mKey),
+      navLabel: labelMois(mKey, i18n.language),
       onPrev: () => setMonthOffset(o => o - 1),
       onNext: () => setMonthOffset(o => o + 1),
       nextDisabled: monthOffset >= 0,
@@ -260,9 +276,14 @@ export default function StatistiquesScreen() {
         const k = allKeysM[i];
         if (k <= todayKey) { setDayKey(k); setActiveTab('jour'); }
       },
-      tapHint: 'Touchez un jour pour voir le détail heure par heure',
+      tapHint: t('tapHint.day'),
       comparaison: sumPrev > 0
-        ? `${labelMois(pKey)} : ${sumPrev} cig · ${sumCur <= sumPrev ? '↓' : '↑'} ${Math.abs(Math.round(((sumCur - sumPrev) / sumPrev) * 100))}% ce mois`
+        ? t('month.comparison', {
+            month: labelMois(pKey, i18n.language),
+            count: sumPrev,
+            arrow: sumCur <= sumPrev ? '↓' : '↑',
+            percent: Math.abs(Math.round(((sumCur - sumPrev) / sumPrev) * 100)),
+          })
         : null,
     };
   }
@@ -286,14 +307,14 @@ export default function StatistiquesScreen() {
       dates,
       chartData: monthSums,
       chartLabels: months.map(mKey =>
-        new Date(mKey + '-15T12:00:00').toLocaleDateString('fr-FR', { month: 'short' })
+        new Date(mKey + '-15T12:00:00').toLocaleDateString(i18n.language, { month: 'short' })
       ),
       onBarPress: i => {
         const [y, m] = months[i].split('-').map(Number);
         setMonthOffset((y - now.getFullYear()) * 12 + (m - 1 - now.getMonth()));
         setActiveTab('mois');
       },
-      tapHint: 'Touchez un mois pour voir le détail jour par jour',
+      tapHint: t('tapHint.month'),
       isRange: true,
       months,
     };
@@ -308,12 +329,13 @@ export default function StatistiquesScreen() {
     return next ?? key;
   }
 
-  const periodeLabel = TABS.find(t => t.key === activeTab)?.label;
+  const periodeLabel = TAB_LABELS[activeTab];
+  const fmtEur = n => new Intl.NumberFormat(i18n.language, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
 
   return (
     <SafeAreaView style={styles.safe}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Statistiques</Text>
+        <Text style={styles.headerTitle}>{t('common:tabs.stats')}</Text>
       </View>
 
       <View style={styles.tabBar}>
@@ -324,7 +346,7 @@ export default function StatistiquesScreen() {
             onPress={() => setActiveTab(tab.key)}
           >
             <Text style={[styles.tabText, activeTab === tab.key && styles.tabTextActive]}>
-              {tab.label}
+              {TAB_LABELS[tab.key]}
             </Text>
           </TouchableOpacity>
         ))}
@@ -343,9 +365,9 @@ export default function StatistiquesScreen() {
         ) : (
           <View style={styles.rangeCard}>
             <View style={styles.rangeRow}>
-              <Text style={styles.rangeLabel}>De</Text>
+              <Text style={styles.rangeLabel}>{t('range.from')}</Text>
               <PeriodNav
-                label={labelMois(rStart)}
+                label={labelMois(rStart, i18n.language)}
                 onPrev={() => setRangeStart(stepMonth(rStart, -1))}
                 onNext={() => {
                   const n = stepMonth(rStart, 1);
@@ -356,9 +378,9 @@ export default function StatistiquesScreen() {
               />
             </View>
             <View style={styles.rangeRow}>
-              <Text style={styles.rangeLabel}>À</Text>
+              <Text style={styles.rangeLabel}>{t('range.to')}</Text>
               <PeriodNav
-                label={labelMois(rEnd)}
+                label={labelMois(rEnd, i18n.language)}
                 onPrev={() => {
                   const n = stepMonth(rEnd, -1);
                   if (n >= rStart) setRangeEnd(n);
@@ -375,20 +397,20 @@ export default function StatistiquesScreen() {
         <View style={styles.card}>
           <View style={styles.cardHeader}>
             <Text style={styles.cardIcon}>🚬</Text>
-            <Text style={styles.cardTitle}>Cigarettes fumées</Text>
+            <Text style={styles.cardTitle}>{t('smokedCard.title')}</Text>
             <Text style={styles.cardPeriod}>{periodeLabel}</Text>
           </View>
           <View style={styles.bigStatRow}>
             <View>
-              <Text style={styles.bigNumber}>{p.sum.toLocaleString('fr-FR')}</Text>
-              <Text style={styles.bigUnit}>cigarettes</Text>
+              <Text style={styles.bigNumber}>{p.sum.toLocaleString(i18n.language)}</Text>
+              <Text style={styles.bigUnit}>{t('smokedCard.unit')}</Text>
             </View>
             {p.progression !== 0 && (
               <View style={styles.badgeCol}>
                 <Text style={[styles.badgeGreen, p.progression < 0 && { color: colors.red }]}>
-                  {p.progression > 0 ? '↓' : '↑'} {Math.abs(p.progression)} %
+                  {t('smokedCard.vsBeforeAppValue', { arrow: p.progression > 0 ? '↓' : '↑', percent: Math.abs(p.progression) })}
                 </Text>
-                <Text style={styles.badgeSub}>vs avant l'app</Text>
+                <Text style={styles.badgeSub}>{t('vsBeforeApp')}</Text>
               </View>
             )}
           </View>
@@ -407,7 +429,7 @@ export default function StatistiquesScreen() {
             <View style={styles.heuresBox}>
               {view.heures.length > 0 ? (
                 <>
-                  <Text style={styles.heuresTitre}>Heures des cigarettes</Text>
+                  <Text style={styles.heuresTitre}>{t('smokedCard.hoursTitle')}</Text>
                   <View style={styles.heuresWrap}>
                     {view.heures.map((h, i) => (
                       <View key={i} style={styles.heureChip}>
@@ -419,12 +441,12 @@ export default function StatistiquesScreen() {
               ) : (
                 <Text style={styles.heuresVide}>
                   {p.sum > 0
-                    ? 'Heures non enregistrées pour ce jour.'
-                    : 'Aucune cigarette ce jour 🎉'}
+                    ? t('smokedCard.hoursNotRecorded')
+                    : t('smokedCard.noCigarettesToday')}
                 </Text>
               )}
               {view.sansHeure > 0 && view.heures.length > 0 && (
-                <Text style={styles.heuresVide}>+ {view.sansHeure} sans heure enregistrée</Text>
+                <Text style={styles.heuresVide}>{t('smokedCard.withoutHourCount', { count: view.sansHeure })}</Text>
               )}
             </View>
           )}
@@ -439,30 +461,30 @@ export default function StatistiquesScreen() {
         <View style={styles.card}>
           <View style={styles.cardHeader}>
             <Text style={styles.cardIcon}>💰</Text>
-            <Text style={styles.cardTitle}>Argent</Text>
+            <Text style={styles.cardTitle}>{t('moneyCard.title')}</Text>
             <Text style={styles.cardPeriod}>{periodeLabel}</Text>
           </View>
           <View style={styles.argRow}>
             <View style={styles.argCol}>
               <Text style={[styles.argGreen, p.argEco < 0 && { color: colors.red }]}>
-                {p.argEco >= 0 ? '+' : '-'}{Math.abs(p.argEco).toFixed(2)} €
+                {p.argEco >= 0 ? '+' : '-'}{fmtEur(Math.abs(p.argEco))} €
               </Text>
-              <Text style={styles.argLabel}>vs avant l'app</Text>
+              <Text style={styles.argLabel}>{t('vsBeforeApp')}</Text>
             </View>
             <View style={styles.argCol}>
-              <Text style={styles.argRed}>-{p.argDep.toFixed(2)} €</Text>
-              <Text style={styles.argLabel}>dépensés (réel)</Text>
+              <Text style={styles.argRed}>-{fmtEur(p.argDep)} €</Text>
+              <Text style={styles.argLabel}>{t('moneyCard.spentReal')}</Text>
             </View>
             <View style={styles.argCol}>
               <Text style={[styles.argRed, { color: p.argEco >= p.argDep ? colors.primary : colors.red }]}>
-                {p.argEco >= p.argDep ? '+' : '-'}{Math.abs(p.argEco - p.argDep).toFixed(2)} €
+                {p.argEco >= p.argDep ? '+' : '-'}{fmtEur(Math.abs(p.argEco - p.argDep))} €
               </Text>
-              <Text style={styles.argLabel}>net</Text>
+              <Text style={styles.argLabel}>{t('moneyCard.net')}</Text>
             </View>
           </View>
           {p.nbNonRenseignes > 0 && (
             <Text style={{ fontSize: 10, color: colors.gray, textAlign: 'center' }}>
-              Calculé sur les {p.nbEnregistres} jour{p.nbEnregistres > 1 ? 's' : ''} enregistré{p.nbEnregistres > 1 ? 's' : ''} — {p.nbNonRenseignes} non renseigné{p.nbNonRenseignes > 1 ? 's' : ''}
+              {t('moneyCard.calculatedOn', { count: p.nbEnregistres })}{t('moneyCard.missingDays', { count: p.nbNonRenseignes })}
             </Text>
           )}
         </View>
@@ -472,27 +494,27 @@ export default function StatistiquesScreen() {
           <View style={[styles.card, styles.halfCard]}>
             <View style={styles.cardHeader}>
               <Text style={styles.cardIcon}>❤️</Text>
-              <Text style={[styles.cardTitle, { fontSize: 12 }]}>Vie récupérée</Text>
+              <Text style={[styles.cardTitle, { fontSize: 12 }]}>{t('lifeCard.title')}</Text>
             </View>
             <View style={{ alignItems: 'center', marginTop: 8 }}>
               <MiniArc ratio={Math.min(p.vieMins / (24 * 60), 1)} size={80} color={p.vieMins >= 0 ? colors.primary : colors.red} />
               <Text style={[styles.vieText, p.vieMins < 0 && { color: colors.red }]}>{fmtVie(p.vieMins)}</Text>
-              <Text style={styles.vieSub}>vs avant l'app</Text>
-              <Text style={[styles.vieSub, { fontSize: 9, marginTop: 2, color: '#aaa' }]}>5 min / cig. non fumée</Text>
+              <Text style={styles.vieSub}>{t('vsBeforeApp')}</Text>
+              <Text style={[styles.vieSub, { fontSize: 9, marginTop: 2, color: '#aaa' }]}>{t('lifeCard.rate')}</Text>
             </View>
           </View>
 
           <View style={[styles.card, styles.halfCard]}>
             <View style={styles.cardHeader}>
               <Text style={styles.cardIcon}>📈</Text>
-              <Text style={[styles.cardTitle, { fontSize: 12 }]}>Progression</Text>
+              <Text style={[styles.cardTitle, { fontSize: 12 }]}>{t('progressionCard.title')}</Text>
             </View>
             <Text style={[styles.progNum, p.progression < 0 && { color: colors.red }]}>
               {p.progression > 0 ? '↓' : '↑'} {Math.abs(p.progression)} %
             </Text>
-            <Text style={styles.progSub}>consommation</Text>
+            <Text style={styles.progSub}>{t('progressionCard.subtitle')}</Text>
             <View style={styles.badgeRow}>
-              <Text style={styles.badgeSmall}>🔥 {serie}j en objectif</Text>
+              <Text style={styles.badgeSmall}>{t('progressionCard.streak', { count: serie })}</Text>
             </View>
           </View>
         </View>
@@ -501,18 +523,18 @@ export default function StatistiquesScreen() {
         <View style={styles.card}>
           <View style={styles.cardHeader}>
             <Text style={styles.cardIcon}>✨</Text>
-            <Text style={styles.cardTitle}>Résumé</Text>
+            <Text style={styles.cardTitle}>{t('summaryCard.title')}</Text>
           </View>
           <View style={styles.resumeLine}>
             <Text style={styles.resumeBullet}>•</Text>
             <Text style={styles.resumeText}>
-              {p.sum} cigarette{p.sum > 1 ? 's' : ''} fumée{p.sum > 1 ? 's' : ''} sur {p.nbEnregistres} jour{p.nbEnregistres > 1 ? 's' : ''} enregistré{p.nbEnregistres > 1 ? 's' : ''}
-              {p.nbNonRenseignes > 0 ? ` (${p.nbNonRenseignes} non renseigné${p.nbNonRenseignes > 1 ? 's' : ''})` : ''}
+              {t('summaryCard.smokedCount', { count: p.sum })} {t('summaryCard.onDaysRecorded', { count: p.nbEnregistres })}
+              {p.nbNonRenseignes > 0 ? ` ${t('summaryCard.missingParen', { count: p.nbNonRenseignes })}` : ''}
             </Text>
           </View>
           <View style={styles.resumeLine}>
             <Text style={styles.resumeBullet}>•</Text>
-            <Text style={styles.resumeText}>Moyenne : {(p.sum / p.n).toFixed(1)} cig / jour — objectif : {objectifJour} / jour</Text>
+            <Text style={styles.resumeText}>{t('summaryCard.average', { avg: (p.sum / p.n).toFixed(1), count: objectifJour })}</Text>
           </View>
           <View style={styles.resumeLine}>
             <Text style={styles.resumeBullet}>•</Text>
@@ -520,21 +542,23 @@ export default function StatistiquesScreen() {
               {(() => {
                 const ecartObj = p.sum - objectifJour * p.nbEnregistres;
                 return ecartObj > 0
-                  ? `⚠️ ${ecartObj} cigarette${ecartObj > 1 ? 's' : ''} au-dessus de votre plan sur la période`
-                  : `✅ Plan respecté : ${Math.abs(ecartObj)} cigarette${Math.abs(ecartObj) > 1 ? 's' : ''} sous l'objectif`;
+                  ? t('summaryCard.overPlan', { count: ecartObj })
+                  : t('summaryCard.underPlan', { count: Math.abs(ecartObj) });
               })()}
             </Text>
           </View>
           <View style={styles.resumeLine}>
             <Text style={styles.resumeBullet}>•</Text>
             <Text style={styles.resumeText}>
-              {p.argEco >= 0 ? `+${p.argEco.toFixed(2)} € vs avant l'app` : `${p.argEco.toFixed(2)} € vs avant l'app (vous fumez plus qu'avant)`}
+              {p.argEco >= 0
+                ? t('summaryCard.moneyPositive', { amount: fmtEur(p.argEco) })
+                : t('summaryCard.moneyNegative', { amount: fmtEur(p.argEco) })}
             </Text>
           </View>
           <Text style={styles.resumeMessage}>
-            {p.progression > 0 ? `↓ ${p.progression}% vs avant l'app 💚`
-              : p.progression < 0 ? `↑ ${Math.abs(p.progression)}% vs avant l'app — accrochez-vous 💪`
-              : 'Chaque jour noté compte.'}
+            {p.progression > 0 ? t('summaryCard.messagePositive', { percent: p.progression })
+              : p.progression < 0 ? t('summaryCard.messageNegative', { percent: Math.abs(p.progression) })
+              : t('summaryCard.messageNeutral')}
           </Text>
         </View>
 

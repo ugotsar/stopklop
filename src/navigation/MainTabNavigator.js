@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Svg, { Path, Rect, Circle } from 'react-native-svg';
+import { useTranslation } from 'react-i18next';
 
 import { colors } from '../theme';
 import DashboardScreen  from '../screens/DashboardScreen';
@@ -73,6 +74,8 @@ function TabLabel({ label, focused }) {
 // ── Navigator ─────────────────────────────────────────────────────────────────
 
 export default function MainTabNavigator() {
+  const { t } = useTranslation('common');
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -89,7 +92,7 @@ export default function MainTabNavigator() {
         component={DashboardScreen}
         options={{
           tabBarIcon: ({ color }) => <IconAccueil color={color} />,
-          tabBarLabel: ({ focused, color }) => <TabLabel label="Accueil" focused={focused} />,
+          tabBarLabel: ({ focused }) => <TabLabel label={t('tabs.home')} focused={focused} />,
         }}
       />
       <Tab.Screen
@@ -97,7 +100,7 @@ export default function MainTabNavigator() {
         component={StatistiquesScreen}
         options={{
           tabBarIcon: ({ color }) => <IconStatistiques color={color} />,
-          tabBarLabel: ({ focused }) => <TabLabel label="Statistiques" focused={focused} />,
+          tabBarLabel: ({ focused }) => <TabLabel label={t('tabs.stats')} focused={focused} />,
         }}
       />
       <Tab.Screen
@@ -105,7 +108,7 @@ export default function MainTabNavigator() {
         component={PlanScreen}
         options={{
           tabBarIcon: ({ color }) => <IconPlan color={color} />,
-          tabBarLabel: ({ focused }) => <TabLabel label="Plan" focused={focused} />,
+          tabBarLabel: ({ focused }) => <TabLabel label={t('tabs.plan')} focused={focused} />,
         }}
       />
       <Tab.Screen
@@ -113,7 +116,7 @@ export default function MainTabNavigator() {
         component={ProfilScreen}
         options={{
           tabBarIcon: ({ color }) => <IconProfil color={color} />,
-          tabBarLabel: ({ focused }) => <TabLabel label="Profil" focused={focused} />,
+          tabBarLabel: ({ focused }) => <TabLabel label={t('tabs.profile')} focused={focused} />,
         }}
       />
     </Tab.Navigator>

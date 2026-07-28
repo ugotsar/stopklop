@@ -1,0 +1,65 @@
+{
+  "header": { "title": "I smoked today" },
+  "subtitle": {
+    "none": "No cigarettes today 🎉",
+    "some_one": "{{count}} cigarette today",
+    "some_other": "{{count}} cigarettes today"
+  },
+  "tip": {
+    "underGoal": "Every cigarette less counts!\nYou are {{remaining}} away from your goal.",
+    "atGoal": "Limit reached — don't go over!\nYou're exactly at your goal of {{goal}}.",
+    "overGoal_one": "Goal exceeded by {{count}} cigarette.\nTomorrow is a new start!",
+    "overGoal_other": "Goal exceeded by {{count}} cigarettes.\nTomorrow is a new start!"
+  },
+  "recap": {
+    "title": "Today's summary",
+    "spent": "spent",
+    "lifeExpectancy": "of life expectancy",
+    "note": "ⓘ  Each cigarette costs ~5 min of life expectancy"
+  },
+  "triggers": {
+    "stress": "Stress",
+    "ennui": "Boredom",
+    "cafe": "Coffee / break",
+    "repas": "After a meal",
+    "social": "Social circle",
+    "alcool": "Night out / alcohol",
+    "habitude": "Habit"
+  },
+  "raisonModal": {
+    "title": "Why this cigarette?",
+    "subtitle": "Understanding your triggers helps you anticipate them",
+    "otherNote": "Other (write it down)",
+    "createHabit": "Create a habit",
+    "skip": "Skip",
+    "backArrow": "← Back",
+    "notePlaceholder": "E.g.: argument on the phone…",
+    "validate": "Confirm",
+    "createHint": "This habit will be saved: next time, a single tap will be enough.",
+    "createPlaceholder": "E.g.: Mom got on my nerves",
+    "createAndSelect": "Create and select"
+  },
+  "feedbackModal": {
+    "perfectTitle": "Smoke-free day!",
+    "okTitle": "Well done!",
+    "exceededTitle": "Goal exceeded",
+    "perfectSub": "0 cigarettes today",
+    "okSub": "Goal met today",
+    "exceededSub": "{{count}} cig · +{{diff}} over",
+    "lifeGained": "life gained",
+    "spent": "spent",
+    "streak": "streak",
+    "goalLabel": "goal: {{goal}}",
+    "margin": "{{pct}}% margin",
+    "lifePreserved": "life preserved",
+    "tooMuch": "+{{exces}} too many",
+    "smokedToday_one": "{{count}} cigarette smoked today",
+    "smokedToday_other": "{{count}} cigarettes smoked today",
+    "lifeLost": "of life",
+    "message": "Every day is a new chance.\nTomorrow, you can do it. 💪",
+    "modifyGoal": "Edit goal",
+    "btnPerfect": "Great, thanks!",
+    "btnOk": "Got it!",
+    "btnExceeded": "Understood!"
+  }
+}

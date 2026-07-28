@@ -1,0 +1,43 @@
+{
+  "header": {
+    "title": "Mein Ziel bearbeiten"
+  },
+  "objectives": {
+    "sectionTitle": "Wähle dein Ziel",
+    "stop": { "title": "Vollständig aufhören", "desc": "0 Zigaretten" },
+    "reduce": { "title": "Schrittweise reduzieren", "desc": "Schritt für Schritt reduzieren" },
+    "libre": { "title": "Freies Ziel", "desc": "Selbst festlegen" }
+  },
+  "dailyGoal": {
+    "titleReduceMode": "Ausgangspunkt (heute)",
+    "titleOtherMode": "Tagesziel",
+    "unit": "Zigaretten / Tag"
+  },
+  "pace": {
+    "sectionTitle": "Reduktionstempo",
+    "perWeek_one": "Zigarette pro Woche",
+    "perWeek_other": "Zigaretten pro Woche"
+  },
+  "planPreview": {
+    "today": "Heute",
+    "weekLabel": "W+{{n}}",
+    "summaryPrefix": "🏁 In diesem Tempo erreichst du",
+    "zeroCigarette": "0 Zigaretten",
+    "inWeeks_one": "in {{count}} Woche",
+    "inWeeks_other": "in {{count}} Wochen",
+    "towardDate": ", etwa am {{date}}."
+  },
+  "overview": {
+    "title": "Vorschau deines Ziels",
+    "reference": "Referenz: {{count}} Zig. / Tag vor der App",
+    "referenceEstimatedNote": " (geschätzt — passe es in Profil → Konsumeinstellungen an)",
+    "estimatedSavings": "Geschätzte Ersparnis",
+    "lifeRecovered": "Gewonnene Lebenszeit",
+    "perMonth": "pro Monat",
+    "perYear": "pro Jahr",
+    "per10Years": "über 10 Jahre",
+    "consumptionReduction": "Konsumreduzierung\n(Durchschnitt über den 1. Monat)"
+  },
+  "saveButton": "Mein Ziel speichern",
+  "footerNote": "ⓘ  Du kannst dein Ziel jederzeit ändern."
+}

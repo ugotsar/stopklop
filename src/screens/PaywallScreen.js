@@ -3,18 +3,20 @@ import {
   View, Text, StyleSheet, TouchableOpacity,
   SafeAreaView, ActivityIndicator, ScrollView, Alert,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { getOfferings, purchasePackage, restorePurchases, isPro } from '../services/purchases';
 import { colors, spacing, font, radius } from '../theme';
 
 const FEATURES = [
-  { icon: '📊', label: 'Statistiques avancées illimitées' },
-  { icon: '🏆', label: 'Tous les badges & milestones' },
-  { icon: '☁️', label: 'Sauvegarde cloud automatique' },
-  { icon: '🔔', label: 'Rappels personnalisés' },
-  { icon: '📤', label: 'Export de tes données' },
+  { icon: '📊', key: 'stats' },
+  { icon: '🏆', key: 'badges' },
+  { icon: '☁️', key: 'cloud' },
+  { icon: '🔔', key: 'reminders' },
+  { icon: '📤', key: 'export' },
 ];
 
 export default function PaywallScreen({ navigation }) {
+  const { t } = useTranslation('paywall');
   const [offering, setOffering]       = useState(null);
   const [selected, setSelected]       = useState(null);
   const [loading, setLoading]         = useState(true);
@@ -37,13 +39,13 @@ export default function PaywallScreen({ navigation }) {
       setPurchasing(true);
       const info = await purchasePackage(selected);
       if (isPro(info)) {
-        Alert.alert('🎉 Bienvenue dans Stopklop Pro !', 'Toutes les fonctionnalités sont débloquées.', [
-          { text: 'Super !', onPress: () => navigation.goBack() },
+        Alert.alert(t('alerts.welcomeTitle'), t('alerts.welcomeBody'), [
+          { text: t('alerts.welcomeButton'), onPress: () => navigation.goBack() },
         ]);
       }
     } catch (e) {
       if (!e.userCancelled) {
-        Alert.alert('Erreur', 'Achat impossible. Réessaie.');
+        Alert.alert(t('common:error'), t('alerts.purchaseErrorBody'));
       }
     } finally {
       setPurchasing(false);
@@ -55,14 +57,14 @@ export default function PaywallScreen({ navigation }) {
       setPurchasing(true);
       const info = await restorePurchases();
       if (isPro(info)) {
-        Alert.alert('✅ Abonnement restauré !', '', [
-          { text: 'OK', onPress: () => navigation.goBack() },
+        Alert.alert(t('alerts.restoredTitle'), '', [
+          { text: t('common:ok'), onPress: () => navigation.goBack() },
         ]);
       } else {
-        Alert.alert('Aucun abonnement trouvé', 'Aucun achat à restaurer.');
+        Alert.alert(t('alerts.noSubscriptionTitle'), t('alerts.noSubscriptionBody'));
       }
     } catch (e) {
-      Alert.alert('Erreur', 'Restauration impossible.');
+      Alert.alert(t('common:error'), t('alerts.restoreErrorBody'));
     } finally {
       setPurchasing(false);
     }
@@ -86,15 +88,15 @@ export default function PaywallScreen({ navigation }) {
         </TouchableOpacity>
 
         <Text style={s.crown}>👑</Text>
-        <Text style={s.title}>Stopklop Pro</Text>
-        <Text style={s.subtitle}>Toutes les fonctionnalités pour arrêter définitivement</Text>
+        <Text style={s.title}>{t('title')}</Text>
+        <Text style={s.subtitle}>{t('subtitle')}</Text>
 
         {/* Features */}
         <View style={s.featureList}>
           {FEATURES.map((f, i) => (
             <View key={i} style={s.featureRow}>
               <Text style={s.featureIcon}>{f.icon}</Text>
-              <Text style={s.featureLabel}>{f.label}</Text>
+              <Text style={s.featureLabel}>{t(`features.${f.key}`)}</Text>
             </View>
           ))}
         </View>
@@ -109,20 +111,20 @@ export default function PaywallScreen({ navigation }) {
               style={[s.plan, isSelected && s.planSelected]}
               onPress={() => setSelected(pkg)}
             >
-              {isYearly && <View style={s.badgePopulaire}><Text style={s.badgeText}>Populaire</Text></View>}
+              {isYearly && <View style={s.badgePopulaire}><Text style={s.badgeText}>{t('plans.popular')}</Text></View>}
               <View style={s.planLeft}>
                 <Text style={[s.planName, isSelected && s.planNameSelected]}>
-                  {pkg.packageType === 'LIFETIME' ? 'À vie' : isYearly ? 'Annuel' : 'Mensuel'}
+                  {pkg.packageType === 'LIFETIME' ? t('plans.lifetime') : isYearly ? t('plans.annual') : t('plans.monthly')}
                 </Text>
                 {isYearly && (
-                  <Text style={s.planEco}>Économise 50%</Text>
+                  <Text style={s.planEco}>{t('plans.save50')}</Text>
                 )}
               </View>
               <Text style={[s.planPrice, isSelected && s.planPriceSelected]}>
                 {pkg.product.priceString}
                 {pkg.packageType !== 'LIFETIME' && (
                   <Text style={s.planPer}>
-                    {isYearly ? '/an' : '/mois'}
+                    {isYearly ? t('plans.perYear') : t('plans.perMonth')}
                   </Text>
                 )}
               </Text>
@@ -138,14 +140,14 @@ export default function PaywallScreen({ navigation }) {
         >
           {purchasing
             ? <ActivityIndicator color="#fff" />
-            : <Text style={s.ctaText}>Commencer maintenant</Text>
+            : <Text style={s.ctaText}>{t('cta.start')}</Text>
           }
         </TouchableOpacity>
 
-        <Text style={s.trial}>Essai gratuit 7 jours · Annulable à tout moment</Text>
+        <Text style={s.trial}>{t('cta.trial')}</Text>
 
         <TouchableOpacity onPress={handleRestore}>
-          <Text style={s.restore}>Restaurer mes achats</Text>
+          <Text style={s.restore}>{t('cta.restore')}</Text>
         </TouchableOpacity>
 
       </ScrollView>

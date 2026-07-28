@@ -5,6 +5,7 @@ import {
 } from 'react-native';
 import Svg, { Circle, Path } from 'react-native-svg';
 import { Image } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 const PICTOS = {
   temps:    require('../../assets/onboarding/stopklop-illustrations-hd/pictogrammes/10-dashboard-temps.jpg'),
@@ -20,13 +21,18 @@ import { buildDemoProfile } from '../utils/demoData';
 
 const { width: SCREEN_W } = Dimensions.get('window');
 
+// Nombre de citations motivationnelles disponibles (voir dashboard.json → motivation.quotes)
+const MOTIVATIONS_COUNT = 5;
+
 // ── Modal journée parfaite ──────────────────────────────────────────────────
 function ModalParfait({ visible, diffJours, objectifJour, prixCig, onClose }) {
+  const { t, i18n } = useTranslation('dashboard');
   const streak = diffJours || 0;
   const vieGagneeMins = objectifJour * 5;
   const vieGagneeStr = vieGagneeMins >= 60
     ? `+${Math.floor(vieGagneeMins/60)}h ${vieGagneeMins%60}min`
     : `+${vieGagneeMins}min`;
+  const spentZero = `${new Intl.NumberFormat(i18n.language, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(0)} €`;
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <View style={mp.overlay}>
@@ -34,20 +40,20 @@ function ModalParfait({ visible, diffJours, objectifJour, prixCig, onClose }) {
           <View style={mp.banner}>
             <Text style={mp.emoji}>🏆</Text>
             <View style={{ flex: 1 }}>
-              <Text style={mp.titre}>Journée sans tabac !</Text>
-              <Text style={mp.sous}>0 cigarette aujourd'hui</Text>
+              <Text style={mp.titre}>{t('perfectDayModal.title')}</Text>
+              <Text style={mp.sous}>{t('perfectDayModal.subtitle')}</Text>
             </View>
           </View>
           <View style={mp.body}>
             <View style={mp.statsRow}>
-              <StatColonne valeur={vieGagneeStr} label="vie récupérée" color="#1B6B3A" />
+              <StatColonne valeur={vieGagneeStr} label={t('perfectDayModal.lifeRegained')} color="#1B6B3A" />
               <View style={mp.div} />
-              <StatColonne valeur="0,00 €" label="dépensé" color="#1B6B3A" />
+              <StatColonne valeur={spentZero} label={t('perfectDayModal.spent')} color="#1B6B3A" />
               <View style={mp.div} />
-              <StatColonne valeur={`🔥 ${streak}j`} label="streak" color="#F59E0B" />
+              <StatColonne valeur={`🔥 ${streak}${t('common:dayShort')}`} label={t('perfectDayModal.streak')} color="#F59E0B" />
             </View>
             <TouchableOpacity style={mp.btn} onPress={onClose}>
-              <Text style={mp.btnText}>Super, merci !</Text>
+              <Text style={mp.btnText}>{t('perfectDayModal.closeButton')}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -81,8 +87,9 @@ const mp = StyleSheet.create({
 
 // ── Modal feedback journée (variante A = ok, variante B = dépassé) ───────────
 function ModalObjectif({ visible, count, objectif, prixCigarette, onClose }) {
+  const { t, i18n } = useTranslation('dashboard');
   const isOk      = count <= objectif;
-  const depense   = (count * prixCigarette).toFixed(2);
+  const depense   = new Intl.NumberFormat(i18n.language, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(count * prixCigarette);
 
   // Variante A — objectif respecté
   const pct          = isOk ? Math.round((count / objectif) * 100) : 0;
@@ -107,8 +114,8 @@ function ModalObjectif({ visible, count, objectif, prixCigarette, onClose }) {
                 <Text style={{ fontSize: 20 }}>✅</Text>
               </View>
               <View style={{ flex: 1 }}>
-                <Text style={{ fontSize: 14, fontWeight: '700', color: '#27500A' }}>Bien joué !</Text>
-                <Text style={{ fontSize: 11, color: '#3B6D11', marginTop: 2 }}>Objectif respecté aujourd'hui</Text>
+                <Text style={{ fontSize: 14, fontWeight: '700', color: '#27500A' }}>{t('goalModal.successTitle')}</Text>
+                <Text style={{ fontSize: 11, color: '#3B6D11', marginTop: 2 }}>{t('goalModal.successSubtitle')}</Text>
               </View>
             </View>
           ) : (
@@ -117,8 +124,8 @@ function ModalObjectif({ visible, count, objectif, prixCigarette, onClose }) {
                 <Text style={{ fontSize: 20 }}>⚠️</Text>
               </View>
               <View style={{ flex: 1 }}>
-                <Text style={{ fontSize: 14, fontWeight: '700', color: '#fff' }}>Objectif dépassé</Text>
-                <Text style={{ fontSize: 11, color: 'rgba(255,255,255,0.8)', marginTop: 2 }}>{count} cig · +{exces} au-dessus</Text>
+                <Text style={{ fontSize: 14, fontWeight: '700', color: '#fff' }}>{t('goalModal.exceededTitle')}</Text>
+                <Text style={{ fontSize: 11, color: 'rgba(255,255,255,0.8)', marginTop: 2 }}>{t('goalModal.exceededSubtitle', { count, exceeded: exces })}</Text>
               </View>
             </View>
           )}
@@ -128,55 +135,55 @@ function ModalObjectif({ visible, count, objectif, prixCigarette, onClose }) {
             {isOk ? (
               <>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 5 }}>
-                  <Text style={{ fontSize: 11, color: '#888' }}>{count} cigarette{count > 1 ? 's' : ''}</Text>
-                  <Text style={{ fontSize: 11, color: '#888' }}>objectif : {objectif}</Text>
+                  <Text style={{ fontSize: 11, color: '#888' }}>{count} {t('common:cigarette', { count })}</Text>
+                  <Text style={{ fontSize: 11, color: '#888' }}>{t('goalModal.goalLabel', { count: objectif })}</Text>
                 </View>
                 <View style={{ height: 7, backgroundColor: '#E5E7EB', borderRadius: 6, overflow: 'hidden', marginBottom: 4 }}>
                   <View style={{ height: '100%', width: `${pct}%`, backgroundColor: '#1B6B3A', borderRadius: 6 }} />
                 </View>
-                <Text style={{ fontSize: 10, color: '#1B6B3A', textAlign: 'right', marginBottom: 12 }}>{marge}% de marge</Text>
+                <Text style={{ fontSize: 10, color: '#1B6B3A', textAlign: 'right', marginBottom: 12 }}>{t('goalModal.marginLabel', { percent: marge })}</Text>
                 <View style={{ flexDirection: 'row', gap: 8, marginBottom: 14 }}>
                   <View style={{ flex: 1, backgroundColor: '#EAF3DE', borderRadius: 10, paddingVertical: 8, alignItems: 'center' }}>
                     <Text style={{ fontSize: 13, fontWeight: '700', color: '#27500A' }}>{depense} €</Text>
-                    <Text style={{ fontSize: 10, color: '#1B6B3A', marginTop: 1 }}>dépensé</Text>
+                    <Text style={{ fontSize: 10, color: '#1B6B3A', marginTop: 1 }}>{t('goalModal.spent')}</Text>
                   </View>
                   <View style={{ flex: 1, backgroundColor: '#EAF3DE', borderRadius: 10, paddingVertical: 8, alignItems: 'center' }}>
-                    <Text style={{ fontSize: 13, fontWeight: '700', color: '#27500A' }}>{viePreservee} min</Text>
-                    <Text style={{ fontSize: 10, color: '#1B6B3A', marginTop: 1 }}>vie préservée</Text>
+                    <Text style={{ fontSize: 13, fontWeight: '700', color: '#27500A' }}>{viePreservee} {t('common:min')}</Text>
+                    <Text style={{ fontSize: 10, color: '#1B6B3A', marginTop: 1 }}>{t('goalModal.lifePreserved')}</Text>
                   </View>
                 </View>
                 <TouchableOpacity style={{ backgroundColor: '#1B6B3A', borderRadius: 30, paddingVertical: 12, alignItems: 'center' }} onPress={onClose}>
-                  <Text style={{ color: '#fff', fontSize: 14, fontWeight: '700' }}>C'est noté !</Text>
+                  <Text style={{ color: '#fff', fontSize: 14, fontWeight: '700' }}>{t('goalModal.successButton')}</Text>
                 </TouchableOpacity>
               </>
             ) : (
               <>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 5 }}>
-                  <Text style={{ fontSize: 11, color: '#92400E' }}>objectif : {objectif}</Text>
-                  <Text style={{ fontSize: 11, color: '#DC2626' }}>+{exces} de trop</Text>
+                  <Text style={{ fontSize: 11, color: '#92400E' }}>{t('goalModal.goalLabel', { count: objectif })}</Text>
+                  <Text style={{ fontSize: 11, color: '#DC2626' }}>{t('goalModal.tooMany', { count: exces })}</Text>
                 </View>
                 <View style={{ height: 7, borderRadius: 6, overflow: 'hidden', flexDirection: 'row', marginBottom: 4 }}>
                   <View style={{ height: '100%', width: `${pctObj}%`, backgroundColor: '#F59E0B' }} />
                   <View style={{ height: '100%', width: `${100 - pctObj}%`, backgroundColor: '#DC2626' }} />
                 </View>
-                <Text style={{ fontSize: 10, color: '#B45309', textAlign: 'center', marginBottom: 12 }}>{count} cigarettes fumées aujourd'hui</Text>
+                <Text style={{ fontSize: 10, color: '#B45309', textAlign: 'center', marginBottom: 12 }}>{t('goalModal.cigsSmokedToday', { count })}</Text>
                 <View style={{ flexDirection: 'row', gap: 8, marginBottom: 14 }}>
                   <View style={{ flex: 1, backgroundColor: '#FEF3C7', borderRadius: 10, paddingVertical: 8, alignItems: 'center' }}>
                     <Text style={{ fontSize: 13, fontWeight: '700', color: '#92400E' }}>{depense} €</Text>
-                    <Text style={{ fontSize: 10, color: '#B45309', marginTop: 1 }}>dépensé</Text>
+                    <Text style={{ fontSize: 10, color: '#B45309', marginTop: 1 }}>{t('goalModal.spent')}</Text>
                   </View>
                   <View style={{ flex: 1, backgroundColor: '#FEF3C7', borderRadius: 10, paddingVertical: 8, alignItems: 'center' }}>
-                    <Text style={{ fontSize: 13, fontWeight: '700', color: '#92400E' }}>{viePerdue} min</Text>
-                    <Text style={{ fontSize: 10, color: '#B45309', marginTop: 1 }}>de vie</Text>
+                    <Text style={{ fontSize: 13, fontWeight: '700', color: '#92400E' }}>{viePerdue} {t('common:min')}</Text>
+                    <Text style={{ fontSize: 10, color: '#B45309', marginTop: 1 }}>{t('goalModal.lifeLost')}</Text>
                   </View>
                 </View>
                 <View style={{ backgroundColor: '#FFF7ED', borderRadius: 10, borderWidth: 1, borderColor: '#FDE68A', padding: 12, marginBottom: 14 }}>
                   <Text style={{ fontSize: 13, color: '#92400E', lineHeight: 19, textAlign: 'center' }}>
-                    Chaque jour est une nouvelle chance.{'\n'}Demain, vous pouvez le faire. 💪
+                    {t('goalModal.encouragement')}
                   </Text>
                 </View>
                 <TouchableOpacity style={{ backgroundColor: '#92400E', borderRadius: 30, paddingVertical: 12, alignItems: 'center' }} onPress={onClose}>
-                  <Text style={{ color: '#fff', fontSize: 14, fontWeight: '700' }}>Compris !</Text>
+                  <Text style={{ color: '#fff', fontSize: 14, fontWeight: '700' }}>{t('goalModal.exceededButton')}</Text>
                 </TouchableOpacity>
               </>
             )}
@@ -188,21 +195,25 @@ function ModalObjectif({ visible, count, objectif, prixCigarette, onClose }) {
 }
 
 // ── Déclencheurs d'envie de fumer ───────────────────────────────────────────
+// Les clés (key) sont des identifiants de données utilisés pour l'analyse des
+// habitudes — ne pas les traduire. Seuls les libellés affichés (namespace
+// dashboard → triggers.*) sont traduits.
 const DECLENCHEURS = [
-  { key: 'stress',   emoji: '😰', label: 'Stress' },
-  { key: 'ennui',    emoji: '😴', label: 'Ennui' },
-  { key: 'cafe',     emoji: '☕', label: 'Café / pause' },
-  { key: 'repas',    emoji: '🍽', label: 'Après repas' },
-  { key: 'social',   emoji: '👥', label: 'Entourage' },
-  { key: 'alcool',   emoji: '🍺', label: 'Soirée / alcool' },
-  { key: 'habitude', emoji: '🚬', label: 'Habitude' },
-  { key: 'autre',    emoji: '🤷', label: 'Autre' },
+  { key: 'stress',   emoji: '😰' },
+  { key: 'ennui',    emoji: '😴' },
+  { key: 'cafe',     emoji: '☕' },
+  { key: 'repas',    emoji: '🍽' },
+  { key: 'social',   emoji: '👥' },
+  { key: 'alcool',   emoji: '🍺' },
+  { key: 'habitude', emoji: '🚬' },
+  { key: 'autre',    emoji: '🤷' },
 ];
 
 // ── Modal "J'ai envie de fumer" ─────────────────────────────────────────────
 // Étapes : pick (choisir le déclencheur) → note (si "autre" : texte libre)
 //          → result (conseils + issue : "j'ai tenu bon" ou "j'ai fumé")
 function ModalEnvie({ visible, onSave, onClose }) {
+  const { t } = useTranslation('dashboard');
   const [step, setStep]       = useState('pick');
   const [trigger, setTrigger] = useState(null);
   const [note, setNote]       = useState('');
@@ -237,8 +248,8 @@ function ModalEnvie({ visible, onSave, onClose }) {
               <View style={[mp.banner, { backgroundColor: '#B45309' }]}>
                 <Text style={mp.emoji}>🔥</Text>
                 <View style={{ flex: 1 }}>
-                  <Text style={mp.titre}>Une envie de fumer ?</Text>
-                  <Text style={mp.sous}>Qu'est-ce qui la déclenche ?</Text>
+                  <Text style={mp.titre}>{t('envieModal.pickTitle')}</Text>
+                  <Text style={mp.sous}>{t('envieModal.pickSubtitle')}</Text>
                 </View>
               </View>
               <View style={mp.body}>
@@ -246,12 +257,12 @@ function ModalEnvie({ visible, onSave, onClose }) {
                   {DECLENCHEURS.map(d => (
                     <TouchableOpacity key={d.key} style={env.chip} onPress={() => handleSelect(d.key)}>
                       <Text style={{ fontSize: 22 }}>{d.emoji}</Text>
-                      <Text style={env.chipLabel}>{d.label}</Text>
+                      <Text style={env.chipLabel}>{t(`triggers.${d.key}`)}</Text>
                     </TouchableOpacity>
                   ))}
                 </View>
                 <TouchableOpacity onPress={handleClose} style={{ alignItems: 'center', paddingVertical: 8 }}>
-                  <Text style={{ color: colors.gray, fontSize: 13 }}>Annuler</Text>
+                  <Text style={{ color: colors.gray, fontSize: 13 }}>{t('common:cancel')}</Text>
                 </TouchableOpacity>
               </View>
             </>
@@ -262,8 +273,8 @@ function ModalEnvie({ visible, onSave, onClose }) {
               <View style={[mp.banner, { backgroundColor: '#B45309' }]}>
                 <Text style={mp.emoji}>✍️</Text>
                 <View style={{ flex: 1 }}>
-                  <Text style={mp.titre}>Dites-nous en plus</Text>
-                  <Text style={mp.sous}>Que ressentez-vous ? Pourquoi cette envie ?</Text>
+                  <Text style={mp.titre}>{t('envieModal.noteTitle')}</Text>
+                  <Text style={mp.sous}>{t('envieModal.noteSubtitle')}</Text>
                 </View>
               </View>
               <View style={mp.body}>
@@ -271,14 +282,14 @@ function ModalEnvie({ visible, onSave, onClose }) {
                   style={env.noteInput}
                   value={note}
                   onChangeText={setNote}
-                  placeholder="Ex : je viens de raccrocher un appel stressant…"
+                  placeholder={t('envieModal.notePlaceholder')}
                   placeholderTextColor="#B0B0B0"
                   multiline
                   autoFocus
                   maxLength={200}
                 />
                 <TouchableOpacity style={mp.btn} onPress={() => setStep('result')}>
-                  <Text style={mp.btnText}>Continuer</Text>
+                  <Text style={mp.btnText}>{t('envieModal.continueButton')}</Text>
                 </TouchableOpacity>
               </View>
             </>
@@ -289,23 +300,19 @@ function ModalEnvie({ visible, onSave, onClose }) {
               <View style={mp.banner}>
                 <Text style={mp.emoji}>💪</Text>
                 <View style={{ flex: 1 }}>
-                  <Text style={mp.titre}>C'est noté !</Text>
-                  <Text style={mp.sous}>Envie enregistrée dans vos habitudes</Text>
+                  <Text style={mp.titre}>{t('envieModal.resultTitle')}</Text>
+                  <Text style={mp.sous}>{t('envieModal.resultSubtitle')}</Text>
                 </View>
               </View>
               <View style={mp.body}>
                 <Text style={env.conseil}>
-                  Une envie dure en moyenne <Text style={{ fontWeight: '800' }}>3 à 5 minutes</Text>.{'\n\n'}
-                  💧 Buvez un verre d'eau{'\n'}
-                  🫁 Respirez profondément 5 fois{'\n'}
-                  🚶 Changez de pièce ou d'activité{'\n\n'}
-                  Elle va passer — tenez bon !
+                  {t('envieModal.conseilPrefix')}<Text style={{ fontWeight: '800' }}>{t('envieModal.conseilBold')}</Text>{t('envieModal.conseilSuffix')}
                 </Text>
                 <TouchableOpacity style={mp.btn} onPress={() => handleOutcome(false)}>
-                  <Text style={mp.btnText}>J'ai tenu bon 💪</Text>
+                  <Text style={mp.btnText}>{t('envieModal.keptButton')}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={env.btnFume} onPress={() => handleOutcome(true)}>
-                  <Text style={env.btnFumeText}>J'ai fumé  🚬  (+1 cigarette)</Text>
+                  <Text style={env.btnFumeText}>{t('envieModal.smokedButton')}</Text>
                 </TouchableOpacity>
               </View>
             </>
@@ -337,15 +344,6 @@ const env = StyleSheet.create({
   },
   btnFumeText: { color: '#DC2626', fontSize: 13, fontWeight: '700' },
 });
-
-// ── Citations motivation ────────────────────────────────────────────────────
-const MOTIVATIONS = [
-  "Chaque heure sans cigarette est une victoire pour votre santé.",
-  "Vous n'abandonnez pas quelque chose, vous gagnez une vie meilleure.",
-  "La force que vous montrez aujourd'hui construit votre santé de demain.",
-  "Un jour à la fois. Vous y arrivez ! 💪",
-  "Votre corps vous remercie à chaque minute sans tabac.",
-];
 
 // ── Arc circulaire de progression ───────────────────────────────────────────
 // Règle simple : sous l'objectif = vert · pile à l'objectif = orange ·
@@ -391,13 +389,19 @@ function CircularProgress({ current, total, size = 110 }) {
 
 // ── Composant principal ─────────────────────────────────────────────────────
 export default function DashboardScreen({ navigation }) {
+  const { t, i18n } = useTranslation('dashboard');
   const { profile, stats, resetProfile, updateProfile } = useUser();
   const [, setTick]          = useState(0);
-  const [quoteIdx]           = useState(() => Math.floor(Math.random() * MOTIVATIONS.length));
+  const [quoteIdx]           = useState(() => Math.floor(Math.random() * MOTIVATIONS_COUNT));
   const [liked, setLiked]    = useState(false);
   const [modalParfait, setModalParfait]   = useState(false);
   const [modalObjectif, setModalObjectif] = useState(false);
   const [modalEnvie, setModalEnvie]       = useState(false);
+
+  const motivationQuotes = t('motivation.quotes', { returnObjects: true });
+
+  // Formatage monétaire adapté à la langue (séparateur décimal), symbole € conservé
+  const fmtEur = n => new Intl.NumberFormat(i18n.language, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
 
   // Enregistre une envie de fumer (heure + jour + déclencheur + note + issue).
   // Si l'utilisateur a fumé, la cigarette est aussi comptée partout (compteur + historique + cloud).
@@ -447,7 +451,7 @@ export default function DashboardScreen({ navigation }) {
       <SafeAreaView style={styles.safe}>
         <View style={styles.center}>
           <Text style={{ fontSize: 40 }}>🌿</Text>
-          <Text style={styles.loadingText}>Chargement...</Text>
+          <Text style={styles.loadingText}>{t('common:loading')}</Text>
         </View>
       </SafeAreaView>
     );
@@ -491,9 +495,9 @@ export default function DashboardScreen({ navigation }) {
         {/* ── Header ── */}
         <View style={styles.header}>
           <Text style={styles.hello}>
-            Bonjour 👋{' '}
+            {t('header.greeting')}{' '}
             <Text style={styles.prenom}>
-              {profile.prenom || profile.email?.split('@')[0] || 'Champion'}
+              {profile.prenom || profile.email?.split('@')[0] || t('header.defaultName')}
             </Text>
           </Text>
           <TouchableOpacity style={styles.bellBtn} onPress={() => navigation.navigate('Notifications')}>
@@ -504,18 +508,18 @@ export default function DashboardScreen({ navigation }) {
         {/* ── Carte verte "Temps sans cigarette" (remise à zéro à chaque cigarette) ── */}
         <View style={styles.heroCard}>
           <View style={styles.heroRow}>
-            <Text style={styles.heroLabel}>Temps sans cigarette</Text>
+            <Text style={styles.heroLabel}>{t('hero.label')}</Text>
             <Text style={styles.heroMedal}>🏅</Text>
           </View>
           <Text style={styles.heroTimer}>{dureeSansCigStr}</Text>
           <Text style={styles.heroSub}>
-            {aDejaFume ? 'depuis votre dernière cigarette' : `depuis le début (${dureeStr})`}
+            {aDejaFume ? t('hero.sinceLastCig') : t('hero.sinceStart', { duration: dureeStr })}
           </Text>
         </View>
 
         {/* ── Section Aujourd'hui ── */}
         <View style={styles.todayCard}>
-          <Text style={styles.sectionTitle}>Aujourd'hui</Text>
+          <Text style={styles.sectionTitle}>{t('today.sectionTitle')}</Text>
 
           <View style={styles.todayContent}>
             {/* Arc circulaire */}
@@ -534,8 +538,8 @@ export default function DashboardScreen({ navigation }) {
 
             {/* Label à côté */}
             <View style={styles.todayRight}>
-              <Text style={styles.todaySubtitle}>cigarettes{'\n'}aujourd'hui</Text>
-              <Text style={styles.todayObjectif}>Objectif : {objectifJour} max</Text>
+              <Text style={styles.todaySubtitle}>{t('today.subtitle')}</Text>
+              <Text style={styles.todayObjectif}>{t('today.goal', { count: objectifJour })}</Text>
             </View>
           </View>
 
@@ -549,7 +553,7 @@ export default function DashboardScreen({ navigation }) {
               else setModalObjectif(true);
             }}
           >
-            <Text style={styles.validateBtnText}>✓  Valider ma journée</Text>
+            <Text style={styles.validateBtnText}>{t('today.validateButton')}</Text>
           </TouchableOpacity>
 
           {/* Lien "J'ai fumé" */}
@@ -557,7 +561,7 @@ export default function DashboardScreen({ navigation }) {
             style={styles.fumerLink}
             onPress={() => navigation.navigate('JaiFume')}
           >
-            <Text style={styles.fumerLinkText}>J'ai fumé aujourd'hui  ›</Text>
+            <Text style={styles.fumerLinkText}>{t('today.smokedLink')}</Text>
           </TouchableOpacity>
         </View>
 
@@ -565,26 +569,26 @@ export default function DashboardScreen({ navigation }) {
         <View style={styles.statsGrid}>
           <StatBox
             img={PICTOS.objectif}
-            valeur={ecartPlanJour > 0 ? `+${ecartPlanJour} de trop` : `${Math.abs(ecartPlanJour)} de marge`}
-            label={`vs objectif du jour (${objectifJour})`}
+            valeur={ecartPlanJour > 0 ? t('stats.aboveGoal', { count: ecartPlanJour }) : t('stats.belowGoal', { count: Math.abs(ecartPlanJour) })}
+            label={t('stats.vsGoalLabel', { count: objectifJour })}
             valeurColor={sousObjectif ? colors.primary : '#DC2626'}
           />
           <StatBox
             img={PICTOS.economie}
-            valeur={`${argentVsPlanJour >= 0 ? '+' : '-'}${Math.abs(argentVsPlanJour).toFixed(2)}€`}
-            label={argentVsPlanJour >= 0 ? 'Argent préservé\nvs votre plan' : 'Surcoût\nvs votre plan'}
+            valeur={`${argentVsPlanJour >= 0 ? '+' : '-'}${fmtEur(Math.abs(argentVsPlanJour))}€`}
+            label={argentVsPlanJour >= 0 ? t('stats.moneyPreserved') : t('stats.moneyOver')}
             valeurColor={argentVsPlanJour >= 0 ? colors.primary : '#DC2626'}
           />
           <StatBox
             img={PICTOS.temps}
-            valeur={`${vieVsPlanJour >= 0 ? '+' : '-'}${Math.abs(vieVsPlanJour)} min`}
-            label={vieVsPlanJour >= 0 ? `Vie préservée vs plan\n(5 min / cigarette)` : `Vie perdue vs plan\n(5 min / cigarette)`}
+            valeur={t('stats.minutesVsPlan', { sign: vieVsPlanJour >= 0 ? '+' : '-', count: Math.abs(vieVsPlanJour) })}
+            label={vieVsPlanJour >= 0 ? t('stats.lifePreservedVsPlan') : t('stats.lifeLostVsPlan')}
             valeurColor={vieVsPlanJour >= 0 ? colors.primary : '#DC2626'}
           />
           <StatBox
             img={PICTOS.evitees}
-            valeur={`${progression > 0 ? '+' : ''}${progression}%`}
-            label={`Progression\nvs avant l'app`}
+            valeur={t('stats.progressionValue', { sign: progression > 0 ? '+' : '', count: progression })}
+            label={t('stats.progressionLabel')}
             valeurColor={progressionPositif ? colors.primary : colors.red}
           />
         </View>
@@ -594,18 +598,18 @@ export default function DashboardScreen({ navigation }) {
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: spacing.sm }}>
             <Text style={{ fontSize: 24 }}>🔥</Text>
             <View style={{ flex: 1 }}>
-              <Text style={styles.envieTitle}>Une envie de fumer, là maintenant ?</Text>
+              <Text style={styles.envieTitle}>{t('envieCard.title')}</Text>
               <Text style={styles.envieSub}>
-                Enregistrez-la : on analyse vos déclencheurs pour vous aider à les anticiper.
+                {t('envieCard.subtitle')}
               </Text>
             </View>
           </View>
           <TouchableOpacity style={styles.envieBtn} onPress={() => setModalEnvie(true)}>
-            <Text style={styles.envieBtnText}>J'ai envie de fumer</Text>
+            <Text style={styles.envieBtnText}>{t('envieCard.button')}</Text>
           </TouchableOpacity>
           {(profile?.envies?.length ?? 0) > 0 && (
             <Text style={styles.envieCount}>
-              {profile.envies.length} envie{profile.envies.length > 1 ? 's' : ''} enregistrée{profile.envies.length > 1 ? 's' : ''} — analyse visible dans l'onglet Plan
+              {t('envieCard.count', { count: profile.envies.length })}
             </Text>
           )}
         </View>
@@ -613,12 +617,12 @@ export default function DashboardScreen({ navigation }) {
         {/* ── Motivation du jour ── */}
         <View style={styles.motivCard}>
           <View style={styles.motivHeader}>
-            <Text style={styles.motivTitle}>✨  Motivation du jour</Text>
+            <Text style={styles.motivTitle}>{t('motivation.sectionTitle')}</Text>
             <TouchableOpacity onPress={() => { if (!liked) jouerSon('motivation_like'); setLiked(l => !l); }}>
               <Text style={styles.motivHeart}>{liked ? '❤️' : '🤍'}</Text>
             </TouchableOpacity>
           </View>
-          <Text style={styles.motivQuote}>"{MOTIVATIONS[quoteIdx]}"</Text>
+          <Text style={styles.motivQuote}>"{motivationQuotes[quoteIdx]}"</Text>
         </View>
 
         {/* ── Boutons dev ── */}
@@ -626,13 +630,13 @@ export default function DashboardScreen({ navigation }) {
           style={styles.resetBtn}
           onPress={async () => { await updateProfile(buildDemoProfile()); }}
         >
-          <Text style={styles.resetText}>🎬 Charger la démo (5 semaines d'utilisation)</Text>
+          <Text style={styles.resetText}>{t('devButtons.loadDemo')}</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.resetBtn}
           onPress={async () => { await resetProfile(); }}
         >
-          <Text style={styles.resetText}>↩ Recommencer l'onboarding</Text>
+          <Text style={styles.resetText}>{t('devButtons.resetOnboarding')}</Text>
         </TouchableOpacity>
 
       </ScrollView>

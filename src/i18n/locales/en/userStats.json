@@ -1,0 +1,17 @@
+{
+  "msgJour": {
+    "smokeFree": "🎉 Smoke-free day!",
+    "onTrack": "✅ On track — well done!",
+    "over": "💪 {{count}} more than your goal, do better tomorrow."
+  },
+  "benefits": {
+    "bloodPressure": { "label": "Blood pressure", "description": "Your blood pressure returns to normal" },
+    "oxygen":        { "label": "Oxygen",          "description": "Blood CO levels drop by half" },
+    "heart":         { "label": "Heart",           "description": "Reduced risk of heart attack" },
+    "senses":        { "label": "Taste & Smell",   "description": "Your sense of taste and smell improve" },
+    "breathing":     { "label": "Breathing",       "description": "Easier breathing, relaxed airways" },
+    "circulation":   { "label": "Circulation",     "description": "Improved blood circulation" },
+    "lungs":         { "label": "Lungs",            "description": "Lung capacity increases by 30%" },
+    "strokeRisk":    { "label": "Stroke risk",     "description": "Stroke risk equal to a non-smoker" }
+  }
+}

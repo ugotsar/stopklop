@@ -1,0 +1,126 @@
+{
+  "welcome": {
+    "titlePrefix": "Bienvenido a",
+    "subtitle": "Tu compañero para dejar\nde fumar y recuperar el control\nde tu vida.",
+    "startButton": "Empezar  →",
+    "alreadyHaveAccount": "Ya tengo una cuenta"
+  },
+  "affirmations": {
+    "title": "¿Te reconoces\nen esta situación?",
+    "quoted": "«{{text}}»",
+    "items": [
+      "Ya he intentado reducir o dejar de fumar, pero no he conseguido mantenerlo en el tiempo.",
+      "A veces enciendo un cigarrillo automáticamente, sin tener realmente ganas.",
+      "No sé muy bien cómo reducir progresivamente sin volver a mis viejos hábitos."
+    ]
+  },
+  "deculpabilisation": {
+    "title": "Tranquilo, no se trata\nsimplemente de falta de voluntad",
+    "subtitle": "La dependencia se basa en hábitos, desencadenantes y automatismos. Al comprenderlos, puedes recuperar progresivamente el control.",
+    "withoutSupport": "Sin acompañamiento",
+    "withStopklop": "Con Stopklop",
+    "note": "Ilustración del principio — tu recorrido será único."
+  },
+  "solution": {
+    "title": "Avanza a tu ritmo,\ncon un plan adaptado",
+    "subtitle": "Cada fumador es diferente. Stopklop crea un recorrido personalizado a partir de tu consumo, tus hábitos y tu objetivo: reducir progresivamente o dejarlo por completo."
+  },
+  "benefits": {
+    "items": [
+      { "emoji": "🚬", "title": "Cada cigarrillo se convierte en una elección", "text": "Registra fácilmente tus cigarrillos y descubre cuáles fumas por ganas… y cuáles son simplemente un automatismo." },
+      { "emoji": "🔍", "title": "Identifica lo que desencadena tus ganas de fumar", "text": "Stopklop analiza los momentos, las situaciones y las emociones asociadas a tu consumo para ayudarte a anticipar mejor las ganas." },
+      { "emoji": "📉", "title": "Reduce a tu ritmo, sin presión innecesaria", "text": "Tu objetivo evoluciona según tu consumo y tus progresos. Cada etapa se mantiene realista, medible y adaptada a tu día a día." },
+      { "emoji": "💚", "title": "Cada cigarrillo evitado cuenta de verdad", "text": "Observa en tiempo real los cigarrillos evitados, el dinero ahorrado y el tiempo recuperado progresivamente." }
+    ]
+  },
+  "goalType": {
+    "title": "¿Cuál es tu objetivo?",
+    "subtitle": "Elige el objetivo que más te motive hoy.",
+    "options": {
+      "reduce": { "title": "Reducir progresivamente", "desc": "Disminuir paso a paso, a tu ritmo" },
+      "stop": { "title": "Dejarlo por completo", "desc": "0 cigarrillos, desde tu fecha de inicio" }
+    }
+  },
+  "consumption": {
+    "title": "¿Cuántos cigarrillos\nfumas actualmente?",
+    "subtitle": "Sé honesto, esto es 100 % confidencial.",
+    "cigarettesPerUnit": "cigarrillos / {{unit}}",
+    "unit": { "jour": "día", "semaine": "semana" },
+    "toggle": { "jour": "Por día", "semaine": "Por semana" },
+    "estimatedPerDay": "≈ {{count}} cigarrillos por día"
+  },
+  "packSize": {
+    "title": "¿Cuántos cigarrillos\ntiene tu paquete?",
+    "subtitle": "Una información clave para ayudarte a seguir mejor tu presupuesto.",
+    "unit": "cigarrillos por paquete"
+  },
+  "packPrice": {
+    "title": "¿Cuál es el precio\nde tu paquete?",
+    "subtitle": "Esto nos permite calcular los ahorros reales.",
+    "priceLabel": "Precio del paquete",
+    "error": "Introduce un precio válido superior a 0."
+  },
+  "startDate": {
+    "title": "¿Cuándo quieres\nempezar?",
+    "subtitle": "Elige la fecha que mejor te convenga.",
+    "hint": "Inicio: {{date}}",
+    "calendarWeekdays": ["L", "M", "M", "J", "V", "S", "D"]
+  },
+  "dailyGoal": {
+    "title": "¿Qué objetivo\nquieres alcanzar?",
+    "subtitle": "Define tu objetivo diario para el inicio. Después irá bajando progresivamente.",
+    "unit": "cigarrillos / día máx.",
+    "error": "Tu objetivo debe ser inferior a tu consumo actual ({{count}} / día)."
+  },
+  "currency": {
+    "title": "Elige tu moneda",
+    "subtitle": "Para seguir tus ahorros con precisión.",
+    "options": { "EUR": "Euro", "CHF": "Franco suizo", "GBP": "Libra esterlina" }
+  },
+  "motivations": {
+    "title": "¿Cuáles son tus\nprincipales motivaciones?",
+    "subtitle": "Selecciona hasta 3 motivaciones que más te importen.",
+    "options": {
+      "health": "Mi salud",
+      "family": "Mi familia",
+      "appearance": "Mi aspecto",
+      "money": "Ahorrar dinero",
+      "breathing": "Mejor respiración",
+      "fitness": "Recuperar mi forma física"
+    },
+    "personalTitle": "✏️  Escribir mi propia motivación",
+    "personalPlaceholder": "Tu motivación…",
+    "personalA11y": "Motivación personalizada"
+  },
+  "motivationLevel": {
+    "title": "¿Cuál es tu nivel\nde motivación?",
+    "subtitle": "Sé honesto contigo mismo.",
+    "low": "Bajo",
+    "high": "Alto",
+    "levelA11y": "Nivel {{n}}",
+    "sliderA11y": "Nivel de motivación de 1 a 10"
+  },
+  "summary": {
+    "title": "Tu recorrido está listo 🎉",
+    "subtitle": "Aquí tienes un resumen de tu plan personalizado.",
+    "labels": {
+      "goal": "Objetivo",
+      "currentConsumption": "Consumo actual",
+      "dailyGoal": "Objetivo diario",
+      "packPrice": "Precio del paquete",
+      "start": "Inicio",
+      "estimatedSavings": "Ahorro estimado",
+      "motivations": "Motivaciones",
+      "personalNote": "Tu mensaje",
+      "motivationLevel": "Motivación"
+    },
+    "cigPerDayValue": "{{count}} cig / día",
+    "cigPerDayMaxValue": "{{count}} cig / día máx.",
+    "packPriceValue": "{{price}} {{currency}} ({{count}} cig.)",
+    "savingsValue": "≈ {{monthly}} {{currency}} / mes\n≈ {{yearly}} {{currency}} / año",
+    "quoted": "«{{text}}»",
+    "savingIndicator": "Guardando tu recorrido…",
+    "saveError": "No se pudo guardar. Comprueba tu conexión e inténtalo de nuevo.",
+    "startButton": "Empezar  🚀"
+  }
+}

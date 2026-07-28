@@ -1,0 +1,131 @@
+{
+  "shared": {
+    "dividerOr": "oder"
+  },
+  "welcome": {
+    "title": "Willkommen bei",
+    "subtitle": "Dein Begleiter, um mit dem Rauchen\naufzuhören und die Kontrolle\nüber dein Leben zurückzugewinnen.",
+    "startButton": "Loslegen  →",
+    "haveAccount": "Ich habe bereits ein Konto"
+  },
+  "register": {
+    "title": "Registrieren",
+    "subtitle": "Erstelle dein Konto, um deine Reise\nzu einem rauchfreien Leben zu beginnen.",
+    "googleButton": "Mit Google registrieren",
+    "appleButton": "Mit Apple registrieren",
+    "emailPlaceholder": "E-Mail-Adresse",
+    "passwordPlaceholder": "Passwort",
+    "confirmPasswordPlaceholder": "Passwort bestätigen",
+    "checkLength": "Mindestens 8 Zeichen",
+    "checkLower": "Mindestens ein Kleinbuchstabe",
+    "checkUpper": "Mindestens ein Großbuchstabe",
+    "checkDigit": "Mindestens eine Ziffer",
+    "submitButton": "Registrieren",
+    "haveAccountText": "Du hast bereits ein Konto?",
+    "loginLink": "Anmelden",
+    "termsPrefix": "Mit der Registrierung akzeptierst du unsere",
+    "termsLink": "Nutzungsbedingungen",
+    "termsMiddle": "und unsere",
+    "privacyLink": "Datenschutzrichtlinie",
+    "errorInvalidEmail": "Ungültige E-Mail-Adresse.",
+    "errorInvalidPassword": "Ungültiges Passwort.",
+    "errorPasswordMismatch": "Die Passwörter stimmen nicht überein."
+  },
+  "login": {
+    "title": "Anmelden",
+    "subtitle": "Willkommen zurück!",
+    "googleButton": "Weiter mit Google",
+    "appleButton": "Weiter mit Apple",
+    "emailPlaceholder": "E-Mail-Adresse",
+    "passwordPlaceholder": "Passwort",
+    "forgotPassword": "Passwort vergessen?",
+    "submitButton": "Anmelden",
+    "noAccountText": "Du hast noch kein Konto?",
+    "createAccountLink": "Konto erstellen",
+    "errorFillFields": "Bitte fülle alle Felder aus."
+  },
+  "step1": {
+    "title": "Wie viele Zigaretten\nrauchst du pro Tag?",
+    "subtitle": "Sei ehrlich, das hilft uns,\ndein Erlebnis zu personalisieren.",
+    "unitLabel": "Zigaretten / Tag",
+    "freeTitle": "Eigene Zahl eingeben",
+    "freeDescription": "Gib die Anzahl der Zigaretten ein, die du pro Tag rauchst.",
+    "freePlaceholder": "z. B. 15"
+  },
+  "step2": {
+    "title": "Wie viel kostet\ndeine Packung?",
+    "subtitle": "Gib den Preis ein, den du normalerweise zahlst.",
+    "freeTitle": "Eigenen Preis eingeben",
+    "freeDescription": "Gib den Preis deiner Packung ein.",
+    "freePlaceholder": "11,50"
+  },
+  "step3": {
+    "title": "Wie viele Zigaretten\nenthält deine Packung?",
+    "subtitle": "Wähle die Anzahl der Zigaretten\nin deiner üblichen Packung.",
+    "unitLabel": "Zigaretten",
+    "freeTitle": "Eigene Zahl eingeben",
+    "freeDescription": "Gib die Anzahl der Zigaretten ein, die deine Packung enthält.",
+    "freePlaceholder": "z. B. 25"
+  },
+  "step4": {
+    "title": "Seit wann\nrauchst du?",
+    "subtitle": "So können wir die Vorteile\ndes Aufhörens abschätzen.",
+    "options": {
+      "lessThanOne": "Weniger als 1 Jahr",
+      "oneToFive": "1 bis 5 Jahre",
+      "fiveToTen": "5 bis 10 Jahre",
+      "tenToTwenty": "10 bis 20 Jahre",
+      "moreThanTwenty": "Mehr als 20 Jahre"
+    },
+    "freeTitle": "Eigene Dauer eingeben",
+    "freeDescription": "Gib die Anzahl der Jahre\noder Monate ein.",
+    "freePlaceholder": "z. B. 7 Jahre"
+  },
+  "step5": {
+    "title": "Was ist dein gewünschtes\nAufhördatum?",
+    "subtitle": "Wähle den Tag, an dem du\nmit dem Rauchen aufhören möchtest.",
+    "months": ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"],
+    "daysShort": ["M", "D", "M", "D", "F", "S", "S"],
+    "freeTitle": "Eigenes Datum eingeben",
+    "freeDescription": "Gib das Datum ein, an dem du aufhören möchtest.",
+    "datePlaceholder": "TT / MM / JJJJ"
+  },
+  "step6": {
+    "title": "Was sind deine wichtigsten\nMotivationen?",
+    "subtitle": "Wähle bis zu 3 Motivationen aus,\ndie dir am wichtigsten sind.",
+    "motivations": {
+      "sante": "Meine Gesundheit",
+      "famille": "Meine Familie",
+      "apparence": "Mein Aussehen",
+      "economiser": "Geld\nsparen",
+      "souffle": "Bessere\nAtmung",
+      "condition": "Meine Fitness\nzurückgewinnen"
+    },
+    "freeTitle": "Eigene Motivation eingeben",
+    "freeDescription": "Gib eine Motivation ein, die dir wichtig ist.",
+    "freePlaceholder": "Deine Motivation"
+  },
+  "step7": {
+    "title": "Wie hoch ist dein\nMotivationslevel?",
+    "subtitle": "Sei ehrlich zu dir selbst.",
+    "descriptions": [
+      "",
+      "Du beginnst diesen Weg. Jeder Schritt zählt.",
+      "Du denkst darüber nach. Das ist schon ein Anfang.",
+      "Deine Motivation wächst.",
+      "Du beginnst daran zu glauben.",
+      "Du bist bereit, dich zu engagieren.",
+      "Gute Entschlossenheit. Weiter so!",
+      "Du bist fest entschlossen.",
+      "Dein Wille ist stark.",
+      "Du bist fast unaufhaltsam!",
+      "Du bist vollkommen entschlossen! 🏆"
+    ],
+    "lowLabel": "Niedrig",
+    "highLabel": "Hoch",
+    "manualTitle": "Manuell eingeben",
+    "manualDescription": "Gib deinen Wert von 1 bis 10 ein.",
+    "manualPlaceholder": "1-10",
+    "finishButton": "Fertig →"
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "tabs": {
+    "day": "Day",
+    "week": "Week",
+    "month": "Month",
+    "period": "Period"
+  },
+  "vsBeforeApp": "vs before the app",
+  "dates": {
+    "today": "Today",
+    "yesterday": "Yesterday"
+  },
+  "week": {
+    "rangeLabel": "{{start}} to {{end}}"
+  },
+  "tapHint": {
+    "day": "Tap a day to see the hour-by-hour detail",
+    "month": "Tap a month to see the day-by-day detail"
+  },
+  "month": {
+    "comparison": "{{month}}: {{count}} cig · {{arrow}} {{percent}}% this month"
+  },
+  "range": {
+    "from": "From",
+    "to": "To"
+  },
+  "smokedCard": {
+    "title": "Cigarettes smoked",
+    "unit": "cigarettes",
+    "vsBeforeAppValue": "{{arrow}} {{percent}} %",
+    "hoursTitle": "Cigarette times",
+    "hoursNotRecorded": "Times not recorded for this day.",
+    "noCigarettesToday": "No cigarettes this day 🎉",
+    "withoutHourCount": "+ {{count}} without a recorded time"
+  },
+  "moneyCard": {
+    "title": "Money",
+    "spentReal": "spent (actual)",
+    "net": "net",
+    "calculatedOn_one": "Calculated over {{count}} recorded day",
+    "calculatedOn_other": "Calculated over {{count}} recorded days",
+    "missingDays_one": " — {{count}} not logged",
+    "missingDays_other": " — {{count}} not logged"
+  },
+  "lifeCard": {
+    "title": "Life regained",
+    "rate": "5 min / cigarette not smoked"
+  },
+  "progressionCard": {
+    "title": "Progress",
+    "subtitle": "consumption",
+    "streak": "🔥 {{count}} d on target"
+  },
+  "summaryCard": {
+    "title": "Summary",
+    "smokedCount_one": "{{count}} cigarette smoked",
+    "smokedCount_other": "{{count}} cigarettes smoked",
+    "onDaysRecorded_one": "over {{count}} recorded day",
+    "onDaysRecorded_other": "over {{count}} recorded days",
+    "missingParen_one": "({{count}} not logged)",
+    "missingParen_other": "({{count}} not logged)",
+    "average": "Average: {{avg}} cig / day — goal: {{count}} / day",
+    "overPlan_one": "⚠️ {{count}} cigarette above your plan for this period",
+    "overPlan_other": "⚠️ {{count}} cigarettes above your plan for this period",
+    "underPlan_one": "✅ Goal met: {{count}} cigarette under target",
+    "underPlan_other": "✅ Goal met: {{count}} cigarettes under target",
+    "moneyPositive": "+{{amount}} € vs before the app",
+    "moneyNegative": "{{amount}} € vs before the app (you're smoking more than before)",
+    "messagePositive": "↓ {{percent}}% vs before the app 💚",
+    "messageNegative": "↑ {{percent}}% vs before the app — hang in there 💪",
+    "messageNeutral": "Every day logged counts."
+  }
+}

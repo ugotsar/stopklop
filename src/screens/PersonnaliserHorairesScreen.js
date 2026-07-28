@@ -4,17 +4,9 @@ import {
   ScrollView, Alert, Modal,
 } from 'react-native';
 import * as Notifications from 'expo-notifications';
+import { useTranslation } from 'react-i18next';
 import { annulerToutesNotifications, demanderPermissionNotifications } from '../services/notifications';
 import { colors, spacing, font, radius } from '../theme';
-
-const MESSAGES = [
-  { title: '☀️ Nouvelle journée, nouveau départ',  body: "Aujourd'hui, tu peux faire mieux qu'hier. Note tes cigarettes." },
-  { title: '🚬 Comment ça se passe aujourd\'hui ?', body: 'Pense à noter tes cigarettes. Chaque chiffre compte.' },
-  { title: '📊 Bilan de ta journée',               body: "Tu as fumé combien aujourd'hui ? Note-le avant de dormir." },
-  { title: '💪 Tu tiens le coup ?',                body: 'Un petit rappel pour noter tes cigarettes.' },
-  { title: '⏰ Rappel supplémentaire',             body: 'Prends 10 secondes pour noter tes cigarettes.' },
-  { title: '🌙 Fin de journée',                    body: 'Dernière chance de noter ta consommation du jour.' },
-];
 
 function defaultTimes(count) {
   return Array.from({ length: count }, (_, i) => {
@@ -29,12 +21,22 @@ function defaultTimes(count) {
 function pad(n) { return String(n).padStart(2, '0'); }
 
 export default function PersonnaliserHorairesScreen({ navigation, route }) {
+  const { t } = useTranslation('personnaliserHoraires');
   const count = route?.params?.count ?? 3;
   const [times, setTimes]         = useState(defaultTimes(count));
   const [editing, setEditing]     = useState(null); // index en cours d'édition
   const [tempH, setTempH]         = useState(9);
   const [tempM, setTempM]         = useState(0);
   const [saving, setSaving]       = useState(false);
+
+  const MESSAGES = [
+    { title: t('messages.morning.title'),       body: t('messages.morning.body') },
+    { title: t('messages.afternoon.title'),      body: t('messages.afternoon.body') },
+    { title: t('messages.evening.title'),        body: t('messages.evening.body') },
+    { title: t('messages.encouragement.title'),  body: t('messages.encouragement.body') },
+    { title: t('messages.extra.title'),          body: t('messages.extra.body') },
+    { title: t('messages.night.title'),          body: t('messages.night.body') },
+  ];
 
   function openPicker(i) {
     setTempH(times[i].h);
@@ -54,7 +56,7 @@ export default function PersonnaliserHorairesScreen({ navigation, route }) {
     try {
       const ok = await demanderPermissionNotifications();
       if (!ok) {
-        Alert.alert('Permission refusée', 'Active les notifications dans les Réglages iOS.');
+        Alert.alert(t('alerts.permissionDeniedTitle'), t('alerts.permissionDeniedBody'));
         return;
       }
       await annulerToutesNotifications();
@@ -71,9 +73,9 @@ export default function PersonnaliserHorairesScreen({ navigation, route }) {
         });
       }
       Alert.alert(
-        'Horaires enregistrés ✓',
-        times.map((t, i) => `Rappel ${i + 1} : ${pad(t.h)}:${pad(t.m)}`).join('\n'),
-        [{ text: 'OK', onPress: () => navigation.goBack() }]
+        t('alerts.savedTitle'),
+        times.map((time, i) => t('alerts.savedLine', { index: i + 1, time: `${pad(time.h)}:${pad(time.m)}` })).join('\n'),
+        [{ text: t('common:ok'), onPress: () => navigation.goBack() }]
       );
     } finally {
       setSaving(false);
@@ -87,14 +89,14 @@ export default function PersonnaliserHorairesScreen({ navigation, route }) {
         <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn}>
           <Text style={s.backArrow}>‹</Text>
         </TouchableOpacity>
-        <Text style={s.headerTitle}>Personnaliser les horaires</Text>
+        <Text style={s.headerTitle}>{t('headerTitle')}</Text>
       </View>
 
       <ScrollView contentContainerStyle={s.scroll} showsVerticalScrollIndicator={false}>
-        <Text style={s.subtitle}>Appuie sur un rappel pour modifier son heure.</Text>
+        <Text style={s.subtitle}>{t('subtitle')}</Text>
 
         <View style={s.card}>
-          {times.map((t, i) => (
+          {times.map((time, i) => (
             <View key={i}>
               <TouchableOpacity style={s.row} onPress={() => openPicker(i)} activeOpacity={0.7}>
                 <View style={s.rowLeft}>
@@ -102,12 +104,12 @@ export default function PersonnaliserHorairesScreen({ navigation, route }) {
                     <Text style={s.numText}>{i + 1}</Text>
                   </View>
                   <View style={{ flex: 1 }}>
-                    <Text style={s.rowTitle}>Rappel {i + 1}</Text>
+                    <Text style={s.rowTitle}>{t('reminderLabel', { index: i + 1 })}</Text>
                     <Text style={s.rowMsg} numberOfLines={1}>{MESSAGES[i % MESSAGES.length].title}</Text>
                   </View>
                 </View>
                 <View style={s.timeBadge}>
-                  <Text style={s.timeText}>{pad(t.h)}:{pad(t.m)}</Text>
+                  <Text style={s.timeText}>{pad(time.h)}:{pad(time.m)}</Text>
                 </View>
               </TouchableOpacity>
               {i < times.length - 1 && <View style={s.divider} />}
@@ -117,7 +119,7 @@ export default function PersonnaliserHorairesScreen({ navigation, route }) {
 
         <View style={s.infoBox}>
           <Text style={s.infoText}>
-            💡 Ces notifications se déclenchent chaque jour à l'heure choisie, même si l'application est fermée.
+            {t('infoText')}
           </Text>
         </View>
 
@@ -127,7 +129,7 @@ export default function PersonnaliserHorairesScreen({ navigation, route }) {
           activeOpacity={0.8}
           disabled={saving}
         >
-          <Text style={s.saveBtnText}>{saving ? 'Enregistrement…' : 'Enregistrer les horaires'}</Text>
+          <Text style={s.saveBtnText}>{saving ? t('savingButton') : t('saveButton')}</Text>
         </TouchableOpacity>
       </ScrollView>
 
@@ -135,7 +137,7 @@ export default function PersonnaliserHorairesScreen({ navigation, route }) {
       <Modal visible={editing !== null} transparent animationType="slide">
         <View style={s.modalOverlay}>
           <View style={s.modalBox}>
-            <Text style={s.modalTitle}>Rappel {editing !== null ? editing + 1 : ''}</Text>
+            <Text style={s.modalTitle}>{editing !== null ? t('reminderLabel', { index: editing + 1 }) : ''}</Text>
 
             <View style={s.pickerRow}>
               {/* Heures */}
@@ -147,7 +149,7 @@ export default function PersonnaliserHorairesScreen({ navigation, route }) {
                 <TouchableOpacity style={s.arrowBtn} onPress={() => setTempH(h => (h + 23) % 24)}>
                   <Text style={s.arrowText}>▼</Text>
                 </TouchableOpacity>
-                <Text style={s.pickerLabel}>heure</Text>
+                <Text style={s.pickerLabel}>{t('picker.hourLabel')}</Text>
               </View>
 
               <Text style={s.pickerColon}>:</Text>
@@ -161,16 +163,16 @@ export default function PersonnaliserHorairesScreen({ navigation, route }) {
                 <TouchableOpacity style={s.arrowBtn} onPress={() => setTempM(m => (m + 55) % 60)}>
                   <Text style={s.arrowText}>▼</Text>
                 </TouchableOpacity>
-                <Text style={s.pickerLabel}>minutes</Text>
+                <Text style={s.pickerLabel}>{t('picker.minuteLabel')}</Text>
               </View>
             </View>
 
             <View style={s.modalBtns}>
               <TouchableOpacity style={s.cancelBtn} onPress={() => setEditing(null)}>
-                <Text style={s.cancelText}>Annuler</Text>
+                <Text style={s.cancelText}>{t('common:cancel')}</Text>
               </TouchableOpacity>
               <TouchableOpacity style={s.confirmBtn} onPress={confirmTime}>
-                <Text style={s.confirmText}>Confirmer</Text>
+                <Text style={s.confirmText}>{t('common:confirm')}</Text>
               </TouchableOpacity>
             </View>
           </View>

@@ -3,6 +3,7 @@ import {
   View, Text, StyleSheet, TextInput, TouchableOpacity,
   SafeAreaView, ScrollView, KeyboardAvoidingView, Platform, Dimensions,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { colors, spacing, font, radius } from '../../theme';
 import PrimaryButton from '../../components/PrimaryButton';
 import NatureBackground from '../../components/NatureBackground';
@@ -10,13 +11,14 @@ import NatureBackground from '../../components/NatureBackground';
 const { height: SCREEN_H } = Dimensions.get('window');
 
 export default function LoginScreen({ navigation }) {
+  const { t } = useTranslation('onboardingLegacy');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPass, setShowPass] = useState(false);
   const [error, setError] = useState('');
 
   function handleLogin() {
-    if (!email || !password) { setError('Veuillez remplir tous les champs.'); return; }
+    if (!email || !password) { setError(t('login.errorFillFields')); return; }
     setError('');
     navigation.navigate('Step1', { email });
   }
@@ -30,40 +32,40 @@ export default function LoginScreen({ navigation }) {
         </TouchableOpacity>
 
         <ScrollView style={styles.sheet} contentContainerStyle={styles.sheetContent} keyboardShouldPersistTaps="handled">
-          <Text style={styles.title}>Se connecter</Text>
-          <Text style={styles.subtitle}>Bienvenue de retour !</Text>
+          <Text style={styles.title}>{t('login.title')}</Text>
+          <Text style={styles.subtitle}>{t('login.subtitle')}</Text>
 
-          <SocialBtn icon="🇬" label="Continuer avec Google" onPress={() => navigation.navigate('Step1', { email: '' })} />
-          <SocialBtn icon="🍎" label="Continuer avec Apple" onPress={() => navigation.navigate('Step1', { email: '' })} />
+          <SocialBtn icon="🇬" label={t('login.googleButton')} onPress={() => navigation.navigate('Step1', { email: '' })} />
+          <SocialBtn icon="🍎" label={t('login.appleButton')} onPress={() => navigation.navigate('Step1', { email: '' })} />
 
           <View style={styles.dividerRow}>
-            <View style={styles.divider} /><Text style={styles.dividerText}>ou</Text><View style={styles.divider} />
+            <View style={styles.divider} /><Text style={styles.dividerText}>{t('shared.dividerOr')}</Text><View style={styles.divider} />
           </View>
 
           <View style={styles.inputWrap}>
             <Text style={styles.inputIcon}>✉️</Text>
-            <TextInput style={styles.input} placeholder="Adresse e-mail" value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" placeholderTextColor={colors.gray} />
+            <TextInput style={styles.input} placeholder={t('login.emailPlaceholder')} value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none" placeholderTextColor={colors.gray} />
           </View>
 
           <View style={styles.inputWrap}>
             <Text style={styles.inputIcon}>🔒</Text>
-            <TextInput style={styles.input} placeholder="Mot de passe" value={password} onChangeText={setPassword} secureTextEntry={!showPass} placeholderTextColor={colors.gray} />
+            <TextInput style={styles.input} placeholder={t('login.passwordPlaceholder')} value={password} onChangeText={setPassword} secureTextEntry={!showPass} placeholderTextColor={colors.gray} />
             <TouchableOpacity onPress={() => setShowPass(v => !v)}>
               <Text style={styles.eyeIcon}>{showPass ? '🙈' : '👁️'}</Text>
             </TouchableOpacity>
           </View>
 
           <TouchableOpacity style={styles.forgotWrap}>
-            <Text style={styles.forgot}>Mot de passe oublié ?</Text>
+            <Text style={styles.forgot}>{t('login.forgotPassword')}</Text>
           </TouchableOpacity>
 
           {error ? <Text style={styles.error}>{error}</Text> : null}
 
-          <PrimaryButton title="Se connecter" onPress={handleLogin} style={styles.btn} />
+          <PrimaryButton title={t('login.submitButton')} onPress={handleLogin} style={styles.btn} />
 
           <TouchableOpacity onPress={() => navigation.navigate('Register')} style={styles.link}>
-            <Text style={styles.linkText}>Vous n'avez pas de compte ?</Text>
-            <Text style={styles.linkBold}>Créer un compte</Text>
+            <Text style={styles.linkText}>{t('login.noAccountText')}</Text>
+            <Text style={styles.linkBold}>{t('login.createAccountLink')}</Text>
           </TouchableOpacity>
         </ScrollView>
       </KeyboardAvoidingView>

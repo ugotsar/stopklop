@@ -1,0 +1,143 @@
+{
+  "header": {
+    "title": "Plan para dejarlo"
+  },
+  "labels": {
+    "perMonth": "al mes",
+    "perYear": "al año",
+    "per10Years": "en 10 años"
+  },
+  "impact": {
+    "sectionTitle": "Tu impacto",
+    "gotIt": "¡Entendido!",
+    "savings": {
+      "label": "Dinero ahorrado",
+      "modalTitle": "Dinero ahorrado",
+      "explanationIntro_one": "Antes de la app, fumabas {{consoAvant}} cigarrillos al día. Tu objetivo actual es {{objectif}} al día: eso son {{count}} cigarrillo evitado cada día.",
+      "explanationIntro_other": "Antes de la app, fumabas {{consoAvant}} cigarrillos al día. Tu objetivo actual es {{objectif}} al día: eso son {{count}} cigarrillos evitados cada día.",
+      "explanationDetail": "\n\nCada cigarrillo cuesta {{prixCig}} € (precio del paquete ÷ cigarrillos por paquete).\n{{count}} × {{prixCig}} € × 30 días = {{ecoMois}} € al mes.",
+      "note": "Puedes ajustar el precio del paquete en Perfil → Ajustes de consumo."
+    },
+    "life": {
+      "label": "Vida recuperada"
+    },
+    "lifeMonth": {
+      "modalTitle": "Vida recuperada al mes",
+      "explanation_one": "Los estudios médicos estiman que un cigarrillo reduce la esperanza de vida en unos 5 minutos.\n\nAl evitar {{count}} cigarrillo al día, recuperas {{minutes}} minutos de vida cada día, es decir, unas {{hours}}h al mes.",
+      "explanation_other": "Los estudios médicos estiman que un cigarrillo reduce la esperanza de vida en unos 5 minutos.\n\nAl evitar {{count}} cigarrillos al día, recuperas {{minutes}} minutos de vida cada día, es decir, unas {{hours}}h al mes."
+    },
+    "lifeYear": {
+      "modalTitle": "Vida recuperada al año",
+      "explanation_one": "A lo largo de un año entero, los 5 minutos recuperados por cada cigarrillo evitado se acumulan:\n\n{{count}} cigarrillo evitado × 5 min × 365 días = unos {{days}} días de esperanza de vida ganados cada año.",
+      "explanation_other": "A lo largo de un año entero, los 5 minutos recuperados por cada cigarrillo evitado se acumulan:\n\n{{count}} cigarrillos evitados × 5 min × 365 días = unos {{days}} días de esperanza de vida ganados cada año.",
+      "moreLifeLabel": "más de vida",
+      "monthsValue": "≈ {{count}} meses"
+    },
+    "health": {
+      "value": "Mejor",
+      "label": "salud",
+      "sublabel": "cada día",
+      "modalTitle": "Mejor salud cada día",
+      "explanation": "Tu cuerpo empieza a repararse en cuanto reduces el consumo:\n\n• 20 min: la tensión arterial vuelve a la normalidad\n• 8 h: el monóxido de carbono en sangre se reduce a la mitad\n• 24 h: el riesgo de infarto empieza a disminuir\n• 48 h: el gusto y el olfato mejoran\n• 72 h: respirar se vuelve más fácil\n• 1 año: el riesgo de ictus se iguala al de un no fumador",
+      "note": "Consulta tu progreso de salud detallado en el panel."
+    }
+  },
+  "projection": {
+    "sectionTitle": "Proyección anual",
+    "herosSub": "se quedarán en tu bolsillo en 1 año",
+    "herosHint": "siguiendo tu plan",
+    "beforeApp": {
+      "title": "Antes de la app",
+      "sub": "gastados en cigarrillos cada año",
+      "value": "−{{amount}} / año"
+    },
+    "alreadySaved": {
+      "title": "Ya ahorrado",
+      "sub": "desde el principio",
+      "value": "+{{amount}}"
+    },
+    "planRespected": {
+      "title": "Plan cumplido al 100 %",
+      "sub": "si continúas",
+      "value": "+{{amount}} / año"
+    },
+    "equivalenceLabel": "Con esos {{amount}} podrías darte:",
+    "chartRemaining": "quedan",
+    "chartInPocket": "en tu bolsillo",
+    "chartSixMonths": "6 meses",
+    "chartOneYear": "1 año"
+  },
+  "equivalence": {
+    "trip": "Un gran viaje + 6 meses de compras",
+    "flight": "Un vuelo de larga distancia para dos, o 5 meses de compras",
+    "vacation": "Una semana de vacaciones, o 3 meses de compras",
+    "smartphone": "Un smartphone nuevo, o 6 fines de semana",
+    "restaurants": "12 cenas en restaurante, o un fin de semana romántico",
+    "small": "Suficiente para varios caprichos de verdad"
+  },
+  "habits": {
+    "sectionTitle": "Análisis de tus hábitos",
+    "analyzedCount_one": "{{count}} antojo analizado",
+    "analyzedCount_other": "{{count}} antojos analizados",
+    "peakHour": { "desc": "Franja horaria más crítica" },
+    "peakDay": { "desc": "Día más difícil" },
+    "topTrigger": { "desc": "Desencadenante n.º 1" },
+    "pctOfCravings": "{{pct}}% de tus antojos",
+    "breakdownTitle": "Desglose por desencadenante",
+    "viewBreakdownDetail": "Ver el detalle por desencadenante  ›",
+    "resistedCount": "💪 {{count}}",
+    "resistedLabel": "antojos superados",
+    "smokedCount": "🚬 {{count}}",
+    "smokedLabel": "antojos fumados",
+    "recentCravingsTitle": "Últimos antojos",
+    "viewFullJournal": "Ver el diario completo, día a día  ›",
+    "smokedIssue": "🚬 fumado",
+    "resistedIssue": "💪 resistido",
+    "emptyTitle": "Aún no hay datos",
+    "emptyTextBefore": "Cuando llegue un antojo de fumar, pulsa el botón",
+    "emptyTextButton": "«Tengo ganas de fumar»",
+    "emptyTextAfter": " en Inicio.\nAnalizaremos tus horas, días y desencadenantes críticos para ayudarte a anticiparlos."
+  },
+  "triggers": {
+    "stress": "Estrés",
+    "ennui": "Aburrimiento",
+    "cafe": "Café / descanso",
+    "repas": "Después de comer",
+    "social": "Entorno social",
+    "alcool": "Noche de fiesta / alcohol",
+    "habitude": "Costumbre",
+    "autre": "Otro"
+  },
+  "recommendedPlan": {
+    "sectionTitle": "Mi plan",
+    "rateTag_one": "−{{count}} cig / semana",
+    "rateTag_other": "−{{count}} cig / semana",
+    "progressiveTag": "Reducción progresiva",
+    "dailyGoal": "Objetivo diario",
+    "cigarettesMax": "cigarrillos máx.",
+    "today": "Hoy",
+    "weekLabel": "S+{{n}}",
+    "goalReached": "🎉 ¡Objetivo de 0 cigarrillos alcanzado!",
+    "goalReachedSuffix": " Mantén el rumbo.",
+    "nextMilestonePrefix": "Próxima etapa: ",
+    "nextMilestoneCig_one": "{{count}} cigarrillo máx.",
+    "nextMilestoneCig_other": "{{count}} cigarrillos máx.",
+    "nextMilestoneInLabel": " en ",
+    "nextMilestoneDays_one": "{{count}} día",
+    "nextMilestoneDays_other": "{{count}} días",
+    "zeroDatePrefix": "\n🏁 0 cigarrillos previstos hacia el ",
+    "chooseProgressivePrefix": "Elige ",
+    "chooseProgressiveLabel": "«Reducir progresivamente»",
+    "chooseProgressiveSuffix": " para activar un plan semana a semana.",
+    "modifyButton": "Editar el plan"
+  },
+  "motivations": {
+    "title": "💚 Por qué lo haces",
+    "health": "Mi salud",
+    "family": "Mi familia",
+    "appearance": "Mi apariencia",
+    "money": "Ahorrar dinero",
+    "breathing": "Respirar mejor",
+    "fitness": "Recuperar mi forma física"
+  }
+}

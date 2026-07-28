@@ -1,0 +1,43 @@
+{
+  "header": {
+    "title": "Modificar mi objetivo"
+  },
+  "objectives": {
+    "sectionTitle": "Elige tu objetivo",
+    "stop": { "title": "Dejarlo por completo", "desc": "0 cigarrillos" },
+    "reduce": { "title": "Reducir progresivamente", "desc": "Disminuir paso a paso" },
+    "libre": { "title": "Objetivo libre", "desc": "Elígelo tú mismo" }
+  },
+  "dailyGoal": {
+    "titleReduceMode": "Punto de partida (hoy)",
+    "titleOtherMode": "Objetivo diario",
+    "unit": "cigarrillos / día"
+  },
+  "pace": {
+    "sectionTitle": "Ritmo de reducción",
+    "perWeek_one": "cigarrillo por semana",
+    "perWeek_other": "cigarrillos por semana"
+  },
+  "planPreview": {
+    "today": "Hoy",
+    "weekLabel": "S+{{n}}",
+    "summaryPrefix": "🏁 A este ritmo, alcanzarás",
+    "zeroCigarette": "0 cigarrillos",
+    "inWeeks_one": "en {{count}} semana",
+    "inWeeks_other": "en {{count}} semanas",
+    "towardDate": ", hacia el {{date}}."
+  },
+  "overview": {
+    "title": "Vista previa de tu objetivo",
+    "reference": "Referencia: {{count}} cig / día antes de la app",
+    "referenceEstimatedNote": " (estimado — ajústalo en Perfil → Ajustes de consumo)",
+    "estimatedSavings": "Ahorro estimado",
+    "lifeRecovered": "Tiempo de vida recuperado",
+    "perMonth": "al mes",
+    "perYear": "al año",
+    "per10Years": "en 10 años",
+    "consumptionReduction": "Reducción de consumo\n(promedio del primer mes)"
+  },
+  "saveButton": "Guardar mi objetivo",
+  "footerNote": "ⓘ  Podrás modificar tu objetivo en cualquier momento."
+}

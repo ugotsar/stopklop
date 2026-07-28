@@ -6,6 +6,7 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Svg, { Path, Circle } from 'react-native-svg';
 import { Dimensions } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { colors, spacing, font, radius } from '../../theme';
 import PrimaryButton from '../../components/PrimaryButton';
 import NatureBackground from '../../components/NatureBackground';
@@ -46,36 +47,23 @@ const PICTOS_MOTIV = {
 };
 
 // ── Contenus statiques ────────────────────────────────────────────────────────
-const AFFIRMATIONS = [
-  "J'ai déjà essayé de réduire ou d'arrêter de fumer, mais je n'ai pas réussi à tenir sur la durée.",
-  "Il m'arrive d'allumer une cigarette automatiquement, sans même en avoir réellement envie.",
-  "Je ne sais pas vraiment comment réduire progressivement sans reprendre mes anciennes habitudes.",
-];
-
-const BENEFICES = [
-  { emoji: '🚬', titre: 'Chaque cigarette devient un choix',
-    texte: "Enregistre facilement tes cigarettes et découvre celles que tu fumes par envie… et celles qui relèvent simplement d'un automatisme." },
-  { emoji: '🔍', titre: "Identifie ce qui déclenche ton envie de fumer",
-    texte: "Stopklop analyse les moments, les situations et les émotions associés à ta consommation pour t'aider à mieux anticiper les envies." },
-  { emoji: '📉', titre: 'Réduis à ton rythme, sans pression inutile',
-    texte: "Ton objectif évolue selon ta consommation et tes progrès. Chaque étape reste réaliste, mesurable et adaptée à ton quotidien." },
-  { emoji: '💚', titre: 'Chaque cigarette évitée compte vraiment',
-    texte: "Observe en temps réel les cigarettes évitées, l'argent économisé et le temps progressivement regagné." },
-];
-
+// Les libellés (titre/texte/label) sont désormais résolus via i18n au moment
+// du rendu (voir t('affirmations.items'), t('benefits.items'),
+// t('motivations.options.*') et t('currency.options.*')) ; seules les clés
+// stables et emojis (utilisés par la logique/état) restent ici.
 export const MOTIVATIONS_CHOIX = [
-  { key: 'health',     emoji: '❤️', label: 'Ma santé' },
-  { key: 'family',     emoji: '👨‍👩‍👧', label: 'Ma famille' },
-  { key: 'appearance', emoji: '✨', label: 'Mon apparence' },
-  { key: 'money',      emoji: '💰', label: "Économiser de l'argent" },
-  { key: 'breathing',  emoji: '🫁', label: 'Un meilleur souffle' },
-  { key: 'fitness',    emoji: '🏃', label: 'Retrouver ma condition' },
+  { key: 'health',     emoji: '❤️' },
+  { key: 'family',     emoji: '👨‍👩‍👧' },
+  { key: 'appearance', emoji: '✨' },
+  { key: 'money',      emoji: '💰' },
+  { key: 'breathing',  emoji: '🫁' },
+  { key: 'fitness',    emoji: '🏃' },
 ];
 
 const DEVISES = [
-  { code: 'EUR', symbole: '€', label: 'Euro' },
-  { code: 'CHF', symbole: 'CHF', label: 'Franc suisse' },
-  { code: 'GBP', symbole: '£', label: 'Livre sterling' },
+  { code: 'EUR', symbole: '€' },
+  { code: 'CHF', symbole: 'CHF' },
+  { code: 'GBP', symbole: '£' },
 ];
 
 // ── Graphique illustratif (page déculpabilisation) ───────────────────────────
@@ -111,6 +99,7 @@ const initialAnswers = {
 
 // ── Composant principal ───────────────────────────────────────────────────────
 export default function OnboardingFlow({ navigation }) {
+  const { t, i18n } = useTranslation('onboardingFlow');
   const { profile, updateProfile } = useUser();
 
   const [step, setStep]       = useState(0);
@@ -265,7 +254,7 @@ export default function OnboardingFlow({ navigation }) {
       await AsyncStorage.removeItem(DRAFT_KEY).catch(() => {});
       navigation.replace('Paywall');
     } catch (e) {
-      setSaveError("Impossible d'enregistrer. Vérifiez votre connexion et réessayez.");
+      setSaveError(t('summary.saveError'));
     } finally {
       savingRef.current = false;
       setSaving(false);
@@ -293,14 +282,14 @@ export default function OnboardingFlow({ navigation }) {
         />
         <View style={[st.welcomeCard, { position: 'absolute', bottom: 0, left: 0, right: 0 }]}>
           <Text style={st.welcomeTitle}>
-            Bienvenue sur{'\n'}<Text style={{ color: colors.primary }}>Stopklop</Text>
+            {t('welcome.titlePrefix')}{'\n'}<Text style={{ color: colors.primary }}>Stopklop</Text>
           </Text>
           <Text style={st.welcomeSub}>
-            Votre compagnon pour arrêter{'\n'}de fumer et reprendre le contrôle{'\n'}de votre vie.
+            {t('welcome.subtitle')}
           </Text>
-          <PrimaryButton title="Commencer  →" onPress={next} />
+          <PrimaryButton title={t('welcome.startButton')} onPress={next} />
           <TouchableOpacity onPress={() => navigation.navigate('Login')} style={{ alignItems: 'center', paddingTop: spacing.sm }}>
-            <Text style={{ color: colors.gray, fontSize: font.md }}>J'ai déjà un compte</Text>
+            <Text style={{ color: colors.gray, fontSize: font.md }}>{t('welcome.alreadyHaveAccount')}</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -309,16 +298,17 @@ export default function OnboardingFlow({ navigation }) {
 
   // ── Corps de page selon l'étape ────────────────────────────────────────────
   let body = null;
-  let cta  = 'Continuer  →';
+  let cta  = t('common:continue');
   let onCta = next;
 
   if (page.startsWith('affirmation')) {
     const idx = Number(page.slice(-1));
+    const affirmationItems = t('affirmations.items', { returnObjects: true });
     body = (
       <>
-        <Text style={st.title}>Est-ce que tu te reconnais{'\n'}dans cette situation ?</Text>
+        <Text style={st.title}>{t('affirmations.title')}</Text>
         <View style={st.affirmationCard}>
-          <Text style={st.affirmationText}>« {AFFIRMATIONS[idx]} »</Text>
+          <Text style={st.affirmationText}>{t('affirmations.quoted', { text: affirmationItems[idx] })}</Text>
         </View>
         <View style={st.illusBox}>
           <Image source={ILLUS[page]} style={st.illusImg} resizeMode="contain" />
@@ -332,7 +322,7 @@ export default function OnboardingFlow({ navigation }) {
             }}
           >
             <Text style={st.ouiNonIcon}>✕</Text>
-            <Text style={st.ouiNonLabel}>Non</Text>
+            <Text style={st.ouiNonLabel}>{t('common:no')}</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[st.ouiNonBtn, answers.identification[idx] === true && st.ouiNonBtnOui]}
@@ -342,7 +332,7 @@ export default function OnboardingFlow({ navigation }) {
             }}
           >
             <Text style={[st.ouiNonIcon, { color: colors.primary }]}>✓</Text>
-            <Text style={st.ouiNonLabel}>Oui</Text>
+            <Text style={st.ouiNonLabel}>{t('common:yes')}</Text>
           </TouchableOpacity>
         </View>
       </>
@@ -353,10 +343,9 @@ export default function OnboardingFlow({ navigation }) {
   else if (page === 'deculpabilisation') {
     body = (
       <>
-        <Text style={st.title}>Rassure-toi, ce n'est pas{'\n'}simplement un manque de volonté</Text>
+        <Text style={st.title}>{t('deculpabilisation.title')}</Text>
         <Text style={st.subtitle}>
-          La dépendance repose sur des habitudes, des déclencheurs et des automatismes.
-          En les comprenant, tu peux progressivement reprendre le contrôle.
+          {t('deculpabilisation.subtitle')}
         </Text>
         <View style={[st.illusBox, { height: 280 }]}>
           <Image source={ILLUS.deculpabilisation} style={st.illusImg} resizeMode="contain" />
@@ -364,14 +353,14 @@ export default function OnboardingFlow({ navigation }) {
         <View style={{ flexDirection: 'row', justifyContent: 'center', gap: spacing.lg, marginTop: 4 }}>
           <View style={st.chartLegRow}>
             <View style={[st.legDot, { backgroundColor: '#EF4444' }]} />
-            <Text style={st.legText}>Sans accompagnement</Text>
+            <Text style={st.legText}>{t('deculpabilisation.withoutSupport')}</Text>
           </View>
           <View style={st.chartLegRow}>
             <View style={[st.legDot, { backgroundColor: colors.primary }]} />
-            <Text style={st.legText}>Avec Stopklop</Text>
+            <Text style={st.legText}>{t('deculpabilisation.withStopklop')}</Text>
           </View>
         </View>
-        <Text style={st.chartNote}>Illustration du principe — votre parcours sera unique.</Text>
+        <Text style={st.chartNote}>{t('deculpabilisation.note')}</Text>
       </>
     );
   }
@@ -379,24 +368,24 @@ export default function OnboardingFlow({ navigation }) {
   else if (page === 'solution') {
     body = (
       <>
-        <Text style={st.title}>Avance à ton rythme,{'\n'}avec un plan adapté</Text>
+        <Text style={st.title}>{t('solution.title')}</Text>
         <View style={[st.illusBox, { height: 260, marginBottom: spacing.lg }]}>
           <Image source={ILLUS.solution} style={st.illusImg} resizeMode="contain" />
         </View>
         <Text style={st.subtitle}>
-          Chaque fumeur est différent. Stopklop crée un parcours personnalisé à partir de ta consommation,
-          de tes habitudes et de ton objectif : réduire progressivement ou arrêter complètement.
+          {t('solution.subtitle')}
         </Text>
       </>
     );
   }
 
   else if (page.startsWith('benefice')) {
-    const b = BENEFICES[Number(page.slice(-1))];
+    const beneficeIdx = Number(page.slice(-1));
+    const b = t(`benefits.items.${beneficeIdx}`, { returnObjects: true });
     body = (
       <>
-        <Text style={st.title}>{b.titre}</Text>
-        <Text style={st.subtitle}>{b.texte}</Text>
+        <Text style={st.title}>{b.title}</Text>
+        <Text style={st.subtitle}>{b.text}</Text>
         <View style={[st.illusBox, { height: 300 }]}>
           <Image source={ILLUS[page]} style={st.illusImg} resizeMode="contain" />
         </View>
@@ -407,11 +396,11 @@ export default function OnboardingFlow({ navigation }) {
   else if (page === 'objectif') {
     body = (
       <>
-        <Text style={st.title}>Quel est ton objectif ?</Text>
-        <Text style={st.subtitle}>Choisis l'objectif qui te motive le plus aujourd'hui.</Text>
+        <Text style={st.title}>{t('goalType.title')}</Text>
+        <Text style={st.subtitle}>{t('goalType.subtitle')}</Text>
         {[
-          { key: 'reduce', img: ILLUS.objReduire, titre: 'Réduire progressivement', desc: 'Diminuer étape par étape, à ton rythme' },
-          { key: 'stop',   img: ILLUS.objArreter, titre: 'Arrêter complètement',    desc: '0 cigarette, dès ta date de début' },
+          { key: 'reduce', img: ILLUS.objReduire, titre: t('goalType.options.reduce.title'), desc: t('goalType.options.reduce.desc') },
+          { key: 'stop',   img: ILLUS.objArreter, titre: t('goalType.options.stop.title'),    desc: t('goalType.options.stop.desc') },
         ].map(o => (
           <TouchableOpacity
             key={o.key}
@@ -435,15 +424,15 @@ export default function OnboardingFlow({ navigation }) {
   else if (page === 'conso') {
     body = (
       <>
-        <Text style={st.title}>Combien de cigarettes{'\n'}fumes-tu actuellement ?</Text>
-        <Text style={st.subtitle}>Sois honnête, cela reste 100 % confidentiel.</Text>
+        <Text style={st.title}>{t('consumption.title')}</Text>
+        <Text style={st.subtitle}>{t('consumption.subtitle')}</Text>
         <View style={st.stepperRow}>
           <TouchableOpacity style={st.stepperBtn} onPress={() => set('consoDeclaree', Math.max(1, answers.consoDeclaree - 1))}>
             <Text style={st.stepperBtnText}>−</Text>
           </TouchableOpacity>
           <View style={st.stepperCenter}>
             <Text style={st.stepperNum}>{answers.consoDeclaree}</Text>
-            <Text style={st.stepperUnit}>cigarettes / {answers.consoUnite}</Text>
+            <Text style={st.stepperUnit}>{t('consumption.cigarettesPerUnit', { unit: t(`consumption.unit.${answers.consoUnite}`) })}</Text>
           </View>
           <TouchableOpacity style={st.stepperBtn} onPress={() => set('consoDeclaree', answers.consoDeclaree + 1)}>
             <Text style={st.stepperBtnText}>+</Text>
@@ -457,13 +446,13 @@ export default function OnboardingFlow({ navigation }) {
               onPress={() => set('consoUnite', u)}
             >
               <Text style={[st.toggleText, answers.consoUnite === u && st.toggleTextActive]}>
-                Par {u}
+                {t(`consumption.toggle.${u}`)}
               </Text>
             </TouchableOpacity>
           ))}
         </View>
         {answers.consoUnite === 'semaine' && (
-          <Text style={st.hint}>≈ {consoNormalisee} cigarettes par jour</Text>
+          <Text style={st.hint}>{t('consumption.estimatedPerDay', { count: consoNormalisee })}</Text>
         )}
       </>
     );
@@ -472,15 +461,15 @@ export default function OnboardingFlow({ navigation }) {
   else if (page === 'paquet') {
     body = (
       <>
-        <Text style={st.title}>Combien de cigarettes{'\n'}contient ton paquet ?</Text>
-        <Text style={st.subtitle}>Une information clé pour t'aider à mieux suivre ton budget.</Text>
+        <Text style={st.title}>{t('packSize.title')}</Text>
+        <Text style={st.subtitle}>{t('packSize.subtitle')}</Text>
         <View style={st.stepperRow}>
           <TouchableOpacity style={st.stepperBtn} onPress={() => set('cigarettesParPaquet', Math.max(1, answers.cigarettesParPaquet - 1))}>
             <Text style={st.stepperBtnText}>−</Text>
           </TouchableOpacity>
           <View style={st.stepperCenter}>
             <Text style={st.stepperNum}>{answers.cigarettesParPaquet}</Text>
-            <Text style={st.stepperUnit}>cigarettes par paquet</Text>
+            <Text style={st.stepperUnit}>{t('packSize.unit')}</Text>
           </View>
           <TouchableOpacity style={st.stepperBtn} onPress={() => set('cigarettesParPaquet', answers.cigarettesParPaquet + 1)}>
             <Text style={st.stepperBtnText}>+</Text>
@@ -493,8 +482,8 @@ export default function OnboardingFlow({ navigation }) {
   else if (page === 'prix') {
     body = (
       <>
-        <Text style={st.title}>Quel est le prix{'\n'}de ton paquet ?</Text>
-        <Text style={st.subtitle}>Cela nous permet de calculer les économies réelles.</Text>
+        <Text style={st.title}>{t('packPrice.title')}</Text>
+        <Text style={st.subtitle}>{t('packPrice.subtitle')}</Text>
         <View style={st.prixRow}>
           <TextInput
             style={st.prixInput}
@@ -503,12 +492,12 @@ export default function OnboardingFlow({ navigation }) {
             keyboardType="decimal-pad"
             placeholder="12.50"
             placeholderTextColor="#B0B0B0"
-            accessibilityLabel="Prix du paquet"
+            accessibilityLabel={t('packPrice.priceLabel')}
           />
           <Text style={st.prixDevise}>{symboleDevise}</Text>
         </View>
         {!isValid() && String(answers.prixPaquet).length > 0 && (
-          <Text style={st.errorHint}>Entre un prix valide supérieur à 0.</Text>
+          <Text style={st.errorHint}>{t('packPrice.error')}</Text>
         )}
       </>
     );
@@ -517,15 +506,19 @@ export default function OnboardingFlow({ navigation }) {
   else if (page === 'dateDebut') {
     body = (
       <>
-        <Text style={st.title}>Quand souhaites-tu{'\n'}commencer ?</Text>
-        <Text style={st.subtitle}>Choisis la date qui te convient le mieux.</Text>
+        <Text style={st.title}>{t('startDate.title')}</Text>
+        <Text style={st.subtitle}>{t('startDate.subtitle')}</Text>
         <Calendrier
           selected={answers.dateDebut}
           onSelect={k => set('dateDebut', k)}
+          weekdays={t('startDate.calendarWeekdays', { returnObjects: true })}
+          locale={i18n.language}
         />
         {answers.dateDebut && (
           <Text style={st.hint}>
-            Début : {new Date(answers.dateDebut + 'T12:00:00').toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}
+            {t('startDate.hint', {
+              date: new Date(answers.dateDebut + 'T12:00:00').toLocaleDateString(i18n.language, { weekday: 'long', day: 'numeric', month: 'long' }),
+            })}
           </Text>
         )}
       </>
@@ -535,15 +528,15 @@ export default function OnboardingFlow({ navigation }) {
   else if (page === 'objectifQuotidien') {
     body = (
       <>
-        <Text style={st.title}>Quel objectif{'\n'}veux-tu atteindre ?</Text>
-        <Text style={st.subtitle}>Définis ton objectif quotidien pour ton départ. Il baissera ensuite progressivement.</Text>
+        <Text style={st.title}>{t('dailyGoal.title')}</Text>
+        <Text style={st.subtitle}>{t('dailyGoal.subtitle')}</Text>
         <View style={st.stepperRow}>
           <TouchableOpacity style={st.stepperBtn} onPress={() => set('objectifQuotidien', Math.max(0, answers.objectifQuotidien - 1))}>
             <Text style={st.stepperBtnText}>−</Text>
           </TouchableOpacity>
           <View style={st.stepperCenter}>
             <Text style={st.stepperNum}>{answers.objectifQuotidien}</Text>
-            <Text style={st.stepperUnit}>cigarettes / jour max</Text>
+            <Text style={st.stepperUnit}>{t('dailyGoal.unit')}</Text>
           </View>
           <TouchableOpacity style={st.stepperBtn} onPress={() => set('objectifQuotidien', answers.objectifQuotidien + 1)}>
             <Text style={st.stepperBtnText}>+</Text>
@@ -551,7 +544,7 @@ export default function OnboardingFlow({ navigation }) {
         </View>
         {answers.objectifQuotidien >= consoNormalisee && (
           <Text style={st.errorHint}>
-            Ton objectif doit être inférieur à ta consommation actuelle ({consoNormalisee} / jour).
+            {t('dailyGoal.error', { count: consoNormalisee })}
           </Text>
         )}
       </>
@@ -561,8 +554,8 @@ export default function OnboardingFlow({ navigation }) {
   else if (page === 'devise') {
     body = (
       <>
-        <Text style={st.title}>Choisis ta monnaie</Text>
-        <Text style={st.subtitle}>Pour suivre tes économies avec précision.</Text>
+        <Text style={st.title}>{t('currency.title')}</Text>
+        <Text style={st.subtitle}>{t('currency.subtitle')}</Text>
         {DEVISES.map(d => (
           <TouchableOpacity
             key={d.code}
@@ -572,7 +565,7 @@ export default function OnboardingFlow({ navigation }) {
             <Text style={{ fontSize: 22, fontWeight: '800', width: 44, textAlign: 'center', color: colors.primary }}>{d.symbole}</Text>
             <View style={{ flex: 1 }}>
               <Text style={st.choixTitre}>{d.code}</Text>
-              <Text style={st.choixDesc}>{d.label}</Text>
+              <Text style={st.choixDesc}>{t(`currency.options.${d.code}`)}</Text>
             </View>
             {answers.monnaie === d.code && (
               <View style={st.checkBadge}><Text style={{ color: '#fff', fontWeight: '800' }}>✓</Text></View>

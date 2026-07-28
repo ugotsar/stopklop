@@ -1,0 +1,38 @@
+{
+  "header": { "title": "Hilfe-Center" },
+  "intro": "Häufig gestellte Fragen",
+  "faq": {
+    "reductionPlan": {
+      "question": "Wie funktioniert der schrittweise Reduktionsplan?",
+      "answer": "Du wählst einen Startpunkt (deinen aktuellen Konsum) und ein Tempo, zum Beispiel 2 Zigaretten weniger pro Woche. Jede Woche sinkt dein Tagesziel automatisch, bis es 0 erreicht. Du kannst das Tempo jederzeit im Tab Plan ändern."
+    },
+    "cravingButton": {
+      "question": "Wofür ist der Button „Ich habe Lust zu rauchen“?",
+      "answer": "Er zeichnet den Zeitpunkt und die Ursache deiner Verlangen auf (Stress, Kaffee, Abend…). Die App analysiert dann deine kritischen Uhrzeiten, schwierigen Tage und Hauptauslöser im Tab Plan, um dir zu helfen, sie vorherzusehen."
+    },
+    "lifeGained": {
+      "question": "Was bedeutet „Gewonnene Lebenszeit“?",
+      "answer": "Medizinische Studien schätzen, dass eine Zigarette die Lebenserwartung um etwa 5 Minuten verringert. Jede nicht gerauchte Zigarette im Vergleich zu deinem früheren Konsum „gibt dir“ also 5 Minuten Leben zurück."
+    },
+    "moneySaved": {
+      "question": "Wie wird das gesparte Geld berechnet?",
+      "answer": "Wir vergleichen deinen aktuellen Konsum mit dem vor der App, multipliziert mit dem Preis einer Zigarette (Packungspreis ÷ Anzahl der Zigaretten). Du kannst diese Werte unter Profil → Konsumeinstellungen anpassen."
+    },
+    "exceededGoal": {
+      "question": "Ich habe mein Ziel überschritten, was passiert jetzt?",
+      "answer": "Nichts Schlimmes! Der Kreis wird rot, um dich darauf hinzuweisen, aber jeder Tag ist ein neuer Anfang. Wichtig ist der Trend über die Zeit, nicht ein einzelner Tag."
+    },
+    "dataSaved": {
+      "question": "Werden meine Daten gespeichert?",
+      "answer": "Ja. Deine Daten werden lokal auf deinem Telefon gespeichert und mit der Cloud synchronisiert. Du findest sie wieder, wenn du das Gerät wechselst."
+    },
+    "editGoal": {
+      "question": "Wie ändere ich mein Ziel?",
+      "answer": "Gehe zum Tab Plan → „Plan bearbeiten“, oder zu Profil → „Mein aktuelles Ziel“. Du kannst zwischen vollständigem Aufhören, schrittweiser Reduktion oder einem freien Ziel wählen."
+    }
+  },
+  "contact": {
+    "title": "Deine Antwort war nicht dabei?",
+    "button": "Kontakt aufnehmen"
+  }
+}

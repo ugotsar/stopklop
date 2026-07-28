@@ -1,0 +1,35 @@
+{
+  "title": "Stopklop Pro",
+  "subtitle": "Toutes les fonctionnalités pour arrêter définitivement",
+  "features": {
+    "stats": "Statistiques avancées illimitées",
+    "badges": "Tous les badges & milestones",
+    "cloud": "Sauvegarde cloud automatique",
+    "reminders": "Rappels personnalisés",
+    "export": "Export de tes données"
+  },
+  "plans": {
+    "lifetime": "À vie",
+    "annual": "Annuel",
+    "monthly": "Mensuel",
+    "popular": "Populaire",
+    "save50": "Économise 50%",
+    "perYear": "/an",
+    "perMonth": "/mois"
+  },
+  "cta": {
+    "start": "Commencer maintenant",
+    "trial": "Essai gratuit 7 jours · Annulable à tout moment",
+    "restore": "Restaurer mes achats"
+  },
+  "alerts": {
+    "welcomeTitle": "🎉 Bienvenue dans Stopklop Pro !",
+    "welcomeBody": "Toutes les fonctionnalités sont débloquées.",
+    "welcomeButton": "Super !",
+    "restoredTitle": "✅ Abonnement restauré !",
+    "noSubscriptionTitle": "Aucun abonnement trouvé",
+    "noSubscriptionBody": "Aucun achat à restaurer.",
+    "purchaseErrorBody": "Achat impossible. Réessaie.",
+    "restoreErrorBody": "Restauration impossible."
+  }
+}

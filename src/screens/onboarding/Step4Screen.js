@@ -2,23 +2,27 @@ import React, { useState } from 'react';
 import {
   View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { colors, spacing, font, radius } from '../../theme';
 import { jouerSon } from '../../services/sounds';
 import StepHeader from '../../components/StepHeader';
 import PrimaryButton from '../../components/PrimaryButton';
 import FreeTextCard from '../../components/FreeTextCard';
 
-const OPTIONS = [
-  { label: "Moins d'1 an", icon: '📅' },
-  { label: '1 à 5 ans', icon: '📅' },
-  { label: '5 à 10 ans', icon: '📅' },
-  { label: '10 à 20 ans', icon: '📅' },
-  { label: 'Plus de 20 ans', icon: '📅' },
+const OPTION_KEYS = [
+  { key: 'lessThanOne', icon: '📅' },
+  { key: 'oneToFive', icon: '📅' },
+  { key: 'fiveToTen', icon: '📅' },
+  { key: 'tenToTwenty', icon: '📅' },
+  { key: 'moreThanTwenty', icon: '📅' },
 ];
 
 export default function Step4Screen({ navigation, route }) {
+  const { t } = useTranslation('onboardingLegacy');
   const [selected, setSelected] = useState('');
   const [freeValue, setFreeValue] = useState('');
+
+  const OPTIONS = OPTION_KEYS.map(opt => ({ ...opt, label: t(`step4.options.${opt.key}`) }));
 
   function handleContinue() {
     jouerSon('onboarding_step');
@@ -30,15 +34,15 @@ export default function Step4Screen({ navigation, route }) {
     <SafeAreaView style={styles.safe}>
       <StepHeader step={4} onBack={() => navigation.goBack()} />
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-        <Text style={styles.title}>Depuis combien de temps{'\n'}fumez-vous ?</Text>
-        <Text style={styles.subtitle}>Cela nous permet d'estimer les bénéfices{'\n'}de votre arrêt.</Text>
+        <Text style={styles.title}>{t('step4.title')}</Text>
+        <Text style={styles.subtitle}>{t('step4.subtitle')}</Text>
 
         <View style={styles.list}>
           {OPTIONS.map((opt) => {
             const isSelected = opt.label === selected && !freeValue;
             return (
               <TouchableOpacity
-                key={opt.label}
+                key={opt.key}
                 style={[styles.row, isSelected && styles.rowSelected]}
                 onPress={() => { setSelected(opt.label); setFreeValue(''); }}
                 activeOpacity={0.7}
@@ -54,16 +58,16 @@ export default function Step4Screen({ navigation, route }) {
         </View>
 
         <FreeTextCard
-          title="Écrire ma propre durée"
-          description={"Saisissez le nombre d'années\nou de mois."}
-          placeholder="Ex. 7 ans"
+          title={t('step4.freeTitle')}
+          description={t('step4.freeDescription')}
+          placeholder={t('step4.freePlaceholder')}
           value={freeValue}
           onChangeText={setFreeValue}
         />
       </ScrollView>
 
       <View style={styles.bottom}>
-        <PrimaryButton title="Continuer  →" onPress={handleContinue} />
+        <PrimaryButton title={t('common:continue')} onPress={handleContinue} />
       </View>
     </SafeAreaView>
   );

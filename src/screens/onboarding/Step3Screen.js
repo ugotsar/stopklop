@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import {
   View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity, TextInput,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { colors, spacing, font, radius } from '../../theme';
 import { jouerSon } from '../../services/sounds';
 import StepHeader from '../../components/StepHeader';
@@ -9,12 +10,13 @@ import PrimaryButton from '../../components/PrimaryButton';
 import FreeTextCard from '../../components/FreeTextCard';
 
 const OPTIONS = [
-  { value: 20, icon: '🚬', label: 'cigarettes' },
-  { value: 25, icon: '🚬', label: 'cigarettes' },
-  { value: 30, icon: '🚬', label: 'cigarettes' },
+  { value: 20, icon: '🚬' },
+  { value: 25, icon: '🚬' },
+  { value: 30, icon: '🚬' },
 ];
 
 export default function Step3Screen({ navigation, route }) {
+  const { t } = useTranslation('onboardingLegacy');
   const [selected, setSelected] = useState(20);
   const [freeValue, setFreeValue] = useState('');
 
@@ -28,8 +30,8 @@ export default function Step3Screen({ navigation, route }) {
     <SafeAreaView style={styles.safe}>
       <StepHeader step={3} onBack={() => navigation.goBack()} />
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-        <Text style={styles.title}>Combien de cigarettes{'\n'}contient votre paquet ?</Text>
-        <Text style={styles.subtitle}>Sélectionnez le nombre de cigarettes{'\n'}dans votre paquet habituel.</Text>
+        <Text style={styles.title}>{t('step3.title')}</Text>
+        <Text style={styles.subtitle}>{t('step3.subtitle')}</Text>
 
         <View style={styles.grid}>
           {OPTIONS.map((opt, i) => {
@@ -46,16 +48,16 @@ export default function Step3Screen({ navigation, route }) {
                 )}
                 <Text style={styles.cardIcon}>{opt.icon}</Text>
                 <Text style={[styles.cardValue, isSelected && styles.cardValueSelected]}>{opt.value}</Text>
-                <Text style={[styles.cardLabel, isSelected && styles.cardLabelSelected]}>{opt.label}</Text>
+                <Text style={[styles.cardLabel, isSelected && styles.cardLabelSelected]}>{t('step3.unitLabel')}</Text>
               </TouchableOpacity>
             );
           })}
         </View>
 
         <FreeTextCard
-          title="Écrire mon propre nombre"
-          description="Saisissez le nombre de cigarettes que contient votre paquet."
-          placeholder="Ex. 25"
+          title={t('step3.freeTitle')}
+          description={t('step3.freeDescription')}
+          placeholder={t('step3.freePlaceholder')}
           value={freeValue}
           onChangeText={setFreeValue}
           keyboardType="number-pad"
@@ -63,7 +65,7 @@ export default function Step3Screen({ navigation, route }) {
       </ScrollView>
 
       <View style={styles.bottom}>
-        <PrimaryButton title="Continuer  →" onPress={handleContinue} />
+        <PrimaryButton title={t('common:continue')} onPress={handleContinue} />
       </View>
     </SafeAreaView>
   );

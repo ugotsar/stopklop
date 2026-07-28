@@ -4,8 +4,10 @@ import {
   TouchableOpacity, Switch, Modal, TextInput, Alert,
 } from 'react-native';
 import Svg, { Path, Circle, Rect } from 'react-native-svg';
+import { useTranslation } from 'react-i18next';
 import { useUser } from '../context/UserContext';
 import { colors, spacing, font, radius } from '../theme';
+import { SUPPORTED_LANGUAGES, changeLanguage } from '../i18n';
 
 // ── Icônes SVG (trait vert, style cohérent avec la maquette) ─────────────────
 function Icon({ name, size = 22, color = colors.primary }) {
@@ -93,6 +95,14 @@ function Icon({ name, size = 22, color = colors.primary }) {
           <Path d="M12 3c2.5 2.6 2.5 15.4 0 18M12 3c-2.5 2.6-2.5 15.4 0 18" {...stroke} />
         </Svg>
       );
+    case 'language':
+      return (
+        <Svg {...box}>
+          <Path d="M4 5h11M9 3v2.5c0 4.5-2.2 8-5 9.5" {...stroke} />
+          <Path d="M6.5 9.5c1 2.3 3.4 4.4 6.5 5.5" {...stroke} />
+          <Path d="M14 21l4-9 4 9M15.3 18h5.4" {...stroke} />
+        </Svg>
+      );
     case 'help':
       return (
         <Svg {...box}>
@@ -128,7 +138,12 @@ function Icon({ name, size = 22, color = colors.primary }) {
 
 // ── Modal bottom sheet générique ─────────────────────────────────────────────
 function EditModal({ visible, onClose, title, currentValue, unit, onSave, step = 0.5 }) {
+  const { t } = useTranslation('profil');
   const [val, setVal] = useState(currentValue);
+
+  useEffect(() => {
+    if (visible) setVal(currentValue);
+  }, [visible, currentValue]);
 
   function handleSave() {
     const n = parseFloat(val);
@@ -144,7 +159,7 @@ function EditModal({ visible, onClose, title, currentValue, unit, onSave, step =
 
         <Text style={styles.sheetTitle}>{title}</Text>
 
-        <Text style={styles.sheetCurrentLabel}>Valeur actuelle</Text>
+        <Text style={styles.sheetCurrentLabel}>{t('editModal.currentValue')}</Text>
         <Text style={styles.sheetCurrentValue}>{currentValue} {unit}</Text>
 
         {/* Stepper */}
@@ -167,8 +182,8 @@ function EditModal({ visible, onClose, title, currentValue, unit, onSave, step =
         </View>
 
         {/* OU saisie manuelle */}
-        <Text style={styles.sheetOu}>OU</Text>
-        <Text style={styles.sheetManuelLabel}>Saisir manuellement</Text>
+        <Text style={styles.sheetOu}>{t('common:or')}</Text>
+        <Text style={styles.sheetManuelLabel}>{t('common:manualEntry')}</Text>
         <View style={styles.sheetInputRow}>
           <TextInput
             style={styles.sheetInput}
@@ -183,18 +198,18 @@ function EditModal({ visible, onClose, title, currentValue, unit, onSave, step =
         <View style={styles.sheetCheckRow}>
           <View style={styles.checkboxActive}><Text style={{ color: '#fff', fontSize: 12 }}>✓</Text></View>
           <View style={{ flex: 1 }}>
-            <Text style={styles.checkLabel}>Mettre à jour mes projections</Text>
-            <Text style={styles.checkSub}>Les statistiques seront recalculées avec cette nouvelle valeur.</Text>
+            <Text style={styles.checkLabel}>{t('editModal.updateProjections')}</Text>
+            <Text style={styles.checkSub}>{t('editModal.updateProjectionsSub')}</Text>
           </View>
         </View>
 
         {/* Boutons */}
         <View style={styles.sheetBtns}>
           <TouchableOpacity style={styles.sheetBtnCancel} onPress={onClose}>
-            <Text style={styles.sheetBtnCancelText}>Annuler</Text>
+            <Text style={styles.sheetBtnCancelText}>{t('common:cancel')}</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.sheetBtnSave} onPress={handleSave}>
-            <Text style={styles.sheetBtnSaveText}>Enregistrer</Text>
+            <Text style={styles.sheetBtnSaveText}>{t('common:save')}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -203,16 +218,17 @@ function EditModal({ visible, onClose, title, currentValue, unit, onSave, step =
 }
 
 // ── Modal motivations (consultation + modification) ─────────────────────────
-const MOTIVATIONS_CHOIX = [
-  { key: 'health',     emoji: '❤️', label: 'Ma santé' },
-  { key: 'family',     emoji: '👨‍👩‍👧', label: 'Ma famille' },
-  { key: 'appearance', emoji: '✨', label: 'Mon apparence' },
-  { key: 'money',      emoji: '💰', label: "Économiser de l'argent" },
-  { key: 'breathing',  emoji: '🫁', label: 'Un meilleur souffle' },
-  { key: 'fitness',    emoji: '🏃', label: 'Retrouver ma condition' },
+const MOTIVATIONS_KEYS = [
+  { key: 'health',     emoji: '❤️' },
+  { key: 'family',     emoji: '👨‍👩‍👧' },
+  { key: 'appearance', emoji: '✨' },
+  { key: 'money',      emoji: '💰' },
+  { key: 'breathing',  emoji: '🫁' },
+  { key: 'fitness',    emoji: '🏃' },
 ];
 
 function MotivationsModal({ visible, onClose, initial, initialPerso, initialNiveau, onSave }) {
+  const { t } = useTranslation('profil');
   const [sel, setSel]       = useState(initial);
   const [perso, setPerso]   = useState(initialPerso ?? '');
   const [niveau, setNiveau] = useState(initialNiveau ?? 5);
@@ -226,10 +242,10 @@ function MotivationsModal({ visible, onClose, initial, initialPerso, initialNive
       <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPress={onClose} />
       <View style={styles.bottomSheet}>
         <View style={styles.sheetHandle} />
-        <Text style={styles.sheetTitle}>Mes motivations</Text>
+        <Text style={styles.sheetTitle}>{t('motivations.modalTitle')}</Text>
 
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: spacing.md }}>
-          {MOTIVATIONS_CHOIX.map(m => {
+          {MOTIVATIONS_KEYS.map(m => {
             const active = sel.includes(m.key);
             return (
               <TouchableOpacity
@@ -241,7 +257,9 @@ function MotivationsModal({ visible, onClose, initial, initialPerso, initialNive
                 }}
               >
                 <Text style={{ fontSize: 14 }}>{m.emoji}</Text>
-                <Text style={[styles.motivChipText, active && { color: colors.primary, fontWeight: '700' }]}>{m.label}</Text>
+                <Text style={[styles.motivChipText, active && { color: colors.primary, fontWeight: '700' }]}>
+                  {t(`motivations.options.${m.key}`)}
+                </Text>
               </TouchableOpacity>
             );
           })}
@@ -251,12 +269,14 @@ function MotivationsModal({ visible, onClose, initial, initialPerso, initialNive
           style={styles.motivPersoInput}
           value={perso}
           onChangeText={setPerso}
-          placeholder="Votre motivation personnelle…"
+          placeholder={t('motivations.personalPlaceholder')}
           placeholderTextColor="#B0B0B0"
           maxLength={120}
         />
 
-        <Text style={[styles.sheetManuelLabel, { marginTop: spacing.md }]}>Niveau de motivation : {niveau} / 10</Text>
+        <Text style={[styles.sheetManuelLabel, { marginTop: spacing.md }]}>
+          {t('motivations.levelLabel', { level: niveau })}
+        </Text>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: spacing.lg, marginTop: 4 }}>
           {Array.from({ length: 10 }, (_, i) => i + 1).map(n => (
             <TouchableOpacity
@@ -269,13 +289,13 @@ function MotivationsModal({ visible, onClose, initial, initialPerso, initialNive
 
         <View style={styles.sheetBtns}>
           <TouchableOpacity style={styles.sheetBtnCancel} onPress={onClose}>
-            <Text style={styles.sheetBtnCancelText}>Annuler</Text>
+            <Text style={styles.sheetBtnCancelText}>{t('common:cancel')}</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.sheetBtnSave}
             onPress={() => { onSave({ motivations: sel, motivationPerso: perso.trim() || null, niveauMotivation: niveau }); onClose(); }}
           >
-            <Text style={styles.sheetBtnSaveText}>Enregistrer</Text>
+            <Text style={styles.sheetBtnSaveText}>{t('common:save')}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -283,8 +303,52 @@ function MotivationsModal({ visible, onClose, initial, initialPerso, initialNive
   );
 }
 
+// ── Modal sélection de langue ─────────────────────────────────────────────────
+function LanguageModal({ visible, onClose, current }) {
+  const { t } = useTranslation('profil');
+
+  async function handleSelect(code) {
+    await changeLanguage(code);
+    onClose();
+  }
+
+  return (
+    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
+      <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPress={onClose} />
+      <View style={styles.bottomSheet}>
+        <View style={styles.sheetHandle} />
+        <Text style={styles.sheetTitle}>{t('languageModal.title')}</Text>
+
+        <View style={{ gap: spacing.sm, marginBottom: spacing.lg }}>
+          {SUPPORTED_LANGUAGES.map(lang => {
+            const active = lang.code === current;
+            return (
+              <TouchableOpacity
+                key={lang.code}
+                style={[styles.langRow, active && styles.langRowActive]}
+                onPress={() => handleSelect(lang.code)}
+              >
+                <Text style={styles.langFlag}>{lang.flag}</Text>
+                <Text style={[styles.langLabel, active && { color: colors.primary, fontWeight: '700' }]}>
+                  {lang.label}
+                </Text>
+                {active && <Text style={styles.langCheck}>✓</Text>}
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+
+        <TouchableOpacity style={styles.sheetBtnCancel} onPress={onClose}>
+          <Text style={styles.sheetBtnCancelText}>{t('common:close')}</Text>
+        </TouchableOpacity>
+      </View>
+    </Modal>
+  );
+}
+
 // ── Écran Profil ─────────────────────────────────────────────────────────────
 export default function ProfilScreen({ navigation }) {
+  const { t, i18n } = useTranslation('profil');
   const { profile, stats, updateProfile, resetProfile } = useUser();
 
   const [notifs,       setNotifs]       = useState(true);
@@ -292,6 +356,7 @@ export default function ProfilScreen({ navigation }) {
   const [modalCig,     setModalCig]     = useState(false);
   const [modalConso,   setModalConso]   = useState(false);
   const [modalMotiv,   setModalMotiv]   = useState(false);
+  const [modalLang,    setModalLang]    = useState(false);
 
   const prixPaquet       = profile?.prixPaquet       ?? 11;
   const cigParPaquet     = profile?.cigarettesParPaquet ?? 20;
@@ -300,29 +365,31 @@ export default function ProfilScreen({ navigation }) {
   const argentEco        = stats?.argentEcoCumul ?? 0;
   const vieGagneeMin     = stats?.vieGagneeMinCumul ?? 0;
   const vieGagneeH       = Math.floor(vieGagneeMin / 60);
-  const vieStr           = vieGagneeH > 0 ? `${vieGagneeH} h ${vieGagneeMin % 60} min` : `${vieGagneeMin} min`;
+  const vieStr           = vieGagneeH > 0
+    ? `${vieGagneeH} ${t('common:hourShort')} ${vieGagneeMin % 60} ${t('common:minuteShort')}`
+    : `${vieGagneeMin} ${t('common:minuteShort')}`;
   const motivation       = profile?.niveauMotivation ?? 8;
   const diffJours        = stats?.diffJours ?? 0;
   const objectifCig      = stats?.objectifJour ?? 8;
   const reductionSem     = stats?.reductionSem ?? 0;
   const objectifLabel    =
-    profile?.typeObjectif === 'stop'  ? 'Arrêt complet' :
-    profile?.typeObjectif === 'libre' ? 'Objectif libre' : 'Réduction progressive';
+    profile?.typeObjectif === 'stop'  ? t('goal.typeStop') :
+    profile?.typeObjectif === 'libre' ? t('goal.typeFree') : t('goal.typeReduce');
   const objectifDetail   = reductionSem > 0
-    ? `${objectifCig} cig./jour max. · −${reductionSem} par semaine`
-    : `Objectif : ${objectifCig} cigarette${objectifCig > 1 ? 's' : ''} / jour`;
+    ? t('goal.detailReduce', { count: objectifCig, reduction: reductionSem })
+    : t('goal.detailSimple', { count: objectifCig });
 
-  // Formatage FR (virgule décimale)
-  const eur = n => `${n.toFixed(2).replace('.', ',')} €`;
+  // Formatage monétaire adapté à la langue (séparateur décimal), symbole € conservé
+  const eur = n => `${new Intl.NumberFormat(i18n.language, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n)} €`;
 
   async function handleDeleteAccount() {
     Alert.alert(
-      'Supprimer mon compte',
-      'Cette action est irréversible. Toutes vos données seront supprimées.',
+      t('deleteAccount.confirmTitle'),
+      t('deleteAccount.confirmBody'),
       [
-        { text: 'Annuler', style: 'cancel' },
+        { text: t('common:cancel'), style: 'cancel' },
         {
-          text: 'Supprimer',
+          text: t('common:delete'),
           style: 'destructive',
           onPress: async () => {
             await resetProfile();
@@ -338,7 +405,7 @@ export default function ProfilScreen({ navigation }) {
 
       {/* ── Header ── */}
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Profil</Text>
+        <Text style={styles.headerTitle}>{t('title')}</Text>
       </View>
 
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
@@ -352,14 +419,16 @@ export default function ProfilScreen({ navigation }) {
             <View style={styles.dayBlock}>
               <View style={styles.dayRow}>
                 <Text style={styles.dayNum}>{diffJours}</Text>
-                <Text style={styles.dayUnit}>jours</Text>
+                <Text style={styles.dayUnit}>{t('common:day', { count: diffJours })}</Text>
               </View>
-              <Text style={styles.daySub}>sans cigarette</Text>
+              <Text style={styles.daySub}>{t('sansCigarette')}</Text>
               <View style={styles.userDivider} />
               <Text style={styles.userSince}>
-                Membre depuis {profile?.createdAt
-                  ? new Date(profile.createdAt).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })
-                  : 'mai 2024'}
+                {t('memberSince', {
+                  date: profile?.createdAt
+                    ? new Date(profile.createdAt).toLocaleDateString(i18n.language, { month: 'long', year: 'numeric' })
+                    : new Date().toLocaleDateString(i18n.language, { month: 'long', year: 'numeric' }),
+                })}
               </Text>
             </View>
           </View>
@@ -367,17 +436,17 @@ export default function ProfilScreen({ navigation }) {
 
         {/* ── Statistiques clés (liste) ── */}
         <View style={styles.listCard}>
-          <StatRow icon="wallet"   label="Économies réalisées" value={eur(argentEco)}    unit="économisés" />
+          <StatRow icon="wallet"   label={t('stats.savings')}       value={eur(argentEco)}      unit={t('stats.savingsUnit')} />
           <View style={styles.listDivider} />
-          <StatRow icon="clock"    label="Temps de vie gagné"  value={vieStr}            unit="de vie gagnées" />
+          <StatRow icon="clock"    label={t('stats.lifeGained')}    value={vieStr}               unit={t('stats.lifeGainedUnit')} />
           <View style={styles.listDivider} />
-          <StatRow icon="target"   label="Motivation"          value={`${motivation}/10`} unit="motivation" />
+          <StatRow icon="target"   label={t('stats.motivation')}    value={`${motivation}/10`}    unit={t('stats.motivationUnit')} />
           <View style={styles.listDivider} />
-          <StatRow icon="calendar" label="Suivi actuel"        value={`${diffJours} jours`} unit="sans cigarette" />
+          <StatRow icon="calendar" label={t('stats.currentStreak')} value={t('stats.daysUnit', { count: diffJours })} unit={t('stats.currentStreakUnit')} />
         </View>
 
         {/* ── Mon objectif actuel ── */}
-        <Text style={styles.sectionTitle}>Mon objectif actuel</Text>
+        <Text style={styles.sectionTitle}>{t('goal.sectionTitle')}</Text>
         <TouchableOpacity
           style={[styles.listCard, styles.objectifCard]}
           onPress={() => navigation.navigate('ModifierObjectif')}
@@ -390,22 +459,22 @@ export default function ProfilScreen({ navigation }) {
               <Text style={styles.listItemTitle} numberOfLines={1} adjustsFontSizeToFit>{objectifLabel}</Text>
               <Text style={styles.listItemSub} numberOfLines={1}>{objectifDetail}</Text>
             </View>
-            <Text style={styles.listModifier}>Modifier ›</Text>
+            <Text style={styles.listModifier}>{t('common:modifyArrow')}</Text>
           </View>
         </TouchableOpacity>
 
         {/* ── Paramètres de consommation ── */}
-        <Text style={styles.sectionTitle}>Paramètres de consommation</Text>
+        <Text style={styles.sectionTitle}>{t('consumption.sectionTitle')}</Text>
         <View style={styles.listCard}>
           <TouchableOpacity style={styles.listRow} onPress={() => setModalPrix(true)}>
             <View style={styles.listIconCircle}>
               <Icon name="tag" />
             </View>
             <View style={{ flex: 1 }}>
-              <Text style={styles.listItemTitle}>Prix du paquet</Text>
+              <Text style={styles.listItemTitle}>{t('consumption.packPrice')}</Text>
               <Text style={styles.listItemSub}>{eur(prixPaquet)}</Text>
             </View>
-            <Text style={styles.listModifier}>Modifier ›</Text>
+            <Text style={styles.listModifier}>{t('common:modifyArrow')}</Text>
           </TouchableOpacity>
 
           <View style={styles.listDivider} />
@@ -415,10 +484,10 @@ export default function ProfilScreen({ navigation }) {
               <Icon name="cigarettes" />
             </View>
             <View style={{ flex: 1 }}>
-              <Text style={styles.listItemTitle}>Cigarettes par paquet</Text>
-              <Text style={styles.listItemSub}>{cigParPaquet} cigarettes</Text>
+              <Text style={styles.listItemTitle}>{t('consumption.cigsPerPack')}</Text>
+              <Text style={styles.listItemSub}>{t('consumption.cigsPerPackUnit', { count: cigParPaquet })}</Text>
             </View>
-            <Text style={styles.listModifier}>Modifier ›</Text>
+            <Text style={styles.listModifier}>{t('common:modifyArrow')}</Text>
           </TouchableOpacity>
 
           <View style={styles.listDivider} />
@@ -428,20 +497,20 @@ export default function ProfilScreen({ navigation }) {
               <Icon name="bars" />
             </View>
             <View style={{ flex: 1 }}>
-              <Text style={styles.listItemTitle}>Ma consommation avant l'app</Text>
+              <Text style={styles.listItemTitle}>{t('consumption.before')}</Text>
               <Text style={styles.listItemSub}>
-                {consoAvant} cig./jour{consoEstimee ? '  ·  ⚠️ valeur estimée' : ''}
+                {t('consumption.beforeUnit', { count: consoAvant })}{consoEstimee ? `  ·  ${t('consumption.estimated')}` : ''}
               </Text>
               <Text style={[styles.listItemSub, { fontSize: 10, color: '#B45309' }]}>
-                Référence de toutes vos économies — vérifiez qu'elle est juste
+                {t('consumption.beforeNote')}
               </Text>
             </View>
-            <Text style={styles.listModifier}>Modifier ›</Text>
+            <Text style={styles.listModifier}>{t('common:modifyArrow')}</Text>
           </TouchableOpacity>
         </View>
 
         {/* ── Mes motivations ── */}
-        <Text style={styles.sectionTitle}>Mes motivations</Text>
+        <Text style={styles.sectionTitle}>{t('motivations.sectionTitle')}</Text>
         <TouchableOpacity style={styles.listCard} onPress={() => setModalMotiv(true)}>
           <View style={styles.listRow}>
             <View style={styles.listIconCircle}>
@@ -451,28 +520,29 @@ export default function ProfilScreen({ navigation }) {
               <Text style={styles.listItemTitle} numberOfLines={1}>
                 {(profile?.motivations ?? []).length > 0
                   ? (profile.motivations)
-                      .map(k => MOTIVATIONS_CHOIX.find(m => m.key === k)?.label)
+                      .map(k => MOTIVATIONS_KEYS.some(m => m.key === k) ? t(`motivations.options.${k}`) : null)
                       .filter(Boolean).join(' · ')
-                  : 'Définir mes motivations'}
+                  : t('motivations.placeholder')}
               </Text>
               <Text style={styles.listItemSub} numberOfLines={1}>
-                Motivation {motivation}/10{profile?.motivationPerso ? `  ·  « ${profile.motivationPerso} »` : ''}
+                {t('motivations.label', { level: motivation })}
+                {profile?.motivationPerso ? `  ·  ${t('motivations.personal', { text: profile.motivationPerso })}` : ''}
               </Text>
             </View>
-            <Text style={styles.listModifier}>Modifier ›</Text>
+            <Text style={styles.listModifier}>{t('common:modifyArrow')}</Text>
           </View>
         </TouchableOpacity>
 
         {/* ── Préférences ── */}
-        <Text style={styles.sectionTitle}>Préférences</Text>
+        <Text style={styles.sectionTitle}>{t('preferences.sectionTitle')}</Text>
         <View style={styles.listCard}>
           <View style={styles.listRow}>
             <View style={styles.listIconCircle}>
               <Icon name="bell" />
             </View>
             <View style={{ flex: 1 }}>
-              <Text style={styles.listItemTitle}>Notifications</Text>
-              <Text style={styles.listItemSub}>Rappels, motivation, conseils</Text>
+              <Text style={styles.listItemTitle}>{t('preferences.notifications')}</Text>
+              <Text style={styles.listItemSub}>{t('preferences.notificationsSub')}</Text>
             </View>
             <Switch
               value={notifs}
@@ -492,23 +562,42 @@ export default function ProfilScreen({ navigation }) {
               <Icon name="globe" />
             </View>
             <View style={{ flex: 1 }}>
-              <Text style={styles.listItemTitle}>Unités</Text>
-              <Text style={styles.listItemSub}>Euro (€) · Heures · Cigarettes</Text>
+              <Text style={styles.listItemTitle}>{t('preferences.units')}</Text>
+              <Text style={styles.listItemSub}>{t('preferences.unitsSub')}</Text>
+            </View>
+            <Text style={styles.chevron}>›</Text>
+          </TouchableOpacity>
+
+          <View style={styles.listDivider} />
+
+          <TouchableOpacity
+            style={styles.listRow}
+            onPress={() => setModalLang(true)}
+          >
+            <View style={styles.listIconCircle}>
+              <Icon name="language" />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.listItemTitle}>{t('preferences.language')}</Text>
+              <Text style={styles.listItemSub}>
+                {SUPPORTED_LANGUAGES.find(l => l.code === i18n.language)?.flag}{' '}
+                {SUPPORTED_LANGUAGES.find(l => l.code === i18n.language)?.label ?? t('preferences.languageSub')}
+              </Text>
             </View>
             <Text style={styles.chevron}>›</Text>
           </TouchableOpacity>
         </View>
 
         {/* ── Aide & support ── */}
-        <Text style={styles.sectionTitle}>Aide & support</Text>
+        <Text style={styles.sectionTitle}>{t('help.sectionTitle')}</Text>
         <View style={styles.listCard}>
           <TouchableOpacity style={styles.listRow} onPress={() => navigation.navigate('CentreAide')}>
             <View style={styles.listIconCircle}>
               <Icon name="help" />
             </View>
             <View style={{ flex: 1 }}>
-              <Text style={styles.listItemTitle}>Centre d'aide</Text>
-              <Text style={styles.listItemSub}>FAQ, guides et ressources</Text>
+              <Text style={styles.listItemTitle}>{t('help.helpCenter')}</Text>
+              <Text style={styles.listItemSub}>{t('help.helpCenterSub')}</Text>
             </View>
             <Text style={styles.chevron}>›</Text>
           </TouchableOpacity>
@@ -523,8 +612,8 @@ export default function ProfilScreen({ navigation }) {
               <Icon name="chat" />
             </View>
             <View style={{ flex: 1 }}>
-              <Text style={styles.listItemTitle}>Nous contacter</Text>
-              <Text style={styles.listItemSub}>Une question ? On est là pour vous</Text>
+              <Text style={styles.listItemTitle}>{t('help.contactUs')}</Text>
+              <Text style={styles.listItemSub}>{t('help.contactUsSub')}</Text>
             </View>
             <Text style={styles.chevron}>›</Text>
           </TouchableOpacity>
@@ -534,20 +623,16 @@ export default function ProfilScreen({ navigation }) {
           <TouchableOpacity
             style={styles.listRow}
             onPress={() => Alert.alert(
-              'Stopklop v1.0.0',
-              'Stopklop vous accompagne pour réduire puis arrêter la cigarette, à votre rythme.\n\n'
-              + '🌿 Suivi quotidien et statistiques détaillées\n'
-              + '📉 Plan de réduction progressive personnalisé\n'
-              + '🔥 Analyse de vos envies et déclencheurs\n\n'
-              + 'Fait avec 💚 pour votre santé.'
+              t('help.aboutTitle', { version: '1.0.0' }),
+              t('help.aboutBody')
             )}
           >
             <View style={styles.listIconCircle}>
               <Icon name="info" />
             </View>
             <View style={{ flex: 1 }}>
-              <Text style={styles.listItemTitle}>À propos de Stopklop</Text>
-              <Text style={styles.listItemSub}>Version 1.0.0</Text>
+              <Text style={styles.listItemTitle}>{t('help.about')}</Text>
+              <Text style={styles.listItemSub}>{t('help.aboutSub', { version: '1.0.0' })}</Text>
             </View>
             <Text style={styles.chevron}>›</Text>
           </TouchableOpacity>
@@ -557,7 +642,7 @@ export default function ProfilScreen({ navigation }) {
         <TouchableOpacity style={styles.deleteBtn} onPress={handleDeleteAccount}>
           <View style={styles.deleteBtnLeft}>
             <Icon name="trash" size={18} color={colors.red} />
-            <Text style={styles.deleteBtnText}>Supprimer mon compte</Text>
+            <Text style={styles.deleteBtnText}>{t('deleteAccount.button')}</Text>
           </View>
           <Text style={styles.chevron}>›</Text>
         </TouchableOpacity>
@@ -568,7 +653,7 @@ export default function ProfilScreen({ navigation }) {
       <EditModal
         visible={modalPrix}
         onClose={() => setModalPrix(false)}
-        title="Modifier le prix du paquet"
+        title={t('editModal.packPriceTitle')}
         currentValue={prixPaquet}
         unit="€"
         step={0.5}
@@ -577,16 +662,16 @@ export default function ProfilScreen({ navigation }) {
       <EditModal
         visible={modalCig}
         onClose={() => setModalCig(false)}
-        title="Modifier le nombre de cigarettes par paquet"
+        title={t('editModal.cigsPerPackTitle')}
         currentValue={cigParPaquet}
-        unit="cigarettes"
+        unit={t('editModal.unitCigarettes')}
         step={1}
         onSave={v => updateProfile({ cigarettesParPaquet: Math.round(v) })}
       />
       <MotivationsModal
         visible={modalMotiv}
         onClose={() => setModalMotiv(false)}
-        initial={Array.isArray(profile?.motivations) ? profile.motivations.filter(k => MOTIVATIONS_CHOIX.some(m => m.key === k)) : []}
+        initial={Array.isArray(profile?.motivations) ? profile.motivations.filter(k => MOTIVATIONS_KEYS.some(m => m.key === k)) : []}
         initialPerso={profile?.motivationPerso}
         initialNiveau={profile?.niveauMotivation}
         onSave={changes => updateProfile(changes)}
@@ -594,11 +679,16 @@ export default function ProfilScreen({ navigation }) {
       <EditModal
         visible={modalConso}
         onClose={() => setModalConso(false)}
-        title="Ma consommation avant l'app"
+        title={t('editModal.beforeTitle')}
         currentValue={consoAvant}
-        unit="cig / jour"
+        unit={t('editModal.unitCigPerDay')}
         step={1}
         onSave={v => updateProfile({ consoAvantApp: Math.round(v) })}
+      />
+      <LanguageModal
+        visible={modalLang}
+        onClose={() => setModalLang(false)}
+        current={i18n.language}
       />
 
     </SafeAreaView>
@@ -748,6 +838,17 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderColor: colors.grayBorder, borderRadius: radius.md,
     padding: spacing.sm, fontSize: font.sm, color: colors.black,
   },
+
+  // Langue
+  langRow: {
+    flexDirection: 'row', alignItems: 'center', gap: spacing.sm,
+    borderWidth: 1.5, borderColor: colors.grayBorder, borderRadius: radius.lg,
+    paddingHorizontal: spacing.md, paddingVertical: 12,
+  },
+  langRowActive: { borderColor: colors.primary, backgroundColor: colors.primaryLight },
+  langFlag:  { fontSize: 20 },
+  langLabel: { flex: 1, fontSize: font.sm, color: colors.black },
+  langCheck: { fontSize: 16, color: colors.primary, fontWeight: '800' },
 
   sheetBtns:        { flexDirection: 'row', gap: spacing.sm },
   sheetBtnCancel:   { flex: 1, borderWidth: 1.5, borderColor: colors.grayBorder, borderRadius: radius.full, paddingVertical: 14, alignItems: 'center' },

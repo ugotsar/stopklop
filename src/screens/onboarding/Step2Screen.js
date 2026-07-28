@@ -3,6 +3,7 @@ import {
   View, Text, StyleSheet, SafeAreaView, ScrollView,
   TouchableOpacity, TextInput, PanResponder, Dimensions,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { colors, spacing, font, radius } from '../../theme';
 import { jouerSon } from '../../services/sounds';
 import StepHeader from '../../components/StepHeader';
@@ -87,6 +88,7 @@ const sliderStyles = StyleSheet.create({
 const PRESETS = [8, 10, 11.5, 13];
 
 export default function Step2Screen({ navigation, route }) {
+  const { t } = useTranslation('onboardingLegacy');
   const [selected, setSelected] = useState(11.5);
   const [sliderVal, setSliderVal] = useState(11.5);
   const [freeValue, setFreeValue] = useState('');
@@ -113,8 +115,8 @@ export default function Step2Screen({ navigation, route }) {
     <SafeAreaView style={styles.safe}>
       <StepHeader step={2} onBack={() => navigation.goBack()} />
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
-        <Text style={styles.title}>Quel est le prix{'\n'}de votre paquet ?</Text>
-        <Text style={styles.subtitle}>Entrez le prix que vous payez habituellement.</Text>
+        <Text style={styles.title}>{t('step2.title')}</Text>
+        <Text style={styles.subtitle}>{t('step2.subtitle')}</Text>
 
         <View style={styles.priceDisplay}>
           <Text style={styles.priceText}>{formatPrice(displayPrice)}</Text>
@@ -150,9 +152,9 @@ export default function Step2Screen({ navigation, route }) {
         </View>
 
         <FreeTextCard
-          title="Écrire mon propre prix"
-          description="Saisissez le prix de votre paquet."
-          placeholder="11,50"
+          title={t('step2.freeTitle')}
+          description={t('step2.freeDescription')}
+          placeholder={t('step2.freePlaceholder')}
           value={freeValue}
           onChangeText={setFreeValue}
           suffix="€"
@@ -161,7 +163,7 @@ export default function Step2Screen({ navigation, route }) {
       </ScrollView>
 
       <View style={styles.bottom}>
-        <PrimaryButton title="Continuer  →" onPress={handleContinue} />
+        <PrimaryButton title={t('common:continue')} onPress={handleContinue} />
       </View>
     </SafeAreaView>
   );

@@ -3,6 +3,7 @@ import { loadProfile, saveProfile, clearProfile } from '../store/onboardingStore
 import { subscribeToAuth, signOut as firebaseSignOut } from '../services/authService';
 import { getProfile, saveProfile as saveFirestore } from '../services/firestore';
 import { configurePurchases } from '../services/purchases';
+import i18n from '../i18n';
 
 // ─── Contexte ────────────────────────────────────────────────────────────────
 const UserContext = createContext(null);
@@ -149,7 +150,7 @@ function computeStats(profile) {
     const semainesTotal = Math.ceil(objectifBase / reductionSem);
     semainesRestantes   = Math.max(0, semainesTotal - semainesEcoulees);
     const dateZero = new Date(planStart.getTime() + semainesTotal * 7 * 86400000);
-    dateZeroStr = dateZero.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+    dateZeroStr = dateZero.toLocaleDateString(i18n.language, { day: 'numeric', month: 'long', year: 'numeric' });
   }
 
   // ── Analyse des habitudes (envies de fumer enregistrées) ───────────────────
@@ -163,7 +164,7 @@ function computeStats(profile) {
       const h0 = Math.floor(d.getHours() / 3) * 3;
       const bucket = `${h0}h – ${h0 + 3}h`;
       hCount[bucket]    = (hCount[bucket] || 0) + 1;
-      const day = d.toLocaleDateString('fr-FR', { weekday: 'long' });
+      const day = d.toLocaleDateString(i18n.language, { weekday: 'long' });
       dCount[day]       = (dCount[day] || 0) + 1;
       tCount[e.trigger] = (tCount[e.trigger] || 0) + 1;
     });
@@ -200,9 +201,10 @@ function computeStats(profile) {
   const diffMinutes = Math.floor(diffSeconds / 60);
   const diffHeures  = Math.floor(diffMinutes / 60);
   const diffJours   = Math.floor(diffHeures / 24);
+  const dJ = i18n.t('common:dayShort'), dH = i18n.t('common:hourShort'), dM = i18n.t('common:minuteShort');
   const dureeStr    = diffJours > 0
-    ? `${diffJours}j ${String(diffHeures % 24).padStart(2,'0')}h ${String(diffMinutes % 60).padStart(2,'0')}m`
-    : `${String(diffHeures % 24).padStart(2,'0')}h ${String(diffMinutes % 60).padStart(2,'0')}m`;
+    ? `${diffJours}${dJ} ${String(diffHeures % 24).padStart(2,'0')}${dH} ${String(diffMinutes % 60).padStart(2,'0')}${dM}`
+    : `${String(diffHeures % 24).padStart(2,'0')}${dH} ${String(diffMinutes % 60).padStart(2,'0')}${dM}`;
 
   // ── Temps depuis la DERNIÈRE cigarette (remis à zéro à chaque cigarette) ────
   // Basé sur cigLog (horodatage de chaque cigarette). Fallback : début de l'app.
@@ -215,8 +217,8 @@ function computeStats(profile) {
   const sansCigH      = Math.floor(sansCigMin / 60);
   const sansCigJ      = Math.floor(sansCigH / 24);
   const dureeSansCigStr = sansCigJ > 0
-    ? `${sansCigJ}j ${String(sansCigH % 24).padStart(2,'0')}h ${String(sansCigMin % 60).padStart(2,'0')}m`
-    : `${String(sansCigH % 24).padStart(2,'0')}h ${String(sansCigMin % 60).padStart(2,'0')}m`;
+    ? `${sansCigJ}${dJ} ${String(sansCigH % 24).padStart(2,'0')}${dH} ${String(sansCigMin % 60).padStart(2,'0')}${dM}`
+    : `${String(sansCigH % 24).padStart(2,'0')}${dH} ${String(sansCigMin % 60).padStart(2,'0')}${dM}`;
 
   // ── Stats aujourd'hui ───────────────────────────────────────────────────────
   // "vs avant l'app" : peut être NÉGATIF si on fume plus qu'avant (on ne masque plus).
@@ -237,7 +239,7 @@ function computeStats(profile) {
   const week7 = Array.from({ length: 7 }, (_, i) => { const d = new Date(); d.setDate(d.getDate() - (6-i)); return d; });
   const weekKeys   = week7.map(d => d.toISOString().slice(0, 10));
   const weekData   = weekKeys.map(k => hist[k] ?? 0);
-  const weekLabels = week7.map(d => d.toLocaleDateString('fr-FR', { weekday: 'short' }).slice(0,3));
+  const weekLabels = week7.map(d => d.toLocaleDateString(i18n.language, { weekday: 'short' }).slice(0,3));
   const weekSum    = weekData.reduce((s,v) => s+v, 0);
   const progressionSemaine = consoAvant > 0
     ? Math.max(-100, Math.min(100, Math.round(((consoAvant*7 - weekSum) / (consoAvant*7)) * 100)))
@@ -308,12 +310,12 @@ function computeStats(profile) {
   function fmtVie(mins) {
     const neg = mins < 0; const m = Math.abs(mins); const signe = neg ? '-' : '+';
     const h = Math.floor(m/60); const j = Math.floor(h/24);
-    if (j>0) return `${signe}${j}j ${h%24}h`; if (h>0) return `${signe}${h}h ${m%60}m`; return `${signe}${m}min`;
+    if (j>0) return `${signe}${j}${dJ} ${h%24}${dH}`; if (h>0) return `${signe}${h}${dH} ${m%60}${dM}`; return `${signe}${m}${dM}`;
   }
   function msgJour() {
-    if (cigarettesToday === 0) return '🎉 Journée sans tabac !';
-    if (cigarettesToday <= objectifJour) return `✅ Dans l'objectif — bravo !`;
-    return `💪 ${cigarettesToday - objectifJour} de plus que l'objectif, demain tu feras mieux.`;
+    if (cigarettesToday === 0) return i18n.t('userStats:msgJour.smokeFree');
+    if (cigarettesToday <= objectifJour) return i18n.t('userStats:msgJour.onTrack');
+    return i18n.t('userStats:msgJour.over', { count: cigarettesToday - objectifJour });
   }
 
   return {
@@ -416,13 +418,18 @@ function computeProjectionAnnuelle(consoAvant, objectifJour, reductionSem, prixC
 
 function getBeneficesSante(heures) {
   return [
-    { heures: 0.33,   label: 'Tension artérielle', description: 'Votre tension revient à la normale' },
-    { heures: 8,      label: 'Oxygène',             description: 'Le taux de CO dans le sang diminue de moitié' },
-    { heures: 24,     label: 'Cœur',                description: 'Risque de crise cardiaque diminué' },
-    { heures: 48,     label: 'Goût & Odorat',       description: "Vos sens du goût et de l'odorat s'améliorent" },
-    { heures: 72,     label: 'Respiration',          description: 'Respiration plus facile, bronches détendues' },
-    { heures: 24*14,  label: 'Circulation',          description: 'Circulation sanguine améliorée' },
-    { heures: 24*30,  label: 'Poumons',              description: 'Capacité pulmonaire en hausse de 30%' },
-    { heures: 24*365, label: 'Risque AVC',           description: "Risque d'AVC équivalent à un non-fumeur" },
-  ].map(b => ({ ...b, done: heures >= b.heures }));
+    { heures: 0.33,   key: 'bloodPressure' },
+    { heures: 8,      key: 'oxygen' },
+    { heures: 24,     key: 'heart' },
+    { heures: 48,     key: 'senses' },
+    { heures: 72,     key: 'breathing' },
+    { heures: 24*14,  key: 'circulation' },
+    { heures: 24*30,  key: 'lungs' },
+    { heures: 24*365, key: 'strokeRisk' },
+  ].map(b => ({
+    ...b,
+    label: i18n.t(`userStats:benefits.${b.key}.label`),
+    description: i18n.t(`userStats:benefits.${b.key}.description`),
+    done: heures >= b.heures,
+  }));
 }

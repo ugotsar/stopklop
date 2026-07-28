@@ -3,6 +3,7 @@ import {
   View, Text, StyleSheet, TextInput, TouchableOpacity,
   SafeAreaView, ScrollView, KeyboardAvoidingView, Platform, Dimensions,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { colors, spacing, font, radius } from '../../theme';
 import PrimaryButton from '../../components/PrimaryButton';
 import NatureBackground from '../../components/NatureBackground';
@@ -19,6 +20,7 @@ function check(password) {
 }
 
 export default function RegisterScreen({ navigation }) {
+  const { t } = useTranslation('onboardingLegacy');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
@@ -28,9 +30,9 @@ export default function RegisterScreen({ navigation }) {
   const checks = check(password);
 
   function handleRegister() {
-    if (!email.includes('@')) { setError('Email invalide.'); return; }
-    if (!checks.length || !checks.upper || !checks.digit) { setError('Mot de passe invalide.'); return; }
-    if (password !== confirm) { setError('Les mots de passe ne correspondent pas.'); return; }
+    if (!email.includes('@')) { setError(t('register.errorInvalidEmail')); return; }
+    if (!checks.length || !checks.upper || !checks.digit) { setError(t('register.errorInvalidPassword')); return; }
+    if (password !== confirm) { setError(t('register.errorPasswordMismatch')); return; }
     setError('');
     navigation.navigate('Step1', { email });
   }
@@ -44,36 +46,36 @@ export default function RegisterScreen({ navigation }) {
         </TouchableOpacity>
 
         <ScrollView style={styles.sheet} contentContainerStyle={styles.sheetContent} keyboardShouldPersistTaps="handled">
-          <Text style={styles.title}>S'inscrire</Text>
-          <Text style={styles.subtitle}>Créez votre compte pour commencer{'\n'}votre parcours vers une vie sans tabac.</Text>
+          <Text style={styles.title}>{t('register.title')}</Text>
+          <Text style={styles.subtitle}>{t('register.subtitle')}</Text>
 
-          <SocialBtn icon="🇬" label="S'inscrire avec Google" onPress={() => navigation.navigate('Step1', { email: '' })} />
-          <SocialBtn icon="🍎" label="S'inscrire avec Apple" onPress={() => navigation.navigate('Step1', { email: '' })} />
+          <SocialBtn icon="🇬" label={t('register.googleButton')} onPress={() => navigation.navigate('Step1', { email: '' })} />
+          <SocialBtn icon="🍎" label={t('register.appleButton')} onPress={() => navigation.navigate('Step1', { email: '' })} />
 
           <Divider />
 
-          <InputField icon="✉️" placeholder="Adresse e-mail" value={email} onChangeText={setEmail} keyboardType="email-address" />
-          <InputField icon="🔒" placeholder="Mot de passe" value={password} onChangeText={setPassword} secureTextEntry={!showPass} eye onToggleEye={() => setShowPass(v => !v)} showPass={showPass} />
-          <InputField icon="🔒" placeholder="Confirmer le mot de passe" value={confirm} onChangeText={setConfirm} secureTextEntry={!showPass} eye onToggleEye={() => setShowPass(v => !v)} showPass={showPass} />
+          <InputField icon="✉️" placeholder={t('register.emailPlaceholder')} value={email} onChangeText={setEmail} keyboardType="email-address" />
+          <InputField icon="🔒" placeholder={t('register.passwordPlaceholder')} value={password} onChangeText={setPassword} secureTextEntry={!showPass} eye onToggleEye={() => setShowPass(v => !v)} showPass={showPass} />
+          <InputField icon="🔒" placeholder={t('register.confirmPasswordPlaceholder')} value={confirm} onChangeText={setConfirm} secureTextEntry={!showPass} eye onToggleEye={() => setShowPass(v => !v)} showPass={showPass} />
 
           <View style={styles.checks}>
-            <CheckItem ok={checks.length} label="8 caractères minimum" />
-            <CheckItem ok={checks.lower} label="Au moins une minuscule" />
-            <CheckItem ok={checks.upper} label="Au moins une majuscule" />
-            <CheckItem ok={checks.digit} label="Au moins un chiffre" />
+            <CheckItem ok={checks.length} label={t('register.checkLength')} />
+            <CheckItem ok={checks.lower} label={t('register.checkLower')} />
+            <CheckItem ok={checks.upper} label={t('register.checkUpper')} />
+            <CheckItem ok={checks.digit} label={t('register.checkDigit')} />
           </View>
 
           {error ? <Text style={styles.error}>{error}</Text> : null}
 
-          <PrimaryButton title="S'inscrire" onPress={handleRegister} style={styles.btn} />
+          <PrimaryButton title={t('register.submitButton')} onPress={handleRegister} style={styles.btn} />
 
           <TouchableOpacity onPress={() => navigation.navigate('Login')} style={styles.link}>
-            <Text style={styles.linkText}>Vous avez déjà un compte ? <Text style={styles.linkBold}>Se connecter</Text></Text>
+            <Text style={styles.linkText}>{t('register.haveAccountText')} <Text style={styles.linkBold}>{t('register.loginLink')}</Text></Text>
           </TouchableOpacity>
 
           <Text style={styles.terms}>
-            En vous inscrivant, vous acceptez nos <Text style={styles.termsLink}>Conditions d'utilisation</Text>
-            {' '}et notre <Text style={styles.termsLink}>Politique de confidentialité</Text>.
+            {t('register.termsPrefix')} <Text style={styles.termsLink}>{t('register.termsLink')}</Text>
+            {' '}{t('register.termsMiddle')} <Text style={styles.termsLink}>{t('register.privacyLink')}</Text>.
           </Text>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -91,9 +93,10 @@ function SocialBtn({ icon, label, onPress }) {
 }
 
 function Divider() {
+  const { t } = useTranslation('onboardingLegacy');
   return (
     <View style={styles.dividerRow}>
-      <View style={styles.divider} /><Text style={styles.dividerText}>ou</Text><View style={styles.divider} />
+      <View style={styles.divider} /><Text style={styles.dividerText}>{t('shared.dividerOr')}</Text><View style={styles.divider} />
     </View>
   );
 }

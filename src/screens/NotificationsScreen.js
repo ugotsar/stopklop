@@ -3,12 +3,14 @@ import {
   View, Text, StyleSheet, SafeAreaView, TouchableOpacity,
   ScrollView, Switch, Alert,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { colors, spacing, font, radius } from '../theme';
 import {
   demanderPermissionNotifications,
   annulerToutesNotifications,
 } from '../services/notifications';
 import * as Notifications from 'expo-notifications';
+import i18n from '../i18n';
 
 const MIN_NOTIFS = 1;
 const MAX_NOTIFS = 6;
@@ -31,12 +33,12 @@ async function programmerNotifsDynamiques(count) {
   await annulerToutesNotifications();
   const horaires = computeHoraires(count);
   const messages = [
-    { title: '☀️ Nouvelle journée, nouveau départ',  body: "Aujourd'hui, tu peux faire mieux qu'hier. Note tes cigarettes." },
-    { title: '🚬 Comment ça se passe aujourd\'hui ?', body: 'Pense à noter tes cigarettes. Chaque chiffre compte.' },
-    { title: '📊 Bilan de ta journée',               body: "Tu as fumé combien aujourd'hui ? Note-le avant de dormir." },
-    { title: '💪 Tu tiens le coup ?',                body: 'Un petit rappel pour noter tes cigarettes.' },
-    { title: '⏰ Rappel de mi-journée',              body: 'Prends 10 secondes pour noter tes cigarettes.' },
-    { title: '🌙 Fin de journée',                    body: 'Dernière chance de noter ta consommation du jour.' },
+    { title: i18n.t('notifications:screen.messages.morning.title'),       body: i18n.t('notifications:screen.messages.morning.body') },
+    { title: i18n.t('notifications:screen.messages.afternoon.title'),     body: i18n.t('notifications:screen.messages.afternoon.body') },
+    { title: i18n.t('notifications:screen.messages.evening.title'),       body: i18n.t('notifications:screen.messages.evening.body') },
+    { title: i18n.t('notifications:screen.messages.encouragement.title'), body: i18n.t('notifications:screen.messages.encouragement.body') },
+    { title: i18n.t('notifications:screen.messages.midday.title'),        body: i18n.t('notifications:screen.messages.midday.body') },
+    { title: i18n.t('notifications:screen.messages.night.title'),         body: i18n.t('notifications:screen.messages.night.body') },
   ];
   for (let i = 0; i < horaires.length; i++) {
     const { h, m } = horaires[i];
@@ -50,19 +52,13 @@ async function programmerNotifsDynamiques(count) {
 }
 
 export default function NotificationsScreen({ navigation }) {
+  const { t } = useTranslation('notifications');
   const [count, setCount]         = useState(3);
   const [autoRep, setAutoRep]     = useState(true);
   const [tipVisible, setTipVisible] = useState(true);
   const horaires = computeHoraires(count);
 
-  const tip = {
-    1: 'Une notification par jour suffit pour débuter le suivi.',
-    2: 'Matin et soir : le minimum pour un suivi efficace.',
-    3: '3 rappels par jour pour un suivi équilibré.',
-    4: '4 rappels : idéal pour les premières semaines.',
-    5: '5 rappels gardent la conscience de ta conso tout au long de la journée.',
-    6: '6 notifications par jour est idéal pour rester motivé sans être dérangé.',
-  };
+  const tip = t('screen.tips', { returnObjects: true });
 
   function decrement() { setCount(c => Math.max(MIN_NOTIFS, c - 1)); setTipVisible(true); }
   function increment() { setCount(c => Math.min(MAX_NOTIFS, c + 1)); setTipVisible(true); }
@@ -70,21 +66,21 @@ export default function NotificationsScreen({ navigation }) {
   async function handleSave() {
     const ok = await demanderPermissionNotifications();
     if (!ok) {
-      Alert.alert('Permission refusée', 'Active les notifications dans les Réglages iOS pour recevoir des rappels.');
+      Alert.alert(t('screen.alerts.permissionDeniedTitle'), t('screen.alerts.permissionDeniedBody'));
       return;
     }
     await programmerNotifsDynamiques(count);
-    Alert.alert('Enregistré', `${count} notification${count > 1 ? 's' : ''} par jour programmée${count > 1 ? 's' : ''}.`);
+    Alert.alert(t('screen.alerts.savedTitle'), t('screen.alerts.savedBody', { count }));
   }
 
   async function handleDesactiver() {
     Alert.alert(
-      'Désactiver les notifications',
-      'Tu ne recevras plus de rappels pour noter tes cigarettes.',
+      t('screen.alerts.disableConfirmTitle'),
+      t('screen.alerts.disableConfirmBody'),
       [
-        { text: 'Annuler', style: 'cancel' },
+        { text: t('common:cancel'), style: 'cancel' },
         {
-          text: 'Désactiver', style: 'destructive',
+          text: t('screen.alerts.disableButton'), style: 'destructive',
           onPress: async () => {
             await annulerToutesNotifications();
             navigation.goBack();
@@ -101,7 +97,7 @@ export default function NotificationsScreen({ navigation }) {
         <TouchableOpacity onPress={() => navigation.goBack()} style={s.backBtn}>
           <Text style={s.backArrow}>‹</Text>
         </TouchableOpacity>
-        <Text style={s.headerTitle}>Notifications</Text>
+        <Text style={s.headerTitle}>{t('screen.headerTitle')}</Text>
         <View style={s.bellCircle}>
           <Text style={s.bellEmoji}>🔔</Text>
         </View>
@@ -109,12 +105,12 @@ export default function NotificationsScreen({ navigation }) {
 
       <ScrollView contentContainerStyle={s.scroll} showsVerticalScrollIndicator={false}>
         <Text style={s.subtitle}>
-          Choisis combien de fois par jour l'application te demande si tu as fumé.
+          {t('screen.subtitle')}
         </Text>
 
         {/* Card : nombre */}
         <View style={s.card}>
-          <Text style={s.cardTitle}>Nombre de notifications par jour</Text>
+          <Text style={s.cardTitle}>{t('screen.countCard.title')}</Text>
           <View style={s.counterRow}>
             <TouchableOpacity
               style={[s.counterBtn, count <= MIN_NOTIFS && s.counterBtnDisabled]}
@@ -132,14 +128,14 @@ export default function NotificationsScreen({ navigation }) {
               <Text style={[s.counterBtnText, count >= MAX_NOTIFS && s.counterBtnTextDisabled]}>+</Text>
             </TouchableOpacity>
           </View>
-          <Text style={s.counterLabel}>notifications par jour</Text>
+          <Text style={s.counterLabel}>{t('screen.countCard.unitLabel')}</Text>
 
           <View style={s.infoBox}>
             <View style={s.infoIcon}>
               <Text style={s.infoIconText}>i</Text>
             </View>
             <Text style={s.infoText}>
-              Nous te demanderons jusqu'à {count} fois dans la journée si tu as fumé.
+              {t('screen.countCard.infoText', { count })}
             </Text>
           </View>
         </View>
@@ -148,9 +144,9 @@ export default function NotificationsScreen({ navigation }) {
         <View style={s.card}>
           <View style={s.repRow}>
             <View style={{ flex: 1 }}>
-              <Text style={s.cardTitle}>Répartition automatique</Text>
+              <Text style={s.cardTitle}>{t('screen.distributionCard.title')}</Text>
               <Text style={s.cardSub}>
-                Les notifications seront réparties automatiquement et de manière équilibrée tout au long de la journée.
+                {t('screen.distributionCard.sub')}
               </Text>
             </View>
             <Switch
@@ -161,7 +157,7 @@ export default function NotificationsScreen({ navigation }) {
             />
           </View>
 
-          <Text style={s.aperçuTitle}>Aperçu des horaires</Text>
+          <Text style={s.aperçuTitle}>{t('screen.distributionCard.previewTitle')}</Text>
           <View style={s.chipsRow}>
             {horaires.map((h, i) => (
               <View key={i} style={s.chip}>
@@ -169,7 +165,7 @@ export default function NotificationsScreen({ navigation }) {
               </View>
             ))}
           </View>
-          <Text style={s.aperçuSub}>Les horaires s'adaptent automatiquement à tes réglages.</Text>
+          <Text style={s.aperçuSub}>{t('screen.distributionCard.previewSub')}</Text>
 
           {tipVisible && (
             <View style={s.tipBox}>
@@ -178,7 +174,7 @@ export default function NotificationsScreen({ navigation }) {
                   <Text style={s.tipIcon}>🕐</Text>
                 </View>
                 <View style={{ flex: 1 }}>
-                  <Text style={s.tipTitle}>Conseil</Text>
+                  <Text style={s.tipTitle}>{t('screen.tipLabel')}</Text>
                   <Text style={s.tipText}>{tip[count]}</Text>
                 </View>
               </View>
@@ -191,7 +187,7 @@ export default function NotificationsScreen({ navigation }) {
 
         {/* Bouton enregistrer */}
         <TouchableOpacity style={s.saveBtn} onPress={handleSave} activeOpacity={0.8}>
-          <Text style={s.saveBtnText}>Enregistrer</Text>
+          <Text style={s.saveBtnText}>{t('screen.saveButton')}</Text>
         </TouchableOpacity>
 
         {/* Rows */}
@@ -199,8 +195,8 @@ export default function NotificationsScreen({ navigation }) {
           <TouchableOpacity style={s.row} activeOpacity={0.7} onPress={() => navigation.navigate('PersonnaliserHoraires', { count })}>
             <Text style={s.rowIcon}>🔔</Text>
             <View style={{ flex: 1 }}>
-              <Text style={s.rowTitle}>Personnaliser les horaires</Text>
-              <Text style={s.rowSub}>Choisir des horaires spécifiques</Text>
+              <Text style={s.rowTitle}>{t('screen.rows.customizeTitle')}</Text>
+              <Text style={s.rowSub}>{t('screen.rows.customizeSub')}</Text>
             </View>
             <Text style={s.rowArrow}>›</Text>
           </TouchableOpacity>
@@ -210,8 +206,8 @@ export default function NotificationsScreen({ navigation }) {
           <TouchableOpacity style={s.row} onPress={handleDesactiver} activeOpacity={0.7}>
             <Text style={s.rowIcon}>🔕</Text>
             <View style={{ flex: 1 }}>
-              <Text style={[s.rowTitle, { color: colors.red }]}>Désactiver les notifications</Text>
-              <Text style={s.rowSub}>Ne plus recevoir de rappels</Text>
+              <Text style={[s.rowTitle, { color: colors.red }]}>{t('screen.rows.disableTitle')}</Text>
+              <Text style={s.rowSub}>{t('screen.rows.disableSub')}</Text>
             </View>
             <Text style={s.rowArrow}>›</Text>
           </TouchableOpacity>

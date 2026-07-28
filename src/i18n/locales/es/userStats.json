@@ -1,0 +1,17 @@
+{
+  "msgJour": {
+    "smokeFree": "🎉 ¡Día sin tabaco!",
+    "onTrack": "✅ Dentro del objetivo — ¡bien hecho!",
+    "over": "💪 {{count}} más que tu objetivo, mañana lo harás mejor."
+  },
+  "benefits": {
+    "bloodPressure": { "label": "Presión arterial", "description": "Tu presión arterial vuelve a la normalidad" },
+    "oxygen":        { "label": "Oxígeno", "description": "El nivel de CO en sangre se reduce a la mitad" },
+    "heart":         { "label": "Corazón", "description": "Riesgo reducido de infarto" },
+    "senses":        { "label": "Gusto y olfato", "description": "Tu sentido del gusto y del olfato mejoran" },
+    "breathing":     { "label": "Respiración", "description": "Respiración más fácil, vías respiratorias relajadas" },
+    "circulation":   { "label": "Circulación", "description": "Circulación sanguínea mejorada" },
+    "lungs":         { "label": "Pulmones", "description": "Capacidad pulmonar aumenta un 30%" },
+    "strokeRisk":    { "label": "Riesgo de ACV", "description": "Riesgo de ACV igual al de un no fumador" }
+  }
+}
