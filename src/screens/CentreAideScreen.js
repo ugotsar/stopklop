@@ -67,7 +67,7 @@ export default function CentreAideScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  safe:   { flex: 1, backgroundColor: '#F7F8FA' },
+  safe:   { flex: 1, backgroundColor: colors.cream },
   scroll: { padding: spacing.md, paddingBottom: spacing.xxl },
 
   header: {

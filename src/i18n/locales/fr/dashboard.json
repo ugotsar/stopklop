@@ -12,7 +12,7 @@
     "sectionTitle": "Aujourd'hui",
     "subtitle": "cigarettes\naujourd'hui",
     "goal": "Objectif : {{count}} max",
-    "validateButton": "✓  Valider ma journée",
+    "validateButton": "Valider ma journée",
     "smokedLink": "J'ai fumé aujourd'hui  ›"
   },
   "perfectDayModal": {
@@ -66,7 +66,7 @@
     "smokedButton": "J'ai fumé  🚬  (+1 cigarette)"
   },
   "motivation": {
-    "sectionTitle": "✨  Motivation du jour",
+    "sectionTitle": "Motivation du jour",
     "quotes": [
       "Chaque heure sans cigarette est une victoire pour votre santé.",
       "Vous n'abandonnez pas quelque chose, vous gagnez une vie meilleure.",
@@ -90,12 +90,12 @@
   "envieCard": {
     "title": "Une envie de fumer, là maintenant ?",
     "subtitle": "Enregistrez-la : on analyse vos déclencheurs pour vous aider à les anticiper.",
-    "button": "J'ai envie de fumer",
+    "button": "J'ai envie\nde fumer",
     "count_one": "{{count}} envie enregistrée — analyse visible dans l'onglet Plan",
     "count_other": "{{count}} envies enregistrées — analyse visible dans l'onglet Plan"
   },
   "devButtons": {
-    "loadDemo": "🎬 Charger la démo (5 semaines d'utilisation)",
-    "resetOnboarding": "↩ Recommencer l'onboarding"
+    "loadDemo": "Charger la démo (5 semaines d'utilisation)",
+    "resetOnboarding": "Recommencer l'onboarding"
   }
 }

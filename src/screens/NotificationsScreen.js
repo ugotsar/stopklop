@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import {
-  View, Text, StyleSheet, SafeAreaView, TouchableOpacity,
+  View, Text, Image, StyleSheet, SafeAreaView, TouchableOpacity,
   ScrollView, Switch, Alert,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { colors, spacing, font, radius } from '../theme';
+import { colors, spacing, font, radius, shadow } from '../theme';
+import { UI } from '../assets/uiKit';
 import {
   demanderPermissionNotifications,
   annulerToutesNotifications,
@@ -98,9 +99,7 @@ export default function NotificationsScreen({ navigation }) {
           <Text style={s.backArrow}>‹</Text>
         </TouchableOpacity>
         <Text style={s.headerTitle}>{t('screen.headerTitle')}</Text>
-        <View style={s.bellCircle}>
-          <Text style={s.bellEmoji}>🔔</Text>
-        </View>
+        <View style={s.backBtn} />
       </View>
 
       <ScrollView contentContainerStyle={s.scroll} showsVerticalScrollIndicator={false}>
@@ -131,9 +130,7 @@ export default function NotificationsScreen({ navigation }) {
           <Text style={s.counterLabel}>{t('screen.countCard.unitLabel')}</Text>
 
           <View style={s.infoBox}>
-            <View style={s.infoIcon}>
-              <Text style={s.infoIconText}>i</Text>
-            </View>
+            <Image source={UI.information} style={s.infoIllus} resizeMode="contain" />
             <Text style={s.infoText}>
               {t('screen.countCard.infoText', { count })}
             </Text>
@@ -161,7 +158,8 @@ export default function NotificationsScreen({ navigation }) {
           <View style={s.chipsRow}>
             {horaires.map((h, i) => (
               <View key={i} style={s.chip}>
-                <Text style={s.chipText}>🔔 {h.label}</Text>
+                <Image source={UI.cloche_rappel} style={s.chipIllus} resizeMode="contain" />
+                <Text style={s.chipText}>{h.label}</Text>
               </View>
             ))}
           </View>
@@ -170,9 +168,7 @@ export default function NotificationsScreen({ navigation }) {
           {tipVisible && (
             <View style={s.tipBox}>
               <View style={s.tipLeft}>
-                <View style={s.tipIconCircle}>
-                  <Text style={s.tipIcon}>🕐</Text>
-                </View>
+                <Image source={UI.reveil_conseil} style={s.tipIllus} resizeMode="contain" />
                 <View style={{ flex: 1 }}>
                   <Text style={s.tipTitle}>{t('screen.tipLabel')}</Text>
                   <Text style={s.tipText}>{tip[count]}</Text>
@@ -193,7 +189,7 @@ export default function NotificationsScreen({ navigation }) {
         {/* Rows */}
         <View style={s.rowsCard}>
           <TouchableOpacity style={s.row} activeOpacity={0.7} onPress={() => navigation.navigate('PersonnaliserHoraires', { count })}>
-            <Text style={s.rowIcon}>🔔</Text>
+            <Image source={UI.cloche_reglages} style={s.rowIllus} resizeMode="contain" />
             <View style={{ flex: 1 }}>
               <Text style={s.rowTitle}>{t('screen.rows.customizeTitle')}</Text>
               <Text style={s.rowSub}>{t('screen.rows.customizeSub')}</Text>
@@ -204,7 +200,7 @@ export default function NotificationsScreen({ navigation }) {
           <View style={s.divider} />
 
           <TouchableOpacity style={s.row} onPress={handleDesactiver} activeOpacity={0.7}>
-            <Text style={s.rowIcon}>🔕</Text>
+            <Image source={UI.cloche_desactivee} style={s.rowIllus} resizeMode="contain" />
             <View style={{ flex: 1 }}>
               <Text style={[s.rowTitle, { color: colors.red }]}>{t('screen.rows.disableTitle')}</Text>
               <Text style={s.rowSub}>{t('screen.rows.disableSub')}</Text>
@@ -218,58 +214,58 @@ export default function NotificationsScreen({ navigation }) {
 }
 
 const s = StyleSheet.create({
-  safe:         { flex: 1, backgroundColor: '#F5F5F5' },
+  safe:         { flex: 1, backgroundColor: colors.cream },
   scroll:       { padding: spacing.md, paddingBottom: 40 },
 
   header:       { flexDirection: 'row', alignItems: 'center', paddingHorizontal: spacing.md, paddingTop: spacing.sm, paddingBottom: spacing.sm },
   backBtn:      { width: 36, alignItems: 'flex-start' },
-  backArrow:    { fontSize: 28, color: colors.black, lineHeight: 32 },
-  headerTitle:  { flex: 1, fontSize: 22, fontWeight: '800', color: colors.black },
-  bellCircle:   { width: 44, height: 44, borderRadius: 22, backgroundColor: colors.primaryLight, alignItems: 'center', justifyContent: 'center' },
-  bellEmoji:    { fontSize: 20 },
+  backArrow:    { fontSize: 28, color: colors.primaryDeep, lineHeight: 32 },
+  headerTitle:  { flex: 1, fontSize: 22, fontWeight: '900', color: colors.primaryDeep, textAlign: 'center' },
 
   subtitle:     { fontSize: font.sm, color: colors.gray, marginBottom: spacing.md, lineHeight: 21 },
 
-  card:         { backgroundColor: colors.white, borderRadius: radius.lg, padding: spacing.md, marginBottom: spacing.md },
-  cardTitle:    { fontSize: font.md, fontWeight: '700', color: colors.black, marginBottom: spacing.sm },
+  card:         { backgroundColor: colors.surface, borderRadius: radius.xl, padding: spacing.lg, marginBottom: spacing.md, borderWidth: 1, borderColor: colors.grayBorder, ...shadow.card },
+  cardTitle:    { fontSize: font.md, fontWeight: '800', color: colors.primaryDeep, marginBottom: spacing.sm },
   cardSub:      { fontSize: 13, color: colors.gray, lineHeight: 19, marginTop: 2, marginRight: spacing.sm },
 
   counterRow:   { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 28, marginVertical: spacing.sm },
-  counterBtn:   { width: 44, height: 44, borderRadius: 22, backgroundColor: colors.primaryLight, alignItems: 'center', justifyContent: 'center' },
+  counterBtn:   { width: 48, height: 48, borderRadius: 24, backgroundColor: colors.primaryLight, alignItems: 'center', justifyContent: 'center' },
   counterBtnDisabled: { backgroundColor: colors.grayLight },
-  counterBtnText: { fontSize: 24, color: colors.primary, fontWeight: '300', lineHeight: 28 },
+  counterBtnText: { fontSize: 24, color: colors.primaryDeep, fontWeight: '300', lineHeight: 28 },
   counterBtnTextDisabled: { color: colors.gray },
-  counterNum:   { fontSize: 52, fontWeight: '800', color: colors.primary, lineHeight: 60, minWidth: 60, textAlign: 'center' },
+  counterNum:   { fontSize: 52, fontWeight: '900', color: colors.primaryDeep, lineHeight: 60, minWidth: 60, textAlign: 'center' },
   counterLabel: { fontSize: 13, color: colors.gray, textAlign: 'center', marginBottom: spacing.sm },
 
-  infoBox:      { flexDirection: 'row', alignItems: 'flex-start', gap: spacing.sm, backgroundColor: colors.primaryLight, borderRadius: radius.md, padding: spacing.sm, marginTop: spacing.xs },
-  infoIcon:     { width: 22, height: 22, borderRadius: 11, backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center', marginTop: 1 },
-  infoIconText: { color: colors.white, fontSize: 13, fontWeight: '800' },
-  infoText:     { flex: 1, fontSize: 13, color: colors.primary, lineHeight: 19 },
+  infoBox:      { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, backgroundColor: colors.primaryLight, borderRadius: radius.md, padding: spacing.sm, marginTop: spacing.xs },
+  infoIllus:    { width: 28, height: 28 },
+  infoText:     { flex: 1, fontSize: 13, color: colors.primaryDeep, lineHeight: 19 },
 
   repRow:       { flexDirection: 'row', alignItems: 'flex-start', marginBottom: spacing.md },
-  aperçuTitle:  { fontSize: 14, fontWeight: '600', color: colors.black, marginBottom: spacing.sm },
-  chipsRow:     { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: spacing.sm },
-  chip:         { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.primaryLight, borderRadius: radius.full, paddingHorizontal: 10, paddingVertical: 5 },
-  chipText:     { fontSize: 13, color: colors.primary, fontWeight: '600' },
+  aperçuTitle:  { fontSize: 14, fontWeight: '700', color: colors.primaryDeep, marginBottom: spacing.sm },
+  chipsRow:     { flexDirection: 'row', gap: 8, marginBottom: spacing.sm },
+  chip:         {
+    flex: 1, alignItems: 'center', backgroundColor: colors.primaryLight,
+    borderRadius: radius.lg, paddingVertical: 14, gap: 6,
+  },
+  chipIllus:    { width: 30, height: 30 },
+  chipText:     { fontSize: 14, color: colors.primaryDeep, fontWeight: '800' },
   aperçuSub:    { fontSize: 12, color: colors.gray, marginBottom: spacing.sm },
 
-  tipBox:       { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', backgroundColor: colors.primaryLight, borderRadius: radius.md, padding: spacing.sm, marginTop: spacing.xs },
-  tipLeft:      { flexDirection: 'row', alignItems: 'flex-start', gap: spacing.sm, flex: 1 },
-  tipIconCircle:{ width: 30, height: 30, borderRadius: 15, backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center' },
-  tipIcon:      { fontSize: 15 },
-  tipTitle:     { fontSize: 13, fontWeight: '700', color: colors.primary, marginBottom: 2 },
-  tipText:      { fontSize: 12, color: colors.primary, lineHeight: 17 },
+  tipBox:       { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: colors.primaryLight, borderRadius: radius.md, padding: spacing.sm, marginTop: spacing.xs },
+  tipLeft:      { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, flex: 1 },
+  tipIllus:     { width: 34, height: 34 },
+  tipTitle:     { fontSize: 13, fontWeight: '700', color: colors.primaryDeep, marginBottom: 2 },
+  tipText:      { fontSize: 12, color: colors.primaryDeep, lineHeight: 17 },
   tipClose:     { fontSize: 14, color: colors.gray, paddingLeft: spacing.sm },
 
-  saveBtn:      { backgroundColor: colors.primary, borderRadius: radius.lg, padding: spacing.md, alignItems: 'center', marginBottom: spacing.md },
+  saveBtn:      { backgroundColor: colors.primary, borderRadius: radius.pill, padding: spacing.md, alignItems: 'center', marginBottom: spacing.md, ...shadow.card },
   saveBtnText:  { color: colors.white, fontSize: font.md, fontWeight: '700' },
 
-  rowsCard:     { backgroundColor: colors.white, borderRadius: radius.lg, overflow: 'hidden' },
+  rowsCard:     { backgroundColor: colors.surface, borderRadius: radius.xl, overflow: 'hidden', borderWidth: 1, borderColor: colors.grayBorder, ...shadow.card },
   row:          { flexDirection: 'row', alignItems: 'center', padding: spacing.md, gap: spacing.sm },
-  rowIcon:      { fontSize: 20 },
-  rowTitle:     { fontSize: font.sm, fontWeight: '600', color: colors.black },
+  rowIllus:     { width: 36, height: 36 },
+  rowTitle:     { fontSize: font.sm, fontWeight: '700', color: colors.black },
   rowSub:       { fontSize: 12, color: colors.gray, marginTop: 2 },
   rowArrow:     { fontSize: 22, color: colors.gray },
-  divider:      { height: 0.5, backgroundColor: colors.grayBorder, marginLeft: spacing.md + 20 + spacing.sm },
+  divider:      { height: 0.5, backgroundColor: colors.grayBorder, marginLeft: spacing.md + 36 + spacing.sm },
 });

@@ -136,7 +136,7 @@ export default function NousContacterScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  safe:   { flex: 1, backgroundColor: '#F7F8FA' },
+  safe:   { flex: 1, backgroundColor: colors.cream },
   scroll: { padding: spacing.lg, paddingBottom: spacing.xxl },
 
   header: {

@@ -11,11 +11,15 @@
     "yesterday": "Gestern"
   },
   "week": {
-    "rangeLabel": "Vom {{start}} bis {{end}}"
+    "rangeLabel": "Vom {{start}} bis {{end}}",
+    "previous": "letzte Woche"
   },
   "tapHint": {
-    "day": "Tippe auf einen Tag, um die stündliche Übersicht zu sehen",
-    "month": "Tippe auf einen Monat, um die tägliche Übersicht zu sehen"
+    "day": "Tippe auf einen Tag, um die Anzahl gerauchter Zigaretten zu sehen",
+    "month": "Tippe auf einen Monat, um die Anzahl gerauchter Zigaretten zu sehen"
+  },
+  "tapOverlay": {
+    "seeDetail": "Stündliche Übersicht ›"
   },
   "month": {
     "comparison": "{{month}}: {{count}} Zig. · {{arrow}} {{percent}}% diesen Monat"
@@ -26,21 +30,53 @@
   },
   "smokedCard": {
     "title": "Gerauchte Zigaretten",
+    "chartTitle": "Konsum pro Stunde",
     "unit": "Zigaretten",
     "vsBeforeAppValue": "{{arrow}} {{percent}} %",
     "hoursTitle": "Uhrzeiten der Zigaretten",
     "hoursNotRecorded": "Für diesen Tag keine Uhrzeiten erfasst.",
     "noCigarettesToday": "An diesem Tag keine Zigarette 🎉",
-    "withoutHourCount": "+ {{count}} ohne erfasste Uhrzeit"
+    "withoutHourCount": "+ {{count}} ohne erfasste Uhrzeit",
+    "tipPositive": "Je weniger du rauchst, desto mehr sinkt deine Kurve. Gut gemacht!",
+    "tipNegative": "Jede vermiedene Zigarette zählt, mach weiter so.",
+    "totalLabel": "Gesamt",
+    "avgLabel": "Tagesdurchschnitt",
+    "decreaseLabel": "Rückgang"
   },
   "moneyCard": {
     "title": "Geld",
-    "spentReal": "ausgegeben (tatsächlich)",
-    "net": "netto",
+    "spentTitle": "Ausgegebenes Geld",
+    "savedTitle": "Gespartes Geld",
+    "beforeLabel": "Vor der App",
+    "afterLabel": "Mit der App",
+    "cigCount_one": "{{count}} Zigarette",
+    "cigCount_other": "{{count}} Zigaretten",
+    "savedBecause_one": "dank {{count}} vermiedener Zigarette",
+    "savedBecause_other": "dank {{count}} vermiedener Zigaretten",
+    "overspentBecause_one": "wegen {{count}} zusätzlicher Zigarette",
+    "overspentBecause_other": "wegen {{count}} zusätzlicher Zigaretten",
     "calculatedOn_one": "Berechnet über {{count}} erfassten Tag",
     "calculatedOn_other": "Berechnet über {{count}} erfasste Tage",
     "missingDays_one": " — {{count}} nicht erfasst",
     "missingDays_other": " — {{count}} nicht erfasst"
+  },
+  "gridTiles": {
+    "vs": "vs. {{ref}} ({{value}})",
+    "cumulMoney": "Gesamt: {{amount}} €",
+    "cumulLife": "Gesamt: {{value}}"
+  },
+  "goalProgress": {
+    "title": "Fortschritt bis zur nächsten Sparetappe",
+    "reached": "erreicht",
+    "remaining": "Noch {{amount}} € bis zum Ziel"
+  },
+  "goalCard": {
+    "titleDay": "Heutiges Ziel",
+    "titleAverage": "Tägliches Ziel",
+    "stayUnder_one": "Bleib unter {{count}} Zigarette",
+    "stayUnder_other": "Bleib unter {{count}} Zigaretten",
+    "onTrack": "Gut gemacht, weiter so!",
+    "overGoal": "Ziel überschritten"
   },
   "lifeCard": {
     "title": "Gewonnenes Leben",
@@ -53,6 +89,14 @@
   },
   "summaryCard": {
     "title": "Zusammenfassung",
+    "narrative": "Du hast {{count}} {{unit}} geraucht{{comparison}}. {{moneyPhrase}} und {{lifePhrase}}. Weiter so, jeder kleine Schritt zählt!",
+    "narrativeComparison": ", {{diff}} {{unit}} {{dir}} {{ref}}",
+    "moneySavedPhrase": "Du hast {{amount}} € gespart",
+    "moneyOverspentPhrase": "Du hast {{amount}} € mehr ausgegeben als geplant",
+    "lifeGainedPhrase": "{{value}} Lebenszeit zurückgewonnen",
+    "lifeLostPhrase": "{{value}} Lebenszeit verloren",
+    "less": "weniger als",
+    "more": "mehr als",
     "smokedCount_one": "{{count}} Zigarette geraucht",
     "smokedCount_other": "{{count}} Zigaretten geraucht",
     "onDaysRecorded_one": "an {{count}} erfasstem Tag",

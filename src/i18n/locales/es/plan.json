@@ -15,7 +15,13 @@
       "modalTitle": "Dinero ahorrado",
       "explanationIntro_one": "Antes de la app, fumabas {{consoAvant}} cigarrillos al día. Tu objetivo actual es {{objectif}} al día: eso son {{count}} cigarrillo evitado cada día.",
       "explanationIntro_other": "Antes de la app, fumabas {{consoAvant}} cigarrillos al día. Tu objetivo actual es {{objectif}} al día: eso son {{count}} cigarrillos evitados cada día.",
-      "explanationDetail": "\n\nCada cigarrillo cuesta {{prixCig}} € (precio del paquete ÷ cigarrillos por paquete).\n{{count}} × {{prixCig}} € × 30 días = {{ecoMois}} € al mes.",
+      "explanationDetail": "Cada cigarrillo cuesta {{prixCig}} €\n(precio del paquete ÷ cigarrillos por paquete).\n{{count}} × {{prixCig}} € × 30 días = {{ecoMois}} € / mes.",
+      "beforeLabel": "Antes de la app",
+      "goalLabel": "Objetivo actual",
+      "unitPerDay": "/ día",
+      "avoidedPerDay_one": "{{count}} cigarrillo evitado",
+      "avoidedPerDay_other": "{{count}} cigarrillos evitados",
+      "avoidedSub": "cada día",
       "note": "Puedes ajustar el precio del paquete en Perfil → Ajustes de consumo."
     },
     "life": {
@@ -38,7 +44,21 @@
       "label": "salud",
       "sublabel": "cada día",
       "modalTitle": "Mejor salud cada día",
-      "explanation": "Tu cuerpo empieza a repararse en cuanto reduces el consumo:\n\n• 20 min: la tensión arterial vuelve a la normalidad\n• 8 h: el monóxido de carbono en sangre se reduce a la mitad\n• 24 h: el riesgo de infarto empieza a disminuir\n• 48 h: el gusto y el olfato mejoran\n• 72 h: respirar se vuelve más fácil\n• 1 año: el riesgo de ictus se iguala al de un no fumador",
+      "explanation": "Tu cuerpo empieza a repararse en cuanto reduces el consumo:",
+      "timeline": {
+        "t20min": "20 min",
+        "l20min": "la tensión arterial vuelve a la normalidad",
+        "t8h":    "8 h",
+        "l8h":    "el monóxido de carbono en sangre se reduce a la mitad",
+        "t24h":   "24 h",
+        "l24h":   "el riesgo de infarto empieza a disminuir",
+        "t48h":   "48 h",
+        "l48h":   "el gusto y el olfato mejoran",
+        "t72h":   "72 h",
+        "l72h":   "respirar se vuelve más fácil",
+        "t1an":   "1 año",
+        "l1an":   "el riesgo de ictus se iguala al de un no fumador"
+      },
       "note": "Consulta tu progreso de salud detallado en el panel."
     }
   },

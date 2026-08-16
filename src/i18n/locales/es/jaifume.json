@@ -42,10 +42,10 @@
   "feedbackModal": {
     "perfectTitle": "¡Día sin tabaco!",
     "okTitle": "¡Bien hecho!",
-    "exceededTitle": "Objetivo superado",
+    "exceededTitle": "Objetivo no alcanzado",
     "perfectSub": "0 cigarrillos hoy",
     "okSub": "Objetivo cumplido hoy",
-    "exceededSub": "{{count}} cig · +{{diff}} de más",
+    "exceededSub": "Es solo una etapa, sigue mañana.",
     "lifeGained": "vida ganada",
     "spent": "gastado",
     "streak": "racha",
@@ -60,6 +60,7 @@
     "modifyGoal": "Editar objetivo",
     "btnPerfect": "¡Genial, gracias!",
     "btnOk": "¡Anotado!",
-    "btnExceeded": "¡Entendido!"
+    "btnExceeded": "Continuar",
+    "smokedCigarettes": "cigarrillos fumados"
   }
 }

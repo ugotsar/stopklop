@@ -7,19 +7,20 @@ import Svg, { Circle, Path } from 'react-native-svg';
 import { Image } from 'react-native';
 import { useTranslation } from 'react-i18next';
 
+import { UI } from '../assets/uiKit';
 const PICTOS = {
-  temps:    require('../../assets/onboarding/stopklop-illustrations-hd/pictogrammes/10-dashboard-temps.jpg'),
-  evitees:  require('../../assets/onboarding/stopklop-illustrations-hd/pictogrammes/11-dashboard-cigarettes-evitees.jpg'),
-  objectif: require('../../assets/onboarding/stopklop-illustrations-hd/pictogrammes/12-dashboard-objectif.jpg'),
-  economie: require('../../assets/onboarding/stopklop-illustrations-hd/pictogrammes/13-dashboard-economies.jpg'),
+  temps:    UI.chrono_vie_preservee,
+  evitees:  UI.progression_fleche,
+  objectif: UI.cible_objectif,
+  economie: UI.pile_pieces_feuilles,
 };
 import { useUser } from '../context/UserContext';
-import { colors, spacing, font, radius } from '../theme';
+import { colors, spacing, font, radius, shadow, getScreenWidth } from '../theme';
 import { annulerNotificationSoir } from '../services/notifications';
 import { jouerSon } from '../services/sounds';
 import { buildDemoProfile } from '../utils/demoData';
 
-const { width: SCREEN_W } = Dimensions.get('window');
+const SCREEN_W = getScreenWidth();
 
 // Nombre de citations motivationnelles disponibles (voir dashboard.json → motivation.quotes)
 const MOTIVATIONS_COUNT = 5;
@@ -37,25 +38,19 @@ function ModalParfait({ visible, diffJours, objectifJour, prixCig, onClose }) {
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <View style={mp.overlay}>
         <View style={mp.card}>
-          <View style={mp.banner}>
-            <Text style={mp.emoji}>🏆</Text>
-            <View style={{ flex: 1 }}>
-              <Text style={mp.titre}>{t('perfectDayModal.title')}</Text>
-              <Text style={mp.sous}>{t('perfectDayModal.subtitle')}</Text>
-            </View>
+          {/* Trophée feuillage flottant directement sur la carte crème (réf. kit UI écran 04-B) */}
+          <Image source={UI.trophee_feuilles_creme} style={mp.trophyIllus} resizeMode="contain" />
+          <Text style={mp.trophyTitle}>{t('perfectDayModal.title')}</Text>
+          <Text style={mp.trophySub}>{t('perfectDayModal.subtitle')}</Text>
+
+          <View style={mp.statsRow}>
+            <StatColonne valeur={vieGagneeStr} label={t('perfectDayModal.lifeRegained')} color={colors.primary} />
+            <StatColonne valeur={spentZero} label={t('perfectDayModal.spent')} color={colors.black} />
+            <StatColonne valeur={`🔥 ${streak}${t('common:dayShort')}`} label={t('perfectDayModal.streak')} color={colors.warning} />
           </View>
-          <View style={mp.body}>
-            <View style={mp.statsRow}>
-              <StatColonne valeur={vieGagneeStr} label={t('perfectDayModal.lifeRegained')} color="#1B6B3A" />
-              <View style={mp.div} />
-              <StatColonne valeur={spentZero} label={t('perfectDayModal.spent')} color="#1B6B3A" />
-              <View style={mp.div} />
-              <StatColonne valeur={`🔥 ${streak}${t('common:dayShort')}`} label={t('perfectDayModal.streak')} color="#F59E0B" />
-            </View>
-            <TouchableOpacity style={mp.btn} onPress={onClose}>
-              <Text style={mp.btnText}>{t('perfectDayModal.closeButton')}</Text>
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity style={mp.btn} onPress={onClose}>
+            <Text style={mp.btnText}>{t('perfectDayModal.closeButton')}</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </Modal>
@@ -65,24 +60,36 @@ function ModalParfait({ visible, diffJours, objectifJour, prixCig, onClose }) {
 function StatColonne({ valeur, label, color }) {
   return (
     <View style={{ alignItems: 'center', flex: 1 }}>
-      <Text style={{ fontSize: 15, fontWeight: '700', color }}>{valeur}</Text>
-      <Text style={{ fontSize: 10, color: colors.gray, marginTop: 2 }}>{label}</Text>
+      <Text style={{ fontSize: 16, fontWeight: '800', color }}>{valeur}</Text>
+      <Text style={{ fontSize: 11, color: colors.gray, marginTop: 3, textAlign: 'center' }}>{label}</Text>
     </View>
   );
 }
 
 const mp = StyleSheet.create({
-  overlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 28 },
-  card:    { width: '100%', backgroundColor: colors.white, borderRadius: 20, overflow: 'hidden' },
-  banner:  { flexDirection: 'row', alignItems: 'center', backgroundColor: '#1B6B3A', paddingVertical: 16, paddingHorizontal: 18, gap: 12 },
+  overlay: { flex: 1, backgroundColor: 'rgba(23, 61, 38, 0.55)', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 28 },
+  card:    {
+    width: '100%', backgroundColor: colors.surface, borderRadius: radius.xl,
+    padding: spacing.lg, alignItems: 'center',
+    ...shadow.modal,
+  },
+  banner:  { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.primaryDeep, paddingVertical: 16, paddingHorizontal: 18, gap: 12, borderRadius: radius.xl },
   emoji:   { fontSize: 30 },
+  bannerIllusWrap: {
+    width: 48, height: 48, borderRadius: 24,
+    backgroundColor: 'rgba(255,255,255,0.25)',
+    alignItems: 'center', justifyContent: 'center',
+  },
+  bannerIllus: { width: 32, height: 32 },
   titre:   { fontSize: 15, fontWeight: '700', color: '#fff' },
   sous:    { fontSize: 12, color: 'rgba(255,255,255,0.8)', marginTop: 2 },
-  body:    { padding: 18 },
-  statsRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', backgroundColor: '#F9FAFB', borderRadius: 12, paddingVertical: 12, marginBottom: 16 },
-  div:     { width: 1, height: 32, backgroundColor: colors.grayBorder },
-  btn:     { backgroundColor: '#1B6B3A', borderRadius: 30, paddingVertical: 13, alignItems: 'center' },
-  btnText: { color: '#fff', fontSize: 14, fontWeight: '700' },
+  // Trophée feuillage posé directement sur la carte (réf. kit UI écran 04-B)
+  trophyIllus:  { width: 150, height: 150, marginBottom: 4 },
+  trophyTitle:  { fontSize: 20, fontWeight: '900', color: colors.primaryDeep, textAlign: 'center' },
+  trophySub:    { fontSize: 14, color: colors.gray, marginTop: 4, marginBottom: spacing.lg, textAlign: 'center' },
+  statsRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', width: '100%', paddingVertical: 14, marginBottom: spacing.md },
+  btn:     { width: '100%', backgroundColor: colors.primary, borderRadius: radius.pill, paddingVertical: 15, alignItems: 'center' },
+  btnText: { color: '#fff', fontSize: 15, fontWeight: '700' },
 });
 
 // ── Modal feedback journée (variante A = ok, variante B = dépassé) ───────────
@@ -105,17 +112,17 @@ function ModalObjectif({ visible, count, objectif, prixCigarette, onClose }) {
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <View style={mp.overlay}>
-        <View style={[mp.card, { borderWidth: 0.5, borderColor: isOk ? '#C0DD97' : '#FCD34D' }]}>
+        <View style={[mp.card, { borderWidth: 0.5, borderColor: isOk ? '#CFE0C6' : '#FCD34D' }]}>
 
           {/* ── Bandeau ── */}
           {isOk ? (
-            <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#EAF3DE', paddingVertical: 14, paddingHorizontal: 16, gap: 10, borderBottomWidth: 0.5, borderBottomColor: '#C0DD97' }}>
-              <View style={{ width: 38, height: 38, borderRadius: 19, backgroundColor: '#C0DD97', alignItems: 'center', justifyContent: 'center' }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: colors.primaryLight, paddingVertical: 14, paddingHorizontal: 16, gap: 10, borderBottomWidth: 0.5, borderBottomColor: '#CFE0C6' }}>
+              <View style={{ width: 38, height: 38, borderRadius: 19, backgroundColor: '#CFE0C6', alignItems: 'center', justifyContent: 'center' }}>
                 <Text style={{ fontSize: 20 }}>✅</Text>
               </View>
               <View style={{ flex: 1 }}>
-                <Text style={{ fontSize: 14, fontWeight: '700', color: '#27500A' }}>{t('goalModal.successTitle')}</Text>
-                <Text style={{ fontSize: 11, color: '#3B6D11', marginTop: 2 }}>{t('goalModal.successSubtitle')}</Text>
+                <Text style={{ fontSize: 14, fontWeight: '700', color: colors.primaryDeep }}>{t('goalModal.successTitle')}</Text>
+                <Text style={{ fontSize: 11, color: colors.primary, marginTop: 2 }}>{t('goalModal.successSubtitle')}</Text>
               </View>
             </View>
           ) : (
@@ -139,20 +146,20 @@ function ModalObjectif({ visible, count, objectif, prixCigarette, onClose }) {
                   <Text style={{ fontSize: 11, color: '#888' }}>{t('goalModal.goalLabel', { count: objectif })}</Text>
                 </View>
                 <View style={{ height: 7, backgroundColor: '#E5E7EB', borderRadius: 6, overflow: 'hidden', marginBottom: 4 }}>
-                  <View style={{ height: '100%', width: `${pct}%`, backgroundColor: '#1B6B3A', borderRadius: 6 }} />
+                  <View style={{ height: '100%', width: `${pct}%`, backgroundColor: colors.primary, borderRadius: 6 }} />
                 </View>
-                <Text style={{ fontSize: 10, color: '#1B6B3A', textAlign: 'right', marginBottom: 12 }}>{t('goalModal.marginLabel', { percent: marge })}</Text>
+                <Text style={{ fontSize: 10, color: colors.primary, textAlign: 'right', marginBottom: 12 }}>{t('goalModal.marginLabel', { percent: marge })}</Text>
                 <View style={{ flexDirection: 'row', gap: 8, marginBottom: 14 }}>
-                  <View style={{ flex: 1, backgroundColor: '#EAF3DE', borderRadius: 10, paddingVertical: 8, alignItems: 'center' }}>
-                    <Text style={{ fontSize: 13, fontWeight: '700', color: '#27500A' }}>{depense} €</Text>
-                    <Text style={{ fontSize: 10, color: '#1B6B3A', marginTop: 1 }}>{t('goalModal.spent')}</Text>
+                  <View style={{ flex: 1, backgroundColor: colors.primaryLight, borderRadius: 10, paddingVertical: 8, alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, fontWeight: '700', color: colors.primaryDeep }}>{depense} €</Text>
+                    <Text style={{ fontSize: 10, color: colors.primary, marginTop: 1 }}>{t('goalModal.spent')}</Text>
                   </View>
-                  <View style={{ flex: 1, backgroundColor: '#EAF3DE', borderRadius: 10, paddingVertical: 8, alignItems: 'center' }}>
-                    <Text style={{ fontSize: 13, fontWeight: '700', color: '#27500A' }}>{viePreservee} {t('common:min')}</Text>
-                    <Text style={{ fontSize: 10, color: '#1B6B3A', marginTop: 1 }}>{t('goalModal.lifePreserved')}</Text>
+                  <View style={{ flex: 1, backgroundColor: colors.primaryLight, borderRadius: 10, paddingVertical: 8, alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, fontWeight: '700', color: colors.primaryDeep }}>{viePreservee} {t('common:min')}</Text>
+                    <Text style={{ fontSize: 10, color: colors.primary, marginTop: 1 }}>{t('goalModal.lifePreserved')}</Text>
                   </View>
                 </View>
-                <TouchableOpacity style={{ backgroundColor: '#1B6B3A', borderRadius: 30, paddingVertical: 12, alignItems: 'center' }} onPress={onClose}>
+                <TouchableOpacity style={{ backgroundColor: colors.primary, borderRadius: 30, paddingVertical: 12, alignItems: 'center' }} onPress={onClose}>
                   <Text style={{ color: '#fff', fontSize: 14, fontWeight: '700' }}>{t('goalModal.successButton')}</Text>
                 </TouchableOpacity>
               </>
@@ -194,19 +201,19 @@ function ModalObjectif({ visible, count, objectif, prixCigarette, onClose }) {
   );
 }
 
-// ── Déclencheurs d'envie de fumer ───────────────────────────────────────────
+// ── Déclencheurs d'envie de fumer — illustrations 3D du kit UI (page 09) ────
 // Les clés (key) sont des identifiants de données utilisés pour l'analyse des
 // habitudes — ne pas les traduire. Seuls les libellés affichés (namespace
 // dashboard → triggers.*) sont traduits.
 const DECLENCHEURS = [
-  { key: 'stress',   emoji: '😰' },
-  { key: 'ennui',    emoji: '😴' },
-  { key: 'cafe',     emoji: '☕' },
-  { key: 'repas',    emoji: '🍽' },
-  { key: 'social',   emoji: '👥' },
-  { key: 'alcool',   emoji: '🍺' },
-  { key: 'habitude', emoji: '🚬' },
-  { key: 'autre',    emoji: '🤷' },
+  { key: 'stress',   img: UI.trig_stress },
+  { key: 'ennui',    img: UI.trig_ennui },
+  { key: 'cafe',     img: UI.trig_cafe },
+  { key: 'repas',    img: UI.trig_repas },
+  { key: 'social',   img: UI.trig_entourage },
+  { key: 'alcool',   img: UI.trig_alcool },
+  { key: 'habitude', img: UI.trig_habitude },
+  { key: 'autre',    img: UI.trig_autre },
 ];
 
 // ── Modal "J'ai envie de fumer" ─────────────────────────────────────────────
@@ -246,7 +253,9 @@ function ModalEnvie({ visible, onSave, onClose }) {
           {step === 'pick' && (
             <>
               <View style={[mp.banner, { backgroundColor: '#B45309' }]}>
-                <Text style={mp.emoji}>🔥</Text>
+                <View style={mp.bannerIllusWrap}>
+                  <Image source={UI.envie_flamme} style={mp.bannerIllus} resizeMode="contain" />
+                </View>
                 <View style={{ flex: 1 }}>
                   <Text style={mp.titre}>{t('envieModal.pickTitle')}</Text>
                   <Text style={mp.sous}>{t('envieModal.pickSubtitle')}</Text>
@@ -256,7 +265,7 @@ function ModalEnvie({ visible, onSave, onClose }) {
                 <View style={env.grid}>
                   {DECLENCHEURS.map(d => (
                     <TouchableOpacity key={d.key} style={env.chip} onPress={() => handleSelect(d.key)}>
-                      <Text style={{ fontSize: 22 }}>{d.emoji}</Text>
+                      <Image source={d.img} style={env.chipIllus} resizeMode="contain" />
                       <Text style={env.chipLabel}>{t(`triggers.${d.key}`)}</Text>
                     </TouchableOpacity>
                   ))}
@@ -325,13 +334,15 @@ function ModalEnvie({ visible, onSave, onClose }) {
 }
 
 const env = StyleSheet.create({
-  grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 10 },
+  grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, marginBottom: 14 },
   chip: {
-    width: '48%', flexGrow: 1, backgroundColor: '#F7F8FA',
-    borderRadius: 12, borderWidth: 1, borderColor: '#EEE',
-    paddingVertical: 12, alignItems: 'center', gap: 4,
+    width: '29%', flexGrow: 1, backgroundColor: colors.cream,
+    borderRadius: radius.lg, borderWidth: 1, borderColor: colors.grayBorder,
+    paddingVertical: 16, alignItems: 'center', gap: 8,
+    minHeight: 96, justifyContent: 'center',
   },
-  chipLabel: { fontSize: 12, fontWeight: '600', color: colors.black },
+  chipIllus: { width: 48, height: 48 },
+  chipLabel: { fontSize: 11, fontWeight: '700', color: colors.primaryDeep, textAlign: 'center' },
   conseil:   { fontSize: 14, color: colors.black, lineHeight: 22, textAlign: 'center', marginBottom: 16 },
   noteInput: {
     borderWidth: 1, borderColor: colors.grayBorder, borderRadius: 12,
@@ -501,49 +512,54 @@ export default function DashboardScreen({ navigation }) {
             </Text>
           </Text>
           <TouchableOpacity style={styles.bellBtn} onPress={() => navigation.navigate('Notifications')}>
-            <Text style={styles.bellIcon}>🔔</Text>
+            <Image source={UI.cloche_rappel} style={styles.bellIcon} resizeMode="contain" />
           </TouchableOpacity>
         </View>
 
         {/* ── Carte verte "Temps sans cigarette" (remise à zéro à chaque cigarette) ── */}
         <View style={styles.heroCard}>
-          <View style={styles.heroRow}>
-            <Text style={styles.heroLabel}>{t('hero.label')}</Text>
-            <Text style={styles.heroMedal}>🏅</Text>
+          <View style={{ flex: 1 }}>
+            <View style={styles.heroRow}>
+              <Text style={styles.heroLabel}>{t('hero.label')}</Text>
+              <Text style={styles.heroMedal}>🏅</Text>
+            </View>
+            <Text style={styles.heroTimer}>{dureeSansCigStr}</Text>
+            <Text style={styles.heroSub}>
+              {aDejaFume ? t('hero.sinceLastCig') : t('hero.sinceStart', { duration: dureeStr })}
+            </Text>
           </View>
-          <Text style={styles.heroTimer}>{dureeSansCigStr}</Text>
-          <Text style={styles.heroSub}>
-            {aDejaFume ? t('hero.sinceLastCig') : t('hero.sinceStart', { duration: dureeStr })}
-          </Text>
+          <Image source={UI.chrono_feuilles} style={styles.heroIllus} resizeMode="contain" />
         </View>
 
-        {/* ── Section Aujourd'hui ── */}
+        {/* ── Section Aujourd'hui (kit UI accueil_reference) ── */}
         <View style={styles.todayCard}>
-          <Text style={styles.sectionTitle}>{t('today.sectionTitle')}</Text>
+          <Text style={styles.todayTitle}>{t('today.sectionTitle')}</Text>
 
           <View style={styles.todayContent}>
             {/* Arc circulaire */}
             <View style={styles.arcContainer}>
-              <CircularProgress current={cigarettesToday} total={objectifJour} size={110} />
+              <CircularProgress current={cigarettesToday} total={objectifJour} size={84} />
               <View style={styles.arcInner}>
                 <Text style={[
                   styles.arcCurrent,
-                  cigarettesToday > objectifJour && { color: '#DC2626' },
-                  cigarettesToday === objectifJour && cigarettesToday > 0 && { color: '#F59E0B' },
+                  cigarettesToday > objectifJour && { color: colors.danger },
+                  cigarettesToday === objectifJour && cigarettesToday > 0 && { color: colors.warning },
                 ]}>{cigarettesToday}</Text>
-                <Text style={styles.arcSep}>/</Text>
-                <Text style={styles.arcTotal}>{objectifJour}</Text>
+                <Text style={styles.arcTotal}>/{objectifJour}</Text>
               </View>
             </View>
 
-            {/* Label à côté */}
-            <View style={styles.todayRight}>
+            {/* Label au centre */}
+            <View style={styles.todayCenter}>
               <Text style={styles.todaySubtitle}>{t('today.subtitle')}</Text>
               <Text style={styles.todayObjectif}>{t('today.goal', { count: objectifJour })}</Text>
             </View>
+
+            {/* Illustration paquet à droite */}
+            <Image source={UI.paquet_cigarettes} style={styles.todayIllus} resizeMode="contain" />
           </View>
 
-          {/* Bouton valider */}
+          {/* Bouton valider — pilule pleine largeur avec check */}
           <TouchableOpacity
             style={styles.validateBtn}
             onPress={() => {
@@ -553,6 +569,7 @@ export default function DashboardScreen({ navigation }) {
               else setModalObjectif(true);
             }}
           >
+            <Text style={styles.validateBtnCheck}>✓</Text>
             <Text style={styles.validateBtnText}>{t('today.validateButton')}</Text>
           </TouchableOpacity>
 
@@ -565,48 +582,48 @@ export default function DashboardScreen({ navigation }) {
           </TouchableOpacity>
         </View>
 
-        {/* ── Grille stats 2×2 — tout est comparé au PLAN du jour ── */}
+        {/* ── Grille stats 2×2 — illustration à gauche, texte à droite ── */}
         <View style={styles.statsGrid}>
           <StatBox
             img={PICTOS.objectif}
             valeur={ecartPlanJour > 0 ? t('stats.aboveGoal', { count: ecartPlanJour }) : t('stats.belowGoal', { count: Math.abs(ecartPlanJour) })}
             label={t('stats.vsGoalLabel', { count: objectifJour })}
-            valeurColor={sousObjectif ? colors.primary : '#DC2626'}
+            valeurColor={sousObjectif ? colors.primaryDeep : colors.danger}
           />
           <StatBox
             img={PICTOS.economie}
             valeur={`${argentVsPlanJour >= 0 ? '+' : '-'}${fmtEur(Math.abs(argentVsPlanJour))}€`}
             label={argentVsPlanJour >= 0 ? t('stats.moneyPreserved') : t('stats.moneyOver')}
-            valeurColor={argentVsPlanJour >= 0 ? colors.primary : '#DC2626'}
+            valeurColor={argentVsPlanJour >= 0 ? colors.primaryDeep : colors.danger}
           />
           <StatBox
             img={PICTOS.temps}
             valeur={t('stats.minutesVsPlan', { sign: vieVsPlanJour >= 0 ? '+' : '-', count: Math.abs(vieVsPlanJour) })}
             label={vieVsPlanJour >= 0 ? t('stats.lifePreservedVsPlan') : t('stats.lifeLostVsPlan')}
-            valeurColor={vieVsPlanJour >= 0 ? colors.primary : '#DC2626'}
+            valeurColor={vieVsPlanJour >= 0 ? colors.primaryDeep : colors.danger}
           />
           <StatBox
             img={PICTOS.evitees}
             valeur={t('stats.progressionValue', { sign: progression > 0 ? '+' : '', count: progression })}
             label={t('stats.progressionLabel')}
-            valeurColor={progressionPositif ? colors.primary : colors.red}
+            valeurColor={progressionPositif ? colors.primaryDeep : colors.danger}
           />
         </View>
 
-        {/* ── Envie de fumer ── */}
+        {/* ── Envie de fumer — layout horizontal avec bouton à droite ── */}
         <View style={styles.envieCard}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: spacing.sm }}>
-            <Text style={{ fontSize: 24 }}>🔥</Text>
-            <View style={{ flex: 1 }}>
+          <View style={styles.envieTop}>
+            <Image source={UI.envie_flamme} style={styles.envieIllus} resizeMode="contain" />
+            <View style={{ flex: 1, minWidth: 0, marginHorizontal: 8 }}>
               <Text style={styles.envieTitle}>{t('envieCard.title')}</Text>
               <Text style={styles.envieSub}>
                 {t('envieCard.subtitle')}
               </Text>
             </View>
+            <TouchableOpacity style={styles.envieBtn} onPress={() => setModalEnvie(true)}>
+              <Text style={styles.envieBtnText}>{t('envieCard.button')}</Text>
+            </TouchableOpacity>
           </View>
-          <TouchableOpacity style={styles.envieBtn} onPress={() => setModalEnvie(true)}>
-            <Text style={styles.envieBtnText}>{t('envieCard.button')}</Text>
-          </TouchableOpacity>
           {(profile?.envies?.length ?? 0) > 0 && (
             <Text style={styles.envieCount}>
               {t('envieCard.count', { count: profile.envies.length })}
@@ -614,30 +631,45 @@ export default function DashboardScreen({ navigation }) {
           )}
         </View>
 
-        {/* ── Motivation du jour ── */}
-        <View style={styles.motivCard}>
-          <View style={styles.motivHeader}>
-            <Text style={styles.motivTitle}>{t('motivation.sectionTitle')}</Text>
-            <TouchableOpacity onPress={() => { if (!liked) jouerSon('motivation_like'); setLiked(l => !l); }}>
-              <Text style={styles.motivHeart}>{liked ? '❤️' : '🤍'}</Text>
-            </TouchableOpacity>
+        {/* ── Motivation du jour — fond sauge + illustration à droite ── */}
+        <TouchableOpacity
+          activeOpacity={0.9}
+          onPress={() => { if (!liked) jouerSon('motivation_like'); setLiked(l => !l); }}
+          style={styles.motivCard}
+        >
+          <View style={{ flex: 1 }}>
+            <View style={styles.motivHeader}>
+              <Text style={styles.motivSparkle}>✨</Text>
+              <Text style={styles.motivTitle}>{t('motivation.sectionTitle')}</Text>
+            </View>
+            <Text style={styles.motivQuote}>"{motivationQuotes[quoteIdx]}"</Text>
           </View>
-          <Text style={styles.motivQuote}>"{motivationQuotes[quoteIdx]}"</Text>
-        </View>
+          <Image source={UI.coeur_feuilles} style={styles.motivIllus} resizeMode="contain" />
+        </TouchableOpacity>
 
-        {/* ── Boutons dev ── */}
-        <TouchableOpacity
-          style={styles.resetBtn}
-          onPress={async () => { await updateProfile(buildDemoProfile()); }}
-        >
-          <Text style={styles.resetText}>{t('devButtons.loadDemo')}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.resetBtn}
-          onPress={async () => { await resetProfile(); }}
-        >
-          <Text style={styles.resetText}>{t('devButtons.resetOnboarding')}</Text>
-        </TouchableOpacity>
+        {/* ── Boutons dev — 2 cartes horizontales côte à côte ── */}
+        <View style={styles.devRow}>
+          <TouchableOpacity
+            style={styles.devCard}
+            onPress={async () => { await updateProfile(buildDemoProfile()); }}
+          >
+            <Text style={styles.devIcon}>🎬</Text>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.devText}>{t('devButtons.loadDemo')}</Text>
+              <View style={styles.devProgress}>
+                <View style={styles.devProgressFill} />
+              </View>
+            </View>
+          </TouchableOpacity>
+          <View style={styles.devDivider} />
+          <TouchableOpacity
+            style={styles.devCard}
+            onPress={async () => { await resetProfile(); }}
+          >
+            <Text style={styles.devIcon}>↺</Text>
+            <Text style={styles.devText}>{t('devButtons.resetOnboarding')}</Text>
+          </TouchableOpacity>
+        </View>
 
       </ScrollView>
     </SafeAreaView>
@@ -649,17 +681,22 @@ function StatBox({ emoji, img, valeur, label, valeurColor = colors.black }) {
   return (
     <View style={styles.statBox}>
       {img
-        ? <Image source={img} style={{ width: 34, height: 34, marginBottom: 6 }} resizeMode="contain" />
+        ? <Image source={img} style={styles.statIllus} resizeMode="contain" />
         : <Text style={styles.statEmoji}>{emoji}</Text>}
-      <Text style={[styles.statValeur, { color: valeurColor }]}>{valeur}</Text>
-      <Text style={styles.statLabel}>{label}</Text>
+      {/* minWidth: 0 nécessaire sur web pour que ce flex:1 accepte de se réduire
+          au lieu de forcer la troncature du texte avec adjustsFontSizeToFit,
+          qui ne fonctionne pas sur React Native Web (iOS/Android uniquement). */}
+      <View style={styles.statText}>
+        <Text style={[styles.statValeur, { color: valeurColor }]}>{valeur}</Text>
+        <Text style={styles.statLabel} numberOfLines={3}>{label}</Text>
+      </View>
     </View>
   );
 }
 
-// ── Styles ──────────────────────────────────────────────────────────────────
+// ── Styles (refonte kit UI — accueil_reference) ──────────────────────────────
 const styles = StyleSheet.create({
-  safe:   { flex: 1, backgroundColor: '#F7F8FA' },
+  safe:   { flex: 1, backgroundColor: colors.cream },
   scroll: { paddingHorizontal: spacing.md, paddingTop: spacing.md, paddingBottom: 90 },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   loadingText: { fontSize: font.md, color: colors.gray, marginTop: spacing.sm },
@@ -669,94 +706,137 @@ const styles = StyleSheet.create({
     flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
     marginBottom: spacing.md,
   },
-  hello:  { fontSize: font.lg, color: colors.black, fontWeight: '500' },
-  prenom: { fontWeight: '800', color: colors.black },
+  hello:  { fontSize: 22, color: colors.black, fontWeight: '500' },
+  prenom: { fontWeight: '900', color: colors.primaryDeep },
   bellBtn: {
-    width: 40, height: 40, borderRadius: 20,
-    backgroundColor: colors.white, alignItems: 'center', justifyContent: 'center',
-    shadowColor: '#000', shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.08, shadowRadius: 4, elevation: 2,
+    width: 42, height: 42, borderRadius: 21,
+    backgroundColor: colors.surface, alignItems: 'center', justifyContent: 'center',
+    borderWidth: 1, borderColor: colors.grayBorder,
+    ...shadow.card,
   },
-  bellIcon: { fontSize: 18 },
+  bellIcon: { width: 26, height: 26 },
 
-  // Hero verte
+  // Hero verte + grand chrono à droite (PNG réellement transparent, posé tel quel)
   heroCard: {
-    backgroundColor: colors.primary, borderRadius: radius.xl,
-    padding: spacing.lg, marginBottom: spacing.md,
+    flexDirection: 'row', alignItems: 'center',
+    backgroundColor: colors.primaryDeep, borderRadius: radius.xl,
+    paddingVertical: 24, paddingLeft: spacing.lg, paddingRight: spacing.sm,
+    marginBottom: spacing.md,
+    ...shadow.card,
   },
-  heroRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 },
-  heroLabel: { color: 'rgba(255,255,255,0.85)', fontSize: font.sm, fontWeight: '600' },
-  heroMedal: { fontSize: 22 },
-  heroTimer: { color: colors.white, fontSize: 30, fontWeight: '900', letterSpacing: 1 },
-  heroSub:   { color: 'rgba(255,255,255,0.7)', fontSize: 11, marginTop: 4 },
+  heroIllus: { width: 118, height: 118 },
+  heroRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 8 },
+  heroLabel: { color: 'rgba(255,255,255,0.9)', fontSize: 15, fontWeight: '600' },
+  heroMedal: { fontSize: 20 },
+  heroTimer: { color: colors.white, fontSize: 44, fontWeight: '900', letterSpacing: 0.3, marginBottom: 6 },
+  heroSub:   { color: 'rgba(255,255,255,0.7)', fontSize: 13 },
 
-  // Aujourd'hui
+  // Aujourd'hui — anneau à gauche · texte au centre · paquet à droite
   todayCard: {
-    backgroundColor: colors.white, borderRadius: radius.xl,
-    padding: spacing.md, marginBottom: spacing.md,
-    shadowColor: '#000', shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05, shadowRadius: 4, elevation: 2,
+    backgroundColor: colors.surface, borderRadius: radius.xl,
+    padding: spacing.lg, marginBottom: spacing.md,
+    borderWidth: 1, borderColor: colors.grayBorder,
+    ...shadow.card,
   },
-  sectionTitle: { fontSize: font.md, fontWeight: '700', color: colors.black, marginBottom: spacing.md },
-  todayContent: { flexDirection: 'row', alignItems: 'center', marginBottom: spacing.md },
-  arcContainer: { position: 'relative', width: 110, height: 110, alignItems: 'center', justifyContent: 'center' },
+  todayTitle: { fontSize: 20, fontWeight: '900', color: colors.primaryDeep, marginBottom: spacing.md },
+  todayContent: { flexDirection: 'row', alignItems: 'center', marginBottom: spacing.md, gap: 6 },
+  arcContainer: { position: 'relative', width: 84, height: 84, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
   arcInner: { position: 'absolute', flexDirection: 'row', alignItems: 'baseline' },
-  arcCurrent: { fontSize: 26, fontWeight: '900', color: colors.primary },
-  arcSep:     { fontSize: 14, color: colors.gray, marginHorizontal: 2 },
-  arcTotal:   { fontSize: 14, fontWeight: '600', color: colors.gray },
-  todayRight: { marginLeft: spacing.lg, flex: 1 },
-  todaySubtitle: { fontSize: font.md, fontWeight: '600', color: colors.black, lineHeight: 22 },
-  todayObjectif:  { fontSize: 12, color: colors.gray, marginTop: 4 },
+  arcCurrent: { fontSize: 34, fontWeight: '900', color: colors.primary, lineHeight: 36 },
+  arcTotal:   { fontSize: 15, fontWeight: '600', color: colors.gray, marginLeft: 2 },
+  // minWidth: 0 est indispensable sur React Native Web : sans lui, un enfant flex:1
+  // dans une row garde sa largeur de contenu et force un retour à la ligne lettre
+  // par lettre au lieu de rester sur la largeur réellement disponible.
+  todayCenter:   { flex: 1, minWidth: 0, marginLeft: 2 },
+  todaySubtitle: { fontSize: 17, fontWeight: '800', color: colors.black, lineHeight: 21 },
+  todayObjectif: { fontSize: 12, color: colors.gray, marginTop: 4 },
+  todayIllus:    { width: 84, height: 84, flexShrink: 0 },
 
+  // Bouton valider — pilule pleine largeur avec check
   validateBtn: {
-    backgroundColor: colors.primary, borderRadius: radius.full,
-    paddingVertical: 14, alignItems: 'center', marginBottom: spacing.sm,
+    flexDirection: 'row', backgroundColor: colors.primaryDeep, borderRadius: radius.pill,
+    paddingVertical: 15, alignItems: 'center', justifyContent: 'center',
+    gap: 8, marginBottom: spacing.sm,
+    ...shadow.card,
   },
-  validateBtnText: { color: colors.white, fontSize: font.md, fontWeight: '700' },
+  validateBtnCheck: { color: colors.white, fontSize: 18, fontWeight: '900' },
+  validateBtnText:  { color: colors.white, fontSize: font.md, fontWeight: '700' },
   fumerLink:   { alignItems: 'center', paddingVertical: 4 },
-  fumerLinkText: { color: colors.primary, fontSize: font.sm, fontWeight: '500' },
+  fumerLinkText: { color: colors.primary, fontSize: font.sm, fontWeight: '600' },
 
-  // Stats 2×2
+  // Stats 2×2 — cercle crème à gauche · valeur+label à droite (kit UI)
   statsGrid: {
-    flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, marginBottom: spacing.md,
+    flexDirection: 'row', flexWrap: 'wrap', gap: spacing.md, marginBottom: spacing.md,
   },
   statBox: {
-    width: (SCREEN_W - spacing.md * 2 - spacing.sm) / 2,
-    backgroundColor: colors.white, borderRadius: radius.lg,
-    padding: spacing.md, alignItems: 'flex-start',
-    shadowColor: '#000', shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05, shadowRadius: 4, elevation: 2,
+    width: (SCREEN_W - spacing.md * 2 - spacing.md) / 2,
+    backgroundColor: colors.surface, borderRadius: radius.lg,
+    padding: 10, flexDirection: 'row', alignItems: 'center',
+    gap: 6,
+    borderWidth: 1, borderColor: colors.grayBorder,
+    minHeight: 92,
+    ...shadow.card,
   },
-  statEmoji:  { fontSize: 22, marginBottom: 6 },
-  statValeur: { fontSize: font.xl, fontWeight: '900', color: colors.black, marginBottom: 2 },
-  statLabel:  { fontSize: 12, color: colors.gray, lineHeight: 16 },
+  // Illustration 3D, sans cercle de fond — le PNG a déjà son fond transparent
+  statIllus:  { width: 46, height: 46, flexShrink: 0 },
+  statEmoji:  { fontSize: 22 },
+  // minWidth: 0 nécessaire sur web pour que ce flex:1 se réduise correctement
+  // au lieu de forcer la valeur à déborder / se faire tronquer.
+  statText:   { flex: 1, minWidth: 0, justifyContent: 'center' },
+  statValeur: { fontSize: 16, fontWeight: '900', color: colors.primaryDeep, marginBottom: 2 },
+  statLabel:  { fontSize: 10.5, color: colors.gray, lineHeight: 13 },
 
-  // Motivation
-  motivCard: {
-    backgroundColor: colors.white, borderRadius: radius.xl,
-    padding: spacing.md, marginBottom: spacing.md,
-    shadowColor: '#000', shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05, shadowRadius: 4, elevation: 2,
-  },
-  motivHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: spacing.sm },
-  motivTitle:  { fontSize: font.sm, fontWeight: '700', color: colors.black },
-  motivHeart:  { fontSize: 22 },
-  motivQuote:  { fontSize: font.sm, color: colors.gray, lineHeight: 22, fontStyle: 'italic' },
-
-  // Envie de fumer
+  // Envie de fumer — flamme · texte · bouton rectangle arrondi orange
   envieCard: {
-    backgroundColor: '#FFF7ED', borderRadius: radius.xl,
-    borderWidth: 1, borderColor: '#FED7AA',
+    backgroundColor: '#FDF0DC', borderRadius: radius.xl,
+    borderWidth: 1, borderColor: '#F0D5A8',
     padding: spacing.md, marginBottom: spacing.md,
   },
-  envieTitle: { fontSize: font.sm, fontWeight: '700', color: '#92400E' },
-  envieSub:   { fontSize: 11, color: '#B45309', marginTop: 2, lineHeight: 15 },
+  envieTop:   { flexDirection: 'row', alignItems: 'center' },
+  envieIllus: { width: 46, height: 46 },
+  envieTitle: { fontSize: 13.5, fontWeight: '800', color: '#5C3800' },
+  envieSub:   { fontSize: 11, color: '#7A5A20', marginTop: 3, lineHeight: 14 },
   envieBtn: {
-    backgroundColor: '#B45309', borderRadius: radius.full,
-    paddingVertical: 12, alignItems: 'center',
+    backgroundColor: '#B45309', borderRadius: 14,
+    paddingVertical: 12, paddingHorizontal: 8,
+    alignItems: 'center', justifyContent: 'center',
+    width: 96, minHeight: 62,
   },
-  envieBtnText: { color: colors.white, fontSize: font.sm, fontWeight: '700' },
-  envieCount:   { fontSize: 10, color: '#B45309', textAlign: 'center', marginTop: 8 },
+  envieBtnText: { color: colors.white, fontSize: 13, fontWeight: '700', textAlign: 'center', lineHeight: 16 },
+  envieCount:   { fontSize: 11, color: '#B45309', textAlign: 'center', marginTop: 10, fontWeight: '600' },
+
+  // Motivation — fond sauge + illustration cœur/feuilles à droite (kit UI)
+  motivCard: {
+    flexDirection: 'row', alignItems: 'center',
+    backgroundColor: '#EEF3E4', borderRadius: radius.xl,
+    padding: spacing.md, marginBottom: spacing.md,
+    borderWidth: 1, borderColor: '#D5E4CE',
+  },
+  motivHeader: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 6 },
+  motivSparkle:{ fontSize: 16 },
+  motivTitle:  { fontSize: 14, fontWeight: '800', color: colors.primaryDeep },
+  motivIllus:  { width: 58, height: 58, marginLeft: 8 },
+  motivHeart:  { fontSize: 22 },
+  motivQuote:  { fontSize: 13, color: '#3A5942', lineHeight: 19, fontStyle: 'italic' },
+
+  // Boutons dev — carte horizontale à 2 zones cliquables
+  devRow: {
+    flexDirection: 'row', alignItems: 'stretch',
+    backgroundColor: colors.surface, borderRadius: radius.xl,
+    borderWidth: 1, borderColor: colors.grayBorder,
+    marginBottom: spacing.md,
+    overflow: 'hidden',
+    ...shadow.card,
+  },
+  devCard: {
+    flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
+    gap: 8, paddingVertical: 14, paddingHorizontal: 10,
+  },
+  devDivider: { width: 1, backgroundColor: colors.grayBorder },
+  devIcon:    { fontSize: 18 },
+  devText:    { fontSize: 12, color: colors.black, textAlign: 'center', flexShrink: 1 },
+  devProgress:{ height: 3, backgroundColor: colors.grayLight, borderRadius: 2, marginTop: 6, overflow: 'hidden' },
+  devProgressFill: { width: '35%', height: '100%', backgroundColor: colors.primary },
 
   // Reset
   resetBtn:  { alignItems: 'center', paddingVertical: spacing.md },

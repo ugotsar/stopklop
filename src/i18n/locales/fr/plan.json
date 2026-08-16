@@ -15,7 +15,13 @@
       "modalTitle": "Argent économisé",
       "explanationIntro_one": "Avant l'app, vous fumiez {{consoAvant}} cigarettes par jour. Votre objectif actuel est de {{objectif}} par jour : cela fait {{count}} cigarette évitée chaque jour.",
       "explanationIntro_other": "Avant l'app, vous fumiez {{consoAvant}} cigarettes par jour. Votre objectif actuel est de {{objectif}} par jour : cela fait {{count}} cigarettes évitées chaque jour.",
-      "explanationDetail": "\n\nChaque cigarette coûte {{prixCig}} € (prix du paquet ÷ cigarettes par paquet).\n{{count}} × {{prixCig}} € × 30 jours = {{ecoMois}} € par mois.",
+      "explanationDetail": "Chaque cigarette coûte {{prixCig}} €\n(prix du paquet ÷ cigarettes par paquet).\n{{count}} × {{prixCig}} € × 30 jours = {{ecoMois}} € / mois.",
+      "beforeLabel": "Avant l'app",
+      "goalLabel": "Objectif actuel",
+      "unitPerDay": "/ jour",
+      "avoidedPerDay_one": "{{count}} cigarette évitée",
+      "avoidedPerDay_other": "{{count}} cigarettes évitées",
+      "avoidedSub": "chaque jour",
       "note": "Vous pouvez ajuster le prix du paquet dans Profil → Paramètres de consommation."
     },
     "life": {
@@ -38,7 +44,21 @@
       "label": "santé",
       "sublabel": "chaque jour",
       "modalTitle": "Meilleure santé chaque jour",
-      "explanation": "Votre corps se répare dès que vous réduisez :\n\n• 20 min : la tension artérielle redevient normale\n• 8 h : le monoxyde de carbone dans le sang diminue de moitié\n• 24 h : le risque de crise cardiaque commence à baisser\n• 48 h : le goût et l'odorat s'améliorent\n• 72 h : la respiration devient plus facile\n• 1 an : le risque d'AVC rejoint celui d'un non-fumeur",
+      "explanation": "Votre corps se répare dès que vous réduisez :",
+      "timeline": {
+        "t20min": "20 min",
+        "l20min": "la tension artérielle redevient normale",
+        "t8h":    "8 h",
+        "l8h":    "le monoxyde de carbone dans le sang diminue de moitié",
+        "t24h":   "24 h",
+        "l24h":   "le risque de crise cardiaque commence à baisser",
+        "t48h":   "48 h",
+        "l48h":   "le goût et l'odorat s'améliorent",
+        "t72h":   "72 h",
+        "l72h":   "la respiration devient plus facile",
+        "t1an":   "1 an",
+        "l1an":   "le risque d'AVC rejoint celui d'un non-fumeur"
+      },
       "note": "Retrouvez votre progression santé détaillée dans le tableau de bord."
     }
   },

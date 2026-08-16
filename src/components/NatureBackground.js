@@ -1,8 +1,9 @@
 import React from 'react';
-import { View, StyleSheet, Dimensions } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import Svg, { Path, Ellipse, G } from 'react-native-svg';
+import { getScreenWidth } from '../theme';
 
-const { width } = Dimensions.get('window');
+const width = getScreenWidth();
 const H = 320;
 
 // Layered mountain + forest + hot air balloon SVG background

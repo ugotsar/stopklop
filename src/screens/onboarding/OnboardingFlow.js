@@ -594,7 +594,7 @@ export default function OnboardingFlow({ navigation }) {
                 }}
               >
                 <Image source={PICTOS_MOTIV[m.key]} style={st.motivImg} resizeMode="contain" />
-                <Text style={[st.motivLabel, active && { color: colors.primary, fontWeight: '700' }]}>{m.label}</Text>
+                <Text style={[st.motivLabel, active && { color: colors.primary, fontWeight: '700' }]}>{t(`motivations.options.${m.key}`)}</Text>
               </TouchableOpacity>
             );
           })}
@@ -661,8 +661,8 @@ export default function OnboardingFlow({ navigation }) {
 
   else if (page === 'synthese') {
     const motivLabels = answers.motivations
-      .map(k => MOTIVATIONS_CHOIX.find(m => m.key === k)?.label)
-      .filter(Boolean);
+      .filter(k => MOTIVATIONS_CHOIX.some(m => m.key === k))
+      .map(k => t(`motivations.options.${k}`));
     body = (
       <>
         <Text style={st.title}>Ton parcours est prêt 🎉</Text>

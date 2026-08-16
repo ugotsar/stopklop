@@ -12,7 +12,7 @@
     "sectionTitle": "Hoy",
     "subtitle": "cigarrillos\nhoy",
     "goal": "Objetivo: {{count}} máx.",
-    "validateButton": "✓  Confirmar mi día",
+    "validateButton": "Confirmar mi día",
     "smokedLink": "Hoy he fumado  ›"
   },
   "perfectDayModal": {
@@ -66,7 +66,7 @@
     "smokedButton": "Fumé  🚬  (+1 cigarrillo)"
   },
   "motivation": {
-    "sectionTitle": "✨  Motivación del día",
+    "sectionTitle": "Motivación del día",
     "quotes": [
       "Cada hora sin fumar es una victoria para tu salud.",
       "No estás renunciando a algo, estás ganando una vida mejor.",
@@ -90,12 +90,12 @@
   "envieCard": {
     "title": "¿Ganas de fumar ahora mismo?",
     "subtitle": "Regístralo: analizamos tus detonantes para ayudarte a anticiparlos.",
-    "button": "Tengo ganas de fumar",
+    "button": "Tengo ganas\nde fumar",
     "count_one": "{{count}} ganas registradas — análisis disponible en la pestaña Plan",
     "count_other": "{{count}} ganas registradas — análisis disponible en la pestaña Plan"
   },
   "devButtons": {
-    "loadDemo": "🎬 Cargar demo (5 semanas de uso)",
-    "resetOnboarding": "↩ Reiniciar incorporación"
+    "loadDemo": "Cargar demo (5 semanas de uso)",
+    "resetOnboarding": "Reiniciar incorporación"
   }
 }

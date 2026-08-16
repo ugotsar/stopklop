@@ -5,10 +5,12 @@ import {
 } from 'react-native';
 import Svg, { Path, Circle, Text as SvgText } from 'react-native-svg';
 import { useTranslation } from 'react-i18next';
+import { Image } from 'react-native';
 import { useUser } from '../context/UserContext';
-import { colors, spacing, font, radius } from '../theme';
+import { colors, spacing, font, radius, shadow, getScreenWidth } from '../theme';
+import { UI } from '../assets/uiKit';
 
-const { width: SCREEN_W } = Dimensions.get('window');
+const SCREEN_W = getScreenWidth();
 const CHART_W = SCREEN_W - spacing.md * 4;
 const CHART_H = 80;
 
@@ -59,10 +61,10 @@ function ProjectionChart({ badSerie, planSerie, gain, width = CHART_W, height = 
       <Path d={planPath} stroke={colors.primary} strokeWidth={2.5} fill="none" strokeLinecap="round" strokeLinejoin="round" />
 
       {/* Libellé du gain, au cœur de la zone */}
-      <SvgText x={width * 0.60} y={midY} fontSize={12} fontWeight="700" fill="#166534" textAnchor="middle">
+      <SvgText x={width * 0.60} y={midY} fontSize={12} fontWeight="700" fill={colors.primaryDeep} textAnchor="middle">
         {`💚 ${new Intl.NumberFormat(i18n.language).format(gain)} € ${t('projection.chartRemaining')}`}
       </SvgText>
-      <SvgText x={width * 0.60} y={midY + 13} fontSize={11} fontWeight="700" fill="#166534" textAnchor="middle">
+      <SvgText x={width * 0.60} y={midY + 13} fontSize={11} fontWeight="700" fill={colors.primaryDeep} textAnchor="middle">
         {t('projection.chartInPocket')}
       </SvgText>
 
@@ -106,67 +108,276 @@ function LigneProjection({ icone, iconeBg, iconeCouleur, titre, sous, valeur, va
   );
 }
 
-// ── Libellés des déclencheurs d'envie (emoji uniquement, le texte vient de i18n) ──
+// ── Illustrations 3D des déclencheurs d'envie (kit UI, page 09) — le texte
+// vient de i18n. Mêmes assets + couleurs que la grille de sélection, pour
+// rester cohérent partout dans l'app.
 const TRIGGER_META = {
-  stress:   '😰',
-  ennui:    '😴',
-  cafe:     '☕',
-  repas:    '🍽',
-  social:   '👥',
-  alcool:   '🍺',
-  habitude: '🚬',
-  autre:    '🤷',
+  stress:   UI.trig_stress,
+  ennui:    UI.trig_ennui,
+  cafe:     UI.trig_cafe,
+  repas:    UI.trig_repas,
+  social:   UI.trig_entourage,
+  alcool:   UI.trig_alcool,
+  habitude: UI.trig_habitude,
+  autre:    UI.trig_autre,
 };
 
-// ── Modal explicative d'une carte impact ────────────────────────────────────
+// ── Modal explicative d'une carte impact (refonte kit UI 05/06/07/08) ────────
+// 4 layouts distincts selon info.type :
+//   'savings'   → écran 05 : argent économisé (calcul + 3 projections)
+//   'lifeMonth' → écran 06 : vie récupérée par mois
+//   'lifeYear'  → écran 07 : vie récupérée par an
+//   'health'    → écran 08 : bénéfices santé (frise verticale des jalons)
 function ImpactModal({ info, onClose }) {
   const { t } = useTranslation('plan');
+  if (!info) return <Modal visible={false} transparent />;
   return (
-    <Modal visible={!!info} transparent animationType="fade" onRequestClose={onClose}>
-      <View style={im.overlay}>
+    <Modal visible transparent animationType="fade" onRequestClose={onClose}>
+      <ScrollView
+        style={im.overlay}
+        contentContainerStyle={im.overlayContent}
+        showsVerticalScrollIndicator={false}
+      >
         <View style={im.card}>
-          <View style={im.header}>
-            <Text style={{ fontSize: 26 }}>{info?.icon}</Text>
-            <Text style={im.titre}>{info?.titre}</Text>
-          </View>
-
-          <Text style={im.explication}>{info?.explication}</Text>
-
-          {info?.projections && (
-            <View style={im.cols}>
-              {info.projections.map((pr, i) => (
-                <View key={i} style={im.colBox}>
-                  <Text style={im.colVal}>{pr.valeur}</Text>
-                  <Text style={im.colLbl}>{pr.label}</Text>
-                </View>
-              ))}
-            </View>
-          )}
-
-          {info?.note && <Text style={im.note}>{info.note}</Text>}
+          {info.type === 'savings'   && <SavingsBody info={info} t={t} />}
+          {info.type === 'lifeMonth' && <LifeMonthBody info={info} t={t} />}
+          {info.type === 'lifeYear'  && <LifeYearBody info={info} t={t} />}
+          {info.type === 'health'    && <HealthBody info={info} t={t} />}
+          {!info.type && <GenericBody info={info} />}
 
           <TouchableOpacity style={im.btn} onPress={onClose}>
             <Text style={im.btnText}>{t('impact.gotIt')}</Text>
           </TouchableOpacity>
         </View>
-      </View>
+      </ScrollView>
     </Modal>
   );
 }
 
+// ── Body : Argent économisé (écran 05) ───────────────────────────────────────
+function SavingsBody({ info, t }) {
+  return (
+    <>
+      <View style={im.headerRow}>
+        <Image source={UI.sac_euros} style={im.headerIllus} resizeMode="contain" />
+        <Text style={im.titre}>{info.titre}</Text>
+      </View>
+
+      {/* Avant / Après */}
+      {info.savings && (
+        <View style={im.beforeAfter}>
+          <View style={im.baBox}>
+            <Image source={UI.paquet_avant} style={im.baIllus} resizeMode="contain" />
+            <Text style={im.baLabel}>{t('impact.savings.beforeLabel')}</Text>
+            <Text style={im.baValue}>{info.savings.consoAvant}</Text>
+            <Text style={im.baUnit}>{t('impact.savings.unitPerDay')}</Text>
+          </View>
+          <Text style={im.baArrow}>→</Text>
+          <View style={im.baBox}>
+            <Image source={UI.cible_objectif} style={im.baIllus} resizeMode="contain" />
+            <Text style={im.baLabel}>{t('impact.savings.goalLabel')}</Text>
+            <Text style={im.baValue}>{info.savings.objectif}</Text>
+            <Text style={im.baUnit}>{t('impact.savings.unitPerDay')}</Text>
+          </View>
+        </View>
+      )}
+
+      {info.savings && (
+        <View style={im.evitees}>
+          <Image source={UI.feuille_cigarettes_evitees} style={{ width: 40, height: 40 }} resizeMode="contain" />
+          <View style={{ flex: 1 }}>
+            <Text style={im.eviteesValue}>{t('impact.savings.avoidedPerDay', { count: info.savings.cigEviteesJour })}</Text>
+            <Text style={im.eviteesLabel}>{t('impact.savings.avoidedSub')}</Text>
+          </View>
+        </View>
+      )}
+
+      {/* Formule */}
+      {info.formula && (
+        <View style={im.formulaBox}>
+          <Image source={UI.calculatrice} style={{ width: 30, height: 30 }} resizeMode="contain" />
+          <Text style={im.formulaText}>{info.formula}</Text>
+        </View>
+      )}
+
+      {/* 3 projections */}
+      {info.projections && (
+        <View style={im.projRow}>
+          {[UI.calendrier_mois, UI.arbre_annee, UI.montagnes_10_ans].map((img, i) => info.projections[i] && (
+            <View key={i} style={im.projCard}>
+              <Image source={img} style={im.projIllus} resizeMode="contain" />
+              <Text style={im.projValue}>{info.projections[i].valeur}</Text>
+              <Text style={im.projLabel}>{info.projections[i].label}</Text>
+            </View>
+          ))}
+        </View>
+      )}
+
+      {info.note && <Text style={im.note}>{info.note}</Text>}
+    </>
+  );
+}
+
+// ── Body : Vie récupérée par mois (écran 06) ─────────────────────────────────
+function LifeMonthBody({ info, t }) {
+  return (
+    <>
+      <View style={im.headerRow}>
+        <Image source={UI.chronometre} style={im.headerIllus} resizeMode="contain" />
+        <Text style={im.titre}>{info.titre}</Text>
+      </View>
+
+      <Text style={im.explication}>{info.explication}</Text>
+
+      {info.projections && (
+        <View style={im.projRow}>
+          {[UI.horloge_mois, UI.feuille_annee, UI.coeur_10_ans].map((img, i) => info.projections[i] && (
+            <View key={i} style={im.projCard}>
+              <Image source={img} style={im.projIllus} resizeMode="contain" />
+              <Text style={im.projValue}>{info.projections[i].valeur}</Text>
+              <Text style={im.projLabel}>{info.projections[i].label}</Text>
+            </View>
+          ))}
+        </View>
+      )}
+
+      {info.note && <Text style={im.note}>{info.note}</Text>}
+    </>
+  );
+}
+
+// ── Body : Vie récupérée par an (écran 07) ───────────────────────────────────
+function LifeYearBody({ info, t }) {
+  return (
+    <>
+      <View style={im.headerRow}>
+        <Image source={UI.coeur_titre} style={im.headerIllus} resizeMode="contain" />
+        <Text style={im.titre}>{info.titre}</Text>
+      </View>
+
+      <Text style={im.explication}>{info.explication}</Text>
+
+      {info.projections && (
+        <View style={im.projRow}>
+          {[UI.feuille_annee, UI.calendrier_10_ans, UI.etoile_vie].map((img, i) => info.projections[i] && (
+            <View key={i} style={im.projCard}>
+              <Image source={img} style={im.projIllus} resizeMode="contain" />
+              <Text style={im.projValue}>{info.projections[i].valeur}</Text>
+              <Text style={im.projLabel}>{info.projections[i].label}</Text>
+            </View>
+          ))}
+        </View>
+      )}
+    </>
+  );
+}
+
+// ── Body : Bénéfices santé (écran 08) ────────────────────────────────────────
+// Frise verticale des jalons santé.
+function HealthBody({ info, t }) {
+  const milestones = [
+    { img: UI.jalon_20min_coeur,  time: t('impact.health.timeline.t20min'),  label: t('impact.health.timeline.l20min') },
+    { img: UI.jalon_8h_sang,      time: t('impact.health.timeline.t8h'),     label: t('impact.health.timeline.l8h') },
+    { img: UI.jalon_24h_coeur,    time: t('impact.health.timeline.t24h'),    label: t('impact.health.timeline.l24h') },
+    { img: UI.jalon_48h_odorat,   time: t('impact.health.timeline.t48h'),    label: t('impact.health.timeline.l48h') },
+    { img: UI.jalon_72h_poumons,  time: t('impact.health.timeline.t72h'),    label: t('impact.health.timeline.l72h') },
+    { img: UI.jalon_1an_cerveau,  time: t('impact.health.timeline.t1an'),    label: t('impact.health.timeline.l1an') },
+  ];
+  return (
+    <>
+      <View style={im.headerRow}>
+        <Image source={UI.poumons_titre} style={im.headerIllus} resizeMode="contain" />
+        <Text style={im.titre}>{info.titre}</Text>
+      </View>
+
+      <Text style={im.explication}>{info.explication}</Text>
+
+      <View style={im.timeline}>
+        {milestones.map((m, i) => (
+          <View key={i} style={im.tlRow}>
+            <Image source={m.img} style={im.tlIllus} resizeMode="contain" />
+            <View style={{ flex: 1 }}>
+              <Text style={im.tlTime}>{m.time}</Text>
+              <Text style={im.tlLabel}>{m.label}</Text>
+            </View>
+            {i < milestones.length - 1 && <View style={im.tlConnector} />}
+          </View>
+        ))}
+      </View>
+
+      {info.note && <Text style={im.note}>{info.note}</Text>}
+    </>
+  );
+}
+
+// ── Body générique (fallback si type absent) ────────────────────────────────
+function GenericBody({ info }) {
+  return (
+    <>
+      <View style={im.headerRow}>
+        <Text style={{ fontSize: 26 }}>{info.icon}</Text>
+        <Text style={im.titre}>{info.titre}</Text>
+      </View>
+      <Text style={im.explication}>{info.explication}</Text>
+      {info.projections && (
+        <View style={im.projRow}>
+          {info.projections.map((pr, i) => (
+            <View key={i} style={im.projCard}>
+              <Text style={im.projValue}>{pr.valeur}</Text>
+              <Text style={im.projLabel}>{pr.label}</Text>
+            </View>
+          ))}
+        </View>
+      )}
+      {info.note && <Text style={im.note}>{info.note}</Text>}
+    </>
+  );
+}
+
 const im = StyleSheet.create({
-  overlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 24 },
-  card:    { width: '100%', backgroundColor: colors.white, borderRadius: 20, padding: 20 },
-  header:  { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 12 },
-  titre:   { fontSize: 16, fontWeight: '800', color: colors.black, flex: 1 },
-  explication: { fontSize: 13, color: colors.black, lineHeight: 20, marginBottom: 14 },
-  cols:    { flexDirection: 'row', gap: 8, marginBottom: 14 },
-  colBox:  { flex: 1, backgroundColor: colors.primaryLight, borderRadius: 12, paddingVertical: 10, alignItems: 'center' },
-  colVal:  { fontSize: 14, fontWeight: '800', color: colors.primary },
-  colLbl:  { fontSize: 10, color: colors.gray, marginTop: 2 },
-  note:    { fontSize: 11, color: colors.gray, fontStyle: 'italic', marginBottom: 14, lineHeight: 16 },
-  btn:     { backgroundColor: colors.primary, borderRadius: 30, paddingVertical: 12, alignItems: 'center' },
-  btnText: { color: colors.white, fontSize: 14, fontWeight: '700' },
+  overlay:        { flex: 1, backgroundColor: 'rgba(23, 61, 38, 0.55)' },
+  overlayContent: { flexGrow: 1, alignItems: 'center', justifyContent: 'center', padding: 20 },
+  card:           { width: '100%', maxWidth: 420, backgroundColor: colors.surface, borderRadius: radius.xl, padding: 20, borderWidth: 1, borderColor: colors.grayBorder },
+
+  headerRow:  { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 12 },
+  headerIllus:{ width: 44, height: 44 },
+  titre:      { fontSize: 18, fontWeight: '900', color: colors.primaryDeep, flex: 1 },
+  explication:{ fontSize: 13, color: colors.black, lineHeight: 20, marginBottom: 14 },
+
+  // avant/après (savings)
+  beforeAfter:{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 14 },
+  baBox:      { flex: 1, backgroundColor: colors.primaryLight, borderRadius: radius.lg, padding: 10, alignItems: 'center' },
+  baIllus:    { width: 42, height: 42, marginBottom: 4 },
+  baLabel:    { fontSize: 10, color: colors.gray },
+  baValue:    { fontSize: 22, fontWeight: '900', color: colors.primaryDeep, marginTop: 2 },
+  baUnit:     { fontSize: 10, color: colors.gray },
+  baArrow:    { fontSize: 22, color: colors.primary, fontWeight: '800' },
+
+  evitees:    { flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: colors.primaryLight, borderRadius: radius.lg, padding: 12, marginBottom: 12 },
+  eviteesValue:{ fontSize: 15, fontWeight: '800', color: colors.primaryDeep },
+  eviteesLabel:{ fontSize: 11, color: colors.gray, marginTop: 2 },
+
+  formulaBox: { flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: colors.cream, borderRadius: radius.md, padding: 12, marginBottom: 14, borderWidth: 1, borderColor: colors.grayBorder },
+  formulaText:{ flex: 1, fontSize: 12, color: colors.black, lineHeight: 17 },
+
+  // 3 projections
+  projRow:    { flexDirection: 'row', gap: 8, marginBottom: 14 },
+  projCard:   { flex: 1, backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.grayBorder, borderRadius: radius.lg, padding: 10, alignItems: 'center' },
+  projIllus:  { width: 34, height: 34, marginBottom: 4 },
+  projValue:  { fontSize: 14, fontWeight: '800', color: colors.primary, textAlign: 'center' },
+  projLabel:  { fontSize: 10, color: colors.gray, marginTop: 2, textAlign: 'center' },
+
+  // Timeline santé
+  timeline:   { marginBottom: 14, gap: 10 },
+  tlRow:      { flexDirection: 'row', alignItems: 'center', gap: 12, position: 'relative' },
+  tlIllus:    { width: 40, height: 40 },
+  tlTime:     { fontSize: 13, fontWeight: '800', color: colors.primaryDeep },
+  tlLabel:    { fontSize: 12, color: colors.black, marginTop: 1, lineHeight: 16 },
+  tlConnector:{ position: 'absolute', left: 19, top: 40, width: 2, height: 12, backgroundColor: colors.grayBorder },
+
+  note:       { fontSize: 11, color: colors.gray, fontStyle: 'italic', marginBottom: 14, lineHeight: 16 },
+  btn:        { backgroundColor: colors.primary, borderRadius: radius.pill, paddingVertical: 14, alignItems: 'center' },
+  btnText:    { color: colors.white, fontSize: 14, fontWeight: '700' },
 });
 
 // ── Emojis des motivations (identifiants stables de l'onboarding) ───────────
@@ -230,9 +441,9 @@ export default function PlanScreen({ navigation }) {
       .map(d => [d.key, { emoji: '📝', label: d.label }])
   );
   const resoudreTrig = k => {
-    if (TRIGGER_META[k]) return { emoji: TRIGGER_META[k], label: t(`triggers.${k}`) };
+    if (TRIGGER_META[k]) return { img: TRIGGER_META[k], label: t(`triggers.${k}`) };
     if (persoMap[k]) return persoMap[k];
-    return { emoji: TRIGGER_META.autre, label: t('triggers.autre') };
+    return { img: TRIGGER_META.autre, label: t('triggers.autre') };
   };
   const trigInfo       = habitudes ? resoudreTrig(habitudes.declencheur) : null;
   const enviesRecentes = stats?.enviesRecentes ?? [];
@@ -273,13 +484,12 @@ export default function PlanScreen({ navigation }) {
         <View style={styles.card}>
           <View style={styles.impactGrid}>
             <ImpactCard
-              icon="💰" valeur={`+${argentEcoMois.toFixed(0)} €`} label={t('impact.savings.label')} sublabel={t('labels.perMonth')}
+              img={UI.sac_euros} valeur={`+${argentEcoMois.toFixed(0)} €`} label={t('impact.savings.label')} sublabel={t('labels.perMonth')}
               onPress={() => setImpactModal({
-                icon: '💰',
+                type: 'savings',
                 titre: t('impact.savings.modalTitle'),
-                explication:
-                  t('impact.savings.explanationIntro', { count: cigEviteesJour, consoAvant: consoAvantAff, objectif: objectifJour })
-                  + t('impact.savings.explanationDetail', { count: cigEviteesJour, prixCig: prixCigAff, ecoMois: argentEcoMois.toFixed(0) }),
+                savings: { consoAvant: consoAvantAff, objectif: objectifJour, cigEviteesJour },
+                formula: t('impact.savings.explanationDetail', { count: cigEviteesJour, prixCig: prixCigAff, ecoMois: argentEcoMois.toFixed(0) }),
                 projections: [
                   { valeur: `+${argentEcoMois.toFixed(0)} €`, label: t('labels.perMonth') },
                   { valeur: `+${ecoAnAff} €`, label: t('labels.perYear') },
@@ -289,9 +499,9 @@ export default function PlanScreen({ navigation }) {
               })}
             />
             <ImpactCard
-              icon="⏱" valeur={`+${vieGagneeHMois}h`} label={t('impact.life.label')} sublabel={t('labels.perMonth')} valeurColor={colors.primary}
+              img={UI.chronometre} valeur={`+${vieGagneeHMois}h`} label={t('impact.life.label')} sublabel={t('labels.perMonth')} valeurColor={colors.primary}
               onPress={() => setImpactModal({
-                icon: '⏱',
+                type: 'lifeMonth',
                 titre: t('impact.lifeMonth.modalTitle'),
                 explication: t('impact.lifeMonth.explanation', { count: cigEviteesJour, minutes: cigEviteesJour * 5, hours: vieGagneeHMois }),
                 projections: [
@@ -302,9 +512,9 @@ export default function PlanScreen({ navigation }) {
               })}
             />
             <ImpactCard
-              icon="❤️" valeur={`+${vieGagneeJAn}j`} label={t('impact.life.label')} sublabel={t('labels.perYear')} valeurColor={colors.primary}
+              img={UI.coeur_titre} valeur={`+${vieGagneeJAn}j`} label={t('impact.life.label')} sublabel={t('labels.perYear')} valeurColor={colors.primary}
               onPress={() => setImpactModal({
-                icon: '❤️',
+                type: 'lifeYear',
                 titre: t('impact.lifeYear.modalTitle'),
                 explication: t('impact.lifeYear.explanation', { count: cigEviteesJour, days: vieGagneeJAn }),
                 projections: [
@@ -315,9 +525,9 @@ export default function PlanScreen({ navigation }) {
               })}
             />
             <ImpactCard
-              icon="🫁" valeur={t('impact.health.value')} label={t('impact.health.label')} sublabel={t('impact.health.sublabel')} valeurColor={colors.primary}
+              img={UI.poumons_titre} valeur={t('impact.health.value')} label={t('impact.health.label')} sublabel={t('impact.health.sublabel')} valeurColor={colors.primary}
               onPress={() => setImpactModal({
-                icon: '🫁',
+                type: 'health',
                 titre: t('impact.health.modalTitle'),
                 explication: t('impact.health.explanation'),
                 note: t('impact.health.note'),
@@ -345,18 +555,18 @@ export default function PlanScreen({ navigation }) {
             valeurCouleur="#DC2626"
           />
           <LigneProjection
-            icone="↑" iconeBg="#DCFCE7" iconeCouleur="#166534"
+            icone="↑" iconeBg={colors.primaryLight} iconeCouleur={colors.primaryDeep}
             titre={t('projection.alreadySaved.title')}
             sous={t('projection.alreadySaved.sub')}
             valeur={t('projection.alreadySaved.value', { amount: fmtEur(Math.round(argentDejaEco)) })}
-            valeurCouleur="#166534"
+            valeurCouleur={colors.primaryDeep}
           />
           <LigneProjection
-            icone="✓" iconeBg="#DCFCE7" iconeCouleur="#166534"
+            icone="✓" iconeBg={colors.primaryLight} iconeCouleur={colors.primaryDeep}
             titre={t('projection.planRespected.title')}
             sous={t('projection.planRespected.sub')}
             valeur={t('projection.planRespected.value', { amount: fmtEur(proj.gain) })}
-            valeurCouleur="#166534"
+            valeurCouleur={colors.primaryDeep}
           />
 
           {/* ── Équivalence concrète ── */}
@@ -388,18 +598,19 @@ export default function PlanScreen({ navigation }) {
             <>
               <View style={styles.habitudesRow}>
                 <HabitudeChip
-                  icon="🕐"
+                  img={UI.reveil}
                   titre={habitudes.heurePic}
                   desc={t('habits.peakHour.desc')}
                   sub={t('habits.pctOfCravings', { pct: habitudes.pctHeure })}
                 />
                 <HabitudeChip
-                  icon="📅"
+                  img={UI.calendrier_mois}
                   titre={habitudes.jourPic}
                   desc={t('habits.peakDay.desc')}
                   sub={t('habits.pctOfCravings', { pct: habitudes.pctJour })}
                 />
                 <HabitudeChip
+                  img={trigInfo.img}
                   icon={trigInfo.emoji}
                   titre={trigInfo.label}
                   desc={t('habits.topTrigger.desc')}
@@ -415,7 +626,11 @@ export default function PlanScreen({ navigation }) {
                 const vide  = count === 0;
                 return (
                   <View key={key} style={[styles.trigRow, vide && { opacity: 0.35 }]}>
-                    <Text style={{ fontSize: 15, width: 24, textAlign: 'center' }}>{info.emoji}</Text>
+                    <View style={styles.trigBadge}>
+                      {info.img
+                        ? <Image source={info.img} style={styles.trigIllus} resizeMode="contain" />
+                        : <Text style={{ fontSize: 13 }}>{info.emoji}</Text>}
+                    </View>
                     <Text style={styles.trigLabel}>{info.label}</Text>
                     <View style={styles.trigBarTrack}>
                       <View style={[styles.trigBarFill, { width: `${pct}%` }]} />
@@ -451,7 +666,11 @@ export default function PlanScreen({ navigation }) {
                 const { jour, heure } = fmtEnvie(e);
                 return (
                   <View key={i} style={styles.envieLogRow}>
-                    <Text style={{ fontSize: 14 }}>{info.emoji}</Text>
+                    <View style={styles.envieLogBadge}>
+                      {info.img
+                        ? <Image source={info.img} style={styles.envieLogIllus} resizeMode="contain" />
+                        : <Text style={{ fontSize: 12 }}>{info.emoji}</Text>}
+                    </View>
                     <View style={{ flex: 1 }}>
                       <Text style={styles.envieLogMain}>
                         {jour} · {heure} · {info.label}
@@ -579,11 +798,11 @@ export default function PlanScreen({ navigation }) {
 }
 
 // ── Sous-composants ───────────────────────────────────────────────────────────
-function ImpactCard({ icon, valeur, label, sublabel, valeurColor = colors.black, onPress }) {
+function ImpactCard({ img, valeur, label, sublabel, valeurColor = colors.black, onPress }) {
   return (
     <TouchableOpacity style={styles.impactCard} onPress={onPress} activeOpacity={0.7}>
       <View style={{ flexDirection: 'row', width: '100%', justifyContent: 'space-between' }}>
-        <Text style={styles.impactIcon}>{icon}</Text>
+        <Image source={img} style={styles.impactIllus} resizeMode="contain" />
         <Text style={{ fontSize: 13, color: colors.gray }}>ⓘ</Text>
       </View>
       <Text style={[styles.impactValeur, { color: valeurColor }]}>{valeur}</Text>
@@ -593,10 +812,14 @@ function ImpactCard({ icon, valeur, label, sublabel, valeurColor = colors.black,
   );
 }
 
-function HabitudeChip({ icon, titre, desc, sub }) {
+function HabitudeChip({ icon, img, iconBg, titre, desc, sub }) {
   return (
     <View style={styles.habitudeChip}>
-      <Text style={styles.habitudeIcon}>{icon}</Text>
+      <View style={[styles.habitudeIconWrap, iconBg && { backgroundColor: iconBg }]}>
+        {img
+          ? <Image source={img} style={styles.habitudeIconIllus} resizeMode="contain" />
+          : <Text style={styles.habitudeIcon}>{icon}</Text>}
+      </View>
       <Text style={styles.habitudeTitre}>{titre}</Text>
       <Text style={styles.habitudeDesc}>{desc}</Text>
       <Text style={styles.habitudeSub}>{sub}</Text>
@@ -606,7 +829,7 @@ function HabitudeChip({ icon, titre, desc, sub }) {
 
 // ── Styles ────────────────────────────────────────────────────────────────────
 const styles = StyleSheet.create({
-  safe:   { flex: 1, backgroundColor: '#F7F8FA' },
+  safe:   { flex: 1, backgroundColor: colors.cream },
   scroll: { padding: spacing.md, paddingBottom: 90 },
 
   header: {
@@ -634,7 +857,7 @@ const styles = StyleSheet.create({
   subSectionTitle: { fontSize: font.sm, fontWeight: '700', color: colors.black, marginTop: spacing.sm, marginBottom: spacing.sm },
 
   card: {
-    backgroundColor: colors.white, borderRadius: radius.xl,
+    backgroundColor: colors.surface, borderRadius: radius.xl,
     padding: spacing.md, marginBottom: spacing.sm,
     shadowColor: '#000', shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05, shadowRadius: 4, elevation: 2,
@@ -647,7 +870,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F7F8FA', borderRadius: radius.lg, padding: spacing.sm,
     alignItems: 'flex-start',
   },
-  impactIcon:   { fontSize: 24, marginBottom: 4 },
+  impactIllus:  { width: 30, height: 30, marginBottom: 4 },
   impactValeur: { fontSize: font.md, fontWeight: '800', color: colors.black },
   impactLabel:  { fontSize: 11, color: colors.gray },
   impactSub:    { fontSize: 10, color: colors.gray },
@@ -671,8 +894,8 @@ const styles = StyleSheet.create({
   projLegText: { fontSize: 11, color: colors.gray },
 
   // Projection annuelle (bilan simple)
-  projHeros:     { fontSize: 40, fontWeight: '900', color: '#166534', lineHeight: 46 },
-  projHerosSous: { fontSize: 14, fontWeight: '700', color: '#166534', marginTop: 2 },
+  projHeros:     { fontSize: 40, fontWeight: '900', color: colors.primaryDeep, lineHeight: 46 },
+  projHerosSous: { fontSize: 14, fontWeight: '700', color: colors.primaryDeep, marginTop: 2 },
   projHerosHint: { fontSize: 12, color: colors.gray, marginTop: 2 },
   ligneProj: {
     flexDirection: 'row', alignItems: 'center', gap: spacing.sm,
@@ -688,11 +911,11 @@ const styles = StyleSheet.create({
   ligneProjSous:   { fontSize: 11, color: colors.gray, marginTop: 1 },
   ligneProjValeur: { fontSize: 15, fontWeight: '800' },
   projEquivPill: {
-    backgroundColor: '#DCFCE7', borderRadius: radius.md,
+    backgroundColor: colors.primaryLight, borderRadius: radius.md,
     paddingVertical: 10, alignItems: 'center', marginTop: spacing.sm,
   },
-  projEquivLabel: { fontSize: 11, color: '#3B6D11', marginBottom: 3 },
-  projEquivText:  { fontSize: 13, fontWeight: '700', color: '#166534' },
+  projEquivLabel: { fontSize: 11, color: colors.primary, marginBottom: 3 },
+  projEquivText:  { fontSize: 13, fontWeight: '700', color: colors.primaryDeep },
   projNote: {
     fontSize: 11, color: colors.black, lineHeight: 16,
     backgroundColor: colors.primaryLight, borderRadius: radius.md,
@@ -702,10 +925,15 @@ const styles = StyleSheet.create({
   // Habitudes
   habitudesRow: { flexDirection: 'row', gap: spacing.sm },
   habitudeChip: {
-    flex: 1, backgroundColor: '#F7F8FA', borderRadius: radius.lg,
+    flex: 1, backgroundColor: colors.cream, borderRadius: radius.lg,
     padding: spacing.sm, alignItems: 'flex-start',
   },
-  habitudeIcon:  { fontSize: 20, marginBottom: 4 },
+  habitudeIconWrap: {
+    width: 34, height: 34, borderRadius: 17, backgroundColor: colors.primaryLight,
+    alignItems: 'center', justifyContent: 'center', marginBottom: 4,
+  },
+  habitudeIconIllus: { width: 22, height: 22 },
+  habitudeIcon:  { fontSize: 18 },
   habitudeTitre: { fontSize: 12, fontWeight: '800', color: colors.black },
   habitudeDesc:  { fontSize: 10, color: colors.gray, marginTop: 2 },
   habitudeSub:   { fontSize: 10, color: colors.gray },
@@ -719,6 +947,8 @@ const styles = StyleSheet.create({
     marginTop: spacing.md, marginBottom: spacing.sm,
   },
   trigRow:      { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 6 },
+  trigBadge:    { width: 26, height: 26, borderRadius: 13, backgroundColor: colors.primaryLight, alignItems: 'center', justifyContent: 'center' },
+  trigIllus:    { width: 17, height: 17 },
   trigLabel:    { fontSize: 12, color: colors.black, width: 92 },
   trigBarTrack: { flex: 1, height: 8, backgroundColor: '#F0F0F0', borderRadius: 4, overflow: 'hidden' },
   trigBarFill:  { height: '100%', backgroundColor: colors.primary, borderRadius: 4 },
@@ -733,6 +963,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row', alignItems: 'center', gap: 8,
     paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: '#F5F5F5',
   },
+  envieLogBadge: { width: 24, height: 24, borderRadius: 12, backgroundColor: colors.primaryLight, alignItems: 'center', justifyContent: 'center' },
+  envieLogIllus: { width: 15, height: 15 },
   envieLogMain:  { fontSize: 12, color: colors.black },
   envieLogNote:  { fontSize: 11, color: colors.gray, fontStyle: 'italic', marginTop: 2 },
   envieLogIssue: { fontSize: 11, fontWeight: '700' },

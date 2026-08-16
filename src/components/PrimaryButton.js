@@ -21,10 +21,16 @@ export default function PrimaryButton({ title, onPress, loading, disabled, style
 const styles = StyleSheet.create({
   btn: {
     backgroundColor: colors.primary,
-    borderRadius: radius.xl,
-    paddingVertical: spacing.md,
+    borderRadius: radius.pill,
+    paddingVertical: 16,
+    paddingHorizontal: spacing.lg,
     alignItems: 'center',
     justifyContent: 'center',
+    shadowColor: colors.primaryDeep,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
+    elevation: 3,
   },
   btnDisabled: { backgroundColor: '#B9D4C2' },
   label: {

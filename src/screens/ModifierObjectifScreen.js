@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
 import {
-  View, Text, StyleSheet, SafeAreaView, ScrollView,
+  View, Text, Image, StyleSheet, SafeAreaView, ScrollView,
   TouchableOpacity,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useUser } from '../context/UserContext';
-import { colors, spacing, font, radius } from '../theme';
+import { colors, spacing, font, radius, shadow } from '../theme';
+import { UI } from '../assets/uiKit';
 
 const OBJECTIFS_META = [
-  { key: 'stop',   icon: '🎯', iconBg: colors.primaryLight },
-  { key: 'reduce', icon: '📉', iconBg: '#FEF3C7' },
-  { key: 'libre',  icon: '✏️', iconBg: '#EDE9FE' },
+  { key: 'stop',   img: UI.cigarette_barree,        iconBg: colors.primaryLight },
+  { key: 'reduce', img: UI.escalier_reduction,       iconBg: colors.primaryLight },
+  { key: 'libre',  img: UI.curseurs_objectif_libre,  iconBg: colors.primaryLight },
 ];
 
 export default function ModifierObjectifScreen({ navigation }) {
@@ -96,15 +97,11 @@ export default function ModifierObjectifScreen({ navigation }) {
 
         {/* ── Choisir l'objectif ── */}
         <Text style={styles.sectionTitle}>{t('objectives.sectionTitle')}</Text>
-        <View style={styles.card}>
-          {OBJECTIFS_META.map((obj, i) => (
+        <View style={{ gap: spacing.sm }}>
+          {OBJECTIFS_META.map(obj => (
             <TouchableOpacity
               key={obj.key}
-              style={[
-                styles.optionRow,
-                i < OBJECTIFS_META.length - 1 && styles.optionRowBorder,
-                selected === obj.key && styles.optionRowActive,
-              ]}
+              style={[styles.optionCard, selected === obj.key && styles.optionCardActive]}
               onPress={() => setSelected(obj.key)}
             >
               {/* Radio */}
@@ -120,18 +117,93 @@ export default function ModifierObjectifScreen({ navigation }) {
 
               {/* Icône */}
               <View style={[styles.iconCircle, { backgroundColor: obj.iconBg }]}>
-                <Text style={{ fontSize: 18 }}>{obj.icon}</Text>
+                <Image source={obj.img} style={styles.iconIllus} resizeMode="contain" />
               </View>
             </TouchableOpacity>
           ))}
         </View>
 
-        {/* ── Objectif quotidien (masqué si arrêt complet) ── */}
-        {selected !== 'stop' && (
+        {/* ── Mode "réduire" : Point de départ + Rythme côte à côte (réf. 11) ── */}
+        {selected === 'reduce' && (
           <>
-            <Text style={styles.sectionTitle}>
-              {selected === 'reduce' ? t('dailyGoal.titleReduceMode') : t('dailyGoal.titleOtherMode')}
-            </Text>
+            <View style={styles.twoColRow}>
+              <View style={styles.colCard}>
+                <Text style={styles.colTitle}>{t('dailyGoal.titleReduceMode')}</Text>
+                <View style={styles.stepperRowCompact}>
+                  <TouchableOpacity
+                    style={[styles.stepperBtnSm, quantite <= 0 && styles.stepperBtnDisabled]}
+                    onPress={() => setQuantite(q => Math.max(0, q - 1))}
+                    disabled={quantite <= 0}
+                  >
+                    <Text style={[styles.stepperBtnText, quantite <= 0 && { color: colors.grayBorder }]}>−</Text>
+                  </TouchableOpacity>
+                  <Text style={styles.stepperNumberSm}>{quantite}</Text>
+                  <TouchableOpacity style={styles.stepperBtnSm} onPress={() => setQuantite(q => q + 1)}>
+                    <Text style={styles.stepperBtnText}>+</Text>
+                  </TouchableOpacity>
+                </View>
+                <Text style={styles.colUnit}>{t('dailyGoal.unit')}</Text>
+              </View>
+
+              <View style={styles.colCard}>
+                <Text style={styles.colTitle}>{t('pace.sectionTitle')}</Text>
+                <View style={styles.stepperRowCompact}>
+                  <TouchableOpacity
+                    style={[styles.stepperBtnSm, rythme <= 1 && styles.stepperBtnDisabled]}
+                    onPress={() => setRythme(r => Math.max(1, r - 1))}
+                    disabled={rythme <= 1}
+                  >
+                    <Text style={[styles.stepperBtnText, rythme <= 1 && { color: colors.grayBorder }]}>−</Text>
+                  </TouchableOpacity>
+                  <Text style={styles.stepperNumberSm}>−{rythme}</Text>
+                  <TouchableOpacity
+                    style={[styles.stepperBtnSm, rythme >= 10 && styles.stepperBtnDisabled]}
+                    onPress={() => setRythme(r => Math.min(10, r + 1))}
+                    disabled={rythme >= 10}
+                  >
+                    <Text style={[styles.stepperBtnText, rythme >= 10 && { color: colors.grayBorder }]}>+</Text>
+                  </TouchableOpacity>
+                </View>
+                <Text style={styles.colUnit}>{t('pace.perWeek', { count: rythme })}</Text>
+              </View>
+            </View>
+
+            {/* Prévision hebdomadaire */}
+            <Text style={styles.sectionTitle}>{t('planPreview.sectionTitle')}</Text>
+            <View style={styles.card}>
+              <View style={styles.paliersRow}>
+                <View style={styles.paliersConnector} />
+                {paliers.map((v, i) => (
+                  <View key={i} style={styles.palierChip}>
+                    <Text style={styles.palierSemaine}>{i === 0 ? t('planPreview.today') : t('planPreview.weekLabel', { n: i })}</Text>
+                    <Text style={styles.palierValeur}>{v}</Text>
+                    {v === 0 && <Image source={UI.drapeau_jalon} style={styles.palierFlag} resizeMode="contain" />}
+                  </View>
+                ))}
+                {semainesTotal + 1 > 6 && (
+                  <View style={styles.palierChip}>
+                    <Text style={styles.palierSemaine}>…</Text>
+                    <Text style={styles.palierValeur}>0</Text>
+                  </View>
+                )}
+              </View>
+
+              <View style={styles.planResume}>
+                <Image source={UI.drapeau_jalon} style={styles.planResumeFlag} resizeMode="contain" />
+                <Text style={styles.planResumeText}>
+                  {t('planPreview.summaryPrefix')} <Text style={{ fontWeight: '800' }}>{t('planPreview.zeroCigarette')}</Text>{' '}
+                  <Text style={{ fontWeight: '800' }}>{t('planPreview.inWeeks', { count: semainesTotal })}</Text>
+                  <Text style={{ fontWeight: '800' }}>{t('planPreview.towardDate', { date: dateZero })}</Text>
+                </Text>
+              </View>
+            </View>
+          </>
+        )}
+
+        {/* ── Objectif quotidien (mode "objectif libre") ── */}
+        {selected === 'libre' && (
+          <>
+            <Text style={styles.sectionTitle}>{t('dailyGoal.titleOtherMode')}</Text>
             <View style={styles.card}>
               <View style={styles.stepperRow}>
                 <TouchableOpacity
@@ -153,63 +225,6 @@ export default function ModifierObjectifScreen({ navigation }) {
                 >
                   <Text style={styles.stepperBtnText}>+</Text>
                 </TouchableOpacity>
-              </View>
-            </View>
-          </>
-        )}
-
-        {/* ── Rythme de réduction (uniquement mode "réduire") ── */}
-        {selected === 'reduce' && (
-          <>
-            <Text style={styles.sectionTitle}>{t('pace.sectionTitle')}</Text>
-            <View style={styles.card}>
-              <View style={styles.stepperRow}>
-                <TouchableOpacity
-                  style={[styles.stepperBtn, rythme <= 1 && styles.stepperBtnDisabled]}
-                  onPress={() => setRythme(r => Math.max(1, r - 1))}
-                  disabled={rythme <= 1}
-                >
-                  <Text style={[styles.stepperBtnText, rythme <= 1 && { color: colors.grayBorder }]}>−</Text>
-                </TouchableOpacity>
-
-                <View style={styles.stepperCenter}>
-                  <Text style={[styles.stepperNumber, { fontSize: 36, lineHeight: 40 }]}>−{rythme}</Text>
-                  <Text style={styles.stepperUnit}>{t('pace.perWeek', { count: rythme })}</Text>
-                </View>
-
-                <TouchableOpacity
-                  style={[styles.stepperBtn, rythme >= 10 && styles.stepperBtnDisabled]}
-                  onPress={() => setRythme(r => Math.min(10, r + 1))}
-                  disabled={rythme >= 10}
-                >
-                  <Text style={[styles.stepperBtnText, rythme >= 10 && { color: colors.grayBorder }]}>+</Text>
-                </TouchableOpacity>
-              </View>
-
-              {/* Paliers semaine par semaine */}
-              <View style={styles.paliersRow}>
-                {paliers.map((v, i) => (
-                  <View key={i} style={styles.palierChip}>
-                    <Text style={styles.palierSemaine}>{i === 0 ? t('planPreview.today') : t('planPreview.weekLabel', { n: i })}</Text>
-                    <Text style={[styles.palierValeur, v === 0 && { color: colors.primary }]}>
-                      {v === 0 ? '🎉 0' : v}
-                    </Text>
-                  </View>
-                ))}
-                {semainesTotal + 1 > 6 && (
-                  <View style={styles.palierChip}>
-                    <Text style={styles.palierSemaine}>…</Text>
-                    <Text style={styles.palierValeur}>0</Text>
-                  </View>
-                )}
-              </View>
-
-              <View style={styles.planResume}>
-                <Text style={styles.planResumeText}>
-                  {t('planPreview.summaryPrefix')} <Text style={{ fontWeight: '800' }}>{t('planPreview.zeroCigarette')}</Text>{' '}
-                  <Text style={{ fontWeight: '800' }}>{t('planPreview.inWeeks', { count: semainesTotal })}</Text>
-                  <Text style={{ fontWeight: '800' }}>{t('planPreview.towardDate', { date: dateZero })}</Text>
-                </Text>
               </View>
             </View>
           </>
@@ -273,11 +288,11 @@ export default function ModifierObjectifScreen({ navigation }) {
 
           {/* Réduction de consommation */}
           <View style={styles.apercuRow}>
-            <View style={[styles.apercuIconCircle, { backgroundColor: '#EDE9FE' }]}>
+            <View style={styles.apercuIconCircle}>
               <Text style={{ fontSize: 20 }}>📊</Text>
             </View>
             <Text style={styles.apercuLabel}>{t('overview.consumptionReduction')}</Text>
-            <Text style={styles.apercuValPurple}>-{reduction} %</Text>
+            <Text style={styles.apercuValGreen}>-{reduction} %</Text>
           </View>
         </View>
 
@@ -296,33 +311,35 @@ export default function ModifierObjectifScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  safe:   { flex: 1, backgroundColor: '#F7F8FA' },
+  safe:   { flex: 1, backgroundColor: colors.cream },
   scroll: { padding: spacing.lg, paddingBottom: spacing.xxl },
 
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     paddingHorizontal: spacing.lg, paddingTop: spacing.md, paddingBottom: spacing.md,
-    backgroundColor: colors.white,
+    backgroundColor: colors.cream,
     borderBottomWidth: 1, borderBottomColor: colors.grayBorder,
   },
   backBtn:     { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
-  backText:    { fontSize: 24, color: colors.black, fontWeight: '300' },
-  headerTitle: { fontSize: font.md, fontWeight: '700', color: colors.black },
+  backText:    { fontSize: 24, color: colors.primaryDeep, fontWeight: '300' },
+  headerTitle: { fontSize: font.md, fontWeight: '800', color: colors.primaryDeep },
 
-  sectionTitle: { fontSize: font.sm, fontWeight: '700', color: colors.black, marginBottom: spacing.sm, marginTop: spacing.md },
+  sectionTitle: { fontSize: font.sm, fontWeight: '800', color: colors.primaryDeep, marginBottom: spacing.sm, marginTop: spacing.md },
 
   card: {
-    backgroundColor: colors.white, borderRadius: radius.xl, overflow: 'hidden',
-    shadowColor: '#000', shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05, shadowRadius: 4, elevation: 2,
+    backgroundColor: colors.surface, borderRadius: radius.xl, overflow: 'hidden',
+    borderWidth: 1, borderColor: colors.grayBorder,
+    ...shadow.card,
   },
 
-  // Options radio
-  optionRow: {
+  // Options radio — chaque option est sa propre carte (réf. 11)
+  optionCard: {
     flexDirection: 'row', alignItems: 'center', padding: spacing.md, gap: spacing.sm,
+    backgroundColor: colors.surface, borderRadius: radius.xl,
+    borderWidth: 1, borderColor: colors.grayBorder,
+    ...shadow.card,
   },
-  optionRowBorder: { borderBottomWidth: 1, borderBottomColor: colors.grayBorder },
-  optionRowActive: { backgroundColor: colors.primaryLight },
+  optionCardActive: { backgroundColor: colors.primaryLight, borderColor: colors.primary, borderWidth: 1.5 },
   radio: {
     width: 22, height: 22, borderRadius: 11,
     borderWidth: 2, borderColor: colors.grayBorder,
@@ -330,14 +347,15 @@ const styles = StyleSheet.create({
   },
   radioActive: { borderColor: colors.primary },
   radioDot: { width: 10, height: 10, borderRadius: 5, backgroundColor: colors.primary },
-  optionTitre: { fontSize: font.sm, fontWeight: '700', color: colors.black },
+  optionTitre: { fontSize: font.sm, fontWeight: '800', color: colors.primaryDeep },
   optionDesc:  { fontSize: 12, color: colors.gray },
   iconCircle: {
-    width: 44, height: 44, borderRadius: 22,
+    width: 52, height: 52, borderRadius: 26,
     alignItems: 'center', justifyContent: 'center',
   },
+  iconIllus: { width: 34, height: 34 },
 
-  // Stepper
+  // Stepper (pleine largeur — mode "objectif libre")
   stepperRow: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     padding: spacing.lg,
@@ -353,29 +371,54 @@ const styles = StyleSheet.create({
   stepperNumber:  { fontSize: 48, fontWeight: '900', color: colors.black, lineHeight: 52 },
   stepperUnit:    { fontSize: 12, color: colors.gray },
 
+  // Deux cartes côte à côte : Point de départ / Rythme de réduction (réf. 11)
+  twoColRow: { flexDirection: 'row', gap: spacing.sm },
+  colCard: {
+    flex: 1, backgroundColor: colors.surface, borderRadius: radius.xl,
+    borderWidth: 1, borderColor: colors.grayBorder,
+    padding: spacing.md, alignItems: 'center',
+    ...shadow.card,
+  },
+  colTitle: { fontSize: 13, fontWeight: '800', color: colors.primaryDeep, marginBottom: spacing.sm, textAlign: 'center' },
+  stepperRowCompact: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  stepperBtnSm: {
+    width: 36, height: 36, borderRadius: radius.sm,
+    borderWidth: 1.5, borderColor: colors.grayBorder,
+    alignItems: 'center', justifyContent: 'center',
+  },
+  stepperNumberSm: { fontSize: 30, fontWeight: '900', color: colors.primaryDeep, minWidth: 44, textAlign: 'center' },
+  colUnit: { fontSize: 11, color: colors.gray, marginTop: spacing.sm, textAlign: 'center' },
+
   // Paliers plan de réduction
   paliersRow: {
-    flexDirection: 'row', gap: 6,
-    paddingHorizontal: spacing.md, paddingBottom: spacing.sm,
+    flexDirection: 'row', gap: 6, position: 'relative',
+    padding: spacing.md, paddingBottom: spacing.lg,
+  },
+  paliersConnector: {
+    position: 'absolute', left: spacing.md + 16, right: spacing.md + 16, top: spacing.md + 30,
+    height: 0, borderTopWidth: 1.5, borderStyle: 'dashed', borderTopColor: colors.grayBorder,
   },
   palierChip: {
-    flex: 1, backgroundColor: '#F7F8FA', borderRadius: radius.md,
-    paddingVertical: 8, alignItems: 'center',
+    flex: 1, backgroundColor: colors.cream, borderRadius: radius.md, position: 'relative',
+    paddingVertical: 8, alignItems: 'center', minHeight: 60, justifyContent: 'center',
   },
   palierSemaine: { fontSize: 10, color: colors.gray },
   palierValeur:  { fontSize: 15, fontWeight: '800', color: colors.black, marginTop: 2 },
+  palierFlag:    { width: 20, height: 20, position: 'absolute', bottom: -14, alignSelf: 'center' },
   planResume: {
+    flexDirection: 'row', alignItems: 'center', gap: spacing.sm,
     backgroundColor: colors.primaryLight, borderRadius: radius.md,
     padding: spacing.sm, margin: spacing.md, marginTop: 4,
   },
-  planResumeText: { fontSize: 12, color: colors.black, lineHeight: 18, textAlign: 'center' },
+  planResumeFlag: { width: 28, height: 28 },
+  planResumeText: { flex: 1, fontSize: 12, color: colors.black, lineHeight: 18 },
 
   // Aperçu
   apercuCard: {
-    backgroundColor: colors.white, borderRadius: radius.xl,
+    backgroundColor: colors.surface, borderRadius: radius.xl,
     padding: spacing.md, marginTop: spacing.sm,
-    shadowColor: '#000', shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05, shadowRadius: 4, elevation: 2,
+    borderWidth: 1, borderColor: colors.grayBorder,
+    ...shadow.card,
   },
   apercuTitle: { fontSize: font.sm, fontWeight: '700', color: colors.black, textAlign: 'center', marginBottom: 4 },
   apercuRef:   { fontSize: 10, color: colors.gray, textAlign: 'center', marginBottom: spacing.md, fontStyle: 'italic' },
@@ -391,7 +434,6 @@ const styles = StyleSheet.create({
   apercuLabel:    { flex: 1, fontSize: 12, color: colors.gray },
   apercuValGreen:  { fontSize: font.sm, fontWeight: '800', color: colors.primary },
   apercuValOrange: { fontSize: font.sm, fontWeight: '800', color: '#F59E0B' },
-  apercuValPurple: { fontSize: font.sm, fontWeight: '800', color: '#7C3AED' },
 
   // Blocs mois / an / 10 ans
   apercuBloc: {
@@ -410,8 +452,9 @@ const styles = StyleSheet.create({
 
   // Boutons
   saveBtn: {
-    backgroundColor: colors.primary, borderRadius: radius.full,
+    backgroundColor: colors.primary, borderRadius: radius.pill,
     paddingVertical: 16, alignItems: 'center', marginTop: spacing.lg,
+    ...shadow.card,
   },
   saveBtnText: { color: colors.white, fontSize: font.md, fontWeight: '700' },
   footerNote:  { textAlign: 'center', fontSize: 11, color: colors.gray, marginTop: spacing.sm },

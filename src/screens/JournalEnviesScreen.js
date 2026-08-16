@@ -1,21 +1,24 @@
 import React, { useState } from 'react';
 import {
-  View, Text, StyleSheet, SafeAreaView, ScrollView,
+  View, Text, Image, StyleSheet, SafeAreaView, ScrollView,
   TouchableOpacity,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useUser } from '../context/UserContext';
 import { colors, spacing, font, radius } from '../theme';
+import { UI } from '../assets/uiKit';
 
-const TRIGGER_EMOJIS = {
-  stress:   '😰',
-  ennui:    '😴',
-  cafe:     '☕',
-  repas:    '🍽',
-  social:   '👥',
-  alcool:   '🍺',
-  habitude: '🚬',
-  autre:    '🤷',
+// Illustrations 3D du kit UI (page 09) — mêmes assets que la grille de choix
+// du déclencheur, pour rester cohérent dans toute l'app.
+const TRIGGER_IMAGES = {
+  stress:   UI.trig_stress,
+  ennui:    UI.trig_ennui,
+  cafe:     UI.trig_cafe,
+  repas:    UI.trig_repas,
+  social:   UI.trig_entourage,
+  alcool:   UI.trig_alcool,
+  habitude: UI.trig_habitude,
+  autre:    UI.trig_autre,
 };
 
 // Regroupe les envies par jour (clé YYYY-MM-DD), du plus récent au plus ancien
@@ -81,9 +84,9 @@ export default function JournalEnviesScreen({ navigation, route }) {
       .map(d => [d.key, d.label])
   );
   const resoudreTrig = k => {
-    if (TRIGGER_EMOJIS[k]) return { emoji: TRIGGER_EMOJIS[k], label: t(`triggers.${k}`) };
+    if (TRIGGER_IMAGES[k]) return { img: TRIGGER_IMAGES[k], label: t(`triggers.${k}`) };
     if (persoMap[k]) return { emoji: '📝', label: persoMap[k] };
-    return { emoji: TRIGGER_EMOJIS.autre, label: t('triggers.autre') };
+    return { img: TRIGGER_IMAGES.autre, label: t('triggers.autre') };
   };
   const jours  = grouperParJour(envies);
   const trigs  = grouperParDeclencheur(envies);
@@ -165,7 +168,11 @@ export default function JournalEnviesScreen({ navigation, route }) {
                     return (
                       <View key={i} style={styles.envieRow}>
                         <Text style={styles.envieHeure}>{heure}</Text>
-                        <Text style={{ fontSize: 15 }}>{info.emoji}</Text>
+                        <View style={styles.trigBadgeSm}>
+                          {info.img
+                            ? <Image source={info.img} style={styles.trigIllusSm} resizeMode="contain" />
+                            : <Text style={{ fontSize: 13 }}>{info.emoji}</Text>}
+                        </View>
                         <View style={{ flex: 1 }}>
                           <Text style={styles.envieLabel}>{info.label}</Text>
                           {e.note ? <Text style={styles.envieNote} numberOfLines={3}>{t('quotedNote', { note: e.note })}</Text> : null}
@@ -195,7 +202,11 @@ export default function JournalEnviesScreen({ navigation, route }) {
                 activeOpacity={0.7}
                 onPress={() => setOpenTrig(open ? null : trig.key)}
               >
-                <Text style={{ fontSize: 22 }}>{info.emoji}</Text>
+                <View style={styles.trigBadge}>
+                  {info.img
+                    ? <Image source={info.img} style={styles.trigIllus} resizeMode="contain" />
+                    : <Text style={{ fontSize: 20 }}>{info.emoji}</Text>}
+                </View>
                 <View style={{ flex: 1 }}>
                   <Text style={styles.jourTitre}>{info.label}</Text>
                   <Text style={styles.jourSous}>
@@ -235,7 +246,7 @@ export default function JournalEnviesScreen({ navigation, route }) {
 }
 
 const styles = StyleSheet.create({
-  safe:   { flex: 1, backgroundColor: '#F7F8FA' },
+  safe:   { flex: 1, backgroundColor: colors.cream },
   scroll: { padding: spacing.md, paddingBottom: spacing.xxl },
 
   header: {
@@ -285,6 +296,12 @@ const styles = StyleSheet.create({
   jourTitre:   { fontSize: font.sm, fontWeight: '700', color: colors.black },
   jourSous:    { fontSize: 11, color: colors.gray, marginTop: 3 },
   jourChevron: { fontSize: 16, color: colors.gray },
+  // Badge coloré pour l'icône de déclencheur (vue "Par déclencheur")
+  trigBadge:  { width: 40, height: 40, borderRadius: 20, backgroundColor: colors.primaryLight, alignItems: 'center', justifyContent: 'center' },
+  trigIllus:  { width: 26, height: 26 },
+  // Version compacte pour la liste "heure par heure" (vue "Par jour")
+  trigBadgeSm:{ width: 26, height: 26, borderRadius: 13, backgroundColor: colors.primaryLight, alignItems: 'center', justifyContent: 'center' },
+  trigIllusSm:{ width: 17, height: 17 },
 
   detail: {
     borderTopWidth: 1, borderTopColor: '#F5F5F5',

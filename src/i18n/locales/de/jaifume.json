@@ -42,10 +42,10 @@
   "feedbackModal": {
     "perfectTitle": "Rauchfreier Tag!",
     "okTitle": "Gut gemacht!",
-    "exceededTitle": "Ziel überschritten",
+    "exceededTitle": "Ziel nicht erreicht",
     "perfectSub": "0 Zigaretten heute",
     "okSub": "Ziel heute eingehalten",
-    "exceededSub": "{{count}} Zig. · +{{diff}} zu viel",
+    "exceededSub": "Nur ein Schritt — mach morgen weiter.",
     "lifeGained": "gewonnene Lebenszeit",
     "spent": "ausgegeben",
     "streak": "Serie",
@@ -60,6 +60,7 @@
     "modifyGoal": "Ziel ändern",
     "btnPerfect": "Super, danke!",
     "btnOk": "Notiert!",
-    "btnExceeded": "Verstanden!"
+    "btnExceeded": "Weiter",
+    "smokedCigarettes": "gerauchte Zigaretten"
   }
 }

@@ -19,9 +19,10 @@
     "perWeek_other": "Zigaretten pro Woche"
   },
   "planPreview": {
+    "sectionTitle": "Wochenprognose",
     "today": "Heute",
     "weekLabel": "W+{{n}}",
-    "summaryPrefix": "🏁 In diesem Tempo erreichst du",
+    "summaryPrefix": "In diesem Tempo erreichst du",
     "zeroCigarette": "0 Zigaretten",
     "inWeeks_one": "in {{count}} Woche",
     "inWeeks_other": "in {{count}} Wochen",

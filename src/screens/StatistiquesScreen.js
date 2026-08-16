@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View, Text, StyleSheet, SafeAreaView, ScrollView,
   TouchableOpacity, Dimensions,
 } from 'react-native';
-import Svg, { Circle, Rect, Text as SvgText, G } from 'react-native-svg';
+import Svg, { Circle, Rect, Path, Text as SvgText, G } from 'react-native-svg';
 import { useTranslation } from 'react-i18next';
 import { useUser } from '../context/UserContext';
-import { colors, spacing, font, radius } from '../theme';
+import { colors, spacing, font, radius, shadow, getScreenWidth } from '../theme';
+import { UI } from '../assets/uiKit';
+import { Image } from 'react-native';
 
-const { width: SCREEN_W } = Dimensions.get('window');
+const SCREEN_W = getScreenWidth();
 const CHART_W = SCREEN_W - spacing.md * 2 - spacing.md * 2;
 const CHART_H = 100;
 
@@ -67,6 +69,14 @@ function periodStats(dates, hist, consoAvant, prixCig) {
   return { counts, sum, n, nTotal, nbNonRenseignes, nbEnregistres: enregistres.length, argDep, argEco, vieMins, progression };
 }
 
+// ── Prochain palier rond d'économies (barre de progression) ─────────────────
+const SAVINGS_MILESTONES = [50, 100, 250, 500, 1000, 2000, 5000, 10000, 20000, 50000];
+function nextMilestone(amount) {
+  const found = SAVINGS_MILESTONES.find(m => m > amount);
+  if (found) return found;
+  return Math.ceil((amount + 1) / 50000) * 50000;
+}
+
 function fmtVie(mins) {
   const neg = mins < 0; const m = Math.abs(mins); const signe = neg ? '-' : '+';
   const h = Math.floor(m / 60); const j = Math.floor(h / 24);
@@ -75,22 +85,62 @@ function fmtVie(mins) {
   return `${signe}${m}min`;
 }
 
-// ── Graphique barres (cliquable) ─────────────────────────────────────────────
+// ── Pastille de comparaison vs période précédente (grille 2×2) ──────────────
+// mode 'percent' → "↓ 38 % vs hier (26)" (cigarettes)
+// mode 'amount'  → "↑ 1,30 € vs hier (1,90 €)" (argent, via fmt)
+function pillDelta(current, previous, mode, prevLabel, t, fmt = n => n) {
+  if (!previous) return null;
+  const down  = current <= previous; // moins = mieux (cigarettes / argent dépensé)
+  const arrow = down ? '↓' : '↑';
+  if (mode === 'percent') {
+    const pct = Math.round((Math.abs(current - previous) / previous) * 100);
+    if (pct === 0) return null;
+    return { text: `${arrow} ${pct}% ${t('gridTiles.vs', { ref: prevLabel, value: previous })}`, positive: down };
+  }
+  const diff = Math.abs(current - previous);
+  if (diff < 0.005) return null;
+  return { text: `${arrow} ${fmt(diff)} € ${t('gridTiles.vs', { ref: prevLabel, value: `${fmt(previous)} €` })}`, positive: down };
+}
+
+// ── Graphique barres avec axe Y (cliquable) ──────────────────────────────────
+// Axe gauche : 3 repères (0 / milieu / max), lignes pointillées, comme les
+// deux maquettes de référence. Décalage à gauche (yAxisW) pour loger les
+// nombres sans empiéter sur les barres.
+const Y_AXIS_W = 20;
 function BarChart({ data, color = colors.primary, width = CHART_W, height = CHART_H, labels, onBarPress, highlight = -1 }) {
   if (!data || data.length === 0) return null;
+  const chartW = width - Y_AXIS_W;
   const max  = Math.max(...data, 1);
-  const barW = (width / data.length) * 0.6;
-  const gap  = (width / data.length) * 0.4;
+  // Échelle Y arrondie à une dizaine/unité lisible au-dessus du vrai maximum
+  const yMax = max <= 5 ? max + 1 : Math.ceil(max * 1.15);
+  const barW = (chartW / data.length) * 0.6;
+  const gap  = (chartW / data.length) * 0.4;
+  const yTicks = [0, Math.round(yMax / 2), yMax];
+
   return (
     <Svg width={width} height={height + 20}>
+      {/* Lignes de repère + labels de l'axe Y */}
+      {yTicks.map((tick, i) => {
+        const y = height - (tick / yMax) * (height - 8);
+        return (
+          <G key={`y${i}`}>
+            <Path
+              d={`M${Y_AXIS_W},${y} L${width},${y}`}
+              stroke="#E5E1D3" strokeWidth={1} strokeDasharray={tick === 0 ? '' : '3 3'}
+            />
+            <SvgText x={Y_AXIS_W - 6} y={y + 3} fontSize={9} fill="#9E9E9E" textAnchor="end">{tick}</SvgText>
+          </G>
+        );
+      })}
+
       {data.map((v, i) => {
-        const barH = (v / max) * (height - 8);
-        const x    = i * (barW + gap) + gap / 2;
+        const barH = (v / yMax) * (height - 8);
+        const x    = Y_AXIS_W + i * (barW + gap) + gap / 2;
         const y    = height - barH;
         return (
           <G key={i} onPress={onBarPress ? () => onBarPress(i) : undefined}>
             {/* Zone de toucher pleine hauteur */}
-            <Rect x={i * (barW + gap)} y={0} width={barW + gap} height={height + 20} fill="transparent" />
+            <Rect x={Y_AXIS_W + i * (barW + gap)} y={0} width={barW + gap} height={height + 20} fill="transparent" />
             <Rect
               x={x} y={Math.max(y, 0)} width={barW} height={Math.max(barH, 2)} rx={3}
               fill={i === highlight ? '#F59E0B' : color} opacity={0.85}
@@ -119,6 +169,36 @@ function MiniArc({ ratio = 0, size = 80, color = colors.primary }) {
         strokeDasharray={`${dash} ${circ}`} strokeLinecap="round"
         rotation="-90" origin={`${cx},${cy}`} />
     </Svg>
+  );
+}
+
+// ── Tuile de la grille 2×2 (réf. statistiques_reference_B) ──────────────────
+const TILE_TONES = {
+  green:  { bg: colors.primaryLight, border: '#C8E2CF' },
+  orange: { bg: '#FDF0DC', border: '#F0D5A8' },
+  purple: { bg: '#EFE8F7', border: '#D9CBEF' },
+};
+function StatGridTile({ tone, illus, title, value, sub, pill }) {
+  const t2 = TILE_TONES[tone] ?? TILE_TONES.green;
+  const pillObj = typeof pill === 'string' ? { text: pill, positive: null } : pill;
+  return (
+    <View style={[styles.tile, { backgroundColor: t2.bg, borderColor: t2.border }]}>
+      <View style={styles.tileTop}>
+        <Text style={styles.tileTitle}>{title}</Text>
+        <Image source={illus} style={styles.tileIllus} resizeMode="contain" />
+      </View>
+      <Text style={styles.tileValue} numberOfLines={1} adjustsFontSizeToFit>{value}</Text>
+      <Text style={styles.tileSub}>{sub}</Text>
+      {pillObj && (
+        <View style={styles.tilePill}>
+          <Text style={[
+            styles.tilePillText,
+            pillObj.positive === true  && { color: colors.primary },
+            pillObj.positive === false && { color: colors.danger },
+          ]}>{pillObj.text}</Text>
+        </View>
+      )}
+    </View>
   );
 }
 
@@ -163,6 +243,11 @@ export default function StatistiquesScreen() {
   const [monthOffset, setMonthOffset] = useState(0);
   const [rangeStart, setRangeStart]   = useState(null); // clé mois "YYYY-MM"
   const [rangeEnd, setRangeEnd]       = useState(null);
+  // Index de la barre tapée : affiche le nombre de cigarettes de ce jour
+  // directement en overlay, sans changer de page. Remis à zéro dès qu'on
+  // change d'onglet ou qu'on navigue vers une autre période.
+  const [tappedIndex, setTappedIndex] = useState(null);
+  useEffect(() => { setTappedIndex(null); }, [activeTab, weekOffset, monthOffset, rangeStart, rangeEnd]);
 
   const TAB_LABELS = {
     jour: t('tabs.day'),
@@ -187,7 +272,7 @@ export default function StatistiquesScreen() {
   }
 
   // ── Données de base ──────────────────────────────────────────────────────────
-  const { allKeys, allValues, consoAvant, prixCig, serie, objectifJour } = stats;
+  const { allKeys, allValues, consoAvant, prixCig, serie, objectifJour, argentEcoCumul, vieGagneeStrCumul } = stats;
   const hist = Object.fromEntries(allKeys.map((k, i) => [k, allValues[i]]));
   const cigLog   = Array.isArray(profile?.cigLog) ? profile.cigLog : [];
   const now      = new Date();
@@ -212,6 +297,7 @@ export default function StatistiquesScreen() {
     const countJour = hist[dayKey] ?? 0;
     const sansHeure = Math.max(0, countJour - times.length);
 
+    const hierKey = isoKey(addDays(new Date(dayKey + 'T12:00:00'), -1));
     view = {
       navLabel: labelJourCourt(dayKey, t, i18n.language),
       onPrev: () => setDayKey(isoKey(addDays(new Date(dayKey + 'T12:00:00'), -1))),
@@ -222,6 +308,8 @@ export default function StatistiquesScreen() {
       chartLabels: Array.from({ length: 24 }, (_, h) => h % 4 === 0 ? `${h}${t('common:hourShort')}` : ''),
       heures: times.map(d => `${String(d.getHours()).padStart(2, '0')}h${String(d.getMinutes()).padStart(2, '0')}`),
       sansHeure,
+      prevDates: hist[hierKey] !== undefined ? [hierKey] : null,
+      prevLabel: t('dates.yesterday'),
     };
   }
 
@@ -242,10 +330,16 @@ export default function StatistiquesScreen() {
       chartData: allKeys7.map(k => hist[k] ?? 0),
       chartLabels: weekdaysShort,
       onBarPress: i => {
-        const k = allKeys7[i];
-        if (k <= todayKey) { setDayKey(k); setActiveTab('jour'); }
+        if (allKeys7[i] <= todayKey) setTappedIndex(i);
       },
+      fullLabel: i => {
+        const s = days[i].toLocaleDateString(i18n.language, { weekday: 'long', day: 'numeric', month: 'long' });
+        return s.charAt(0).toUpperCase() + s.slice(1);
+      },
+      onDrillDown: i => { setDayKey(allKeys7[i]); setActiveTab('jour'); setTappedIndex(null); },
       tapHint: t('tapHint.day'),
+      prevDates: Array.from({ length: 7 }, (_, i) => isoKey(addDays(monday, i - 7))).filter(k => hist[k] !== undefined),
+      prevLabel: t('week.previous'),
     };
   }
 
@@ -273,9 +367,13 @@ export default function StatistiquesScreen() {
       chartData: allKeysM.map(k => hist[k] ?? 0),
       chartLabels: allKeysM.map((k, i) => (i + 1) % 5 === 0 || i === 0 ? String(i + 1) : ''),
       onBarPress: i => {
-        const k = allKeysM[i];
-        if (k <= todayKey) { setDayKey(k); setActiveTab('jour'); }
+        if (allKeysM[i] <= todayKey) setTappedIndex(i);
       },
+      fullLabel: i => {
+        const s = new Date(allKeysM[i] + 'T12:00:00').toLocaleDateString(i18n.language, { weekday: 'long', day: 'numeric', month: 'long' });
+        return s.charAt(0).toUpperCase() + s.slice(1);
+      },
+      onDrillDown: i => { setDayKey(allKeysM[i]); setActiveTab('jour'); setTappedIndex(null); },
       tapHint: t('tapHint.day'),
       comparaison: sumPrev > 0
         ? t('month.comparison', {
@@ -285,6 +383,8 @@ export default function StatistiquesScreen() {
             percent: Math.abs(Math.round(((sumCur - sumPrev) / sumPrev) * 100)),
           })
         : null,
+      prevDates: Array.from({ length: nbPrev }, (_, i) => `${pKey}-${String(i + 1).padStart(2, '0')}`).filter(k => hist[k] !== undefined),
+      prevLabel: labelMois(pKey, i18n.language),
     };
   }
 
@@ -309,10 +409,16 @@ export default function StatistiquesScreen() {
       chartLabels: months.map(mKey =>
         new Date(mKey + '-15T12:00:00').toLocaleDateString(i18n.language, { month: 'short' })
       ),
-      onBarPress: i => {
+      onBarPress: i => setTappedIndex(i),
+      fullLabel: i => {
+        const s = new Date(months[i] + '-15T12:00:00').toLocaleDateString(i18n.language, { month: 'long', year: 'numeric' });
+        return s.charAt(0).toUpperCase() + s.slice(1);
+      },
+      onDrillDown: i => {
         const [y, m] = months[i].split('-').map(Number);
         setMonthOffset((y - now.getFullYear()) * 12 + (m - 1 - now.getMonth()));
         setActiveTab('mois');
+        setTappedIndex(null);
       },
       tapHint: t('tapHint.month'),
       isRange: true,
@@ -320,7 +426,12 @@ export default function StatistiquesScreen() {
     };
   }
 
-  const p = periodStats(view.dates, hist, consoAvant, prixCig);
+  const p  = periodStats(view.dates, hist, consoAvant, prixCig);
+  // Stats de la période précédente équivalente (hier / semaine dernière / mois
+  // dernier), pour les pastilles de comparaison façon maquette.
+  const p2 = (view.prevDates && view.prevDates.length > 0)
+    ? periodStats(view.prevDates, hist, consoAvant, prixCig)
+    : null;
 
   // Navigation des bornes de la période libre
   function stepMonth(key, dir) {
@@ -332,10 +443,19 @@ export default function StatistiquesScreen() {
   const periodeLabel = TAB_LABELS[activeTab];
   const fmtEur = n => new Intl.NumberFormat(i18n.language, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
 
+  // Prochain palier d'économies (réf. "Progression vers votre objectif") : pas
+  // de montant cible fixé par l'utilisateur dans l'app, donc on vise le
+  // prochain jalon rond au-dessus des économies déjà réalisées — motivant et
+  // toujours honnête vis-à-vis des vraies données.
+  const goalTarget    = nextMilestone(argentEcoCumul);
+  const goalPct       = goalTarget > 0 ? Math.min(100, Math.round((argentEcoCumul / goalTarget) * 100)) : 0;
+  const goalRemaining = Math.max(0, goalTarget - argentEcoCumul);
+
   return (
     <SafeAreaView style={styles.safe}>
       <View style={styles.header}>
         <Text style={styles.headerTitle}>{t('common:tabs.stats')}</Text>
+        <Image source={UI.mascotte_entete} style={styles.headerMascotte} resizeMode="contain" />
       </View>
 
       <View style={styles.tabBar}>
@@ -393,26 +513,18 @@ export default function StatistiquesScreen() {
           </View>
         )}
 
-        {/* ── Cigarettes fumées ── */}
+        {/* ── Consommation (graphique) — réf. "Consommation par heure" ── */}
         <View style={styles.card}>
-          <View style={styles.cardHeader}>
-            <Text style={styles.cardIcon}>🚬</Text>
-            <Text style={styles.cardTitle}>{t('smokedCard.title')}</Text>
-            <Text style={styles.cardPeriod}>{periodeLabel}</Text>
-          </View>
-          <View style={styles.bigStatRow}>
-            <View>
-              <Text style={styles.bigNumber}>{p.sum.toLocaleString(i18n.language)}</Text>
-              <Text style={styles.bigUnit}>{t('smokedCard.unit')}</Text>
-            </View>
-            {p.progression !== 0 && (
-              <View style={styles.badgeCol}>
-                <Text style={[styles.badgeGreen, p.progression < 0 && { color: colors.red }]}>
-                  {t('smokedCard.vsBeforeAppValue', { arrow: p.progression > 0 ? '↓' : '↑', percent: Math.abs(p.progression) })}
-                </Text>
-                <Text style={styles.badgeSub}>{t('vsBeforeApp')}</Text>
+          <View style={styles.chartHeader}>
+            <View style={styles.chartHeaderLeft}>
+              <View style={styles.chartIconCircle}>
+                <Image source={UI.resume_graphique} style={styles.chartIconIllus} resizeMode="contain" />
               </View>
-            )}
+              <Text style={styles.cardTitle}>{t('smokedCard.chartTitle')}</Text>
+            </View>
+            <View style={styles.chartTag}>
+              <Text style={styles.chartTagText}>{t('smokedCard.title')}</Text>
+            </View>
           </View>
           <View style={styles.chartContainer}>
             <BarChart
@@ -420,9 +532,37 @@ export default function StatistiquesScreen() {
               labels={view.chartLabels}
               color={colors.primary}
               onBarPress={view.onBarPress}
+              highlight={tappedIndex ?? -1}
             />
           </View>
-          {view.tapHint && <Text style={styles.tapHint}>👆 {view.tapHint}</Text>}
+
+          {/* Bannière conseil sous le graphique (réf. maquette) */}
+          <View style={styles.chartTip}>
+            <Text style={styles.chartTipIcon}>🍃</Text>
+            <Text style={styles.chartTipText}>
+              {p.progression >= 0 ? t('smokedCard.tipPositive') : t('smokedCard.tipNegative')}
+            </Text>
+          </View>
+
+          {/* Overlay : nombre de cigarettes du jour/mois tapé, sans changer de page */}
+          {tappedIndex != null && view.fullLabel && (
+            <View style={styles.tapOverlay}>
+              <Image source={UI.cigarette} style={styles.tapOverlayIllus} resizeMode="contain" />
+              <View style={{ flex: 1, minWidth: 0 }}>
+                <Text style={styles.tapOverlayLabel}>{view.fullLabel(tappedIndex)}</Text>
+                <Text style={styles.tapOverlayValue}>
+                  {view.chartData[tappedIndex]} {t('common:cigarette', { count: view.chartData[tappedIndex] })}
+                </Text>
+              </View>
+              {view.onDrillDown && (
+                <TouchableOpacity onPress={() => view.onDrillDown(tappedIndex)}>
+                  <Text style={styles.tapOverlayLink}>{t('tapOverlay.seeDetail')}</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+          )}
+
+          {view.tapHint && tappedIndex == null && <Text style={styles.tapHint}>👆 {view.tapHint}</Text>}
 
           {/* Détail horaire (onglet Jour) */}
           {activeTab === 'jour' && (
@@ -457,109 +597,133 @@ export default function StatistiquesScreen() {
           )}
         </View>
 
-        {/* ── Argent ── */}
-        <View style={styles.card}>
-          <View style={styles.cardHeader}>
-            <Text style={styles.cardIcon}>💰</Text>
-            <Text style={styles.cardTitle}>{t('moneyCard.title')}</Text>
-            <Text style={styles.cardPeriod}>{periodeLabel}</Text>
+        {/* ── Total / Moyenne quotidienne / Diminution (réf. maquette) ── */}
+        <View style={styles.threeColCard}>
+          <View style={styles.threeCol}>
+            <Text style={styles.threeColLabel}>{t('smokedCard.totalLabel')}</Text>
+            <Text style={styles.threeColValue}>{p.sum.toLocaleString(i18n.language)}</Text>
+            <Text style={styles.threeColUnit}>{t('smokedCard.unit')}</Text>
           </View>
-          <View style={styles.argRow}>
-            <View style={styles.argCol}>
-              <Text style={[styles.argGreen, p.argEco < 0 && { color: colors.red }]}>
-                {p.argEco >= 0 ? '+' : '-'}{fmtEur(Math.abs(p.argEco))} €
-              </Text>
-              <Text style={styles.argLabel}>{t('vsBeforeApp')}</Text>
-            </View>
-            <View style={styles.argCol}>
-              <Text style={styles.argRed}>-{fmtEur(p.argDep)} €</Text>
-              <Text style={styles.argLabel}>{t('moneyCard.spentReal')}</Text>
-            </View>
-            <View style={styles.argCol}>
-              <Text style={[styles.argRed, { color: p.argEco >= p.argDep ? colors.primary : colors.red }]}>
-                {p.argEco >= p.argDep ? '+' : '-'}{fmtEur(Math.abs(p.argEco - p.argDep))} €
-              </Text>
-              <Text style={styles.argLabel}>{t('moneyCard.net')}</Text>
-            </View>
+          <View style={styles.threeColDiv} />
+          <View style={styles.threeCol}>
+            <Text style={styles.threeColLabel}>{t('smokedCard.avgLabel')}</Text>
+            <Text style={styles.threeColValue}>{(p.sum / p.n).toFixed(1)}</Text>
+            <Text style={styles.threeColUnit}>{t('smokedCard.unit')}</Text>
           </View>
-          {p.nbNonRenseignes > 0 && (
-            <Text style={{ fontSize: 10, color: colors.gray, textAlign: 'center' }}>
-              {t('moneyCard.calculatedOn', { count: p.nbEnregistres })}{t('moneyCard.missingDays', { count: p.nbNonRenseignes })}
-            </Text>
-          )}
-        </View>
-
-        {/* ── Vie récupérée + Progression ── */}
-        <View style={styles.row}>
-          <View style={[styles.card, styles.halfCard]}>
-            <View style={styles.cardHeader}>
-              <Text style={styles.cardIcon}>❤️</Text>
-              <Text style={[styles.cardTitle, { fontSize: 12 }]}>{t('lifeCard.title')}</Text>
-            </View>
-            <View style={{ alignItems: 'center', marginTop: 8 }}>
-              <MiniArc ratio={Math.min(p.vieMins / (24 * 60), 1)} size={80} color={p.vieMins >= 0 ? colors.primary : colors.red} />
-              <Text style={[styles.vieText, p.vieMins < 0 && { color: colors.red }]}>{fmtVie(p.vieMins)}</Text>
-              <Text style={styles.vieSub}>{t('vsBeforeApp')}</Text>
-              <Text style={[styles.vieSub, { fontSize: 9, marginTop: 2, color: '#aaa' }]}>{t('lifeCard.rate')}</Text>
-            </View>
-          </View>
-
-          <View style={[styles.card, styles.halfCard]}>
-            <View style={styles.cardHeader}>
-              <Text style={styles.cardIcon}>📈</Text>
-              <Text style={[styles.cardTitle, { fontSize: 12 }]}>{t('progressionCard.title')}</Text>
-            </View>
-            <Text style={[styles.progNum, p.progression < 0 && { color: colors.red }]}>
-              {p.progression > 0 ? '↓' : '↑'} {Math.abs(p.progression)} %
-            </Text>
-            <Text style={styles.progSub}>{t('progressionCard.subtitle')}</Text>
-            <View style={styles.badgeRow}>
-              <Text style={styles.badgeSmall}>{t('progressionCard.streak', { count: serie })}</Text>
-            </View>
+          <View style={styles.threeColDiv} />
+          <View style={styles.threeCol}>
+            <Text style={styles.threeColLabel}>{t('smokedCard.decreaseLabel')}</Text>
+            {(() => {
+              const cur  = p2 ? p.sum : p.sum;
+              const ref  = p2 ? p2.sum : (p.n * consoAvant);
+              const down = cur <= ref;
+              const pct  = ref > 0 ? Math.round((Math.abs(cur - ref) / ref) * 100) : 0;
+              return (
+                <Text style={[styles.threeColValue, { color: down ? colors.primary : colors.danger, fontSize: 22 }]}>
+                  {down ? '↓' : '↑'} {pct}%
+                </Text>
+              );
+            })()}
+            <Text style={styles.threeColUnit}>{view.prevLabel ?? t('vsBeforeApp')}</Text>
           </View>
         </View>
 
-        {/* ── Résumé ── */}
+        {/* ── Grille 2×2 : Cigarettes / Argent dépensé / Argent économisé / Vie récupérée
+              (réf. maquette statistiques_reference_B) ── */}
+        <View style={styles.grid2}>
+          <StatGridTile
+            tone="green" illus={UI.paquet_cigarettes_feuilles}
+            title={t('smokedCard.title')} value={p.sum.toLocaleString(i18n.language)}
+            sub={periodeLabel}
+            pill={p2 ? pillDelta(p.sum, p2.sum, 'percent', view.prevLabel, t) : null}
+          />
+          <StatGridTile
+            tone="orange" illus={UI.portefeuille}
+            title={t('moneyCard.spentTitle')} value={`${fmtEur(p.argDep)} €`}
+            sub={periodeLabel}
+            pill={p2 ? pillDelta(p.argDep, p2.argDep, 'amount', view.prevLabel, t, fmtEur) : null}
+          />
+          <StatGridTile
+            tone="green" illus={UI.bocal_economies}
+            title={t('moneyCard.savedTitle')} value={`${fmtEur(p.argEco)} €`}
+            sub={periodeLabel}
+            pill={t('gridTiles.cumulMoney', { amount: fmtEur(argentEcoCumul) })}
+          />
+          <StatGridTile
+            tone="purple" illus={UI.sablier}
+            title={t('lifeCard.title')} value={fmtVie(p.vieMins)}
+            sub={periodeLabel}
+            pill={t('gridTiles.cumulLife', { value: vieGagneeStrCumul })}
+          />
+        </View>
+
+        {/* ── Progression vers votre objectif (palier d'économies, réf. maquette) ── */}
+        <View style={styles.card}>
+          <View style={styles.progressHeader}>
+            <View style={styles.progressTitleRow}>
+              <Image source={UI.bocal_economies} style={styles.progressTitleIcon} resizeMode="contain" />
+              <Text style={styles.cardTitle}>{t('goalProgress.title')}</Text>
+            </View>
+            <Text style={styles.progressAmounts}>{fmtEur(argentEcoCumul)} € / {fmtEur(goalTarget)} €</Text>
+          </View>
+          <View style={styles.progressBarRow}>
+            <View style={styles.progressTrack}>
+              <View style={[styles.progressFill, { width: `${goalPct}%` }]} />
+            </View>
+            <Image source={UI.drapeau_jalon} style={styles.progressFlag} resizeMode="contain" />
+          </View>
+          <View style={styles.progressFooter}>
+            <Text style={styles.progressPct}>{goalPct}% {t('goalProgress.reached')}</Text>
+            <Text style={styles.progressRemaining}>{t('goalProgress.remaining', { amount: fmtEur(goalRemaining) })}</Text>
+          </View>
+        </View>
+
+        {/* ── Objectif (réf. "Objectif du jour" de la maquette) ── */}
         <View style={styles.card}>
           <View style={styles.cardHeader}>
-            <Text style={styles.cardIcon}>✨</Text>
-            <Text style={styles.cardTitle}>{t('summaryCard.title')}</Text>
-          </View>
-          <View style={styles.resumeLine}>
-            <Text style={styles.resumeBullet}>•</Text>
-            <Text style={styles.resumeText}>
-              {t('summaryCard.smokedCount', { count: p.sum })} {t('summaryCard.onDaysRecorded', { count: p.nbEnregistres })}
-              {p.nbNonRenseignes > 0 ? ` ${t('summaryCard.missingParen', { count: p.nbNonRenseignes })}` : ''}
+            <Image source={UI.cible_objectif} style={styles.cardIllus} resizeMode="contain" />
+            <Text style={styles.cardTitle}>
+              {activeTab === 'jour' ? t('goalCard.titleDay') : t('goalCard.titleAverage')}
             </Text>
           </View>
-          <View style={styles.resumeLine}>
-            <Text style={styles.resumeBullet}>•</Text>
-            <Text style={styles.resumeText}>{t('summaryCard.average', { avg: (p.sum / p.n).toFixed(1), count: objectifJour })}</Text>
-          </View>
-          <View style={styles.resumeLine}>
-            <Text style={styles.resumeBullet}>•</Text>
-            <Text style={styles.resumeText}>
-              {(() => {
-                const ecartObj = p.sum - objectifJour * p.nbEnregistres;
-                return ecartObj > 0
-                  ? t('summaryCard.overPlan', { count: ecartObj })
-                  : t('summaryCard.underPlan', { count: Math.abs(ecartObj) });
-              })()}
+          <Text style={styles.goalSub}>{t('goalCard.stayUnder', { count: objectifJour })}</Text>
+          <View style={styles.goalRow}>
+            <Text style={styles.goalFraction}>
+              {activeTab === 'jour' ? p.sum : (p.sum / p.n).toFixed(1)}
+              <Text style={styles.goalFractionTotal}> / {objectifJour}</Text>
+            </Text>
+            <Text style={[styles.goalMsg, { color: (activeTab === 'jour' ? p.sum : p.sum / p.n) <= objectifJour ? colors.primary : colors.danger }]}>
+              {(activeTab === 'jour' ? p.sum : p.sum / p.n) <= objectifJour ? t('goalCard.onTrack') : t('goalCard.overGoal')}
             </Text>
           </View>
-          <View style={styles.resumeLine}>
-            <Text style={styles.resumeBullet}>•</Text>
-            <Text style={styles.resumeText}>
-              {p.argEco >= 0
-                ? t('summaryCard.moneyPositive', { amount: fmtEur(p.argEco) })
-                : t('summaryCard.moneyNegative', { amount: fmtEur(p.argEco) })}
+        </View>
+
+        {/* ── Résumé narratif (pas de liste à puces — réf. maquette) ── */}
+        <View style={styles.summaryCard}>
+          <Image source={UI.pousse_resume} style={styles.summaryIllus} resizeMode="contain" />
+          <View style={{ flex: 1, minWidth: 0 }}>
+            <Text style={styles.summaryTitle}>{t('summaryCard.title')}</Text>
+            <Text style={styles.summaryText}>
+              {t('summaryCard.narrative', {
+                count: p.sum,
+                unit: t('common:cigarette', { count: p.sum }),
+                comparison: (p2 && p.sum !== p2.sum)
+                  ? t('summaryCard.narrativeComparison', {
+                      diff: Math.abs(p.sum - p2.sum),
+                      unit: t('common:cigarette', { count: Math.abs(p.sum - p2.sum) }),
+                      dir: p.sum <= p2.sum ? t('summaryCard.less') : t('summaryCard.more'),
+                      ref: view.prevLabel ? view.prevLabel.charAt(0).toLowerCase() + view.prevLabel.slice(1) : '',
+                    })
+                  : '',
+                moneyPhrase: p.argEco >= 0
+                  ? t('summaryCard.moneySavedPhrase', { amount: fmtEur(p.argEco) })
+                  : t('summaryCard.moneyOverspentPhrase', { amount: fmtEur(Math.abs(p.argEco)) }),
+                lifePhrase: p.vieMins >= 0
+                  ? t('summaryCard.lifeGainedPhrase', { value: fmtVie(p.vieMins).replace(/^\+/, '') })
+                  : t('summaryCard.lifeLostPhrase', { value: fmtVie(p.vieMins).replace(/^-/, '') }),
+              })}
             </Text>
           </View>
-          <Text style={styles.resumeMessage}>
-            {p.progression > 0 ? t('summaryCard.messagePositive', { percent: p.progression })
-              : p.progression < 0 ? t('summaryCard.messageNegative', { percent: Math.abs(p.progression) })
-              : t('summaryCard.messageNeutral')}
-          </Text>
         </View>
 
       </ScrollView>
@@ -568,34 +732,36 @@ export default function StatistiquesScreen() {
 }
 
 const styles = StyleSheet.create({
-  safe:   { flex: 1, backgroundColor: '#F7F8FA' },
-  header: { paddingHorizontal: spacing.lg, paddingTop: spacing.md, paddingBottom: spacing.sm, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: colors.white },
-  headerTitle: { fontSize: font.lg, fontWeight: '800', color: colors.black },
-  tabBar: { flexDirection: 'row', backgroundColor: colors.white, paddingHorizontal: spacing.md, paddingBottom: spacing.sm, borderBottomWidth: 1, borderBottomColor: colors.grayBorder },
-  tab:          { flex: 1, paddingVertical: 8, alignItems: 'center', borderRadius: radius.full },
+  safe:   { flex: 1, backgroundColor: colors.cream },
+  header: { paddingHorizontal: spacing.lg, paddingTop: spacing.md, paddingBottom: spacing.sm, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: colors.cream },
+  headerTitle: { fontSize: font.xl, fontWeight: '900', color: colors.primaryDeep },
+  headerMascotte: { width: 48, height: 48 },
+  tabBar: { flexDirection: 'row', backgroundColor: colors.primaryLight, marginHorizontal: spacing.md, marginBottom: spacing.sm, padding: 4, gap: 4, borderRadius: radius.pill },
+  tab:          { flex: 1, paddingVertical: 10, alignItems: 'center', borderRadius: radius.pill },
   tabActive:    { backgroundColor: colors.primary },
-  tabText:      { fontSize: 11, fontWeight: '600', color: colors.gray },
-  tabTextActive:{ color: colors.white },
+  tabText:      { fontSize: 12, fontWeight: '600', color: colors.primaryDeep },
+  tabTextActive:{ color: colors.white, fontWeight: '700' },
   scroll: { padding: spacing.md, gap: spacing.sm, paddingBottom: 90 },
-  card:   { backgroundColor: colors.white, borderRadius: radius.xl, padding: spacing.md, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 4, elevation: 2 },
+  card:   { backgroundColor: colors.surface, borderRadius: radius.xl, padding: spacing.lg, borderWidth: 1, borderColor: colors.grayBorder, ...shadow.card },
   cardHeader: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: spacing.sm },
   cardIcon:   { fontSize: 18 },
+  cardIllus:  { width: 28, height: 28 },
   cardTitle:  { fontSize: font.sm, fontWeight: '700', color: colors.black, flex: 1 },
   cardPeriod: { fontSize: 11, color: colors.gray },
 
   // Navigation de période
   navRow: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    backgroundColor: colors.white, borderRadius: radius.full,
+    backgroundColor: colors.surface, borderRadius: radius.pill,
     paddingHorizontal: 6, paddingVertical: 6, flex: 1,
-    shadowColor: '#000', shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05, shadowRadius: 4, elevation: 2,
+    borderWidth: 1, borderColor: colors.grayBorder,
+    ...shadow.card,
   },
   navBtn: {
-    width: 34, height: 34, borderRadius: 17,
-    backgroundColor: '#F0F0F0', alignItems: 'center', justifyContent: 'center',
+    width: 36, height: 36, borderRadius: 18,
+    backgroundColor: colors.primaryLight, alignItems: 'center', justifyContent: 'center',
   },
-  navBtnDisabled: { backgroundColor: '#FAFAFA' },
+  navBtnDisabled: { backgroundColor: colors.grayLight },
   navBtnText: { fontSize: 20, color: colors.primary, fontWeight: '600', lineHeight: 24 },
   navLabel:   { fontSize: 13, fontWeight: '700', color: colors.black },
 
@@ -612,6 +778,17 @@ const styles = StyleSheet.create({
   chartContainer: { marginTop: 4 },
   tapHint: { fontSize: 10, color: colors.gray, textAlign: 'center', marginTop: 6 },
 
+  // Overlay affiché au tap d'une barre (nombre de cigarettes, sans navigation)
+  tapOverlay: {
+    flexDirection: 'row', alignItems: 'center', gap: spacing.sm,
+    backgroundColor: colors.primaryLight, borderRadius: radius.md,
+    padding: spacing.sm, marginTop: 10,
+  },
+  tapOverlayIllus: { width: 28, height: 28, flexShrink: 0 },
+  tapOverlayLabel: { fontSize: 11, color: colors.gray },
+  tapOverlayValue: { fontSize: 15, fontWeight: '800', color: colors.primaryDeep, marginTop: 1 },
+  tapOverlayLink:  { fontSize: 11, color: colors.primary, fontWeight: '700', textAlign: 'right' },
+
   // Détail horaire
   heuresBox:   { marginTop: spacing.sm, borderTopWidth: 1, borderTopColor: '#F5F5F5', paddingTop: spacing.sm },
   heuresTitre: { fontSize: 12, fontWeight: '700', color: colors.black, marginBottom: 6 },
@@ -626,6 +803,27 @@ const styles = StyleSheet.create({
   argGreen:{ fontSize: font.md, fontWeight: '800', color: colors.primary },
   argRed:  { fontSize: font.md, fontWeight: '800', color: '#EF4444' },
   argLabel:{ fontSize: 11, color: colors.gray, marginTop: 2 },
+
+  // Argent — comparaison Avant / Avec l'app (delta explicite)
+  moneyCompare: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, marginBottom: spacing.sm },
+  moneyBox: {
+    flex: 1, backgroundColor: colors.cream, borderRadius: radius.lg,
+    paddingVertical: spacing.sm, alignItems: 'center', gap: 2,
+  },
+  moneyBoxIllus: { width: 34, height: 34, marginBottom: 2 },
+  moneyBoxLabel: { fontSize: 11, color: colors.gray },
+  moneyBoxCigs:  { fontSize: 13, fontWeight: '700', color: colors.black, marginTop: 4 },
+  moneyBoxValue: { fontSize: 15, fontWeight: '800', color: colors.primaryDeep, marginTop: 1 },
+  moneyArrow:    { fontSize: 20, color: colors.primary, fontWeight: '800' },
+  moneyResult: {
+    flexDirection: 'row', alignItems: 'center', gap: spacing.sm,
+    backgroundColor: colors.primaryLight, borderRadius: radius.lg,
+    padding: spacing.md,
+  },
+  moneyResultNegative: { backgroundColor: '#FBE9E7' },
+  moneyResultIllus: { width: 40, height: 40, flexShrink: 0 },
+  moneyResultValue: { fontSize: 22, fontWeight: '900', color: colors.primaryDeep },
+  moneyResultLabel: { fontSize: 12, color: colors.gray, marginTop: 2 },
   row:      { flexDirection: 'row', gap: spacing.sm },
   halfCard: { flex: 1 },
   vieText:  { fontSize: font.md, fontWeight: '900', color: colors.primary, marginTop: 4, textAlign: 'center' },
@@ -638,4 +836,76 @@ const styles = StyleSheet.create({
   resumeBullet:{ color: colors.primary, fontWeight: '800', fontSize: font.sm },
   resumeText:  { fontSize: font.sm, color: colors.black, flex: 1 },
   resumeMessage: { marginTop: spacing.sm, fontSize: font.sm, color: colors.primary, fontWeight: '600', textAlign: 'center' },
+
+  // Grille 2×2 (réf. statistiques_reference_B)
+  grid2: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
+  tile: {
+    width: (SCREEN_W - spacing.md * 2 - spacing.sm) / 2,
+    borderRadius: radius.lg, borderWidth: 1.5,
+    padding: 12,
+  },
+  tileTop: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: spacing.sm },
+  tileTitle: { flex: 1, fontSize: 12, fontWeight: '700', color: colors.black, lineHeight: 15 },
+  tileIllus: { width: 58, height: 58, marginLeft: 4 },
+  tileValue: { fontSize: 22, fontWeight: '900', color: colors.primaryDeep },
+  tileSub:   { fontSize: 11, color: colors.gray, marginTop: 1, marginBottom: spacing.sm },
+  tilePill:  { backgroundColor: 'rgba(255,255,255,0.6)', borderRadius: radius.full, paddingVertical: 4, paddingHorizontal: 8, alignSelf: 'flex-start' },
+  tilePillText: { fontSize: 10, fontWeight: '700', color: colors.black },
+
+  // Objectif du jour / moyen
+  goalSub: { fontSize: 12, color: colors.gray, marginBottom: spacing.sm },
+  goalRow: { flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between' },
+  goalFraction: { fontSize: 30, fontWeight: '900', color: colors.primaryDeep },
+  goalFractionTotal: { fontSize: 16, fontWeight: '600', color: colors.gray },
+  goalMsg: { fontSize: 13, fontWeight: '700' },
+
+  // Résumé narratif
+  summaryCard: {
+    flexDirection: 'row', alignItems: 'center', gap: spacing.sm,
+    backgroundColor: colors.surface, borderRadius: radius.xl,
+    padding: spacing.lg, borderWidth: 1, borderColor: colors.grayBorder,
+    ...shadow.card,
+  },
+  summaryIllus: { width: 40, height: 40, flexShrink: 0 },
+  summaryTitle: { fontSize: font.sm, fontWeight: '800', color: colors.primaryDeep, marginBottom: 4 },
+  summaryText:  { fontSize: 12, color: colors.black, lineHeight: 18 },
+
+  // En-tête de la carte graphique (icône ronde + titre + tag "Cigarettes fumées")
+  chartHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing.sm },
+  chartHeaderLeft: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, flex: 1, minWidth: 0 },
+  chartIconCircle: { width: 34, height: 34, borderRadius: 17, backgroundColor: colors.primaryLight, alignItems: 'center', justifyContent: 'center' },
+  chartIconIllus:  { width: 20, height: 20 },
+  chartTag:     { backgroundColor: colors.primaryLight, borderRadius: radius.full, paddingHorizontal: 10, paddingVertical: 5 },
+  chartTagText: { fontSize: 11, fontWeight: '700', color: colors.primaryDeep },
+
+  // Bannière conseil sous le graphique
+  chartTip: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: colors.primaryLight, borderRadius: radius.md, padding: spacing.sm, marginTop: spacing.sm },
+  chartTipIcon: { fontSize: 14 },
+  chartTipText: { flex: 1, fontSize: 11, color: colors.primaryDeep, fontWeight: '600' },
+
+  // Carte 3 colonnes : Total / Moyenne quotidienne / Diminution
+  threeColCard: {
+    flexDirection: 'row', alignItems: 'center',
+    backgroundColor: colors.surface, borderRadius: radius.xl,
+    paddingVertical: spacing.md, borderWidth: 1, borderColor: colors.grayBorder,
+    ...shadow.card,
+  },
+  threeCol:    { flex: 1, alignItems: 'center' },
+  threeColDiv: { width: 1, height: 44, backgroundColor: colors.grayBorder },
+  threeColLabel: { fontSize: 10, color: colors.gray, textAlign: 'center', marginBottom: 4 },
+  threeColValue: { fontSize: 24, fontWeight: '900', color: colors.primaryDeep },
+  threeColUnit:  { fontSize: 11, color: colors.gray, marginTop: 2 },
+
+  // Barre de progression vers le prochain palier d'économies
+  progressHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: spacing.sm },
+  progressTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 6, flex: 1, marginRight: spacing.sm },
+  progressTitleIcon: { width: 22, height: 22 },
+  progressAmounts: { fontSize: 12, color: colors.gray, fontWeight: '600' },
+  progressBarRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  progressTrack: { flex: 1, height: 10, backgroundColor: colors.primaryLight, borderRadius: 5, overflow: 'hidden' },
+  progressFill:  { height: '100%', backgroundColor: colors.primary, borderRadius: 5 },
+  progressFlag:  { width: 22, height: 22 },
+  progressFooter: { flexDirection: 'row', justifyContent: 'space-between', marginTop: spacing.sm },
+  progressPct:   { fontSize: 12, fontWeight: '700', color: colors.primaryDeep },
+  progressRemaining: { fontSize: 12, color: colors.gray },
 });

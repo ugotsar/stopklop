@@ -12,7 +12,7 @@
     "sectionTitle": "Today",
     "subtitle": "cigarettes\ntoday",
     "goal": "Goal: {{count}} max",
-    "validateButton": "✓  Log my day",
+    "validateButton": "Log my day",
     "smokedLink": "I smoked today  ›"
   },
   "perfectDayModal": {
@@ -66,7 +66,7 @@
     "smokedButton": "I smoked  🚬  (+1 cigarette)"
   },
   "motivation": {
-    "sectionTitle": "✨  Today's motivation",
+    "sectionTitle": "Today's motivation",
     "quotes": [
       "Every smoke-free hour is a win for your health.",
       "You're not giving something up — you're gaining a better life.",
@@ -90,12 +90,12 @@
   "envieCard": {
     "title": "Craving a cigarette right now?",
     "subtitle": "Log it: we analyze your triggers to help you anticipate them.",
-    "button": "I'm craving a cigarette",
+    "button": "I'm craving\na cigarette",
     "count_one": "{{count}} craving logged — analysis available in the Plan tab",
     "count_other": "{{count}} cravings logged — analysis available in the Plan tab"
   },
   "devButtons": {
-    "loadDemo": "🎬 Load demo (5 weeks of usage)",
-    "resetOnboarding": "↩ Restart onboarding"
+    "loadDemo": "Load demo (5 weeks of usage)",
+    "resetOnboarding": "Restart onboarding"
   }
 }

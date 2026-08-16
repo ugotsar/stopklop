@@ -15,7 +15,13 @@
       "modalTitle": "Gespartes Geld",
       "explanationIntro_one": "Vor der App hast du {{consoAvant}} Zigaretten pro Tag geraucht. Dein aktuelles Ziel liegt bei {{objectif}} pro Tag: Das sind {{count}} vermiedene Zigarette pro Tag.",
       "explanationIntro_other": "Vor der App hast du {{consoAvant}} Zigaretten pro Tag geraucht. Dein aktuelles Ziel liegt bei {{objectif}} pro Tag: Das sind {{count}} vermiedene Zigaretten pro Tag.",
-      "explanationDetail": "\n\nJede Zigarette kostet {{prixCig}} € (Packungspreis ÷ Zigaretten pro Packung).\n{{count}} × {{prixCig}} € × 30 Tage = {{ecoMois}} € pro Monat.",
+      "explanationDetail": "Jede Zigarette kostet {{prixCig}} €\n(Packungspreis ÷ Zigaretten pro Packung).\n{{count}} × {{prixCig}} € × 30 Tage = {{ecoMois}} € / Monat.",
+      "beforeLabel": "Vor der App",
+      "goalLabel": "Aktuelles Ziel",
+      "unitPerDay": "/ Tag",
+      "avoidedPerDay_one": "{{count}} vermiedene Zigarette",
+      "avoidedPerDay_other": "{{count}} vermiedene Zigaretten",
+      "avoidedSub": "pro Tag",
       "note": "Du kannst den Packungspreis in Profil → Konsumeinstellungen anpassen."
     },
     "life": {
@@ -38,7 +44,21 @@
       "label": "Gesundheit",
       "sublabel": "jeden Tag",
       "modalTitle": "Bessere Gesundheit jeden Tag",
-      "explanation": "Dein Körper beginnt sich zu erholen, sobald du reduzierst:\n\n• 20 Min: der Blutdruck normalisiert sich\n• 8 Std: der Kohlenmonoxidgehalt im Blut sinkt um die Hälfte\n• 24 Std: das Herzinfarktrisiko beginnt zu sinken\n• 48 Std: Geschmacks- und Geruchssinn verbessern sich\n• 72 Std: das Atmen fällt leichter\n• 1 Jahr: das Schlaganfallrisiko entspricht dem eines Nichtrauchers",
+      "explanation": "Dein Körper beginnt sich zu erholen, sobald du reduzierst:",
+      "timeline": {
+        "t20min": "20 Min",
+        "l20min": "der Blutdruck normalisiert sich",
+        "t8h":    "8 Std",
+        "l8h":    "der CO-Gehalt im Blut sinkt um die Hälfte",
+        "t24h":   "24 Std",
+        "l24h":   "das Herzinfarktrisiko beginnt zu sinken",
+        "t48h":   "48 Std",
+        "l48h":   "Geschmacks- und Geruchssinn verbessern sich",
+        "t72h":   "72 Std",
+        "l72h":   "das Atmen fällt leichter",
+        "t1an":   "1 Jahr",
+        "l1an":   "das Schlaganfallrisiko entspricht dem eines Nichtrauchers"
+      },
       "note": "Deinen detaillierten Gesundheitsfortschritt findest du im Dashboard."
     }
   },

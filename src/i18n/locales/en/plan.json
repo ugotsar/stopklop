@@ -15,7 +15,13 @@
       "modalTitle": "Money saved",
       "explanationIntro_one": "Before the app, you smoked {{consoAvant}} cigarettes a day. Your current goal is {{objectif}} a day: that's {{count}} cigarette avoided every day.",
       "explanationIntro_other": "Before the app, you smoked {{consoAvant}} cigarettes a day. Your current goal is {{objectif}} a day: that's {{count}} cigarettes avoided every day.",
-      "explanationDetail": "\n\nEach cigarette costs €{{prixCig}} (pack price ÷ cigarettes per pack).\n{{count}} × €{{prixCig}} × 30 days = €{{ecoMois}} per month.",
+      "explanationDetail": "Each cigarette costs €{{prixCig}}\n(pack price ÷ cigarettes per pack).\n{{count}} × €{{prixCig}} × 30 days = €{{ecoMois}} / month.",
+      "beforeLabel": "Before the app",
+      "goalLabel": "Current goal",
+      "unitPerDay": "/ day",
+      "avoidedPerDay_one": "{{count}} cigarette avoided",
+      "avoidedPerDay_other": "{{count}} cigarettes avoided",
+      "avoidedSub": "every day",
       "note": "You can adjust the pack price in Profile → Consumption settings."
     },
     "life": {
@@ -38,7 +44,21 @@
       "label": "health",
       "sublabel": "every day",
       "modalTitle": "Better health every day",
-      "explanation": "Your body starts repairing itself as soon as you cut back:\n\n• 20 min: blood pressure returns to normal\n• 8 h: carbon monoxide in your blood drops by half\n• 24 h: heart attack risk starts to decrease\n• 48 h: taste and smell improve\n• 72 h: breathing becomes easier\n• 1 year: stroke risk matches that of a non-smoker",
+      "explanation": "Your body starts repairing itself as soon as you cut back:",
+      "timeline": {
+        "t20min": "20 min",
+        "l20min": "blood pressure returns to normal",
+        "t8h":    "8 h",
+        "l8h":    "carbon monoxide in your blood drops by half",
+        "t24h":   "24 h",
+        "l24h":   "heart attack risk starts to decrease",
+        "t48h":   "48 h",
+        "l48h":   "taste and smell improve",
+        "t72h":   "72 h",
+        "l72h":   "breathing becomes easier",
+        "t1an":   "1 year",
+        "l1an":   "stroke risk matches that of a non-smoker"
+      },
       "note": "Find your detailed health progress on the dashboard."
     }
   },

@@ -12,7 +12,7 @@
     "sectionTitle": "Heute",
     "subtitle": "Zigaretten\nheute",
     "goal": "Ziel: max. {{count}}",
-    "validateButton": "✓  Tag bestätigen",
+    "validateButton": "Tag bestätigen",
     "smokedLink": "Ich habe heute geraucht  ›"
   },
   "perfectDayModal": {
@@ -66,7 +66,7 @@
     "smokedButton": "Ich habe geraucht  🚬  (+1 Zigarette)"
   },
   "motivation": {
-    "sectionTitle": "✨  Motivation des Tages",
+    "sectionTitle": "Motivation des Tages",
     "quotes": [
       "Jede rauchfreie Stunde ist ein Sieg für deine Gesundheit.",
       "Du gibst nichts auf — du gewinnst ein besseres Leben.",
@@ -90,12 +90,12 @@
   "envieCard": {
     "title": "Gerade Lust auf eine Zigarette?",
     "subtitle": "Erfasse es: Wir analysieren deine Auslöser, damit du ihnen zuvorkommen kannst.",
-    "button": "Ich habe Lust auf eine Zigarette",
+    "button": "Ich möchte\nrauchen",
     "count_one": "{{count}} Verlangen erfasst — Analyse im Tab „Plan” verfügbar",
     "count_other": "{{count}} Verlangen erfasst — Analyse im Tab „Plan” verfügbar"
   },
   "devButtons": {
-    "loadDemo": "🎬 Demo laden (5 Wochen Nutzung)",
-    "resetOnboarding": "↩ Onboarding neu starten"
+    "loadDemo": "Demo laden (5 Wochen Nutzung)",
+    "resetOnboarding": "Onboarding neu starten"
   }
 }

@@ -42,10 +42,10 @@
   "feedbackModal": {
     "perfectTitle": "Journée sans tabac !",
     "okTitle": "Bien joué !",
-    "exceededTitle": "Objectif dépassé",
+    "exceededTitle": "Objectif non atteint",
     "perfectSub": "0 cigarette aujourd'hui",
     "okSub": "Objectif respecté aujourd'hui",
-    "exceededSub": "{{count}} cig · +{{diff}} au-dessus",
+    "exceededSub": "Ce n'est qu'une étape, continuez demain.",
     "lifeGained": "vie gagnée",
     "spent": "dépensé",
     "streak": "streak",
@@ -60,6 +60,7 @@
     "modifyGoal": "Modifier objectif",
     "btnPerfect": "Super, merci !",
     "btnOk": "C'est noté !",
-    "btnExceeded": "Compris !"
+    "btnExceeded": "Continuer",
+    "smokedCigarettes": "cigarettes fumées"
   }
 }

@@ -713,7 +713,7 @@ function StatRow({ icon, label, value, unit }) {
 
 // ── Styles ────────────────────────────────────────────────────────────────────
 const styles = StyleSheet.create({
-  safe:   { flex: 1, backgroundColor: '#F7F8FA' },
+  safe:   { flex: 1, backgroundColor: colors.cream },
   scroll: { padding: spacing.md, paddingBottom: 90 },
 
   header: {
@@ -726,7 +726,7 @@ const styles = StyleSheet.create({
 
   // Carte utilisateur : grand compteur
   userCard: {
-    backgroundColor: colors.white, borderRadius: radius.xl,
+    backgroundColor: colors.surface, borderRadius: radius.xl,
     padding: spacing.md, marginBottom: spacing.sm,
     shadowColor: '#000', shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05, shadowRadius: 4, elevation: 2,
@@ -757,7 +757,7 @@ const styles = StyleSheet.create({
 
   // Listes
   listCard: {
-    backgroundColor: colors.white, borderRadius: radius.xl, overflow: 'hidden',
+    backgroundColor: colors.surface, borderRadius: radius.xl, overflow: 'hidden',
     marginBottom: spacing.sm,
     shadowColor: '#000', shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05, shadowRadius: 4, elevation: 2,
@@ -776,7 +776,7 @@ const styles = StyleSheet.create({
   // Supprimer
   deleteBtn: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    backgroundColor: colors.white, borderRadius: radius.xl,
+    backgroundColor: colors.surface, borderRadius: radius.xl,
     padding: spacing.md, marginTop: spacing.sm,
     borderWidth: 1, borderColor: '#FEE2E2',
   },
