@@ -15,6 +15,9 @@
       "bundleIdentifier": "com.stopklop.app",
       "supportsTablet": false,
       "buildNumber": "1",
+      "entitlements": {
+        "com.apple.security.application-groups": ["group.com.stopklop.app"]
+      },
       "infoPlist": {
         "NSUserNotificationUsageDescription": "Stopklop t'envoie des rappels pour noter tes cigarettes.",
         "NSCameraUsageDescription": "Utilisé pour la photo de profil.",
@@ -51,7 +54,8 @@
         }
       ],
       "expo-apple-authentication",
-      "@react-native-community/datetimepicker"
+      "@react-native-community/datetimepicker",
+      "@bacons/apple-targets"
     ],
     "extra": {}
   }

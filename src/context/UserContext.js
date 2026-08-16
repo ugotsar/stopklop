@@ -3,6 +3,7 @@ import { loadProfile, saveProfile, clearProfile } from '../store/onboardingStore
 import { subscribeToAuth, signOut as firebaseSignOut } from '../services/authService';
 import { getProfile, saveProfile as saveFirestore } from '../services/firestore';
 import { configurePurchases } from '../services/purchases';
+import { syncWidget } from '../services/widget';
 
 // ─── Contexte ────────────────────────────────────────────────────────────────
 const UserContext = createContext(null);
@@ -77,6 +78,11 @@ export function UserProvider({ children }) {
 
   // ── Calculs dérivés (accessibles partout dans l'app) ──────────────────────
   const stats = profile ? computeStats(profile) : null;
+
+  // Synchronise le widget iOS avec les données de l'utilisateur (no-op ailleurs)
+  useEffect(() => {
+    if (profile) syncWidget(computeStats(profile), profile);
+  }, [profile]);
 
   return (
     <UserContext.Provider value={{ profile, loading, firebaseUser, updateProfile, resetProfile, stats }}>
