@@ -50,7 +50,9 @@ function ModalParfait({ visible, serie, objectifJour, prixCig, onClose }) {
 
           <View style={mp.statsRow}>
             <StatColonne valeur={vieGagneeStr} label={t('perfectDayModal.lifeRegained')} color={colors.primary} />
+            <View style={mp.statDiv} />
             <StatColonne valeur={spentZero} label={t('perfectDayModal.spent')} color={colors.black} />
+            <View style={mp.statDiv} />
             <StatColonne valeur={`🔥 ${streak}${t('common:dayShort')}`} label={t('perfectDayModal.streak')} color={colors.warning} />
           </View>
           <TouchableOpacity style={mp.btn} onPress={onClose}>
@@ -92,13 +94,58 @@ const mp = StyleSheet.create({
   trophyIllus:  { width: 150, height: 150, marginBottom: 4 },
   trophyTitle:  { fontSize: 20, fontWeight: '900', color: colors.primaryDeep, textAlign: 'center' },
   trophySub:    { fontSize: 14, color: colors.gray, marginTop: 4, marginBottom: spacing.lg, textAlign: 'center' },
-  statsRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', width: '100%', paddingVertical: 14, marginBottom: spacing.md },
+  statsRow: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', width: '100%',
+    backgroundColor: colors.primaryLight, borderRadius: radius.lg,
+    paddingVertical: 14, marginBottom: spacing.md,
+  },
+  statDiv: { width: 1, height: 36, backgroundColor: colors.grayBorder },
   btn:     { width: '100%', backgroundColor: colors.primary, borderRadius: radius.pill, paddingVertical: 15, alignItems: 'center' },
   btnText: { color: '#fff', fontSize: 15, fontWeight: '700' },
 });
 
+// ── Anneau "objectif non atteint" — deux arcs (vert tenu / corail dépassé)
+// + pastille d'alerte, posé directement sur la carte crème (réf. maquette) ──
+function ExceededRingIcon({ pctGreen, size = 110 }) {
+  const strokeWidth = 16;
+  const r  = (size - strokeWidth) / 2;
+  const cx = size / 2;
+  const cy = size / 2;
+  const circumference = 2 * Math.PI * r;
+  const greenDash = circumference * (pctGreen / 100);
+  return (
+    <View style={{ width: size, height: size }}>
+      <Svg width={size} height={size}>
+        <Circle cx={cx} cy={cy} r={r - strokeWidth / 2} fill={colors.surface} />
+        <Circle cx={cx} cy={cy} r={r} stroke="#E8A08C" strokeWidth={strokeWidth} fill="none" />
+        {pctGreen > 0 && (
+          <Circle
+            cx={cx} cy={cy} r={r}
+            stroke={colors.primary} strokeWidth={strokeWidth} fill="none"
+            strokeDasharray={`${greenDash} ${circumference - greenDash}`}
+            strokeLinecap="round" rotation="-90" origin={`${cx}, ${cy}`}
+          />
+        )}
+      </Svg>
+      <View style={ringStyles.badge}>
+        <Text style={ringStyles.badgeText}>!</Text>
+      </View>
+    </View>
+  );
+}
+
+const ringStyles = StyleSheet.create({
+  badge: {
+    position: 'absolute', bottom: -2, right: -2,
+    width: 36, height: 36, borderRadius: 18,
+    backgroundColor: '#F0998A', alignItems: 'center', justifyContent: 'center',
+    borderWidth: 3, borderColor: colors.surface,
+  },
+  badgeText: { fontSize: 18, fontWeight: '900', color: '#7A4636' },
+});
+
 // ── Modal feedback journée (variante A = ok, variante B = dépassé) ───────────
-function ModalObjectif({ visible, count, objectif, prixCigarette, onClose }) {
+function ModalObjectif({ visible, count, objectif, prixCigarette, serie, onClose }) {
   const { t, i18n } = useTranslation('dashboard');
   if (!visible) return null;
   const isOk      = count <= objectif;
@@ -107,114 +154,93 @@ function ModalObjectif({ visible, count, objectif, prixCigarette, onClose }) {
   // orange affiché sur l'Accueil dans ce même cas (0 marge = prudence).
   const isPile    = count === objectif && count > 0;
   const depense   = new Intl.NumberFormat(i18n.language, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(count * prixCigarette);
+  const streak    = serie || 0;
 
   // Variante A — objectif respecté
-  const pct          = isOk ? Math.round((count / objectif) * 100) : 0;
-  const marge        = isOk ? Math.round(((objectif - count) / objectif) * 100) : 0;
   const viePreservee = isOk ? (objectif - count) * 5 : 0;
 
   // Variante B — objectif dépassé
-  const exces      = !isOk ? count - objectif : 0;
   const viePerdue  = !isOk ? count * 5 : 0;
-  const totalBar   = !isOk ? objectif + exces : 1;
-  const pctObj     = !isOk ? Math.round((objectif / totalBar) * 100) : 0;
+  const pctGreen   = !isOk && count > 0 ? Math.round((objectif / count) * 100) : 0;
 
+  // Cas "objectif respecté" (pas pile, pas dépassé) : même mise en page que
+  // la modale "journée parfaite" (trophée + titre + 3 stats + bouton plein),
+  // réf. maquette explicitement demandée — plutôt qu'une bannière + barre.
+  if (isOk && !isPile) {
+    return (
+      <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
+        <View style={mp.overlay}>
+          <View style={mp.card}>
+            <Image source={UI.trophee_feuilles_creme} style={mp.trophyIllus} resizeMode="contain" />
+            <Text style={mp.trophyTitle}>{t('goalModal.successTitle')}</Text>
+            <Text style={mp.trophySub}>{t('goalModal.successSubtitle')}</Text>
+
+            <View style={mp.statsRow}>
+              <StatColonne valeur={`+${viePreservee} ${t('common:min')}`} label={t('goalModal.lifePreserved')} color={colors.primary} />
+              <View style={mp.statDiv} />
+              <StatColonne valeur={`${depense} €`} label={t('goalModal.spent')} color={colors.black} />
+              <View style={mp.statDiv} />
+              <StatColonne valeur={`🔥 ${streak}${t('common:dayShort')}`} label={t('perfectDayModal.streak')} color={colors.warning} />
+            </View>
+            <TouchableOpacity style={mp.btn} onPress={onClose}>
+              <Text style={mp.btnText}>{t('goalModal.successButton')}</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+    );
+  }
+
+  // Cas "pile à l'objectif" (0 marge) : même mise en page (image + titre +
+  // 3 stats + bouton plein) que les deux autres cas, avec la cible comme
+  // illustration et un ton ambré pour rester distinct d'un succès franc.
+  if (isPile) {
+    return (
+      <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
+        <View style={mp.overlay}>
+          <View style={mp.card}>
+            <Image source={UI.cible_objectif} style={mp.trophyIllus} resizeMode="contain" />
+            <Text style={[mp.trophyTitle, { color: '#92400E' }]}>{t('goalModal.pileTitle')}</Text>
+            <Text style={mp.trophySub}>{t('goalModal.pileSubtitle')}</Text>
+
+            <View style={mp.statsRow}>
+              <StatColonne valeur={`+${viePreservee} ${t('common:min')}`} label={t('goalModal.lifePreserved')} color={colors.primary} />
+              <View style={mp.statDiv} />
+              <StatColonne valeur={`${depense} €`} label={t('goalModal.spent')} color={colors.black} />
+              <View style={mp.statDiv} />
+              <StatColonne valeur={`🔥 ${streak}${t('common:dayShort')}`} label={t('perfectDayModal.streak')} color={colors.warning} />
+            </View>
+            <TouchableOpacity style={[mp.btn, { backgroundColor: '#D97706' }]} onPress={onClose}>
+              <Text style={mp.btnText}>{t('goalModal.successButton')}</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+    );
+  }
+
+  // Cas "objectif dépassé" (dernier cas restant, isOk et isPile retournent
+  // déjà plus haut) : même mise en page que les trois autres cas (image +
+  // titre + bloc de stats à séparateurs + bouton plein), teinte corail pour
+  // marquer l'état négatif — réf. maquette.
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <View style={mp.overlay}>
-        <View style={[mp.card, { borderWidth: 0.5, borderColor: isOk ? '#CFE0C6' : '#FCD34D' }]}>
+        <View style={mp.card}>
+          <ExceededRingIcon pctGreen={pctGreen} />
+          <Text style={[mp.trophyTitle, { color: '#4A1B0C' }]}>{t('goalModal.exceededTitle')}</Text>
+          <Text style={mp.trophySub}>{t('goalModal.exceededSubtitleShort')}</Text>
 
-          {/* ── Bandeau ── */}
-          {isPile ? (
-            <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#FEF3C7', paddingVertical: 14, paddingHorizontal: 16, gap: 10, borderBottomWidth: 0.5, borderBottomColor: '#FCD34D' }}>
-              <View style={{ width: 38, height: 38, borderRadius: 19, backgroundColor: '#FCD34D', alignItems: 'center', justifyContent: 'center' }}>
-                <Text style={{ fontSize: 20 }}>⚖️</Text>
-              </View>
-              <View style={{ flex: 1 }}>
-                <Text style={{ fontSize: 14, fontWeight: '700', color: '#92400E' }}>{t('goalModal.pileTitle')}</Text>
-                <Text style={{ fontSize: 11, color: '#B45309', marginTop: 2 }}>{t('goalModal.pileSubtitle')}</Text>
-              </View>
-            </View>
-          ) : isOk ? (
-            <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: colors.primaryLight, paddingVertical: 14, paddingHorizontal: 16, gap: 10, borderBottomWidth: 0.5, borderBottomColor: '#CFE0C6' }}>
-              <View style={{ width: 38, height: 38, borderRadius: 19, backgroundColor: '#CFE0C6', alignItems: 'center', justifyContent: 'center' }}>
-                <Text style={{ fontSize: 20 }}>✅</Text>
-              </View>
-              <View style={{ flex: 1 }}>
-                <Text style={{ fontSize: 14, fontWeight: '700', color: colors.primaryDeep }}>{t('goalModal.successTitle')}</Text>
-                <Text style={{ fontSize: 11, color: colors.primary, marginTop: 2 }}>{t('goalModal.successSubtitle')}</Text>
-              </View>
-            </View>
-          ) : (
-            <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#92400E', paddingVertical: 14, paddingHorizontal: 16, gap: 10 }}>
-              <View style={{ width: 38, height: 38, borderRadius: 19, backgroundColor: 'rgba(255,255,255,0.2)', alignItems: 'center', justifyContent: 'center' }}>
-                <Text style={{ fontSize: 20 }}>⚠️</Text>
-              </View>
-              <View style={{ flex: 1 }}>
-                <Text style={{ fontSize: 14, fontWeight: '700', color: '#fff' }}>{t('goalModal.exceededTitle')}</Text>
-                <Text style={{ fontSize: 11, color: 'rgba(255,255,255,0.8)', marginTop: 2 }}>{t('goalModal.exceededSubtitle', { count, exceeded: exces })}</Text>
-              </View>
-            </View>
-          )}
-
-          {/* ── Corps ── */}
-          <View style={{ padding: 16 }}>
-            {isOk ? (
-              <>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 5 }}>
-                  <Text style={{ fontSize: 11, color: '#888' }}>{count} {t('common:cigarette', { count })}</Text>
-                  <Text style={{ fontSize: 11, color: '#888' }}>{t('goalModal.goalLabel', { count: objectif })}</Text>
-                </View>
-                <View style={{ height: 7, backgroundColor: '#E5E7EB', borderRadius: 6, overflow: 'hidden', marginBottom: 4 }}>
-                  <View style={{ height: '100%', width: `${pct}%`, backgroundColor: colors.primary, borderRadius: 6 }} />
-                </View>
-                <Text style={{ fontSize: 10, color: colors.primary, textAlign: 'right', marginBottom: 12 }}>{t('goalModal.marginLabel', { percent: marge })}</Text>
-                <View style={{ flexDirection: 'row', gap: 8, marginBottom: 14 }}>
-                  <View style={{ flex: 1, backgroundColor: colors.primaryLight, borderRadius: 10, paddingVertical: 8, alignItems: 'center' }}>
-                    <Text style={{ fontSize: 13, fontWeight: '700', color: colors.primaryDeep }}>{depense} €</Text>
-                    <Text style={{ fontSize: 10, color: colors.primary, marginTop: 1 }}>{t('goalModal.spent')}</Text>
-                  </View>
-                  <View style={{ flex: 1, backgroundColor: colors.primaryLight, borderRadius: 10, paddingVertical: 8, alignItems: 'center' }}>
-                    <Text style={{ fontSize: 13, fontWeight: '700', color: colors.primaryDeep }}>{viePreservee} {t('common:min')}</Text>
-                    <Text style={{ fontSize: 10, color: colors.primary, marginTop: 1 }}>{t('goalModal.lifePreserved')}</Text>
-                  </View>
-                </View>
-                <TouchableOpacity style={{ backgroundColor: colors.primary, borderRadius: 30, paddingVertical: 12, alignItems: 'center' }} onPress={onClose}>
-                  <Text style={{ color: '#fff', fontSize: 14, fontWeight: '700' }}>{t('goalModal.successButton')}</Text>
-                </TouchableOpacity>
-              </>
-            ) : (
-              <>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 5 }}>
-                  <Text style={{ fontSize: 11, color: '#92400E' }}>{t('goalModal.goalLabel', { count: objectif })}</Text>
-                  <Text style={{ fontSize: 11, color: '#DC2626' }}>{t('goalModal.tooMany', { count: exces })}</Text>
-                </View>
-                <View style={{ height: 7, borderRadius: 6, overflow: 'hidden', flexDirection: 'row', marginBottom: 4 }}>
-                  <View style={{ height: '100%', width: `${pctObj}%`, backgroundColor: '#F59E0B' }} />
-                  <View style={{ height: '100%', width: `${100 - pctObj}%`, backgroundColor: '#DC2626' }} />
-                </View>
-                <Text style={{ fontSize: 10, color: '#B45309', textAlign: 'center', marginBottom: 12 }}>{t('goalModal.cigsSmokedToday', { count })}</Text>
-                <View style={{ flexDirection: 'row', gap: 8, marginBottom: 14 }}>
-                  <View style={{ flex: 1, backgroundColor: '#FEF3C7', borderRadius: 10, paddingVertical: 8, alignItems: 'center' }}>
-                    <Text style={{ fontSize: 13, fontWeight: '700', color: '#92400E' }}>{depense} €</Text>
-                    <Text style={{ fontSize: 10, color: '#B45309', marginTop: 1 }}>{t('goalModal.spent')}</Text>
-                  </View>
-                  <View style={{ flex: 1, backgroundColor: '#FEF3C7', borderRadius: 10, paddingVertical: 8, alignItems: 'center' }}>
-                    <Text style={{ fontSize: 13, fontWeight: '700', color: '#92400E' }}>{viePerdue} {t('common:min')}</Text>
-                    <Text style={{ fontSize: 10, color: '#B45309', marginTop: 1 }}>{t('goalModal.lifeLost')}</Text>
-                  </View>
-                </View>
-                <View style={{ backgroundColor: '#FFF7ED', borderRadius: 10, borderWidth: 1, borderColor: '#FDE68A', padding: 12, marginBottom: 14 }}>
-                  <Text style={{ fontSize: 13, color: '#92400E', lineHeight: 19, textAlign: 'center' }}>
-                    {t('goalModal.encouragement')}
-                  </Text>
-                </View>
-                <TouchableOpacity style={{ backgroundColor: '#92400E', borderRadius: 30, paddingVertical: 12, alignItems: 'center' }} onPress={onClose}>
-                  <Text style={{ color: '#fff', fontSize: 14, fontWeight: '700' }}>{t('goalModal.exceededButton')}</Text>
-                </TouchableOpacity>
-              </>
-            )}
+          <View style={[mp.statsRow, { backgroundColor: '#FAECE7' }]}>
+            <StatColonne valeur={`${count}`} label={t('goalModal.smokedCigarettes')} color="#4A1B0C" />
+            <View style={[mp.statDiv, { backgroundColor: '#F0997B' }]} />
+            <StatColonne valeur={`${depense} €`} label={t('goalModal.spent')} color="#4A1B0C" />
+            <View style={[mp.statDiv, { backgroundColor: '#F0997B' }]} />
+            <StatColonne valeur={`-${viePerdue} ${t('common:min')}`} label={t('goalModal.lifeLostLabel')} color="#4A1B0C" />
           </View>
+          <TouchableOpacity style={[mp.btn, { backgroundColor: '#D85A30' }]} onPress={onClose}>
+            <Text style={mp.btnText}>{t('goalModal.exceededButton')}</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </Modal>
@@ -515,6 +541,7 @@ export default function DashboardScreen({ navigation }) {
         count={cigarettesToday}
         objectif={objectifJour}
         prixCigarette={prixCig}
+        serie={serie}
         onClose={() => setModalObjectif(false)}
       />
       <ModalEnvie

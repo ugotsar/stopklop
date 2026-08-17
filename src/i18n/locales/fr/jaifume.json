@@ -60,6 +60,7 @@
     "smokedToday_one": "{{count}} cigarette fumée aujourd'hui",
     "smokedToday_other": "{{count}} cigarettes fumées aujourd'hui",
     "lifeLost": "de vie",
+    "lifeLostLabel": "vie perdue",
     "message": "Chaque jour est une nouvelle chance.\nDemain, vous pouvez le faire. 💪",
     "modifyGoal": "Modifier objectif",
     "btnPerfect": "Super, merci !",

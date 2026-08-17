@@ -28,6 +28,12 @@
     "from": "De",
     "to": "À"
   },
+  "calendar": {
+    "title": "Choisir une période",
+    "subtitle": "Touchez un jour de début, puis un jour de fin.",
+    "cancel": "Annuler",
+    "confirm": "Valider"
+  },
   "smokedCard": {
     "title": "Cigarettes fumées",
     "chartTitle": "Consommation par heure",
@@ -67,8 +73,14 @@
   },
   "goalProgress": {
     "title": "Progression vers votre prochain palier d'économies",
+    "titleCustom": "Progression vers votre objectif d'économies",
     "reached": "atteint",
-    "remaining": "Il vous reste {{amount}} €"
+    "remaining": "Il vous reste {{amount}} €",
+    "goalReached": "Objectif atteint 🎉",
+    "setGoal": "Définir mon objectif ›",
+    "editGoal": "Modifier mon objectif ›",
+    "modalTitle": "Mon objectif d'économies",
+    "modalSubtitle": "Choisissez le montant que vous souhaitez atteindre."
   },
   "goalCard": {
     "titleDay": "Objectif du jour",

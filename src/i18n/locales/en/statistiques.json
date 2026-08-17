@@ -28,6 +28,12 @@
     "from": "From",
     "to": "To"
   },
+  "calendar": {
+    "title": "Choose a period",
+    "subtitle": "Tap a start day, then an end day.",
+    "cancel": "Cancel",
+    "confirm": "Confirm"
+  },
   "smokedCard": {
     "title": "Cigarettes smoked",
     "chartTitle": "Consumption by hour",
@@ -67,8 +73,14 @@
   },
   "goalProgress": {
     "title": "Progress toward your next savings milestone",
+    "titleCustom": "Progress toward your savings goal",
     "reached": "reached",
-    "remaining": "You have {{amount}} € to go"
+    "remaining": "You have {{amount}} € to go",
+    "goalReached": "Goal reached 🎉",
+    "setGoal": "Set my goal ›",
+    "editGoal": "Edit my goal ›",
+    "modalTitle": "My savings goal",
+    "modalSubtitle": "Choose the amount you want to reach."
   },
   "goalCard": {
     "titleDay": "Today's goal",

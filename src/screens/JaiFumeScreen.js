@@ -238,12 +238,7 @@ function FeedbackModal({ visible, count, objectif, prixCigarette, serie, onClose
   // même cas (0 marge = prudence, pas encore un dépassement).
   const isPile     = count === objectif && count > 0;
 
-  const bannerColor    = isParfait ? colors.primary : isPile ? '#FEF3C7' : isOk ? colors.primaryLight : '#92400E';
-  const bannerBorder   = isPile ? '#FCD34D' : isOk ? '#CFE0C6' : 'transparent';
-  const emoji          = isParfait ? '🏆' : isPile ? '⚖️' : isOk ? '✅' : '⚠️';
-  const titre          = isParfait ? t('feedbackModal.perfectTitle') : isPile ? t('feedbackModal.pileTitle') : isOk ? t('feedbackModal.okTitle') : t('feedbackModal.exceededTitle');
-  const titreColor     = isPile ? '#92400E' : isOk ? colors.primaryDeep : '#fff';
-  const sousTitreColor = isPile ? '#B45309' : isOk ? colors.primary : 'rgba(255,255,255,0.8)';
+  const titre       = isParfait ? t('feedbackModal.perfectTitle') : isPile ? t('feedbackModal.pileTitle') : isOk ? t('feedbackModal.okTitle') : t('feedbackModal.exceededTitle');
   const sousTitre   = isParfait
     ? t('feedbackModal.perfectSub')
     : isPile
@@ -269,19 +264,23 @@ function FeedbackModal({ visible, count, objectif, prixCigarette, serie, onClose
               <Text style={modal.trophyTitle}>{titre}</Text>
               <Text style={modal.trophySub}>{sousTitre}</Text>
             </View>
-          ) : isDepasse ? (
+          ) : isPile ? (
             <View style={modal.trophyHeader}>
-              <ExceededRingIcon pctGreen={pctGreen} />
+              <Image source={UI.cible_objectif} style={modal.trophyIllus} resizeMode="contain" />
+              <Text style={[modal.trophyTitle, { color: '#92400E' }]}>{titre}</Text>
+              <Text style={modal.trophySub}>{sousTitre}</Text>
+            </View>
+          ) : isOk ? (
+            <View style={modal.trophyHeader}>
+              <Image source={UI.trophee_feuilles_creme} style={modal.trophyIllus} resizeMode="contain" />
               <Text style={modal.trophyTitle}>{titre}</Text>
               <Text style={modal.trophySub}>{sousTitre}</Text>
             </View>
           ) : (
-            <View style={[modal.banner, { backgroundColor: bannerColor, borderBottomWidth: 0.5, borderBottomColor: bannerBorder }]}>
-              <Text style={modal.bannerEmoji}>{emoji}</Text>
-              <View style={{ flex: 1 }}>
-                <Text style={[modal.bannerTitle, { color: titreColor }]}>{titre}</Text>
-                <Text style={[modal.bannerSub, { color: sousTitreColor }]}>{sousTitre}</Text>
-              </View>
+            <View style={modal.trophyHeader}>
+              <ExceededRingIcon pctGreen={pctGreen} />
+              <Text style={modal.trophyTitle}>{titre}</Text>
+              <Text style={modal.trophySub}>{sousTitre}</Text>
             </View>
           )}
 
@@ -291,41 +290,31 @@ function FeedbackModal({ visible, count, objectif, prixCigarette, serie, onClose
             {isParfait && (
               <View style={modal.statsRow}>
                 <StatItem valeur={`+${vieGagnee}min`} label={t('feedbackModal.lifeGained')} color={colors.primary} />
+                <View style={modal.statDiv} />
                 <StatItem valeur={`0,00 €`} label={t('feedbackModal.spent')} color={colors.black} />
+                <View style={modal.statDiv} />
                 <StatItem valeur={`🔥 ${streak}${t('common:dayShort')}`} label={t('feedbackModal.streak')} color={colors.warning} />
               </View>
             )}
 
-              {/* Cas objectif ok : barre de progression + 2 chips */}
+            {/* Cas objectif respecté (pile ou non) : même mise en page que la
+                modale "journée parfaite" (trophée/cible + 3 métriques) */}
             {isOk && (() => {
-              const pct = Math.round((count / objectif) * 100);
-              const marge = Math.round(((objectif - count) / objectif) * 100);
               const viePreservee = (objectif - count) * 5;
               return (
-                <>
-                  <View style={modal.okBarRow}>
-                    <Text style={modal.okBarLabel}>{count} {t('common:cigarette', { count })}</Text>
-                    <Text style={modal.okBarLabel}>{t('feedbackModal.goalLabel', { goal: objectif })}</Text>
-                  </View>
-                  <View style={modal.okBarTrack}>
-                    <View style={[modal.okBarFill, { width: `${pct}%` }]} />
-                  </View>
-                  <Text style={modal.okBarMarge}>{t('feedbackModal.margin', { pct: marge })}</Text>
-                  <View style={modal.okChips}>
-                    <View style={modal.okChip}>
-                      <Text style={modal.okChipVal}>{argentDepense} €</Text>
-                      <Text style={modal.okChipLbl}>{t('feedbackModal.spent')}</Text>
-                    </View>
-                    <View style={modal.okChip}>
-                      <Text style={modal.okChipVal}>{viePreservee} min</Text>
-                      <Text style={modal.okChipLbl}>{t('feedbackModal.lifePreserved')}</Text>
-                    </View>
-                  </View>
-                </>
+                <View style={modal.statsRow}>
+                  <StatItem valeur={`+${viePreservee}min`} label={t('feedbackModal.lifePreserved')} color={colors.primary} />
+                  <View style={modal.statDiv} />
+                  <StatItem valeur={`${argentDepense} €`} label={t('feedbackModal.spent')} color={colors.black} />
+                  <View style={modal.statDiv} />
+                  <StatItem valeur={`🔥 ${streak}${t('common:dayShort')}`} label={t('feedbackModal.streak')} color={colors.warning} />
+                </View>
               );
             })()}
 
-            {/* Cas dépassé : pastille à 2 statistiques (réf. maquette) */}
+            {/* Cas dépassé : pastille à 3 statistiques, teinte corail pour
+                marquer l'état négatif tout en gardant la même forme (bloc
+                arrondi + séparateurs) que les autres cas — réf. maquette */}
             {isDepasse && (
               <View style={modal.depStatsPill}>
                 <View style={modal.depStatCol}>
@@ -337,12 +326,20 @@ function FeedbackModal({ visible, count, objectif, prixCigarette, serie, onClose
                   <Text style={modal.depStatVal}>{argentDepense} €</Text>
                   <Text style={modal.depStatLbl}>{t('feedbackModal.spent')}</Text>
                 </View>
+                <View style={modal.depStatDiv} />
+                <View style={modal.depStatCol}>
+                  <Text style={modal.depStatVal}>-{count * 5}min</Text>
+                  <Text style={modal.depStatLbl}>{t('feedbackModal.lifeLostLabel')}</Text>
+                </View>
               </View>
             )}
 
             {/* Boutons */}
             <View style={modal.btnRow}>
-              <TouchableOpacity style={[modal.btn, modal.btnPrimary]} onPress={onClose}>
+              <TouchableOpacity
+                style={[modal.btn, modal.btnPrimary, isDepasse && { backgroundColor: '#D85A30' }]}
+                onPress={onClose}
+              >
                 <Text style={modal.btnPrimaryText}>
                   {isParfait ? t('feedbackModal.btnPerfect') : isOk ? t('feedbackModal.btnOk') : t('feedbackModal.btnExceeded')}
                 </Text>
@@ -706,8 +703,10 @@ const modal = StyleSheet.create({
   statsRow: {
     flexDirection: 'row', alignItems: 'center',
     justifyContent: 'space-around', marginBottom: 16,
+    backgroundColor: colors.primaryLight, borderRadius: radius.lg,
     paddingVertical: 14,
   },
+  statDiv: { width: 1, height: 36, backgroundColor: colors.grayBorder },
   okBarRow:   { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 5 },
   okBarLabel: { fontSize: 11, color: colors.gray },
   okBarTrack: { height: 7, backgroundColor: '#E5E7EB', borderRadius: 6, overflow: 'hidden', marginBottom: 4 },
@@ -717,16 +716,17 @@ const modal = StyleSheet.create({
   okChip:     { flex: 1, backgroundColor: colors.primaryLight, borderRadius: 10, paddingVertical: 8, alignItems: 'center' },
   okChipVal:  { fontSize: 13, fontWeight: '700', color: colors.primaryDeep },
   okChipLbl:  { fontSize: 10, color: colors.primary, marginTop: 1 },
-  // Pastille 2 statistiques — cas objectif non atteint (réf. maquette)
+  // Pastille de statistiques — cas objectif non atteint (teinte corail,
+  // réf. maquette)
   depStatsPill: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around',
-    backgroundColor: colors.primaryLight, borderRadius: radius.lg,
-    paddingVertical: 16, marginBottom: 16,
+    backgroundColor: '#FAECE7', borderRadius: radius.lg,
+    paddingVertical: 14, marginBottom: 16,
   },
   depStatCol: { alignItems: 'center', flex: 1 },
-  depStatVal: { fontSize: 22, fontWeight: '900', color: colors.primaryDeep },
-  depStatLbl: { fontSize: 12, color: colors.gray, marginTop: 4 },
-  depStatDiv: { width: 1, height: 36, backgroundColor: colors.grayBorder },
+  depStatVal: { fontSize: 16, fontWeight: '700', color: '#4A1B0C' },
+  depStatLbl: { fontSize: 10, color: colors.gray, marginTop: 2 },
+  depStatDiv: { width: 1, height: 36, backgroundColor: '#F0997B' },
   btnRow:  { flexDirection: 'row', gap: 10 },
   btn:     { flex: 1, paddingVertical: 13, borderRadius: 30, alignItems: 'center' },
   btnPrimary:     { backgroundColor: colors.primary },

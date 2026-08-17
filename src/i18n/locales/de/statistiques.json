@@ -28,6 +28,12 @@
     "from": "Von",
     "to": "Bis"
   },
+  "calendar": {
+    "title": "Zeitraum wählen",
+    "subtitle": "Tippe einen Starttag, dann einen Endtag an.",
+    "cancel": "Abbrechen",
+    "confirm": "Bestätigen"
+  },
   "smokedCard": {
     "title": "Gerauchte Zigaretten",
     "chartTitle": "Konsum pro Stunde",
@@ -67,8 +73,14 @@
   },
   "goalProgress": {
     "title": "Fortschritt bis zur nächsten Sparetappe",
+    "titleCustom": "Fortschritt bis zu deinem Sparziel",
     "reached": "erreicht",
-    "remaining": "Noch {{amount}} € bis zum Ziel"
+    "remaining": "Noch {{amount}} € bis zum Ziel",
+    "goalReached": "Ziel erreicht 🎉",
+    "setGoal": "Mein Ziel festlegen ›",
+    "editGoal": "Mein Ziel bearbeiten ›",
+    "modalTitle": "Mein Sparziel",
+    "modalSubtitle": "Wähle den Betrag, den du erreichen möchtest."
   },
   "goalCard": {
     "titleDay": "Heutiges Ziel",

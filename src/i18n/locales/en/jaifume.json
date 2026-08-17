@@ -60,6 +60,7 @@
     "smokedToday_one": "{{count}} cigarette smoked today",
     "smokedToday_other": "{{count}} cigarettes smoked today",
     "lifeLost": "of life",
+    "lifeLostLabel": "life lost",
     "message": "Every day is a new chance.\nTomorrow, you can do it. 💪",
     "modifyGoal": "Edit goal",
     "btnPerfect": "Great, thanks!",

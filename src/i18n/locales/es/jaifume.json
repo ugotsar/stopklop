@@ -60,6 +60,7 @@
     "smokedToday_one": "{{count}} cigarrillo fumado hoy",
     "smokedToday_other": "{{count}} cigarrillos fumados hoy",
     "lifeLost": "de vida",
+    "lifeLostLabel": "vida perdida",
     "message": "Cada día es una nueva oportunidad.\nMañana puedes lograrlo. 💪",
     "modifyGoal": "Editar objetivo",
     "btnPerfect": "¡Genial, gracias!",

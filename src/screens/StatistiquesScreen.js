@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   View, Text, StyleSheet, SafeAreaView, ScrollView,
-  TouchableOpacity, Dimensions,
+  TouchableOpacity, Dimensions, Modal, TextInput,
 } from 'react-native';
 import Svg, { Circle, Rect, Path, Text as SvgText, G } from 'react-native-svg';
 import { useTranslation } from 'react-i18next';
@@ -46,6 +46,27 @@ function monthsBetween(startKey, endKey) {
     m++; if (m > 12) { m = 1; y++; }
   }
   return out;
+}
+function stepMonthKey(mKey, dir) {
+  let [y, m] = mKey.split('-').map(Number);
+  m += dir;
+  while (m > 12) { m -= 12; y++; }
+  while (m < 1)  { m += 12; y--; }
+  return `${y}-${String(m).padStart(2, '0')}`;
+}
+// Grille de semaines (lundi → dimanche) pour le mois `mKey` ("YYYY-MM") — les
+// cases hors du mois sont `null` pour rester vides dans le calendrier.
+function buildMonthGrid(mKey) {
+  const [y, m] = mKey.split('-').map(Number);
+  const nbDays = new Date(y, m, 0).getDate();
+  const firstDow = (new Date(y, m - 1, 1).getDay() + 6) % 7; // 0 = lundi
+  const cells = [];
+  for (let i = 0; i < firstDow; i++) cells.push(null);
+  for (let d = 1; d <= nbDays; d++) cells.push(`${mKey}-${String(d).padStart(2, '0')}`);
+  while (cells.length % 7 !== 0) cells.push(null);
+  const weeks = [];
+  for (let i = 0; i < cells.length; i += 7) weeks.push(cells.slice(i, i + 7));
+  return weeks;
 }
 
 // ── Stats d'une période quelconque ────────────────────────────────────────────
@@ -223,6 +244,219 @@ function PeriodNav({ label, onPrev, onNext, nextDisabled, prevDisabled }) {
   );
 }
 
+// ── Calendrier de sélection de période ──────────────────────────────────────
+// Modale plein écran avec grille jour par jour : premier tap = début,
+// second tap = fin (ou remplace le début si antérieur). Bornée entre le
+// premier jour de données enregistrées et aujourd'hui.
+function PeriodCalendarModal({ visible, initialStart, initialEnd, minMonth, maxMonth, lang, t, onConfirm, onClose }) {
+  const [viewMonth, setViewMonth]     = useState(initialEnd.slice(0, 7));
+  const [pendingStart, setPendingStart] = useState(initialStart);
+  const [pendingEnd, setPendingEnd]     = useState(initialEnd);
+
+  useEffect(() => {
+    if (visible) {
+      setViewMonth(initialEnd.slice(0, 7));
+      setPendingStart(initialStart);
+      setPendingEnd(initialEnd);
+    }
+  }, [visible]);
+
+  if (!visible) return null;
+
+  const todayKey = isoKey(new Date());
+  const weeks = buildMonthGrid(viewMonth);
+  const weekdayLabels = Array.from({ length: 7 }, (_, i) => {
+    const d = addDays(mondayOf(new Date()), i);
+    return d.toLocaleDateString(lang, { weekday: 'narrow' }).toUpperCase();
+  });
+
+  function handleTapDay(key) {
+    if (!key || key > todayKey) return;
+    if (!pendingStart || (pendingStart && pendingEnd)) {
+      setPendingStart(key); setPendingEnd(null);
+    } else if (key < pendingStart) {
+      setPendingStart(key); setPendingEnd(null);
+    } else {
+      setPendingEnd(key);
+    }
+  }
+
+  const monthLabel = labelMois(viewMonth, lang);
+  const canConfirm = !!(pendingStart && pendingEnd);
+
+  return (
+    <Modal visible transparent onRequestClose={onClose}>
+      <View style={cal.overlay}>
+        <View style={cal.card}>
+          <Text style={cal.title}>{t('calendar.title')}</Text>
+          <Text style={cal.subtitle}>{t('calendar.subtitle')}</Text>
+
+          <View style={cal.navRow}>
+            <TouchableOpacity
+              style={[cal.navBtn, viewMonth <= minMonth && cal.navBtnDisabled]}
+              onPress={() => setViewMonth(stepMonthKey(viewMonth, -1))}
+              disabled={viewMonth <= minMonth}
+            >
+              <Text style={[cal.navBtnText, viewMonth <= minMonth && { color: colors.grayBorder }]}>‹</Text>
+            </TouchableOpacity>
+            <Text style={cal.monthLabel}>{monthLabel}</Text>
+            <TouchableOpacity
+              style={[cal.navBtn, viewMonth >= maxMonth && cal.navBtnDisabled]}
+              onPress={() => setViewMonth(stepMonthKey(viewMonth, 1))}
+              disabled={viewMonth >= maxMonth}
+            >
+              <Text style={[cal.navBtnText, viewMonth >= maxMonth && { color: colors.grayBorder }]}>›</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={cal.weekdayRow}>
+            {weekdayLabels.map((w, i) => (
+              <Text key={i} style={cal.weekdayLabel}>{w}</Text>
+            ))}
+          </View>
+
+          {weeks.map((week, wi) => (
+            <View key={wi} style={cal.weekRow}>
+              {week.map((key, di) => {
+                if (!key) return <View key={di} style={cal.dayCell} />;
+                const disabled  = key > todayKey;
+                const isStart   = key === pendingStart;
+                const isEnd     = key === pendingEnd;
+                const inRange   = pendingStart && pendingEnd && key > pendingStart && key < pendingEnd;
+                const dayNum    = Number(key.slice(8, 10));
+                return (
+                  <TouchableOpacity
+                    key={di}
+                    style={cal.dayCell}
+                    disabled={disabled}
+                    onPress={() => handleTapDay(key)}
+                  >
+                    <View style={[
+                      cal.dayInner,
+                      inRange && cal.dayInRange,
+                      (isStart || isEnd) && cal.daySelected,
+                    ]}>
+                      <Text style={[
+                        cal.dayText,
+                        disabled && cal.dayTextDisabled,
+                        (isStart || isEnd) && cal.dayTextSelected,
+                      ]}>{dayNum}</Text>
+                    </View>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          ))}
+
+          <View style={cal.footer}>
+            <TouchableOpacity style={cal.cancelBtn} onPress={onClose}>
+              <Text style={cal.cancelText}>{t('calendar.cancel')}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[cal.confirmBtn, !canConfirm && cal.confirmBtnDisabled]}
+              disabled={!canConfirm}
+              onPress={() => onConfirm(pendingStart, pendingEnd)}
+            >
+              <Text style={cal.confirmText}>{t('calendar.confirm')}</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+    </Modal>
+  );
+}
+
+// ── Modal : définir un objectif d'économies personnalisé ─────────────────────
+// Remplace l'échelle de paliers ronds automatique (50 €, 100 €, 250 €…) par un
+// vrai montant choisi par l'utilisateur, quand il en a défini un.
+function GoalTargetModal({ visible, currentValue, onClose, onSave, t }) {
+  const [val, setVal] = useState('');
+
+  useEffect(() => {
+    if (visible) setVal(currentValue ? String(currentValue) : '');
+  }, [visible, currentValue]);
+
+  if (!visible) return null;
+
+  function handleSave() {
+    const n = parseFloat(String(val).replace(',', '.'));
+    onSave(!isNaN(n) && n > 0 ? Math.round(n) : null);
+    onClose();
+  }
+
+  return (
+    <Modal visible transparent onRequestClose={onClose}>
+      <View style={cal.overlay}>
+        <View style={cal.card}>
+          <Text style={cal.title}>{t('goalProgress.modalTitle')}</Text>
+          <Text style={cal.subtitle}>{t('goalProgress.modalSubtitle')}</Text>
+          <View style={goalStyles.inputRow}>
+            <TextInput
+              style={goalStyles.input}
+              value={val}
+              onChangeText={setVal}
+              keyboardType="decimal-pad"
+              placeholder="250"
+              placeholderTextColor={colors.gray}
+              autoFocus
+            />
+            <Text style={goalStyles.inputUnit}>€</Text>
+          </View>
+          <View style={cal.footer}>
+            <TouchableOpacity style={cal.cancelBtn} onPress={onClose}>
+              <Text style={cal.cancelText}>{t('calendar.cancel')}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={cal.confirmBtn} onPress={handleSave}>
+              <Text style={cal.confirmText}>{t('common:save')}</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+    </Modal>
+  );
+}
+
+const goalStyles = StyleSheet.create({
+  inputRow: {
+    flexDirection: 'row', alignItems: 'center', gap: 8,
+    borderWidth: 1.5, borderColor: colors.grayBorder, borderRadius: radius.md,
+    paddingHorizontal: spacing.md, marginBottom: spacing.sm,
+  },
+  input: { flex: 1, fontSize: font.lg, fontWeight: '800', color: colors.black, paddingVertical: 12 },
+  inputUnit: { fontSize: font.md, color: colors.gray, fontWeight: '600' },
+});
+
+const cal = StyleSheet.create({
+  overlay: { flex: 1, backgroundColor: 'rgba(23, 61, 38, 0.55)', alignItems: 'center', justifyContent: 'center', padding: spacing.lg },
+  card: {
+    width: '100%', maxWidth: 360, backgroundColor: colors.surface, borderRadius: radius.xl,
+    padding: spacing.lg, ...shadow.modal,
+  },
+  title:    { fontSize: font.md, fontWeight: '900', color: colors.primaryDeep, textAlign: 'center' },
+  subtitle: { fontSize: 12, color: colors.gray, textAlign: 'center', marginTop: 2, marginBottom: spacing.md },
+  navRow:   { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing.sm },
+  navBtn:   { width: 32, height: 32, borderRadius: 16, backgroundColor: colors.primaryLight, alignItems: 'center', justifyContent: 'center' },
+  navBtnDisabled: { backgroundColor: colors.grayLight },
+  navBtnText: { fontSize: 18, color: colors.primary, fontWeight: '700', lineHeight: 22 },
+  monthLabel: { fontSize: 14, fontWeight: '800', color: colors.black },
+  weekdayRow: { flexDirection: 'row', marginBottom: 4 },
+  weekdayLabel: { flex: 1, textAlign: 'center', fontSize: 10, fontWeight: '700', color: colors.gray },
+  weekRow:  { flexDirection: 'row' },
+  dayCell:  { flex: 1, aspectRatio: 1, alignItems: 'center', justifyContent: 'center' },
+  dayInner: { width: '78%', height: '78%', borderRadius: 999, alignItems: 'center', justifyContent: 'center' },
+  dayInRange: { backgroundColor: colors.primaryLight, borderRadius: 0 },
+  daySelected: { backgroundColor: colors.primary },
+  dayText:  { fontSize: 12.5, color: colors.black, fontWeight: '600' },
+  dayTextDisabled: { color: colors.grayBorder },
+  dayTextSelected: { color: colors.white, fontWeight: '800' },
+  footer:   { flexDirection: 'row', gap: spacing.sm, marginTop: spacing.md },
+  cancelBtn:  { flex: 1, paddingVertical: 13, borderRadius: radius.pill, alignItems: 'center', borderWidth: 1, borderColor: colors.grayBorder },
+  cancelText: { fontSize: 14, fontWeight: '700', color: colors.gray },
+  confirmBtn: { flex: 1, paddingVertical: 13, borderRadius: radius.pill, alignItems: 'center', backgroundColor: colors.primary },
+  confirmBtnDisabled: { backgroundColor: colors.grayBorder },
+  confirmText: { fontSize: 14, fontWeight: '700', color: colors.white },
+});
+
 // ── Écran ─────────────────────────────────────────────────────────────────────
 // Les clés (key) des onglets sont des identifiants internes utilisés dans la
 // logique de l'écran — seuls les libellés affichés sont traduits (tabs.*).
@@ -235,19 +469,21 @@ const TABS = [
 
 export default function StatistiquesScreen() {
   const { t, i18n } = useTranslation('statistiques');
-  const { stats, profile } = useUser();
+  const { stats, profile, updateProfile } = useUser();
 
   const [activeTab, setActiveTab]     = useState('jour');
   const [dayKey, setDayKey]           = useState(() => isoKey(new Date()));
   const [weekOffset, setWeekOffset]   = useState(0);
   const [monthOffset, setMonthOffset] = useState(0);
-  const [rangeStart, setRangeStart]   = useState(null); // clé mois "YYYY-MM"
-  const [rangeEnd, setRangeEnd]       = useState(null);
+  const [rangeStartDay, setRangeStartDay] = useState(null); // clé jour "YYYY-MM-DD"
+  const [rangeEndDay, setRangeEndDay]     = useState(null);
+  const [calendarOpen, setCalendarOpen]   = useState(false);
+  const [goalModalOpen, setGoalModalOpen] = useState(false);
   // Index de la barre tapée : affiche le nombre de cigarettes de ce jour
   // directement en overlay, sans changer de page. Remis à zéro dès qu'on
   // change d'onglet ou qu'on navigue vers une autre période.
   const [tappedIndex, setTappedIndex] = useState(null);
-  useEffect(() => { setTappedIndex(null); }, [activeTab, weekOffset, monthOffset, rangeStart, rangeEnd]);
+  useEffect(() => { setTappedIndex(null); }, [activeTab, weekOffset, monthOffset, rangeStartDay, rangeEndDay]);
 
   const TAB_LABELS = {
     jour: t('tabs.day'),
@@ -279,9 +515,12 @@ export default function StatistiquesScreen() {
   const todayKey = isoKey(now);
 
   const firstDataKey  = allKeys[0] ?? todayKey;
-  const allMonths     = monthsBetween(firstDataKey.slice(0, 7), todayKey.slice(0, 7));
-  const rStart        = allMonths.includes(rangeStart) ? rangeStart : allMonths[0];
-  const rEnd          = allMonths.includes(rangeEnd)   ? rangeEnd   : allMonths[allMonths.length - 1];
+  // Bornes jour à jour de la période libre — par défaut, du premier jour de
+  // données enregistrées jusqu'à aujourd'hui. Choisies via le calendrier.
+  const rStartDay = rangeStartDay && rangeStartDay >= firstDataKey && rangeStartDay <= todayKey
+    ? rangeStartDay : firstDataKey;
+  const rEndDay   = rangeEndDay && rangeEndDay >= rStartDay && rangeEndDay <= todayKey
+    ? rangeEndDay : todayKey;
 
   // ── Construction de la vue selon l'onglet ────────────────────────────────────
   let view; // { navLabel, dates, chartData, chartLabels, onBarPress, extra }
@@ -388,17 +627,13 @@ export default function StatistiquesScreen() {
     };
   }
 
-  else { // 'debut' — période libre de mois à mois
-    const months = monthsBetween(rStart, rEnd);
+  else { // 'debut' — période libre, choisie jour par jour via le calendrier
+    const months = monthsBetween(rStartDay.slice(0, 7), rEndDay.slice(0, 7));
     const dates  = [];
-    months.forEach(mKey => {
-      const [y, m] = mKey.split('-').map(Number);
-      const nb = new Date(y, m, 0).getDate();
-      for (let i = 1; i <= nb; i++) {
-        const k = `${mKey}-${String(i).padStart(2, '0')}`;
-        if (k <= todayKey) dates.push(k);
-      }
-    });
+    for (let cursor = new Date(rStartDay + 'T12:00:00'), end = new Date(rEndDay + 'T12:00:00');
+         cursor <= end; cursor = addDays(cursor, 1)) {
+      dates.push(isoKey(cursor));
+    }
     const monthSums = months.map(mKey =>
       dates.filter(k => k.startsWith(mKey)).map(k => hist[k] ?? 0).reduce((s, v) => s + v, 0)
     );
@@ -434,22 +669,20 @@ export default function StatistiquesScreen() {
     : null;
 
   // Navigation des bornes de la période libre
-  function stepMonth(key, dir) {
-    const idx = allMonths.indexOf(key);
-    const next = allMonths[idx + dir];
-    return next ?? key;
-  }
-
   const periodeLabel = TAB_LABELS[activeTab];
   const fmtEur = n => new Intl.NumberFormat(i18n.language, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
 
-  // Prochain palier d'économies (réf. "Progression vers votre objectif") : pas
-  // de montant cible fixé par l'utilisateur dans l'app, donc on vise le
-  // prochain jalon rond au-dessus des économies déjà réalisées — motivant et
-  // toujours honnête vis-à-vis des vraies données.
-  const goalTarget    = nextMilestone(argentEcoCumul);
+  // Objectif d'économies (réf. "Progression vers votre objectif") : si
+  // l'utilisateur a défini un montant cible réel (profile.objectifEconomie,
+  // réglable depuis cette carte), on l'utilise tel quel. Sinon, on retombe
+  // sur le prochain jalon rond au-dessus des économies déjà réalisées —
+  // motivant et toujours honnête vis-à-vis des vraies données, en l'absence
+  // de vrai objectif personnalisé.
+  const objectifEconomiePerso = profile?.objectifEconomie > 0 ? profile.objectifEconomie : null;
+  const goalTarget    = objectifEconomiePerso ?? nextMilestone(argentEcoCumul);
   const goalPct       = goalTarget > 0 ? Math.min(100, Math.round((argentEcoCumul / goalTarget) * 100)) : 0;
   const goalRemaining = Math.max(0, goalTarget - argentEcoCumul);
+  const goalReached   = argentEcoCumul >= goalTarget;
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -483,35 +716,32 @@ export default function StatistiquesScreen() {
             nextDisabled={view.nextDisabled}
           />
         ) : (
-          <View style={styles.rangeCard}>
-            <View style={styles.rangeRow}>
-              <Text style={styles.rangeLabel}>{t('range.from')}</Text>
-              <PeriodNav
-                label={labelMois(rStart, i18n.language)}
-                onPrev={() => setRangeStart(stepMonth(rStart, -1))}
-                onNext={() => {
-                  const n = stepMonth(rStart, 1);
-                  if (n <= rEnd) setRangeStart(n);
-                }}
-                prevDisabled={rStart === allMonths[0]}
-                nextDisabled={rStart === rEnd}
-              />
-            </View>
-            <View style={styles.rangeRow}>
-              <Text style={styles.rangeLabel}>{t('range.to')}</Text>
-              <PeriodNav
-                label={labelMois(rEnd, i18n.language)}
-                onPrev={() => {
-                  const n = stepMonth(rEnd, -1);
-                  if (n >= rStart) setRangeEnd(n);
-                }}
-                onNext={() => setRangeEnd(stepMonth(rEnd, 1))}
-                prevDisabled={rEnd === rStart}
-                nextDisabled={rEnd === allMonths[allMonths.length - 1]}
-              />
-            </View>
-          </View>
+          <TouchableOpacity style={styles.rangeBtn} onPress={() => setCalendarOpen(true)} activeOpacity={0.7}>
+            <Text style={styles.rangeBtnIcon}>📅</Text>
+            <Text style={styles.rangeBtnText}>
+              {new Date(rStartDay + 'T12:00:00').toLocaleDateString(i18n.language, { day: 'numeric', month: 'short' })}
+              {'  →  '}
+              {new Date(rEndDay + 'T12:00:00').toLocaleDateString(i18n.language, { day: 'numeric', month: 'short', year: 'numeric' })}
+            </Text>
+            <Text style={styles.rangeBtnChevron}>›</Text>
+          </TouchableOpacity>
         )}
+
+        <PeriodCalendarModal
+          visible={calendarOpen}
+          initialStart={rStartDay}
+          initialEnd={rEndDay}
+          minMonth={firstDataKey.slice(0, 7)}
+          maxMonth={todayKey.slice(0, 7)}
+          lang={i18n.language}
+          t={t}
+          onClose={() => setCalendarOpen(false)}
+          onConfirm={(start, end) => {
+            setRangeStartDay(start);
+            setRangeEndDay(end);
+            setCalendarOpen(false);
+          }}
+        />
 
         {/* ── Consommation (graphique) — réf. "Consommation par heure" ── */}
         <View style={styles.card}>
@@ -662,7 +892,7 @@ export default function StatistiquesScreen() {
           <View style={styles.progressHeader}>
             <View style={styles.progressTitleRow}>
               <Image source={UI.bocal_economies} style={styles.progressTitleIcon} resizeMode="contain" />
-              <Text style={styles.cardTitle}>{t('goalProgress.title')}</Text>
+              <Text style={styles.cardTitle}>{t(objectifEconomiePerso ? 'goalProgress.titleCustom' : 'goalProgress.title')}</Text>
             </View>
             <Text style={styles.progressAmounts}>{fmtEur(argentEcoCumul)} € / {fmtEur(goalTarget)} €</Text>
           </View>
@@ -674,9 +904,24 @@ export default function StatistiquesScreen() {
           </View>
           <View style={styles.progressFooter}>
             <Text style={styles.progressPct}>{goalPct}% {t('goalProgress.reached')}</Text>
-            <Text style={styles.progressRemaining}>{t('goalProgress.remaining', { amount: fmtEur(goalRemaining) })}</Text>
+            <Text style={styles.progressRemaining}>
+              {goalReached ? t('goalProgress.goalReached') : t('goalProgress.remaining', { amount: fmtEur(goalRemaining) })}
+            </Text>
           </View>
+          <TouchableOpacity onPress={() => setGoalModalOpen(true)} style={styles.progressEditBtn} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}>
+            <Text style={styles.progressEditText}>
+              {objectifEconomiePerso ? t('goalProgress.editGoal') : t('goalProgress.setGoal')}
+            </Text>
+          </TouchableOpacity>
         </View>
+
+        <GoalTargetModal
+          visible={goalModalOpen}
+          currentValue={objectifEconomiePerso}
+          onClose={() => setGoalModalOpen(false)}
+          onSave={v => updateProfile({ objectifEconomie: v })}
+          t={t}
+        />
 
         {/* ── Objectif (réf. "Objectif du jour" de la maquette) ── */}
         <View style={styles.card}>
@@ -765,9 +1010,16 @@ const styles = StyleSheet.create({
   navBtnText: { fontSize: 20, color: colors.primary, fontWeight: '600', lineHeight: 24 },
   navLabel:   { fontSize: 13, fontWeight: '700', color: colors.black },
 
-  rangeCard: { gap: 6 },
-  rangeRow:  { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  rangeLabel: { width: 24, fontSize: 12, fontWeight: '700', color: colors.gray },
+  rangeBtn: {
+    flexDirection: 'row', alignItems: 'center', gap: 8,
+    backgroundColor: colors.surface, borderRadius: radius.pill,
+    paddingHorizontal: spacing.md, paddingVertical: 12,
+    borderWidth: 1, borderColor: colors.grayBorder,
+    ...shadow.card,
+  },
+  rangeBtnIcon: { fontSize: 16 },
+  rangeBtnText: { flex: 1, fontSize: 13, fontWeight: '700', color: colors.black },
+  rangeBtnChevron: { fontSize: 18, color: colors.gray },
 
   bigStatRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: spacing.sm },
   bigNumber:  { fontSize: 40, fontWeight: '900', color: colors.primary, lineHeight: 44 },
@@ -908,4 +1160,6 @@ const styles = StyleSheet.create({
   progressFooter: { flexDirection: 'row', justifyContent: 'space-between', marginTop: spacing.sm },
   progressPct:   { fontSize: 12, fontWeight: '700', color: colors.primaryDeep },
   progressRemaining: { fontSize: 12, color: colors.gray },
+  progressEditBtn:  { alignSelf: 'flex-start', marginTop: spacing.sm },
+  progressEditText: { fontSize: 12, fontWeight: '700', color: colors.primary },
 });
