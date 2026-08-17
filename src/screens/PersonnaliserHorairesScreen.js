@@ -133,8 +133,11 @@ export default function PersonnaliserHorairesScreen({ navigation, route }) {
         </TouchableOpacity>
       </ScrollView>
 
-      {/* Modal de sélection d'heure */}
-      <Modal visible={editing !== null} transparent animationType="slide">
+      {/* Modal de sélection d'heure — démonté entièrement quand fermé (pas
+          juste visible=false) pour éviter qu'une couche invisible du portail
+          web ne bloque les clics de l'écran en dessous. */}
+      {editing !== null && (
+      <Modal visible transparent animationType="slide">
         <View style={s.modalOverlay}>
           <View style={s.modalBox}>
             <Text style={s.modalTitle}>{editing !== null ? t('reminderLabel', { index: editing + 1 }) : ''}</Text>
@@ -178,6 +181,7 @@ export default function PersonnaliserHorairesScreen({ navigation, route }) {
           </View>
         </View>
       </Modal>
+      )}
     </SafeAreaView>
   );
 }

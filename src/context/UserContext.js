@@ -306,18 +306,22 @@ function computeStats(profile) {
     Math.max(0, objectifJour - step*5),
   ];
 
+  // ── Projections mois / an / 10 ans — une SEULE méthode (simulerPlan),
+  // utilisée pour les trois horizons afin qu'ils restent cohérents entre eux
+  // quand un plan de réduction progressif est actif (l'objectif continue de
+  // baisser chaque semaine à l'intérieur de chaque fenêtre simulée).
+  const planMois  = simulerPlan(consoAvant, objectifJour, reductionSem, prixCig, 30);
+  const planAn    = simulerPlan(consoAvant, objectifJour, reductionSem, prixCig, 365);
+  const plan10Ans = simulerPlan(consoAvant, objectifJour, reductionSem, prixCig, 3650);
+  // Courbes cumulées mensuelles (12 points) pour le graphique "Projection annuelle"
+  const projChart = simulerCourbeAnnuelle(consoAvant, objectifJour, reductionSem, prixCig);
+
   // ── Résumés textuels ─────────────────────────────────────────────────────────
   function fmtVie(mins) {
     const neg = mins < 0; const m = Math.abs(mins); const signe = neg ? '-' : '+';
     const h = Math.floor(m/60); const j = Math.floor(h/24);
     if (j>0) return `${signe}${j}${dJ} ${h%24}${dH}`; if (h>0) return `${signe}${h}${dH} ${m%60}${dM}`; return `${signe}${m}${dM}`;
   }
-  function msgJour() {
-    if (cigarettesToday === 0) return i18n.t('userStats:msgJour.smokeFree');
-    if (cigarettesToday <= objectifJour) return i18n.t('userStats:msgJour.onTrack');
-    return i18n.t('userStats:msgJour.over', { count: cigarettesToday - objectifJour });
-  }
-
   return {
     // Bases
     objectifJour, consoAvant, consoEstimee, consoRecente, prixCig, todayKey,
@@ -333,7 +337,6 @@ function computeStats(profile) {
     cigEviteesAujourdhu, argentEcoAujourdhui, vieGagneeMinAujourdhui,
     progressionJour,
     vieGagneeStrAujourdhui: fmtVie(vieGagneeMinAujourdhui),
-    msgJour: msgJour(),
 
     // Semaine
     weekData, weekLabels, weekSum, progressionSemaine,
@@ -360,13 +363,28 @@ function computeStats(profile) {
     // Habitudes (envies de fumer)
     habitudes, nbEnvies: enviesList.length, enviesRecentes,
 
-    // Plan projection (vs objectif)
-    argentEcoPlanMois: Math.max(0, (consoAvant - objectifJour) * prixCig * 30),
-    vieGagneeHPlanMois: Math.round((consoAvant - objectifJour) * 5 / 60 * 30),
-    vieGagneeJPlanAn: Math.round((consoAvant - objectifJour) * 5 / 60 * 365 / 24),
-    coutAnSiContinue: Math.round(consoAvant * prixCig * 365),
-    ecoAnSiReduit: Math.round(Math.max(0, (consoAvant - objectifJour)) * prixCig * 365),
-    projAnnuelle: computeProjectionAnnuelle(consoAvant, objectifJour, reductionSem, prixCig, consoRecente),
+    // Plan projection (vs objectif) — toutes dérivées de simulerPlan() pour
+    // garantir des chiffres cohérents entre eux (mois / an / 10 ans), y
+    // compris quand un plan de réduction progressif est actif : l'objectif
+    // continue alors de baisser chaque semaine dans CHACUNE de ces fenêtres,
+    // au lieu de rester figé à sa valeur actuelle.
+    argentEcoPlanMois: planMois.argentEco,
+    vieGagneeHPlanMois: Math.round(planMois.vieGagneeMin / 60),
+    vieGagneeJPlanAn: Math.round(planAn.vieGagneeMin / 60 / 24),
+    coutAnSiContinue: planAn.coutSiContinue,
+    ecoAnSiReduit: planAn.argentEco,
+    argentEco10Ans: plan10Ans.argentEco,
+    vieGagneeJ10Ans: Math.round(plan10Ans.vieGagneeMin / 60 / 24),
+    projAnnuelle: {
+      cout: planAn.coutSiContinue,
+      coutPlan: planAn.depensePlan,
+      gain: planAn.gain,
+      coutReel: Math.round(consoRecente * prixCig * 365),
+      badSerie: projChart.badSerie,
+      planSerie: projChart.planSerie,
+      consoRecente: Math.round(consoRecente * 10) / 10,
+      planActif: reductionSem > 0,
+    },
 
     // Temps sans fumer
     diffMs, diffSeconds, diffMinutes, diffHeures, diffJours, dureeStr,
@@ -381,17 +399,41 @@ function computeStats(profile) {
   };
 }
 
-// ── Projection annuelle basée sur le plan réellement choisi ──────────────────
-// Simule les 365 prochains jours : en mode "réduction progressive" l'objectif
-// baisse chaque semaine jusqu'à 0, donc les économies s'accélèrent avec le temps.
-// Les DEUX courbes mesurent la même chose : l'argent parti en fumée, cumulé.
+// ── Simulation du plan sur N jours — MÉTHODE UNIQUE réutilisée pour toutes
+// les projections (mois / an / 10 ans) et pour la carte "Votre impact" du
+// Plan, afin qu'elles ne divergent jamais entre elles. En mode "réduction
+// progressive" l'objectif baisse chaque semaine jusqu'à 0 à l'intérieur même
+// de la fenêtre simulée, donc les économies s'accélèrent avec le temps —
+// contrairement à un calcul plat qui figerait l'objectif à sa valeur actuelle.
+function simulerPlan(consoAvant, objectifJour, reductionSem, prixCig, jours) {
+  let cigEvitees = 0;
+  let depensePlan = 0;
+  for (let d = 0; d < jours; d++) {
+    const objDuJour = reductionSem > 0
+      ? Math.max(0, objectifJour - reductionSem * Math.floor(d / 7))
+      : objectifJour;
+    cigEvitees += Math.max(0, consoAvant - objDuJour);
+    depensePlan += objDuJour * prixCig;
+  }
+  const coutSiContinue = consoAvant * prixCig * jours;
+  return {
+    cigEvitees,
+    argentEco: Math.round(cigEvitees * prixCig),
+    vieGagneeMin: cigEvitees * 5,
+    depensePlan: Math.round(depensePlan),
+    coutSiContinue: Math.round(coutSiContinue),
+    gain: Math.max(0, Math.round(coutSiContinue - depensePlan)),
+  };
+}
+
+// ── Courbe cumulée sur 12 points (un par mois) pour le graphique "Projection
+// annuelle" — mêmes objDuJour que simulerPlan, juste échantillonnés pour le tracé.
 // Rouge = si vous continuez comme avant. Verte = en suivant le plan (elle
 // s'aplatit quand l'objectif atteint 0 : plus aucune dépense).
-// Le "gain" = la différence entre les deux = l'argent qui reste dans la poche.
-function computeProjectionAnnuelle(consoAvant, objectifJour, reductionSem, prixCig, consoRecente) {
+function simulerCourbeAnnuelle(consoAvant, objectifJour, reductionSem, prixCig) {
   let depensePlan = 0;
-  const badSerie  = [0]; // dépense cumulée si vous continuez comme avant (négatif)
-  const planSerie = [0]; // dépense cumulée en suivant le plan (négatif, s'aplatit à 0 cig)
+  const badSerie  = [0];
+  const planSerie = [0];
   for (let d = 1; d <= 360; d++) {
     const objDuJour = reductionSem > 0
       ? Math.max(0, objectifJour - reductionSem * Math.floor(d / 7))
@@ -402,18 +444,7 @@ function computeProjectionAnnuelle(consoAvant, objectifJour, reductionSem, prixC
       planSerie.push(-Math.round(depensePlan));
     }
   }
-  const cout     = Math.round(consoAvant * prixCig * 365);
-  const coutPlan = Math.round(depensePlan * 365 / 360);
-  return {
-    cout,                                    // argent brûlé si vous continuez
-    coutPlan,                                // argent brûlé en suivant le plan
-    gain: Math.max(0, cout - coutPlan),      // ce qui reste dans votre poche
-    coutReel: Math.round(consoRecente * prixCig * 365), // à votre rythme réel actuel
-    badSerie,
-    planSerie,
-    consoRecente: Math.round(consoRecente * 10) / 10,
-    planActif: reductionSem > 0,
-  };
+  return { badSerie, planSerie };
 }
 
 function getBeneficesSante(heures) {

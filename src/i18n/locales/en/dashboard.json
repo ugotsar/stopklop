@@ -26,6 +26,8 @@
   "goalModal": {
     "successTitle": "Well done!",
     "successSubtitle": "Goal met today",
+    "pileTitle": "Right at your limit",
+    "pileSubtitle": "No margin left today",
     "exceededTitle": "Goal exceeded",
     "exceededSubtitle": "{{count}} cig · +{{exceeded}} over",
     "goalLabel": "goal: {{count}}",

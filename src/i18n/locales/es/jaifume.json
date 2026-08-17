@@ -9,7 +9,9 @@
     "underGoal": "¡Cada cigarrillo menos cuenta!\nEstás a {{remaining}} de tu objetivo.",
     "atGoal": "Límite alcanzado — ¡no lo superes!\nEstás exactamente en tu objetivo de {{goal}}.",
     "overGoal_one": "Objetivo superado en {{count}} cigarrillo.\n¡Mañana es un nuevo comienzo!",
-    "overGoal_other": "Objetivo superado en {{count}} cigarrillos.\n¡Mañana es un nuevo comienzo!"
+    "overGoal_other": "Objetivo superado en {{count}} cigarrillos.\n¡Mañana es un nuevo comienzo!",
+    "overGoalSevere_one": "Objetivo ampliamente superado, en {{count}} cigarrillo.\n¿Un desencadenante se repite a menudo? Anótalo para detectar el patrón.",
+    "overGoalSevere_other": "Objetivo ampliamente superado, en {{count}} cigarrillos.\n¿Un desencadenante se repite a menudo? Anótalo para detectar el patrón."
   },
   "recap": {
     "title": "Resumen de hoy",
@@ -42,9 +44,11 @@
   "feedbackModal": {
     "perfectTitle": "¡Día sin tabaco!",
     "okTitle": "¡Bien hecho!",
+    "pileTitle": "Justo en el límite",
     "exceededTitle": "Objetivo no alcanzado",
     "perfectSub": "0 cigarrillos hoy",
     "okSub": "Objetivo cumplido hoy",
+    "pileSub": "Sin margen restante hoy",
     "exceededSub": "Es solo una etapa, sigue mañana.",
     "lifeGained": "vida ganada",
     "spent": "gastado",

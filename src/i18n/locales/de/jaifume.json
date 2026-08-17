@@ -9,7 +9,9 @@
     "underGoal": "Jede Zigarette weniger zählt!\nDu bist noch {{remaining}} von deinem Ziel entfernt.",
     "atGoal": "Grenze erreicht — nicht überschreiten!\nDu bist genau bei deinem Ziel von {{goal}}.",
     "overGoal_one": "Ziel um {{count}} Zigarette überschritten.\nMorgen ist ein neuer Anfang!",
-    "overGoal_other": "Ziel um {{count}} Zigaretten überschritten.\nMorgen ist ein neuer Anfang!"
+    "overGoal_other": "Ziel um {{count}} Zigaretten überschritten.\nMorgen ist ein neuer Anfang!",
+    "overGoalSevere_one": "Ziel deutlich überschritten, um {{count}} Zigarette.\nKehrt ein Auslöser oft wieder? Notiere ihn, um das Muster zu erkennen.",
+    "overGoalSevere_other": "Ziel deutlich überschritten, um {{count}} Zigaretten.\nKehrt ein Auslöser oft wieder? Notiere ihn, um das Muster zu erkennen."
   },
   "recap": {
     "title": "Zusammenfassung heute",
@@ -42,9 +44,11 @@
   "feedbackModal": {
     "perfectTitle": "Rauchfreier Tag!",
     "okTitle": "Gut gemacht!",
+    "pileTitle": "Genau am Limit",
     "exceededTitle": "Ziel nicht erreicht",
     "perfectSub": "0 Zigaretten heute",
     "okSub": "Ziel heute eingehalten",
+    "pileSub": "Heute kein Spielraum mehr",
     "exceededSub": "Nur ein Schritt — mach morgen weiter.",
     "lifeGained": "gewonnene Lebenszeit",
     "spent": "ausgegeben",

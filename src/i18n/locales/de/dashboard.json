@@ -26,6 +26,8 @@
   "goalModal": {
     "successTitle": "Gut gemacht!",
     "successSubtitle": "Ziel heute erreicht",
+    "pileTitle": "Genau am Limit",
+    "pileSubtitle": "Heute kein Spielraum mehr",
     "exceededTitle": "Ziel überschritten",
     "exceededSubtitle": "{{count}} Zig. · +{{exceeded}} zu viel",
     "goalLabel": "Ziel: {{count}}",

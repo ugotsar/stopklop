@@ -130,7 +130,10 @@ const TRIGGER_META = {
 //   'health'    → écran 08 : bénéfices santé (frise verticale des jalons)
 function ImpactModal({ info, onClose }) {
   const { t } = useTranslation('plan');
-  if (!info) return <Modal visible={false} transparent />;
+  // Démonter entièrement plutôt que garder un <Modal visible={false}> monté :
+  // sur web, react-native-web peut laisser une couche invisible qui
+  // intercepte les clics de l'écran en dessous tant que le composant reste monté.
+  if (!info) return null;
   return (
     <Modal visible transparent animationType="fade" onRequestClose={onClose}>
       <ScrollView
@@ -428,10 +431,12 @@ export default function PlanScreen({ navigation }) {
   // Détails pour les fiches explicatives "Votre impact"
   const consoAvantAff  = stats?.consoAvant ?? 10;
   const prixCigAff     = (stats?.prixCig ?? 0.5).toFixed(2);
-  const cigEviteesJour = Math.max(0, consoAvantAff - objectifJour);
-  const ecoAnAff  = Math.round(cigEviteesJour * (stats?.prixCig ?? 0.5) * 365).toLocaleString(i18n.language);
-  const eco10Aff  = Math.round(cigEviteesJour * (stats?.prixCig ?? 0.5) * 3650).toLocaleString(i18n.language);
-  const vie10Aff  = Math.round(cigEviteesJour * 5 / 60 / 24 * 3650);
+  const cigEviteesJour = Math.max(0, consoAvantAff - objectifJour); // rythme d'aujourd'hui, pour le texte explicatif
+  // "par an" / "10 ans" : dérivés de stats.ecoAnSiReduit / stats.argentEco10Ans / stats.vieGagneeJ10Ans
+  // (mêmes valeurs que la Projection annuelle — réduction progressive prise en compte si plan actif).
+  const ecoAnAff  = (stats?.ecoAnSiReduit ?? 0).toLocaleString(i18n.language);
+  const eco10Aff  = (stats?.argentEco10Ans ?? 0).toLocaleString(i18n.language);
+  const vie10Aff  = stats?.vieGagneeJ10Ans ?? 0;
 
   // Habitudes réelles (issues des envies enregistrées)
   const habitudes      = stats?.habitudes;

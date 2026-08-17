@@ -9,7 +9,9 @@
     "underGoal": "Chaque cigarette en moins compte !\nVous êtes à {{remaining}} de votre objectif.",
     "atGoal": "Limite atteinte — ne dépasse pas !\nTu es exactement à ton objectif de {{goal}}.",
     "overGoal_one": "Objectif dépassé de {{count}} cigarette.\nDemain est un nouveau départ !",
-    "overGoal_other": "Objectif dépassé de {{count}} cigarettes.\nDemain est un nouveau départ !"
+    "overGoal_other": "Objectif dépassé de {{count}} cigarettes.\nDemain est un nouveau départ !",
+    "overGoalSevere_one": "Objectif largement dépassé, de {{count}} cigarette.\nUn déclencheur revient souvent ? Notez-le pour mieux l'anticiper.",
+    "overGoalSevere_other": "Objectif largement dépassé, de {{count}} cigarettes.\nUn déclencheur revient souvent ? Notez-le pour mieux l'anticiper."
   },
   "recap": {
     "title": "Récapitulatif aujourd'hui",
@@ -42,9 +44,11 @@
   "feedbackModal": {
     "perfectTitle": "Journée sans tabac !",
     "okTitle": "Bien joué !",
+    "pileTitle": "Pile à l'objectif",
     "exceededTitle": "Objectif non atteint",
     "perfectSub": "0 cigarette aujourd'hui",
     "okSub": "Objectif respecté aujourd'hui",
+    "pileSub": "Aucune marge restante aujourd'hui",
     "exceededSub": "Ce n'est qu'une étape, continuez demain.",
     "lifeGained": "vie gagnée",
     "spent": "dépensé",

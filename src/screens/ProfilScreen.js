@@ -150,6 +150,8 @@ function EditModal({ visible, onClose, title, currentValue, unit, onSave, step =
     if (!isNaN(n) && n >= 0) { onSave(n); onClose(); }
   }
 
+  if (!visible) return null;
+
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
       <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPress={onClose} />
@@ -237,6 +239,8 @@ function MotivationsModal({ visible, onClose, initial, initialPerso, initialNive
     if (visible) { setSel(initial); setPerso(initialPerso ?? ''); setNiveau(initialNiveau ?? 5); }
   }, [visible]);
 
+  if (!visible) return null;
+
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
       <TouchableOpacity style={styles.modalOverlay} activeOpacity={1} onPress={onClose} />
@@ -311,6 +315,8 @@ function LanguageModal({ visible, onClose, current }) {
     await changeLanguage(code);
     onClose();
   }
+
+  if (!visible) return null;
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>

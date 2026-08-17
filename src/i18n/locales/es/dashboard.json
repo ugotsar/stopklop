@@ -26,6 +26,8 @@
   "goalModal": {
     "successTitle": "¡Bien hecho!",
     "successSubtitle": "Objetivo cumplido hoy",
+    "pileTitle": "Justo en el límite",
+    "pileSubtitle": "Sin margen restante hoy",
     "exceededTitle": "Objetivo superado",
     "exceededSubtitle": "{{count}} cig · +{{exceeded}} de más",
     "goalLabel": "objetivo: {{count}}",

@@ -26,6 +26,8 @@
   "goalModal": {
     "successTitle": "Bien joué !",
     "successSubtitle": "Objectif respecté aujourd'hui",
+    "pileTitle": "Pile à l'objectif",
+    "pileSubtitle": "Aucune marge restante aujourd'hui",
     "exceededTitle": "Objectif dépassé",
     "exceededSubtitle": "{{count}} cig · +{{exceeded}} au-dessus",
     "goalLabel": "objectif : {{count}}",

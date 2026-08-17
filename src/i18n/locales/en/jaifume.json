@@ -9,7 +9,9 @@
     "underGoal": "Every cigarette less counts!\nYou are {{remaining}} away from your goal.",
     "atGoal": "Limit reached — don't go over!\nYou're exactly at your goal of {{goal}}.",
     "overGoal_one": "Goal exceeded by {{count}} cigarette.\nTomorrow is a new start!",
-    "overGoal_other": "Goal exceeded by {{count}} cigarettes.\nTomorrow is a new start!"
+    "overGoal_other": "Goal exceeded by {{count}} cigarettes.\nTomorrow is a new start!",
+    "overGoalSevere_one": "Goal significantly exceeded, by {{count}} cigarette.\nDoes a trigger keep coming back? Log it to spot the pattern.",
+    "overGoalSevere_other": "Goal significantly exceeded, by {{count}} cigarettes.\nDoes a trigger keep coming back? Log it to spot the pattern."
   },
   "recap": {
     "title": "Today's summary",
@@ -42,9 +44,11 @@
   "feedbackModal": {
     "perfectTitle": "Smoke-free day!",
     "okTitle": "Well done!",
+    "pileTitle": "Right at your limit",
     "exceededTitle": "Goal not met",
     "perfectSub": "0 cigarettes today",
     "okSub": "Goal met today",
+    "pileSub": "No margin left today",
     "exceededSub": "It's just a step, keep going tomorrow.",
     "lifeGained": "life gained",
     "spent": "spent",

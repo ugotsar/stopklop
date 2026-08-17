@@ -26,9 +26,14 @@ const SCREEN_W = getScreenWidth();
 const MOTIVATIONS_COUNT = 5;
 
 // ── Modal journée parfaite ──────────────────────────────────────────────────
-function ModalParfait({ visible, diffJours, objectifJour, prixCig, onClose }) {
+function ModalParfait({ visible, serie, objectifJour, prixCig, onClose }) {
   const { t, i18n } = useTranslation('dashboard');
-  const streak = diffJours || 0;
+  // Ne pas garder le <Modal> monté avec visible=false : sur web, le portail
+  // de react-native-web peut laisser une couche invisible qui intercepte les
+  // clics de l'écran en dessous tant que le composant reste monté. Démonter
+  // entièrement quand invisible force un nettoyage propre.
+  if (!visible) return null;
+  const streak = serie || 0;
   const vieGagneeMins = objectifJour * 5;
   const vieGagneeStr = vieGagneeMins >= 60
     ? `+${Math.floor(vieGagneeMins/60)}h ${vieGagneeMins%60}min`
@@ -95,7 +100,12 @@ const mp = StyleSheet.create({
 // ── Modal feedback journée (variante A = ok, variante B = dépassé) ───────────
 function ModalObjectif({ visible, count, objectif, prixCigarette, onClose }) {
   const { t, i18n } = useTranslation('dashboard');
+  if (!visible) return null;
   const isOk      = count <= objectif;
+  // "Pile à l'objectif" (aucune marge) a son propre ton — ni vert franc
+  // (comme sous l'objectif), ni rouge — pour rester cohérent avec l'anneau
+  // orange affiché sur l'Accueil dans ce même cas (0 marge = prudence).
+  const isPile    = count === objectif && count > 0;
   const depense   = new Intl.NumberFormat(i18n.language, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(count * prixCigarette);
 
   // Variante A — objectif respecté
@@ -115,7 +125,17 @@ function ModalObjectif({ visible, count, objectif, prixCigarette, onClose }) {
         <View style={[mp.card, { borderWidth: 0.5, borderColor: isOk ? '#CFE0C6' : '#FCD34D' }]}>
 
           {/* ── Bandeau ── */}
-          {isOk ? (
+          {isPile ? (
+            <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#FEF3C7', paddingVertical: 14, paddingHorizontal: 16, gap: 10, borderBottomWidth: 0.5, borderBottomColor: '#FCD34D' }}>
+              <View style={{ width: 38, height: 38, borderRadius: 19, backgroundColor: '#FCD34D', alignItems: 'center', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20 }}>⚖️</Text>
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={{ fontSize: 14, fontWeight: '700', color: '#92400E' }}>{t('goalModal.pileTitle')}</Text>
+                <Text style={{ fontSize: 11, color: '#B45309', marginTop: 2 }}>{t('goalModal.pileSubtitle')}</Text>
+              </View>
+            </View>
+          ) : isOk ? (
             <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: colors.primaryLight, paddingVertical: 14, paddingHorizontal: 16, gap: 10, borderBottomWidth: 0.5, borderBottomColor: '#CFE0C6' }}>
               <View style={{ width: 38, height: 38, borderRadius: 19, backgroundColor: '#CFE0C6', alignItems: 'center', justifyContent: 'center' }}>
                 <Text style={{ fontSize: 20 }}>✅</Text>
@@ -241,6 +261,8 @@ function ModalEnvie({ visible, onSave, onClose }) {
     await onSave({ ts, trigger, note: note.trim() || null, fume });
     handleClose();
   }
+
+  if (!visible) return null;
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={handleClose}>
@@ -473,7 +495,7 @@ export default function DashboardScreen({ navigation }) {
     objectifJour, cigarettesToday,
     ecartPlanJour, argentVsPlanJour, vieVsPlanJour,
     progressionJour: progression,
-    prixCig,
+    prixCig, serie,
   } = stats;
 
   const progressionPositif = progression >= 0;
@@ -484,7 +506,7 @@ export default function DashboardScreen({ navigation }) {
 
       <ModalParfait
         visible={modalParfait}
-        diffJours={diffJours}
+        serie={serie}
         objectifJour={objectifJour}
         onClose={() => setModalParfait(false)}
       />

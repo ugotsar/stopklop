@@ -101,6 +101,8 @@ function RaisonModal({ visible, persoList, onPick, onCreatePerso, onSkip }) {
 
   function reset() { setMode('pick'); setTexte(''); }
 
+  if (!visible) return null;
+
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={() => { reset(); onSkip(); }}>
       <KeyboardAvoidingView
@@ -225,27 +227,34 @@ const rm = StyleSheet.create({
 });
 
 // ── Modal feedback ──────────────────────────────────────────────────────────
-function FeedbackModal({ visible, count, objectif, prixCigarette, diffJours, onClose, onNavigate }) {
+function FeedbackModal({ visible, count, objectif, prixCigarette, serie, onClose, onNavigate }) {
   const { t } = useTranslation('jaifume');
+  if (!visible) return null;
   const isParfait  = count === 0;
   const isOk       = count > 0 && count <= objectif;
   const isDepasse  = count > objectif;
+  // "Pile à l'objectif" (aucune marge) a son propre ton ambré — ni vert franc,
+  // ni rouge — cohérent avec l'anneau orange affiché sur la saisie dans ce
+  // même cas (0 marge = prudence, pas encore un dépassement).
+  const isPile     = count === objectif && count > 0;
 
-  const bannerColor    = isParfait ? colors.primary : isOk ? colors.primaryLight : '#92400E';
-  const bannerBorder   = isOk ? '#CFE0C6' : 'transparent';
-  const emoji          = isParfait ? '🏆' : isOk ? '✅' : '⚠️';
-  const titre          = isParfait ? t('feedbackModal.perfectTitle') : isOk ? t('feedbackModal.okTitle') : t('feedbackModal.exceededTitle');
-  const titreColor     = isOk ? colors.primaryDeep : '#fff';
-  const sousTitreColor = isOk ? colors.primary : 'rgba(255,255,255,0.8)';
+  const bannerColor    = isParfait ? colors.primary : isPile ? '#FEF3C7' : isOk ? colors.primaryLight : '#92400E';
+  const bannerBorder   = isPile ? '#FCD34D' : isOk ? '#CFE0C6' : 'transparent';
+  const emoji          = isParfait ? '🏆' : isPile ? '⚖️' : isOk ? '✅' : '⚠️';
+  const titre          = isParfait ? t('feedbackModal.perfectTitle') : isPile ? t('feedbackModal.pileTitle') : isOk ? t('feedbackModal.okTitle') : t('feedbackModal.exceededTitle');
+  const titreColor     = isPile ? '#92400E' : isOk ? colors.primaryDeep : '#fff';
+  const sousTitreColor = isPile ? '#B45309' : isOk ? colors.primary : 'rgba(255,255,255,0.8)';
   const sousTitre   = isParfait
     ? t('feedbackModal.perfectSub')
+    : isPile
+    ? t('feedbackModal.pileSub')
     : isOk
     ? t('feedbackModal.okSub')
     : t('feedbackModal.exceededSub');
 
   const argentDepense = (count * prixCigarette).toFixed(2);
-  const vieGagnee     = isParfait ? objectif * 20 : null;
-  const streak        = diffJours || 0;
+  const vieGagnee     = isParfait ? objectif * 5 : null;
+  const streak        = serie || 0;
   const pctGreen       = isDepasse && count > 0 ? Math.round((objectif / count) * 100) : 0;
 
   return (
@@ -463,7 +472,7 @@ export default function JaiFumeScreen({ navigation }) {
         count={count}
         objectif={objectifJour}
         prixCigarette={prixCigarette}
-        diffJours={stats?.diffJours ?? 0}
+        serie={stats?.serie ?? 0}
         onClose={handleCloseModal}
         onNavigate={handleNavigate}
       />
@@ -537,14 +546,22 @@ export default function JaiFumeScreen({ navigation }) {
             </Text>
           </View>
         )}
-        {count > objectifJour && (
-          <View style={[styles.tipCard, styles.tipCardWarning]}>
-            <Text style={styles.tipEmoji}>⚠️</Text>
-            <Text style={styles.tipText}>
-              {t('tip.overGoal', { count: count - objectifJour })}
-            </Text>
-          </View>
-        )}
+        {count > objectifJour && (() => {
+          const exces = count - objectifJour;
+          // Le ton s'aggrave avec le dépassement : un léger écart reste
+          // encourageant, un dépassement important passe sur un message et
+          // un visuel plus sérieux (pas juste le même texte avec un chiffre
+          // qui change).
+          const severe = exces >= 3;
+          return (
+            <View style={[styles.tipCard, severe ? styles.tipCardSevere : styles.tipCardWarning]}>
+              <Text style={styles.tipEmoji}>{severe ? '🚨' : '⚠️'}</Text>
+              <Text style={styles.tipText}>
+                {t(severe ? 'tip.overGoalSevere' : 'tip.overGoal', { count: exces })}
+              </Text>
+            </View>
+          );
+        })()}
 
         {/* ── Bouton Enregistrer ── */}
         <TouchableOpacity style={styles.saveBtn} onPress={handleEnregistrer}>
@@ -633,6 +650,7 @@ const styles = StyleSheet.create({
     padding: spacing.md, gap: spacing.sm, marginBottom: spacing.lg,
   },
   tipCardWarning: { backgroundColor: '#FEF3C7' },
+  tipCardSevere:  { backgroundColor: '#FEE2E2', borderWidth: 1, borderColor: '#FCA5A5' },
   tipEmoji: { fontSize: 20 },
   tipText:  { flex: 1, fontSize: font.sm, color: colors.black, lineHeight: 20 },
   saveBtn: {
