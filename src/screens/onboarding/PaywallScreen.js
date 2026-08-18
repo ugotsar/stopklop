@@ -7,9 +7,11 @@ import { colors, spacing, font, radius } from '../../theme';
 import PrimaryButton from '../../components/PrimaryButton';
 import { restorePurchases, isPro } from '../../services/purchases';
 
-// TODO ship v1 : héberger ces pages et mettre les vraies URLs
-const PRIVACY_URL = 'https://stopklop.app/confidentialite';
-const TERMS_URL   = 'https://stopklop.app/conditions';
+// Pages hébergées sur le même Firebase Hosting que la page de suppression
+// de compte (web/confidentialite.html, web/conditions.html) — nécessite un
+// déploiement (`firebase deploy --only hosting`) pour être en ligne.
+const PRIVACY_URL = 'https://stopklop-413e1.web.app/confidentialite';
+const TERMS_URL   = 'https://stopklop-413e1.web.app/conditions';
 
 const PLAN_IDS = ['annual', 'monthly'];
 
