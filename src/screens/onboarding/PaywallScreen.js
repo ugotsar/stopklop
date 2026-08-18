@@ -10,7 +10,7 @@ import { restorePurchases, isPro } from '../../services/purchases';
 const PLAN_IDS = ['annual', 'monthly'];
 
 export default function PaywallScreen({ navigation }) {
-  const { t } = useTranslation('paywallOnboarding');
+  const { t, i18n } = useTranslation('paywallOnboarding');
   const [selectedPlan, setSelectedPlan] = useState('annual');
   const [restoring, setRestoring] = useState(false);
 
@@ -55,7 +55,12 @@ export default function PaywallScreen({ navigation }) {
         <View style={styles.plans}>
           {PLAN_IDS.map(id => {
             const isSelected = id === selectedPlan;
-            const badge = t(`plans.${id}.badge`, { defaultValue: '' });
+            // `returnEmptyString: false` (config i18n) fait que defaultValue: ''
+            // n'est jamais retourné pour une clé manquante — i18next renvoie la
+            // clé brute à la place. On vérifie donc l'existence de la clé au
+            // lieu de compter sur une valeur par défaut vide.
+            const badgeKey = `plans.${id}.badge`;
+            const badge = i18n.exists(badgeKey, { ns: 'paywallOnboarding' }) ? t(badgeKey) : '';
             return (
               <TouchableOpacity
                 key={id}
