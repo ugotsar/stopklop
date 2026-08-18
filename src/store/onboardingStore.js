@@ -43,6 +43,9 @@ export async function saveProfile(profile) {
       createdAt: toISO(profile.createdAt),
       startDate: toISO(profile.startDate),
       dateArretSouhaitee: toISO(profile.dateArretSouhaitee),
+      // Horodatage local, comparé à `updatedAt` (Firestore) au chargement
+      // pour savoir quelle source est la plus fraîche en cas de fusion.
+      updatedAt: new Date().toISOString(),
     };
     await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
   } catch (e) {

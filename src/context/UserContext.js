@@ -1,7 +1,15 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { loadProfile, saveProfile, clearProfile } from '../store/onboardingStore';
-import { subscribeToAuth, signOut as firebaseSignOut } from '../services/authService';
-import { getProfile, saveProfile as saveFirestore } from '../services/firestore';
+import {
+  deleteCurrentUser,
+  subscribeToAuth,
+  signOut as firebaseSignOut,
+} from '../services/authService';
+import {
+  deleteUserData,
+  getProfile,
+  saveProfile as saveFirestore,
+} from '../services/firestore';
 import { configurePurchases } from '../services/purchases';
 import i18n from '../i18n';
 
@@ -13,6 +21,12 @@ export function UserProvider({ children }) {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [firebaseUser, setFirebaseUser] = useState(undefined); // undefined = pas encore connu
+  // Miroir synchrone de `profile`, lu par updateProfile() pour fusionner sur
+  // l'état le plus frais plutôt que sur le `profile` capturé par la closure
+  // du render en cours — évite qu'un appel écrase le résultat d'un appel
+  // précédent très rapproché (avant que le re-render n'ait eu lieu).
+  const profileRef = useRef(null);
+  useEffect(() => { profileRef.current = profile; }, [profile]);
 
   // Écoute l'état Firebase auth
   useEffect(() => {
@@ -33,22 +47,41 @@ export function UserProvider({ children }) {
 
         if (firebaseUser) {
           // 1. Essayer Firestore (timeout 5s pour ne pas bloquer)
+          let cloudProfile = null;
           try {
             const firestorePromise = getProfile(firebaseUser.uid);
             const timeout = new Promise(r => setTimeout(() => r(null), 5000));
-            loaded = await Promise.race([firestorePromise, timeout]);
+            cloudProfile = await Promise.race([firestorePromise, timeout]);
           } catch (_) {}
 
-          // 2. Fallback local + migration vers cloud
-          if (!loaded) {
-            loaded = await loadProfile();
-            if (loaded) saveFirestore(firebaseUser.uid, loaded).catch(() => {});
+          // 2. Charger aussi le local (peut contenir des changements plus
+          // récents faits hors-ligne sur cet appareil, jamais synchronisés).
+          const localProfile = await loadProfile();
+
+          if (cloudProfile && localProfile) {
+            // Fusion : la source la plus récente (`updatedAt`) l'emporte sur
+            // les champs en conflit, mais aucun champ présent dans une seule
+            // des deux sources n'est perdu.
+            const cloudTime = cloudProfile.updatedAt instanceof Date ? cloudProfile.updatedAt.getTime() : 0;
+            const localTime = localProfile.updatedAt ? new Date(localProfile.updatedAt).getTime() : 0;
+            loaded = localTime > cloudTime
+              ? { ...cloudProfile, ...localProfile }
+              : { ...localProfile, ...cloudProfile };
+            // Re-synchronise les deux côtés sur le résultat fusionné.
+            saveFirestore(firebaseUser.uid, loaded).catch(e => console.warn('Sync cloud échouée (fusion)', e));
+            saveProfile(loaded);
+          } else if (cloudProfile) {
+            loaded = cloudProfile;
+          } else if (localProfile) {
+            loaded = localProfile;
+            saveFirestore(firebaseUser.uid, loaded).catch(e => console.warn('Sync cloud échouée (migration)', e));
           }
         } else {
           loaded = await loadProfile();
         }
 
         setProfile(loaded);
+        profileRef.current = loaded;
       } catch (_) {
         setProfile(null);
       } finally {
@@ -57,30 +90,52 @@ export function UserProvider({ children }) {
     })();
   }, [firebaseUser]);
 
-  // Met à jour une ou plusieurs clés du profil + persiste (local + cloud)
+  // Met à jour une ou plusieurs clés du profil + persiste (local + cloud).
+  // Fusionne sur `profileRef.current` (toujours à jour de façon synchrone),
+  // pas sur `profile` capturé par la closure du render — deux appels très
+  // rapprochés ne s'écrasent plus l'un l'autre.
   async function updateProfile(changes) {
-    const updated = { ...profile, ...changes };
+    const updated = { ...profileRef.current, ...changes };
+    profileRef.current = updated;
     setProfile(updated);
     // Sauvegarde locale (cache offline)
     await saveProfile(updated);
     // Sauvegarde cloud si connecté
     if (firebaseUser) {
-      await saveFirestore(firebaseUser.uid, updated).catch(() => {});
+      await saveFirestore(firebaseUser.uid, updated).catch(e => console.warn('Sync cloud échouée (updateProfile)', e));
     }
   }
 
   // Réinitialise tout (déconnexion / reset)
   async function resetProfile() {
     await clearProfile();
+    profileRef.current = null;
     setProfile(null);
     if (firebaseUser) await firebaseSignOut();
+  }
+
+  // Suppression définitive : données Firestore, cache local, puis identité
+  // Firebase Auth. L'ordre est important : les règles Firestore exigent que
+  // l'utilisateur soit encore authentifié pour supprimer ses données.
+  async function deleteAccount() {
+    const user = firebaseUser;
+
+    if (user) await deleteUserData(user.uid);
+
+    // Ne jamais laisser une copie locale susceptible d'être re-synchronisée
+    // si Firebase exige exceptionnellement une authentification récente.
+    await clearProfile();
+    profileRef.current = null;
+    setProfile(null);
+
+    if (user) await deleteCurrentUser();
   }
 
   // ── Calculs dérivés (accessibles partout dans l'app) ──────────────────────
   const stats = profile ? computeStats(profile) : null;
 
   return (
-    <UserContext.Provider value={{ profile, loading, firebaseUser, updateProfile, resetProfile, stats }}>
+    <UserContext.Provider value={{ profile, loading, firebaseUser, updateProfile, resetProfile, deleteAccount, stats }}>
       {children}
     </UserContext.Provider>
   );
@@ -236,13 +291,17 @@ function computeStats(profile) {
   const vieVsPlanJour    = (objectifJour - cigarettesToday) * 5;       // minutes, négatif si dépassé
 
   // ── 7 derniers jours ────────────────────────────────────────────────────────
+  // Les économies/vie de la semaine ne comptent que les jours RÉELLEMENT
+  // enregistrés (comme le cumul depuis le début) — un jour non renseigné
+  // n'est ni une bonne ni une mauvaise journée, il ne doit rien ajouter.
   const week7 = Array.from({ length: 7 }, (_, i) => { const d = new Date(); d.setDate(d.getDate() - (6-i)); return d; });
   const weekKeys   = week7.map(d => d.toISOString().slice(0, 10));
   const weekData   = weekKeys.map(k => hist[k] ?? 0);
   const weekLabels = week7.map(d => d.toLocaleDateString(i18n.language, { weekday: 'short' }).slice(0,3));
   const weekSum    = weekData.reduce((s,v) => s+v, 0);
-  const progressionSemaine = consoAvant > 0
-    ? Math.max(-100, Math.min(100, Math.round(((consoAvant*7 - weekSum) / (consoAvant*7)) * 100)))
+  const weekEnregistres = weekKeys.filter(k => hist[k] !== undefined).length;
+  const progressionSemaine = consoAvant > 0 && weekEnregistres > 0
+    ? Math.max(-100, Math.min(100, Math.round(((consoAvant*weekEnregistres - weekSum) / (consoAvant*weekEnregistres)) * 100)))
     : 0;
 
   // ── 30 derniers jours ───────────────────────────────────────────────────────
@@ -251,8 +310,9 @@ function computeStats(profile) {
   const monthData  = monthKeys.map(k => hist[k] ?? 0);
   const monthLabels = month30.map((d,i) => i % 5 === 0 ? String(d.getDate()) : '');
   const monthSum   = monthData.reduce((s,v) => s+v, 0);
-  const progressionMois = consoAvant > 0
-    ? Math.max(-100, Math.min(100, Math.round(((consoAvant*30 - monthSum) / (consoAvant*30)) * 100)))
+  const monthEnregistres = monthKeys.filter(k => hist[k] !== undefined).length;
+  const progressionMois = consoAvant > 0 && monthEnregistres > 0
+    ? Math.max(-100, Math.min(100, Math.round(((consoAvant*monthEnregistres - monthSum) / (consoAvant*monthEnregistres)) * 100)))
     : 0;
 
   // ── Depuis le début ─────────────────────────────────────────────────────────
@@ -285,12 +345,25 @@ function computeStats(profile) {
     : consoAvant;
 
   // ── Série de jours sous l'objectif ─────────────────────────────────────────
+  // Chaque jour est comparé à l'objectif EN VIGUEUR CE JOUR-LÀ, pas à
+  // l'objectif actuel — sinon un plan de réduction progressif (objectif qui
+  // baisse chaque semaine) casse artificiellement le streak des jours passés
+  // qui respectaient pourtant leur propre objectif, plus élevé à l'époque.
+  function objectifPourJour(d) {
+    if (reductionSem > 0 && planStartDate) {
+      const planStart = new Date(planStartDate);
+      if (d < planStart) return objectifBase;
+      const joursDepuisDebutPlan = Math.floor((d - planStart) / 86400000);
+      return Math.max(0, objectifBase - reductionSem * Math.floor(joursDepuisDebutPlan / 7));
+    }
+    return objectifBase;
+  }
   let serie = 0;
   for (let i = 0; i < 30; i++) {
     const d = new Date(); d.setDate(d.getDate() - i);
     const k = d.toISOString().slice(0, 10);
     if (hist[k] === undefined) { if (i === 0) continue; break; }
-    if (hist[k] <= objectifJour) serie++; else break;
+    if (hist[k] <= objectifPourJour(d)) serie++; else break;
   }
 
   // ── Plan progressif ─────────────────────────────────────────────────────────
@@ -340,15 +413,15 @@ function computeStats(profile) {
 
     // Semaine
     weekData, weekLabels, weekSum, progressionSemaine,
-    argentEcoSemaine: Math.max(0, (consoAvant*7 - weekSum) * prixCig),
-    vieGagneeMinSemaine: Math.max(0, (consoAvant*7 - weekSum) * 5),
-    vieGagneeStrSemaine: fmtVie(Math.max(0, (consoAvant*7 - weekSum)*5)),
+    argentEcoSemaine: Math.max(0, (consoAvant*weekEnregistres - weekSum) * prixCig),
+    vieGagneeMinSemaine: Math.max(0, (consoAvant*weekEnregistres - weekSum) * 5),
+    vieGagneeStrSemaine: fmtVie(Math.max(0, (consoAvant*weekEnregistres - weekSum)*5)),
 
     // Mois
     monthData, monthLabels, monthSum, progressionMois,
-    argentEcoMois: Math.max(0, (consoAvant*30 - monthSum) * prixCig),
-    vieGagneeMinMois: Math.max(0, (consoAvant*30 - monthSum) * 5),
-    vieGagneeStrMois: fmtVie(Math.max(0, (consoAvant*30 - monthSum)*5)),
+    argentEcoMois: Math.max(0, (consoAvant*monthEnregistres - monthSum) * prixCig),
+    vieGagneeMinMois: Math.max(0, (consoAvant*monthEnregistres - monthSum) * 5),
+    vieGagneeStrMois: fmtVie(Math.max(0, (consoAvant*monthEnregistres - monthSum)*5)),
 
     // Depuis le début
     allKeys, allValues, totalFume, nbJours, nbJoursEnregistres, progressionTotal,

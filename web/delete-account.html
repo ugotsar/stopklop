@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="index,follow" />
+    <title>Supprimer un compte Stopklop</title>
+    <meta
+      name="description"
+      content="Demander la suppression définitive de votre compte Stopklop et de ses données associées."
+    />
+    <style>
+      :root {
+        color-scheme: light;
+        --cream: #fbf9f1;
+        --surface: #fffdf8;
+        --green: #1e5530;
+        --green-mid: #2f7a44;
+        --sage: #e8f0e2;
+        --border: #ede8d8;
+        --text: #173d26;
+        --muted: #6f746f;
+        --danger: #b42318;
+      }
+
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        background: var(--cream);
+        color: var(--text);
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        line-height: 1.55;
+      }
+      main { width: min(720px, calc(100% - 32px)); margin: 48px auto; }
+      .brand { color: var(--green); font-size: 20px; font-weight: 800; margin-bottom: 18px; }
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 28px;
+        padding: clamp(24px, 6vw, 48px);
+        box-shadow: 0 18px 50px rgba(30, 85, 48, 0.08);
+      }
+      h1 { margin: 0 0 12px; font-size: clamp(30px, 6vw, 46px); line-height: 1.12; }
+      h2 { margin: 30px 0 10px; font-size: 20px; }
+      p, li { color: var(--muted); }
+      .notice { background: var(--sage); border-radius: 18px; padding: 16px 18px; margin: 24px 0; }
+      .notice strong { color: var(--green); }
+      .danger { color: var(--danger); font-weight: 700; }
+      .button {
+        display: inline-block;
+        margin-top: 14px;
+        padding: 14px 22px;
+        border-radius: 999px;
+        background: var(--green);
+        color: white;
+        font-weight: 800;
+        text-decoration: none;
+      }
+      .button:hover { background: var(--green-mid); }
+      .lang { border-top: 1px solid var(--border); margin-top: 34px; padding-top: 28px; }
+      footer { text-align: center; color: var(--muted); font-size: 13px; margin-top: 18px; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="brand">Stopklop</div>
+      <section class="card">
+        <h1>Supprimer votre compte</h1>
+        <p>
+          Vous pouvez lancer une suppression directement dans l’application via
+          <strong>Profil → Supprimer mon compte</strong>. Si vous n’avez plus accès à
+          l’application, utilisez la procédure ci-dessous.
+        </p>
+
+        <div class="notice">
+          <strong>Données supprimées :</strong> votre compte Firebase, votre profil,
+          votre historique de consommation, vos envies enregistrées, vos objectifs et
+          vos préférences Stopklop.
+        </div>
+
+        <h2>Demande depuis le web</h2>
+        <ol>
+          <li>Envoyez un email depuis l’adresse liée à votre compte Stopklop.</li>
+          <li>Indiquez « Suppression de compte Stopklop » comme objet.</li>
+          <li>Ajoutez l’adresse utilisée pour vous connecter et demandez la suppression définitive.</li>
+        </ol>
+        <a
+          class="button"
+          href="mailto:ugosimonmailpro34@gmail.com?subject=Suppression%20de%20compte%20Stopklop&body=Bonjour%2C%0A%0AJe%20demande%20la%20suppression%20d%C3%A9finitive%20de%20mon%20compte%20Stopklop%20et%20de%20toutes%20les%20donn%C3%A9es%20associ%C3%A9es.%0A%0AAdresse%20du%20compte%20%3A%20%0A%0AMerci."
+        >Envoyer une demande de suppression</a>
+
+        <h2>Abonnement</h2>
+        <p class="danger">
+          Supprimer votre compte Stopklop n’annule pas automatiquement un abonnement
+          géré par Apple ou Google.
+        </p>
+        <p>
+          Annulez-le séparément dans les réglages des abonnements de l’App Store ou de Google Play.
+        </p>
+
+        <h2>Délai et conservation</h2>
+        <p>
+          Nous accusons réception de votre demande et supprimons les données associées
+          après vérification de votre identité. Si certaines informations doivent être
+          conservées pour une obligation légale, de sécurité ou de lutte contre la fraude,
+          nous vous en informerons.
+        </p>
+
+        <div class="lang" lang="en">
+          <h1>Delete your account</h1>
+          <p>
+            You can delete your account in the app under
+            <strong>Profile → Delete my account</strong>. If you no longer have access
+            to the app, email us from the address associated with your Stopklop account.
+          </p>
+          <p>
+            Request the permanent deletion of your Firebase account, profile, smoking
+            history, recorded cravings, goals and preferences.
+          </p>
+          <a
+            class="button"
+            href="mailto:ugosimonmailpro34@gmail.com?subject=Stopklop%20account%20deletion%20request&body=Hello%2C%0A%0AI%20request%20the%20permanent%20deletion%20of%20my%20Stopklop%20account%20and%20all%20associated%20data.%0A%0AAccount%20email%3A%20%0A%0AThank%20you."
+          >Request account deletion</a>
+          <p class="danger">
+            Account deletion does not automatically cancel an Apple or Google subscription.
+          </p>
+        </div>
+      </section>
+      <footer>Stopklop · Données personnelles et suppression de compte</footer>
+    </main>
+  </body>
+</html>

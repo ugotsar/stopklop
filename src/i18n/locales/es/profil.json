@@ -73,8 +73,17 @@
   },
   "deleteAccount": {
     "button": "Eliminar mi cuenta",
+    "deleting": "Eliminando la cuenta…",
     "confirmTitle": "Eliminar mi cuenta",
-    "confirmBody": "Esta acción es irreversible. Todos tus datos serán eliminados."
+    "confirmBody": "Esta acción no se puede deshacer. Se eliminarán tu perfil, historial y cuenta. Si tienes una suscripción activa, la facturación continuará hasta que la canceles en los ajustes de la tienda.",
+    "manageSubscription": "Gestionar suscripción",
+    "externalRequest": "Solicitar eliminación desde la web",
+    "successTitle": "Cuenta eliminada",
+    "successBody": "Tu cuenta y tus datos de Stopklop han sido eliminados.",
+    "reauthTitle": "Inicio de sesión reciente requerido",
+    "reauthBody": "Para proteger tu cuenta, Firebase requiere un inicio de sesión reciente. Vuelve a iniciar sesión con la misma cuenta e intenta eliminarla de nuevo. También puedes usar la página pública de eliminación de Stopklop.",
+    "errorTitle": "No se pudo eliminar la cuenta",
+    "errorBody": "Tus datos no se pudieron eliminar por completo. Comprueba tu conexión e inténtalo de nuevo. Si el problema continúa, usa la página pública de eliminación."
   },
   "editModal": {
     "currentValue": "Valor actual",

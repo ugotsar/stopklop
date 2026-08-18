@@ -73,8 +73,17 @@
   },
   "deleteAccount": {
     "button": "Mein Konto löschen",
+    "deleting": "Konto wird gelöscht…",
     "confirmTitle": "Mein Konto löschen",
-    "confirmBody": "Diese Aktion ist unwiderruflich. Alle deine Daten werden gelöscht."
+    "confirmBody": "Diese Aktion kann nicht rückgängig gemacht werden. Dein Profil, Verlauf und Konto werden gelöscht. Ein aktives Abonnement wird weiter berechnet, bis du es in den Store-Einstellungen kündigst.",
+    "manageSubscription": "Abonnement verwalten",
+    "externalRequest": "Löschung über das Web beantragen",
+    "successTitle": "Konto gelöscht",
+    "successBody": "Dein Stopklop-Konto und deine Daten wurden gelöscht.",
+    "reauthTitle": "Erneute Anmeldung erforderlich",
+    "reauthBody": "Zum Schutz deines Kontos verlangt Firebase eine kürzlich erfolgte Anmeldung. Melde dich erneut mit demselben Konto an und versuche die Löschung nochmals. Du kannst auch die öffentliche Löschseite von Stopklop verwenden.",
+    "errorTitle": "Konto konnte nicht gelöscht werden",
+    "errorBody": "Deine Daten konnten nicht vollständig gelöscht werden. Prüfe deine Verbindung und versuche es erneut. Nutze bei anhaltenden Problemen die öffentliche Löschseite."
   },
   "editModal": {
     "currentValue": "Aktueller Wert",

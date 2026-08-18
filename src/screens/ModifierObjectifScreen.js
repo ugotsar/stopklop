@@ -72,7 +72,20 @@ export default function ModifierObjectifScreen({ navigation }) {
     };
     if (selected === 'reduce') {
       changes.reductionParSemaine = rythme;
-      changes.planStartDate = new Date().toISOString(); // le plan (re)démarre aujourd'hui
+      // Si un plan de réduction était déjà actif, on préserve la position
+      // dans la semaine en cours au lieu de relancer un compte à rebours de
+      // 7 jours à chaque simple modification — sinon rééditer le plan (même
+      // sans rien changer) repousse le prochain palier de plusieurs jours.
+      const planDejaActif = profile?.typeObjectif === 'reduce'
+        && profile?.reductionParSemaine > 0 && profile?.planStartDate;
+      if (planDejaActif) {
+        const joursDansSemaine = Math.floor(
+          (Date.now() - new Date(profile.planStartDate).getTime()) / 86400000
+        ) % 7;
+        changes.planStartDate = new Date(Date.now() - joursDansSemaine * 86400000).toISOString();
+      } else {
+        changes.planStartDate = new Date().toISOString(); // le plan démarre aujourd'hui
+      }
     } else {
       changes.reductionParSemaine = null;
       changes.planStartDate = null;

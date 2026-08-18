@@ -73,8 +73,17 @@
   },
   "deleteAccount": {
     "button": "Delete my account",
+    "deleting": "Deleting account…",
     "confirmTitle": "Delete my account",
-    "confirmBody": "This action is irreversible. All your data will be deleted."
+    "confirmBody": "This action cannot be undone. Your profile, history and account will be deleted. If you have an active subscription, billing continues until you cancel it in your store settings.",
+    "manageSubscription": "Manage subscription",
+    "externalRequest": "Request deletion on the web",
+    "successTitle": "Account deleted",
+    "successBody": "Your Stopklop account and data have been deleted.",
+    "reauthTitle": "Recent sign-in required",
+    "reauthBody": "To protect your account, Firebase requires a recent sign-in. Sign in again with the same account, then retry deletion. You can also use Stopklop’s public deletion page.",
+    "errorTitle": "Unable to delete account",
+    "errorBody": "Your data could not be fully deleted. Check your connection and try again. If the problem continues, use the public deletion page."
   },
   "editModal": {
     "currentValue": "Current value",

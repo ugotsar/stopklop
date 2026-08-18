@@ -370,7 +370,13 @@ export default function JaiFumeScreen({ navigation }) {
   const objectifJour  = stats?.objectifJour ?? 8;
   const prixCigarette = stats?.prixCig ?? 0.5;
 
-  const [count, setCount]           = useState(profile?.cigarettesToday ?? 0);
+  // Ne reprendre le compteur existant que s'il date d'AUJOURD'HUI — sinon
+  // (nouveau jour, rien encore saisi) on repart de 0, comme le fait déjà
+  // computeStats() pour `cigarettesToday` ailleurs dans l'app.
+  const todayKeyInit = new Date().toISOString().slice(0, 10);
+  const [count, setCount]           = useState(
+    profile?.lastSavedDate === todayKeyInit ? (profile?.cigarettesToday ?? 0) : 0
+  );
   const [modalVisible, setModal]    = useState(false);
   // Heures des cigarettes ajoutées pendant cette session (pour le journal horaire)
   const [addedTimes, setAddedTimes] = useState([]);

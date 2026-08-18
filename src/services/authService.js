@@ -4,6 +4,7 @@ import {
   OAuthProvider,
   signInWithCredential,
   signInAnonymously,
+  deleteUser,
   signOut as firebaseSignOut,
   onAuthStateChanged,
 } from 'firebase/auth';
@@ -19,6 +20,16 @@ export function subscribeToAuth(callback) {
 // ── Déconnexion ───────────────────────────────────────────────────────────────
 export async function signOut() {
   await firebaseSignOut(auth);
+}
+
+export async function deleteCurrentUser() {
+  const user = auth.currentUser;
+  if (!user) return;
+  await deleteUser(user);
+}
+
+export function isRecentLoginRequired(error) {
+  return error?.code === 'auth/requires-recent-login';
 }
 
 // ── Auth anonyme (test / dev) ─────────────────────────────────────────────────

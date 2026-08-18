@@ -16,9 +16,7 @@
       "supportsTablet": false,
       "buildNumber": "1",
       "infoPlist": {
-        "NSUserNotificationUsageDescription": "Stopklop t'envoie des rappels pour noter tes cigarettes.",
-        "NSCameraUsageDescription": "Utilisé pour la photo de profil.",
-        "NSPhotoLibraryUsageDescription": "Utilisé pour la photo de profil."
+        "NSUserNotificationUsageDescription": "Stopklop t'envoie des rappels pour noter tes cigarettes."
       }
     },
     "android": {
@@ -32,7 +30,6 @@
       },
       "permissions": [
         "android.permission.RECEIVE_BOOT_COMPLETED",
-        "android.permission.SCHEDULE_EXACT_ALARM",
         "android.permission.POST_NOTIFICATIONS"
       ]
     },

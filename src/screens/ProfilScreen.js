@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import {
   View, Text, StyleSheet, SafeAreaView, ScrollView,
-  TouchableOpacity, Switch, Modal, TextInput, Alert,
+  TouchableOpacity, Switch, Modal, TextInput, Alert, Linking, Platform,
 } from 'react-native';
 import Svg, { Path, Circle, Rect } from 'react-native-svg';
 import { useTranslation } from 'react-i18next';
 import { useUser } from '../context/UserContext';
 import { colors, spacing, font, radius } from '../theme';
 import { SUPPORTED_LANGUAGES, changeLanguage } from '../i18n';
+import { isRecentLoginRequired } from '../services/authService';
+
+const ACCOUNT_DELETION_URL = 'https://stopklop-413e1.web.app/delete-account';
 
 // ── Icônes SVG (trait vert, style cohérent avec la maquette) ─────────────────
 function Icon({ name, size = 22, color = colors.primary }) {
@@ -355,7 +358,7 @@ function LanguageModal({ visible, onClose, current }) {
 // ── Écran Profil ─────────────────────────────────────────────────────────────
 export default function ProfilScreen({ navigation }) {
   const { t, i18n } = useTranslation('profil');
-  const { profile, stats, updateProfile, resetProfile } = useUser();
+  const { profile, stats, updateProfile, deleteAccount } = useUser();
 
   const [notifs,       setNotifs]       = useState(true);
   const [modalPrix,    setModalPrix]    = useState(false);
@@ -363,6 +366,7 @@ export default function ProfilScreen({ navigation }) {
   const [modalConso,   setModalConso]   = useState(false);
   const [modalMotiv,   setModalMotiv]   = useState(false);
   const [modalLang,    setModalLang]    = useState(false);
+  const [deletingAccount, setDeletingAccount] = useState(false);
 
   const prixPaquet       = profile?.prixPaquet       ?? 11;
   const cigParPaquet     = profile?.cigarettesParPaquet ?? 20;
@@ -389,18 +393,51 @@ export default function ProfilScreen({ navigation }) {
   const eur = n => `${new Intl.NumberFormat(i18n.language, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n)} €`;
 
   async function handleDeleteAccount() {
+    const subscriptionUrl = Platform.OS === 'ios'
+      ? 'https://apps.apple.com/account/subscriptions'
+      : 'https://play.google.com/store/account/subscriptions';
+
+    async function performDeletion() {
+      if (deletingAccount) return;
+      setDeletingAccount(true);
+      try {
+        await deleteAccount();
+        Alert.alert(t('deleteAccount.successTitle'), t('deleteAccount.successBody'));
+        navigation.getParent()?.getParent()?.reset({
+          index: 0,
+          routes: [{ name: 'Onboarding' }],
+        });
+      } catch (error) {
+        if (isRecentLoginRequired(error)) {
+          Alert.alert(
+            t('deleteAccount.reauthTitle'),
+            t('deleteAccount.reauthBody'),
+          );
+        } else {
+          console.warn('[Account deletion]', error);
+          Alert.alert(
+            t('deleteAccount.errorTitle'),
+            t('deleteAccount.errorBody'),
+          );
+        }
+      } finally {
+        setDeletingAccount(false);
+      }
+    }
+
     Alert.alert(
       t('deleteAccount.confirmTitle'),
       t('deleteAccount.confirmBody'),
       [
         { text: t('common:cancel'), style: 'cancel' },
         {
+          text: t('deleteAccount.manageSubscription'),
+          onPress: () => Linking.openURL(subscriptionUrl),
+        },
+        {
           text: t('common:delete'),
           style: 'destructive',
-          onPress: async () => {
-            await resetProfile();
-            // La déconnexion Firebase ramène automatiquement à l'écran d'auth
-          },
+          onPress: performDeletion,
         },
       ]
     );
@@ -645,12 +682,27 @@ export default function ProfilScreen({ navigation }) {
         </View>
 
         {/* ── Supprimer compte ── */}
-        <TouchableOpacity style={styles.deleteBtn} onPress={handleDeleteAccount}>
+        <TouchableOpacity
+          style={[styles.deleteBtn, deletingAccount && { opacity: 0.5 }]}
+          onPress={handleDeleteAccount}
+          disabled={deletingAccount}
+        >
           <View style={styles.deleteBtnLeft}>
             <Icon name="trash" size={18} color={colors.red} />
-            <Text style={styles.deleteBtnText}>{t('deleteAccount.button')}</Text>
+            <Text style={styles.deleteBtnText}>
+              {deletingAccount ? t('deleteAccount.deleting') : t('deleteAccount.button')}
+            </Text>
           </View>
           <Text style={styles.chevron}>›</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={{ alignItems: 'center', paddingVertical: spacing.sm }}
+          onPress={() => Linking.openURL(ACCOUNT_DELETION_URL)}
+        >
+          <Text style={{ color: colors.gray, fontSize: font.sm, textDecorationLine: 'underline' }}>
+            {t('deleteAccount.externalRequest')}
+          </Text>
         </TouchableOpacity>
 
       </ScrollView>
