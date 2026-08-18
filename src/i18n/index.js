@@ -10,7 +10,7 @@ const NAMESPACES = [
   'dashboard', 'statistiques', 'plan', 'modifierObjectif',
   'jaifume', 'journalEnvies', 'notifications',
   'personnaliserHoraires', 'uniteMonnaie', 'paywall',
-  'nousContacter', 'centreAide', 'authMain', 'mainTabNav',
+  'nousContacter', 'centreAide', 'authMain', 'mainTabNav', 'mentionsLegales',
 ];
 
 // ── Imports statiques (Metro ne supporte pas les require() dynamiques) ───────
@@ -34,6 +34,7 @@ import fr_nousContacter from './locales/fr/nousContacter.json';
 import fr_centreAide from './locales/fr/centreAide.json';
 import fr_authMain from './locales/fr/authMain.json';
 import fr_mainTabNav from './locales/fr/mainTabNav.json';
+import fr_mentionsLegales from './locales/fr/mentionsLegales.json';
 
 import en_common from './locales/en/common.json';
 import en_profil from './locales/en/profil.json';
@@ -55,6 +56,7 @@ import en_nousContacter from './locales/en/nousContacter.json';
 import en_centreAide from './locales/en/centreAide.json';
 import en_authMain from './locales/en/authMain.json';
 import en_mainTabNav from './locales/en/mainTabNav.json';
+import en_mentionsLegales from './locales/en/mentionsLegales.json';
 
 import de_common from './locales/de/common.json';
 import de_profil from './locales/de/profil.json';
@@ -76,6 +78,7 @@ import de_nousContacter from './locales/de/nousContacter.json';
 import de_centreAide from './locales/de/centreAide.json';
 import de_authMain from './locales/de/authMain.json';
 import de_mainTabNav from './locales/de/mainTabNav.json';
+import de_mentionsLegales from './locales/de/mentionsLegales.json';
 
 import es_common from './locales/es/common.json';
 import es_profil from './locales/es/profil.json';
@@ -97,6 +100,7 @@ import es_nousContacter from './locales/es/nousContacter.json';
 import es_centreAide from './locales/es/centreAide.json';
 import es_authMain from './locales/es/authMain.json';
 import es_mainTabNav from './locales/es/mainTabNav.json';
+import es_mentionsLegales from './locales/es/mentionsLegales.json';
 
 export const resources = {
   fr: {
@@ -106,6 +110,7 @@ export const resources = {
     jaifume: fr_jaifume, journalEnvies: fr_journalEnvies, notifications: fr_notifications,
     personnaliserHoraires: fr_personnaliserHoraires, uniteMonnaie: fr_uniteMonnaie, paywall: fr_paywall,
     nousContacter: fr_nousContacter, centreAide: fr_centreAide, authMain: fr_authMain, mainTabNav: fr_mainTabNav,
+    mentionsLegales: fr_mentionsLegales,
   },
   en: {
     common: en_common, profil: en_profil, userStats: en_userStats,
@@ -114,6 +119,7 @@ export const resources = {
     jaifume: en_jaifume, journalEnvies: en_journalEnvies, notifications: en_notifications,
     personnaliserHoraires: en_personnaliserHoraires, uniteMonnaie: en_uniteMonnaie, paywall: en_paywall,
     nousContacter: en_nousContacter, centreAide: en_centreAide, authMain: en_authMain, mainTabNav: en_mainTabNav,
+    mentionsLegales: en_mentionsLegales,
   },
   de: {
     common: de_common, profil: de_profil, userStats: de_userStats,
@@ -122,6 +128,7 @@ export const resources = {
     jaifume: de_jaifume, journalEnvies: de_journalEnvies, notifications: de_notifications,
     personnaliserHoraires: de_personnaliserHoraires, uniteMonnaie: de_uniteMonnaie, paywall: de_paywall,
     nousContacter: de_nousContacter, centreAide: de_centreAide, authMain: de_authMain, mainTabNav: de_mainTabNav,
+    mentionsLegales: de_mentionsLegales,
   },
   es: {
     common: es_common, profil: es_profil, userStats: es_userStats,
@@ -130,6 +137,7 @@ export const resources = {
     jaifume: es_jaifume, journalEnvies: es_journalEnvies, notifications: es_notifications,
     personnaliserHoraires: es_personnaliserHoraires, uniteMonnaie: es_uniteMonnaie, paywall: es_paywall,
     nousContacter: es_nousContacter, centreAide: es_centreAide, authMain: es_authMain, mainTabNav: es_mainTabNav,
+    mentionsLegales: es_mentionsLegales,
   },
 };
 

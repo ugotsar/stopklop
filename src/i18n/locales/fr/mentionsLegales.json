@@ -1,0 +1,52 @@
+{
+  "contact": {
+    "title": "Contact",
+    "body": "Pour toute question, écrivez à :"
+  },
+  "privacy": {
+    "headerTitle": "Confidentialité",
+    "title": "Politique de confidentialité",
+    "updated": "Dernière mise à jour : 18 août 2026",
+    "summaryLabel": "En résumé :",
+    "summaryBody": "vos données de consommation restent sur votre appareil. Elles ne sont envoyées vers notre service cloud (Firebase) que si vous créez un compte, afin de synchroniser vos données entre appareils. Elles ne sont ni vendues ni partagées avec des tiers à des fins publicitaires.",
+    "dataTitle": "Données collectées",
+    "dataRows": [
+      { "label": "Historique de cigarettes (dates, quantités)", "reason": "Calculer vos statistiques, économies et progression" },
+      { "label": "Envies de fumer enregistrées (déclencheur, heure, note)", "reason": "Analyser vos habitudes pour vous aider à les anticiper" },
+      { "label": "Objectif, rythme de réduction, prix du tabac", "reason": "Calculer votre plan personnalisé et vos projections" },
+      { "label": "Motivations, niveau de motivation", "reason": "Personnaliser les messages affichés dans l'app" },
+      { "label": "Adresse email (si connexion Google/Apple)", "reason": "Identifier votre compte et synchroniser vos données" },
+      { "label": "Statut d'abonnement", "reason": "Débloquer les fonctionnalités payantes" }
+    ],
+    "storageTitle": "Où sont stockées vos données",
+    "storageBody": "Par défaut, tout reste en local sur votre appareil (stockage hors-ligne). Si vous créez un compte, une copie est aussi stockée sur Firebase (Google Cloud), pour que vous retrouviez vos données si vous changez d'appareil.",
+    "notDoTitle": "Ce que nous ne faisons pas",
+    "notDoBody": "Nous ne vendons pas vos données. Nous ne les partageons pas à des fins publicitaires. Nous ne les utilisons pas en dehors du fonctionnement de l'application.",
+    "rightsTitle": "Vos droits",
+    "rightsBody": "Vous pouvez à tout moment consulter, modifier ou supprimer vos données depuis l'onglet Profil, ou demander leur suppression complète (Profil → Supprimer mon compte). Si vous êtes situé dans l'Union européenne, vous disposez des droits d'accès, de rectification, d'effacement et de portabilité prévus par le RGPD."
+  },
+  "terms": {
+    "headerTitle": "Conditions d'utilisation",
+    "title": "Conditions d'utilisation",
+    "updated": "Dernière mise à jour : 18 août 2026",
+    "purposeTitle": "Objet de l'application",
+    "purposeBody": "Stopklop est un outil d'accompagnement et de suivi pour arrêter ou réduire sa consommation de tabac. Ce n'est pas un dispositif médical et ne remplace pas l'avis d'un professionnel de santé.",
+    "healthLabel": "Avertissement santé :",
+    "healthBody": "si vous avez des questions sur le sevrage tabagique, votre santé ou un traitement, consultez un médecin ou un professionnel de santé qualifié.",
+    "accountTitle": "Compte et données",
+    "accountBody": "Vous pouvez utiliser l'application sans compte (données stockées uniquement sur votre appareil) ou créer un compte pour synchroniser vos données entre appareils. Voir la politique de confidentialité pour le détail des données traitées.",
+    "subscriptionTitle": "Abonnement Stopklop Pro",
+    "subscriptionItems": [
+      "L'abonnement se renouvelle automatiquement sauf annulation avant la fin de la période en cours.",
+      "Le paiement est prélevé sur votre compte App Store ou Google Play.",
+      "Vous pouvez annuler à tout moment depuis les réglages d'abonnement de l'App Store (iOS) ou de Google Play (Android) — Stopklop ne peut pas annuler l'abonnement à votre place.",
+      "Supprimer votre compte ou désinstaller l'application n'annule pas automatiquement un abonnement en cours."
+    ],
+    "useTitle": "Utilisation acceptable",
+    "useBody": "Vous vous engagez à utiliser l'application dans le respect des lois en vigueur et à ne pas tenter de perturber son fonctionnement ou d'accéder aux données d'autres utilisateurs.",
+    "terminationTitle": "Résiliation",
+    "terminationBody": "Vous pouvez arrêter d'utiliser l'application et supprimer votre compte à tout moment depuis Profil → Supprimer mon compte.",
+    "changesTitle": "Modifications",
+    "changesBody": "Ces conditions peuvent évoluer ; la date de mise à jour en haut de cette page reflète la dernière version en vigueur."
+  }
+}

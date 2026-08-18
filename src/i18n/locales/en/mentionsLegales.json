@@ -1,0 +1,52 @@
+{
+  "contact": {
+    "title": "Contact",
+    "body": "For any question, write to:"
+  },
+  "privacy": {
+    "headerTitle": "Privacy",
+    "title": "Privacy policy",
+    "updated": "Last updated: August 18, 2026",
+    "summaryLabel": "In short:",
+    "summaryBody": "your smoking data stays on your device. It's only sent to our cloud service (Firebase) if you create an account, to sync your data across devices. We don't sell it or share it with third parties for advertising purposes.",
+    "dataTitle": "Data collected",
+    "dataRows": [
+      { "label": "Cigarette history (dates, quantities)", "reason": "Calculate your stats, savings and progress" },
+      { "label": "Recorded cravings (trigger, time, note)", "reason": "Analyze your habits to help you anticipate them" },
+      { "label": "Goal, reduction pace, tobacco price", "reason": "Calculate your personalized plan and projections" },
+      { "label": "Motivations, motivation level", "reason": "Personalize the messages shown in the app" },
+      { "label": "Email address (if signed in with Google/Apple)", "reason": "Identify your account and sync your data" },
+      { "label": "Subscription status", "reason": "Unlock paid features" }
+    ],
+    "storageTitle": "Where your data is stored",
+    "storageBody": "By default, everything stays local on your device (offline storage). If you create an account, a copy is also stored on Firebase (Google Cloud), so you can find your data again if you switch devices.",
+    "notDoTitle": "What we don't do",
+    "notDoBody": "We don't sell your data. We don't share it for advertising purposes. We don't use it outside of running the app.",
+    "rightsTitle": "Your rights",
+    "rightsBody": "You can view, edit or delete your data anytime from the Profile tab, or request full deletion (Profile → Delete my account). EU users have rights of access, rectification, erasure and portability under the GDPR."
+  },
+  "terms": {
+    "headerTitle": "Terms of use",
+    "title": "Terms of use",
+    "updated": "Last updated: August 18, 2026",
+    "purposeTitle": "Purpose of the app",
+    "purposeBody": "Stopklop is a support and tracking tool to help you quit or reduce smoking. It's not a medical device and does not replace professional medical advice.",
+    "healthLabel": "Health notice:",
+    "healthBody": "if you have questions about smoking cessation, your health, or a treatment, consult a doctor or qualified health professional.",
+    "accountTitle": "Account and data",
+    "accountBody": "You can use the app without an account (data stored only on your device) or create an account to sync your data across devices. See the privacy policy for details on data processed.",
+    "subscriptionTitle": "Stopklop Pro subscription",
+    "subscriptionItems": [
+      "The subscription renews automatically unless cancelled before the end of the current period.",
+      "Payment is charged to your App Store or Google Play account.",
+      "You can cancel anytime from your App Store (iOS) or Google Play (Android) subscription settings — Stopklop cannot cancel it on your behalf.",
+      "Deleting your account or uninstalling the app does not automatically cancel an active subscription."
+    ],
+    "useTitle": "Acceptable use",
+    "useBody": "You agree to use the app in compliance with applicable laws and not to attempt to disrupt its operation or access other users' data.",
+    "terminationTitle": "Termination",
+    "terminationBody": "You can stop using the app and delete your account anytime from Profile → Delete my account.",
+    "changesTitle": "Changes",
+    "changesBody": "These terms may change; the update date at the top of this page reflects the latest version in effect."
+  }
+}

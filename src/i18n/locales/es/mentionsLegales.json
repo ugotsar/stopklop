@@ -1,0 +1,52 @@
+{
+  "contact": {
+    "title": "Contacto",
+    "body": "Para cualquier pregunta, escribe a:"
+  },
+  "privacy": {
+    "headerTitle": "Privacidad",
+    "title": "Política de privacidad",
+    "updated": "Última actualización: 18 de agosto de 2026",
+    "summaryLabel": "En resumen:",
+    "summaryBody": "tus datos de consumo permanecen en tu dispositivo. Solo se envían a nuestro servicio en la nube (Firebase) si creas una cuenta, para sincronizar tus datos entre dispositivos. No los vendemos ni los compartimos con terceros con fines publicitarios.",
+    "dataTitle": "Datos recopilados",
+    "dataRows": [
+      { "label": "Historial de cigarrillos (fechas, cantidades)", "reason": "Calcular tus estadísticas, ahorros y progreso" },
+      { "label": "Ganas de fumar registradas (desencadenante, hora, nota)", "reason": "Analizar tus hábitos para ayudarte a anticiparlos" },
+      { "label": "Objetivo, ritmo de reducción, precio del tabaco", "reason": "Calcular tu plan personalizado y tus proyecciones" },
+      { "label": "Motivaciones, nivel de motivación", "reason": "Personalizar los mensajes mostrados en la app" },
+      { "label": "Dirección de correo (si inicias sesión con Google/Apple)", "reason": "Identificar tu cuenta y sincronizar tus datos" },
+      { "label": "Estado de la suscripción", "reason": "Desbloquear las funciones de pago" }
+    ],
+    "storageTitle": "Dónde se almacenan tus datos",
+    "storageBody": "Por defecto, todo permanece localmente en tu dispositivo (almacenamiento sin conexión). Si creas una cuenta, también se guarda una copia en Firebase (Google Cloud), para que recuperes tus datos si cambias de dispositivo.",
+    "notDoTitle": "Lo que no hacemos",
+    "notDoBody": "No vendemos tus datos. No los compartimos con fines publicitarios. No los usamos fuera del funcionamiento de la aplicación.",
+    "rightsTitle": "Tus derechos",
+    "rightsBody": "Puedes consultar, modificar o eliminar tus datos en cualquier momento desde la pestaña Perfil, o solicitar su eliminación completa (Perfil → Eliminar mi cuenta). Si te encuentras en la Unión Europea, tienes derechos de acceso, rectificación, supresión y portabilidad conforme al RGPD."
+  },
+  "terms": {
+    "headerTitle": "Condiciones de uso",
+    "title": "Condiciones de uso",
+    "updated": "Última actualización: 18 de agosto de 2026",
+    "purposeTitle": "Objeto de la aplicación",
+    "purposeBody": "Stopklop es una herramienta de acompañamiento y seguimiento para dejar de fumar o reducir el consumo de tabaco. No es un dispositivo médico y no sustituye el consejo de un profesional de la salud.",
+    "healthLabel": "Aviso de salud:",
+    "healthBody": "si tienes preguntas sobre dejar de fumar, tu salud o un tratamiento, consulta a un médico o profesional de la salud cualificado.",
+    "accountTitle": "Cuenta y datos",
+    "accountBody": "Puedes usar la aplicación sin cuenta (datos almacenados solo en tu dispositivo) o crear una cuenta para sincronizar tus datos entre dispositivos. Consulta la política de privacidad para más detalles sobre los datos tratados.",
+    "subscriptionTitle": "Suscripción Stopklop Pro",
+    "subscriptionItems": [
+      "La suscripción se renueva automáticamente salvo cancelación antes del final del periodo en curso.",
+      "El pago se realiza a través de tu cuenta de App Store o Google Play.",
+      "Puedes cancelar en cualquier momento desde los ajustes de suscripción de App Store (iOS) o Google Play (Android) — Stopklop no puede cancelar la suscripción en tu lugar.",
+      "Eliminar tu cuenta o desinstalar la aplicación no cancela automáticamente una suscripción activa."
+    ],
+    "useTitle": "Uso aceptable",
+    "useBody": "Te comprometes a usar la aplicación conforme a la legislación vigente y a no intentar perturbar su funcionamiento ni acceder a los datos de otros usuarios.",
+    "terminationTitle": "Cancelación",
+    "terminationBody": "Puedes dejar de usar la aplicación y eliminar tu cuenta en cualquier momento desde Perfil → Eliminar mi cuenta.",
+    "changesTitle": "Modificaciones",
+    "changesBody": "Estas condiciones pueden cambiar; la fecha de actualización en la parte superior de esta página refleja la última versión vigente."
+  }
+}

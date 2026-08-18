@@ -32,6 +32,7 @@ import CentreAideScreen        from '../screens/CentreAideScreen';
 import JournalEnviesScreen     from '../screens/JournalEnviesScreen';
 import NotificationsScreen          from '../screens/NotificationsScreen';
 import PersonnaliserHorairesScreen  from '../screens/PersonnaliserHorairesScreen';
+import MentionsLegalesScreen        from '../screens/MentionsLegalesScreen';
 
 const AppTheme = {
   ...DefaultTheme,
@@ -95,6 +96,7 @@ export default function AppNavigator({ navigationRef }) {
         <Stack.Screen name="Notifications"          component={NotificationsScreen}         options={{ animation: 'slide_from_right' }} />
         <Stack.Screen name="PersonnaliserHoraires"  component={PersonnaliserHorairesScreen}  options={{ animation: 'slide_from_right' }} />
         <Stack.Screen name="PaywallPro"       component={PaywallProScreen}       options={{ animation: 'slide_from_bottom', presentation: 'modal' }} />
+        <Stack.Screen name="MentionsLegales"  component={MentionsLegalesScreen}  options={{ animation: 'slide_from_right' }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

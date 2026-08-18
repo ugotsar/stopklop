@@ -1,17 +1,11 @@
 import React, { useState } from 'react';
 import {
-  View, Text, StyleSheet, SafeAreaView, TouchableOpacity, Alert, Linking,
+  View, Text, StyleSheet, SafeAreaView, TouchableOpacity, Alert,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { colors, spacing, font, radius } from '../../theme';
 import PrimaryButton from '../../components/PrimaryButton';
 import { restorePurchases, isPro } from '../../services/purchases';
-
-// Pages hébergées sur le même Firebase Hosting que la page de suppression
-// de compte (web/confidentialite.html, web/conditions.html) — nécessite un
-// déploiement (`firebase deploy --only hosting`) pour être en ligne.
-const PRIVACY_URL = 'https://stopklop-413e1.web.app/confidentialite';
-const TERMS_URL   = 'https://stopklop-413e1.web.app/conditions';
 
 const PLAN_IDS = ['annual', 'monthly'];
 
@@ -107,11 +101,11 @@ export default function PaywallScreen({ navigation }) {
         {/* Mentions d'abonnement exigées par l'App Store */}
         <Text style={styles.legal}>{t('legalDisclosure')}</Text>
         <View style={styles.legalLinks}>
-          <Text style={styles.legalLink} onPress={() => Linking.openURL(TERMS_URL)}>
+          <Text style={styles.legalLink} onPress={() => navigation.navigate('MentionsLegales', { type: 'terms' })}>
             {t('termsLink')}
           </Text>
           <Text style={styles.legalDot}>•</Text>
-          <Text style={styles.legalLink} onPress={() => Linking.openURL(PRIVACY_URL)}>
+          <Text style={styles.legalLink} onPress={() => navigation.navigate('MentionsLegales', { type: 'privacy' })}>
             {t('privacyLink')}
           </Text>
         </View>
