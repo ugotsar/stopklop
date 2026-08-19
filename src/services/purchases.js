@@ -1,8 +1,11 @@
 import Purchases, { LOG_LEVEL } from 'react-native-purchases';
 import { Platform } from 'react-native';
 
+// TODO ship v1 : clé de test en attendant la création de l'app iOS dans
+// RevenueCat (bloquée sur le compte Apple Developer — nécessite la clé P8
+// depuis App Store Connect pour finaliser la config App Store).
 const API_KEY_IOS     = 'test_wXtammSPguzAuLfzPmCYbOmCfJw';
-const API_KEY_ANDROID = 'test_wXtammSPguzAuLfzPmCYbOmCfJw'; // à remplacer par clé Android
+const API_KEY_ANDROID = 'goog_KLhDWVJQndxRjxLZiNoohZQeARI';
 
 export function configurePurchases(userId) {
   const apiKey = Platform.OS === 'ios' ? API_KEY_IOS : API_KEY_ANDROID;
