@@ -30,6 +30,8 @@
     "noSubscriptionTitle": "No se encontró ninguna suscripción",
     "noSubscriptionBody": "No hay ninguna compra que restaurar.",
     "purchaseErrorBody": "No se pudo completar la compra. Inténtalo de nuevo.",
-    "restoreErrorBody": "No se pudo restaurar la compra."
+    "restoreErrorBody": "No se pudo restaurar la compra.",
+    "unavailableTitle": "Suscripción no disponible",
+    "unavailableBody": "Los pagos aún no están configurados para esta versión de Stopklop."
   }
 }

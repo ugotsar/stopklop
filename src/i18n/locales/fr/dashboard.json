@@ -12,6 +12,8 @@
     "sectionTitle": "Aujourd'hui",
     "subtitle": "cigarettes\naujourd'hui",
     "goal": "Objectif : {{count}} max",
+    "notLoggedTitle": "Bilan à renseigner",
+    "notLoggedGoal": "Objectif : {{count}} max",
     "validateButton": "Valider ma journée",
     "smokedLink": "J'ai fumé aujourd'hui  ›"
   },
@@ -90,7 +92,8 @@
     "lifePreservedVsPlan": "Vie préservée vs plan\n(5 min / cigarette)",
     "lifeLostVsPlan": "Vie perdue vs plan\n(5 min / cigarette)",
     "progressionValue": "{{sign}}{{count}}%",
-    "progressionLabel": "Progression\nvs avant l'app"
+    "progressionLabel": "Progression\nvs avant l'app",
+    "progressionEstimatedLabel": "Progression\nréférence estimée"
   },
   "envieCard": {
     "title": "Une envie de fumer, là maintenant ?",

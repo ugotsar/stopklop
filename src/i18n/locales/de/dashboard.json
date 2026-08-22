@@ -12,6 +12,8 @@
     "sectionTitle": "Heute",
     "subtitle": "Zigaretten\nheute",
     "goal": "Ziel: max. {{count}}",
+    "notLoggedTitle": "Tagesbilanz noch offen",
+    "notLoggedGoal": "Ziel: max. {{count}}",
     "validateButton": "Tag bestätigen",
     "smokedLink": "Ich habe heute geraucht  ›"
   },
@@ -90,7 +92,8 @@
     "lifePreservedVsPlan": "Leben bewahrt vs. Plan\n(5 Min / Zigarette)",
     "lifeLostVsPlan": "Leben verloren vs. Plan\n(5 Min / Zigarette)",
     "progressionValue": "{{sign}}{{count}}%",
-    "progressionLabel": "Entwicklung\nvs. vor der App"
+    "progressionLabel": "Entwicklung\nvs. vor der App",
+    "progressionEstimatedLabel": "Entwicklung\ngeschätzter Ausgangswert"
   },
   "envieCard": {
     "title": "Gerade Lust auf eine Zigarette?",

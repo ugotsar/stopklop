@@ -2,12 +2,28 @@
   "tagline": "Arrête de fumer, un jour à la fois.",
   "google": { "button": "Continuer avec Google" },
   "apple": { "button": "Continuer avec Apple" },
+  "email": {
+    "createEntry": "Créer un compte avec un e-mail",
+    "loginEntry": "J'ai déjà un compte",
+    "createTitle": "Créer mon compte",
+    "loginTitle": "Me connecter",
+    "emailPlaceholder": "Adresse e-mail",
+    "passwordPlaceholder": "Mot de passe",
+    "createButton": "Créer mon compte",
+    "loginButton": "Me connecter",
+    "alreadyHaveAccount": "J'ai déjà un compte",
+    "createInstead": "Créer un compte",
+    "back": "Retour aux options de connexion"
+  },
   "divider": { "or": "ou" },
   "guest": { "button": "Continuer sans compte" },
   "errors": {
     "google": "Connexion Google échouée. Réessaie.",
     "apple": "Connexion Apple échouée. Réessaie.",
-    "guest": "Erreur de connexion. Réessaie."
+    "guest": "Erreur de connexion. Réessaie.",
+    "email": "Connexion par e-mail impossible. Vérifie tes identifiants ou réessaie.",
+    "emailInvalid": "Indique une adresse e-mail et un mot de passe valides.",
+    "passwordShort": "Le mot de passe doit contenir au moins 8 caractères."
   },
   "legal": {
     "prefix": "En continuant, tu acceptes nos",

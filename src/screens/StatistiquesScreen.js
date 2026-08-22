@@ -9,15 +9,16 @@ import { useUser } from '../context/UserContext';
 import { colors, spacing, font, radius, shadow, getScreenWidth } from '../theme';
 import { UI } from '../assets/uiKit';
 import { Image } from 'react-native';
+import { addLocalDays, localDateKey } from '../utils/dateKeys';
+import { currencySymbol, formatCurrency } from '../utils/currency';
 
 const SCREEN_W = getScreenWidth();
 const CHART_W = SCREEN_W - spacing.md * 2 - spacing.md * 2;
 const CHART_H = 100;
 
 // ── Helpers dates ─────────────────────────────────────────────────────────────
-const DAY_MS = 86400000;
-const isoKey  = d => d.toISOString().slice(0, 10);
-const addDays = (d, n) => new Date(d.getTime() + n * DAY_MS);
+const isoKey  = localDateKey;
+const addDays = addLocalDays;
 
 function mondayOf(d) {
   const x = new Date(d); x.setHours(12, 0, 0, 0);
@@ -120,7 +121,7 @@ function pillDelta(current, previous, mode, prevLabel, t, fmt = n => n) {
   }
   const diff = Math.abs(current - previous);
   if (diff < 0.005) return null;
-  return { text: `${arrow} ${fmt(diff)} € ${t('gridTiles.vs', { ref: prevLabel, value: `${fmt(previous)} €` })}`, positive: down };
+  return { text: `${arrow} ${fmt(diff)} ${t('gridTiles.vs', { ref: prevLabel, value: fmt(previous) })}`, positive: down };
 }
 
 // ── Graphique barres avec axe Y (cliquable) ──────────────────────────────────
@@ -128,7 +129,7 @@ function pillDelta(current, previous, mode, prevLabel, t, fmt = n => n) {
 // deux maquettes de référence. Décalage à gauche (yAxisW) pour loger les
 // nombres sans empiéter sur les barres.
 const Y_AXIS_W = 20;
-function BarChart({ data, color = colors.primary, width = CHART_W, height = CHART_H, labels, onBarPress, highlight = -1 }) {
+function BarChart({ data, color = colors.primary, width = CHART_W, height = CHART_H, labels, onBarPress, highlight = -1, recorded = [] }) {
   if (!data || data.length === 0) return null;
   const chartW = width - Y_AXIS_W;
   const max  = Math.max(...data, 1);
@@ -155,16 +156,21 @@ function BarChart({ data, color = colors.primary, width = CHART_W, height = CHAR
       })}
 
       {data.map((v, i) => {
+        // Une barre grise représente une période qui n'a pas encore été
+        // renseignée. Ce n'est pas une journée à 0 cigarette : elle ne doit
+        // donc ni être mise en avant, ni ouvrir un faux détail au toucher.
+        const isRecorded = recorded.length === 0 || recorded[i] !== false;
         const barH = (v / yMax) * (height - 8);
         const x    = Y_AXIS_W + i * (barW + gap) + gap / 2;
         const y    = height - barH;
         return (
-          <G key={i} onPress={onBarPress ? () => onBarPress(i) : undefined}>
+          <G key={i} onPress={onBarPress && isRecorded ? () => onBarPress(i) : undefined}>
             {/* Zone de toucher pleine hauteur */}
             <Rect x={Y_AXIS_W + i * (barW + gap)} y={0} width={barW + gap} height={height + 20} fill="transparent" />
             <Rect
               x={x} y={Math.max(y, 0)} width={barW} height={Math.max(barH, 2)} rx={3}
-              fill={i === highlight ? '#F59E0B' : color} opacity={0.85}
+              fill={!isRecorded ? '#D1D5DB' : i === highlight ? '#F59E0B' : color}
+              opacity={!isRecorded ? 0.65 : 0.85}
             />
             {labels && labels[i] !== '' && (
               <SvgText x={x + barW / 2} y={height + 16} fontSize={9} fill="#9E9E9E" textAnchor="middle">{labels[i]}</SvgText>
@@ -369,7 +375,7 @@ function PeriodCalendarModal({ visible, initialStart, initialEnd, minMonth, maxM
 // ── Modal : définir un objectif d'économies personnalisé ─────────────────────
 // Remplace l'échelle de paliers ronds automatique (50 €, 100 €, 250 €…) par un
 // vrai montant choisi par l'utilisateur, quand il en a défini un.
-function GoalTargetModal({ visible, currentValue, onClose, onSave, t }) {
+function GoalTargetModal({ visible, currentValue, currency, locale, onClose, onSave, t }) {
   const [val, setVal] = useState('');
 
   useEffect(() => {
@@ -400,7 +406,7 @@ function GoalTargetModal({ visible, currentValue, onClose, onSave, t }) {
               placeholderTextColor={colors.gray}
               autoFocus
             />
-            <Text style={goalStyles.inputUnit}>€</Text>
+            <Text style={goalStyles.inputUnit}>{currencySymbol(currency, locale)}</Text>
           </View>
           <View style={cal.footer}>
             <TouchableOpacity style={cal.cancelBtn} onPress={onClose}>
@@ -508,7 +514,8 @@ export default function StatistiquesScreen() {
   }
 
   // ── Données de base ──────────────────────────────────────────────────────────
-  const { allKeys, allValues, consoAvant, prixCig, serie, objectifJour, argentEcoCumul, vieGagneeStrCumul } = stats;
+  const { allKeys, allValues, consoAvant, consoEstimee, prixCig, serie, objectifJour, argentEcoCumul, vieGagneeStrCumul } = stats;
+  const currency = profile?.monnaie ?? 'EUR';
   const hist = Object.fromEntries(allKeys.map((k, i) => [k, allValues[i]]));
   const cigLog   = Array.isArray(profile?.cigLog) ? profile.cigLog : [];
   const now      = new Date();
@@ -527,7 +534,7 @@ export default function StatistiquesScreen() {
 
   if (activeTab === 'jour') {
     const times = cigLog
-      .filter(ts => ts.slice(0, 10) === dayKey)
+      .filter(ts => localDateKey(ts) === dayKey)
       .map(ts => new Date(ts))
       .filter(d => !isNaN(d))
       .sort((a, b) => a - b);
@@ -545,6 +552,7 @@ export default function StatistiquesScreen() {
       dates: [dayKey],
       chartData: bins,
       chartLabels: Array.from({ length: 24 }, (_, h) => h % 4 === 0 ? `${h}${t('common:hourShort')}` : ''),
+      recorded: Array.from({ length: 24 }, () => hist[dayKey] !== undefined),
       heures: times.map(d => `${String(d.getHours()).padStart(2, '0')}h${String(d.getMinutes()).padStart(2, '0')}`),
       sansHeure,
       prevDates: hist[hierKey] !== undefined ? [hierKey] : null,
@@ -568,8 +576,9 @@ export default function StatistiquesScreen() {
       dates: keys,
       chartData: allKeys7.map(k => hist[k] ?? 0),
       chartLabels: weekdaysShort,
+      recorded: allKeys7.map(k => hist[k] !== undefined),
       onBarPress: i => {
-        if (allKeys7[i] <= todayKey) setTappedIndex(i);
+        if (allKeys7[i] <= todayKey && hist[allKeys7[i]] !== undefined) setTappedIndex(i);
       },
       fullLabel: i => {
         const s = days[i].toLocaleDateString(i18n.language, { weekday: 'long', day: 'numeric', month: 'long' });
@@ -605,8 +614,9 @@ export default function StatistiquesScreen() {
       dates: keys,
       chartData: allKeysM.map(k => hist[k] ?? 0),
       chartLabels: allKeysM.map((k, i) => (i + 1) % 5 === 0 || i === 0 ? String(i + 1) : ''),
+      recorded: allKeysM.map(k => hist[k] !== undefined),
       onBarPress: i => {
-        if (allKeysM[i] <= todayKey) setTappedIndex(i);
+        if (allKeysM[i] <= todayKey && hist[allKeysM[i]] !== undefined) setTappedIndex(i);
       },
       fullLabel: i => {
         const s = new Date(allKeysM[i] + 'T12:00:00').toLocaleDateString(i18n.language, { weekday: 'long', day: 'numeric', month: 'long' });
@@ -637,14 +647,18 @@ export default function StatistiquesScreen() {
     const monthSums = months.map(mKey =>
       dates.filter(k => k.startsWith(mKey)).map(k => hist[k] ?? 0).reduce((s, v) => s + v, 0)
     );
+    const monthRecorded = months.map(mKey =>
+      dates.some(k => k.startsWith(mKey) && hist[k] !== undefined)
+    );
 
     view = {
       dates,
       chartData: monthSums,
+      recorded: monthRecorded,
       chartLabels: months.map(mKey =>
         new Date(mKey + '-15T12:00:00').toLocaleDateString(i18n.language, { month: 'short' })
       ),
-      onBarPress: i => setTappedIndex(i),
+      onBarPress: i => { if (monthRecorded[i]) setTappedIndex(i); },
       fullLabel: i => {
         const s = new Date(months[i] + '-15T12:00:00').toLocaleDateString(i18n.language, { month: 'long', year: 'numeric' });
         return s.charAt(0).toUpperCase() + s.slice(1);
@@ -667,10 +681,12 @@ export default function StatistiquesScreen() {
   const p2 = (view.prevDates && view.prevDates.length > 0)
     ? periodStats(view.prevDates, hist, consoAvant, prixCig)
     : null;
+  const hasPeriodData = p.nbEnregistres > 0;
 
   // Navigation des bornes de la période libre
   const periodeLabel = TAB_LABELS[activeTab];
-  const fmtEur = n => new Intl.NumberFormat(i18n.language, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
+  const fmtMoney = n => formatCurrency(n, currency, i18n.language);
+  const referenceLabel = consoEstimee ? t('referenceEstimated') : t('vsBeforeApp');
 
   // Objectif d'économies (réf. "Progression vers votre objectif") : si
   // l'utilisateur a défini un montant cible réel (profile.objectifEconomie,
@@ -743,6 +759,12 @@ export default function StatistiquesScreen() {
           }}
         />
 
+        {consoEstimee && (
+          <View style={styles.referenceNotice}>
+            <Text style={styles.referenceNoticeText}>{t('referenceEstimatedNotice')}</Text>
+          </View>
+        )}
+
         {/* ── Consommation (graphique) — réf. "Consommation par heure" ── */}
         <View style={styles.card}>
           <View style={styles.chartHeader}>
@@ -763,8 +785,12 @@ export default function StatistiquesScreen() {
               color={colors.primary}
               onBarPress={view.onBarPress}
               highlight={tappedIndex ?? -1}
+              recorded={view.recorded}
             />
           </View>
+          {view.recorded?.some(isRecorded => !isRecorded) && (
+            <Text style={styles.unreportedLegend}>● {t('smokedCard.unreportedLegend')}</Text>
+          )}
 
           {/* Bannière conseil sous le graphique (réf. maquette) */}
           <View style={styles.chartTip}>
@@ -831,19 +857,19 @@ export default function StatistiquesScreen() {
         <View style={styles.threeColCard}>
           <View style={styles.threeCol}>
             <Text style={styles.threeColLabel}>{t('smokedCard.totalLabel')}</Text>
-            <Text style={styles.threeColValue}>{p.sum.toLocaleString(i18n.language)}</Text>
+            <Text style={styles.threeColValue}>{hasPeriodData ? p.sum.toLocaleString(i18n.language) : '—'}</Text>
             <Text style={styles.threeColUnit}>{t('smokedCard.unit')}</Text>
           </View>
           <View style={styles.threeColDiv} />
           <View style={styles.threeCol}>
             <Text style={styles.threeColLabel}>{t('smokedCard.avgLabel')}</Text>
-            <Text style={styles.threeColValue}>{(p.sum / p.n).toFixed(1)}</Text>
+            <Text style={styles.threeColValue}>{hasPeriodData ? (p.sum / p.n).toFixed(1) : '—'}</Text>
             <Text style={styles.threeColUnit}>{t('smokedCard.unit')}</Text>
           </View>
           <View style={styles.threeColDiv} />
           <View style={styles.threeCol}>
             <Text style={styles.threeColLabel}>{t('smokedCard.decreaseLabel')}</Text>
-            {(() => {
+            {hasPeriodData ? (() => {
               const cur  = p2 ? p.sum : p.sum;
               const ref  = p2 ? p2.sum : (p.n * consoAvant);
               const down = cur <= ref;
@@ -853,8 +879,8 @@ export default function StatistiquesScreen() {
                   {down ? '↓' : '↑'} {pct}%
                 </Text>
               );
-            })()}
-            <Text style={styles.threeColUnit}>{view.prevLabel ?? t('vsBeforeApp')}</Text>
+            })() : <Text style={[styles.threeColValue, { color: colors.gray, fontSize: 22 }]}>—</Text>}
+            <Text style={styles.threeColUnit}>{view.prevLabel ?? referenceLabel}</Text>
           </View>
         </View>
 
@@ -863,25 +889,25 @@ export default function StatistiquesScreen() {
         <View style={styles.grid2}>
           <StatGridTile
             tone="green" illus={UI.paquet_cigarettes_feuilles}
-            title={t('smokedCard.title')} value={p.sum.toLocaleString(i18n.language)}
+            title={t('smokedCard.title')} value={hasPeriodData ? p.sum.toLocaleString(i18n.language) : '—'}
             sub={periodeLabel}
             pill={p2 ? pillDelta(p.sum, p2.sum, 'percent', view.prevLabel, t) : null}
           />
           <StatGridTile
             tone="orange" illus={UI.portefeuille}
-            title={t('moneyCard.spentTitle')} value={`${fmtEur(p.argDep)} €`}
+            title={t('moneyCard.spentTitle')} value={hasPeriodData ? fmtMoney(p.argDep) : '—'}
             sub={periodeLabel}
-            pill={p2 ? pillDelta(p.argDep, p2.argDep, 'amount', view.prevLabel, t, fmtEur) : null}
+            pill={p2 ? pillDelta(p.argDep, p2.argDep, 'amount', view.prevLabel, t, fmtMoney) : null}
           />
           <StatGridTile
             tone="green" illus={UI.bocal_economies}
-            title={t('moneyCard.savedTitle')} value={`${fmtEur(p.argEco)} €`}
+            title={t('moneyCard.savedTitle')} value={hasPeriodData ? fmtMoney(p.argEco) : '—'}
             sub={periodeLabel}
-            pill={t('gridTiles.cumulMoney', { amount: fmtEur(argentEcoCumul) })}
+            pill={t('gridTiles.cumulMoney', { amount: fmtMoney(argentEcoCumul) })}
           />
           <StatGridTile
             tone="purple" illus={UI.sablier}
-            title={t('lifeCard.title')} value={fmtVie(p.vieMins)}
+            title={t('lifeCard.title')} value={hasPeriodData ? fmtVie(p.vieMins) : '—'}
             sub={periodeLabel}
             pill={t('gridTiles.cumulLife', { value: vieGagneeStrCumul })}
           />
@@ -894,7 +920,7 @@ export default function StatistiquesScreen() {
               <Image source={UI.bocal_economies} style={styles.progressTitleIcon} resizeMode="contain" />
               <Text style={styles.cardTitle}>{t(objectifEconomiePerso ? 'goalProgress.titleCustom' : 'goalProgress.title')}</Text>
             </View>
-            <Text style={styles.progressAmounts}>{fmtEur(argentEcoCumul)} € / {fmtEur(goalTarget)} €</Text>
+            <Text style={styles.progressAmounts}>{fmtMoney(argentEcoCumul)} / {fmtMoney(goalTarget)}</Text>
           </View>
           <View style={styles.progressBarRow}>
             <View style={styles.progressTrack}>
@@ -905,7 +931,7 @@ export default function StatistiquesScreen() {
           <View style={styles.progressFooter}>
             <Text style={styles.progressPct}>{goalPct}% {t('goalProgress.reached')}</Text>
             <Text style={styles.progressRemaining}>
-              {goalReached ? t('goalProgress.goalReached') : t('goalProgress.remaining', { amount: fmtEur(goalRemaining) })}
+              {goalReached ? t('goalProgress.goalReached') : t('goalProgress.remaining', { amount: fmtMoney(goalRemaining) })}
             </Text>
           </View>
           <TouchableOpacity onPress={() => setGoalModalOpen(true)} style={styles.progressEditBtn} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}>
@@ -918,6 +944,8 @@ export default function StatistiquesScreen() {
         <GoalTargetModal
           visible={goalModalOpen}
           currentValue={objectifEconomiePerso}
+          currency={currency}
+          locale={i18n.language}
           onClose={() => setGoalModalOpen(false)}
           onSave={v => updateProfile({ objectifEconomie: v })}
           t={t}
@@ -934,11 +962,11 @@ export default function StatistiquesScreen() {
           <Text style={styles.goalSub}>{t('goalCard.stayUnder', { count: objectifJour })}</Text>
           <View style={styles.goalRow}>
             <Text style={styles.goalFraction}>
-              {activeTab === 'jour' ? p.sum : (p.sum / p.n).toFixed(1)}
+              {hasPeriodData ? (activeTab === 'jour' ? p.sum : (p.sum / p.n).toFixed(1)) : '—'}
               <Text style={styles.goalFractionTotal}> / {objectifJour}</Text>
             </Text>
-            <Text style={[styles.goalMsg, { color: (activeTab === 'jour' ? p.sum : p.sum / p.n) <= objectifJour ? colors.primary : colors.danger }]}>
-              {(activeTab === 'jour' ? p.sum : p.sum / p.n) <= objectifJour ? t('goalCard.onTrack') : t('goalCard.overGoal')}
+            <Text style={[styles.goalMsg, { color: !hasPeriodData ? colors.gray : (activeTab === 'jour' ? p.sum : p.sum / p.n) <= objectifJour ? colors.primary : colors.danger }]}>
+              {!hasPeriodData ? t('goalCard.noData') : (activeTab === 'jour' ? p.sum : p.sum / p.n) <= objectifJour ? t('goalCard.onTrack') : t('goalCard.overGoal')}
             </Text>
           </View>
         </View>
@@ -949,7 +977,7 @@ export default function StatistiquesScreen() {
           <View style={{ flex: 1, minWidth: 0 }}>
             <Text style={styles.summaryTitle}>{t('summaryCard.title')}</Text>
             <Text style={styles.summaryText}>
-              {t('summaryCard.narrative', {
+              {hasPeriodData ? t('summaryCard.narrative', {
                 count: p.sum,
                 unit: t('common:cigarette', { count: p.sum }),
                 comparison: (p2 && p.sum !== p2.sum)
@@ -961,12 +989,12 @@ export default function StatistiquesScreen() {
                     })
                   : '',
                 moneyPhrase: p.argEco >= 0
-                  ? t('summaryCard.moneySavedPhrase', { amount: fmtEur(p.argEco) })
-                  : t('summaryCard.moneyOverspentPhrase', { amount: fmtEur(Math.abs(p.argEco)) }),
+                  ? t('summaryCard.moneySavedPhrase', { amount: fmtMoney(p.argEco) })
+                  : t('summaryCard.moneyOverspentPhrase', { amount: fmtMoney(Math.abs(p.argEco)) }),
                 lifePhrase: p.vieMins >= 0
                   ? t('summaryCard.lifeGainedPhrase', { value: fmtVie(p.vieMins).replace(/^\+/, '') })
                   : t('summaryCard.lifeLostPhrase', { value: fmtVie(p.vieMins).replace(/^-/, '') }),
-              })}
+              }) : t('summaryCard.noData')}
             </Text>
           </View>
         </View>
@@ -987,6 +1015,8 @@ const styles = StyleSheet.create({
   tabText:      { fontSize: 12, fontWeight: '600', color: colors.primaryDeep },
   tabTextActive:{ color: colors.white, fontWeight: '700' },
   scroll: { padding: spacing.md, gap: spacing.sm, paddingBottom: 90 },
+  referenceNotice: { backgroundColor: '#FEF3C7', borderRadius: radius.md, borderWidth: 1, borderColor: '#FDE68A', padding: spacing.sm },
+  referenceNoticeText: { color: '#854D0E', fontSize: 11, lineHeight: 15, textAlign: 'center' },
   card:   { backgroundColor: colors.surface, borderRadius: radius.xl, padding: spacing.lg, borderWidth: 1, borderColor: colors.grayBorder, ...shadow.card },
   cardHeader: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: spacing.sm },
   cardIcon:   { fontSize: 18 },
@@ -1028,6 +1058,7 @@ const styles = StyleSheet.create({
   badgeGreen: { fontSize: 16, fontWeight: '800', color: colors.primary },
   badgeSub:   { fontSize: 11, color: colors.gray },
   chartContainer: { marginTop: 4 },
+  unreportedLegend: { fontSize: 10, color: '#9CA3AF', marginTop: 2, textAlign: 'right' },
   tapHint: { fontSize: 10, color: colors.gray, textAlign: 'center', marginTop: 6 },
 
   // Overlay affiché au tap d'une barre (nombre de cigarettes, sans navigation)

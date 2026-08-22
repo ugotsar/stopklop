@@ -5,6 +5,7 @@ import Svg, { Path, Rect, Circle } from 'react-native-svg';
 import { useTranslation } from 'react-i18next';
 
 import { colors } from '../theme';
+import { useUser } from '../context/UserContext';
 import DashboardScreen  from '../screens/DashboardScreen';
 import StatistiquesScreen from '../screens/StatistiquesScreen';
 import PlanScreen       from '../screens/PlanScreen';
@@ -71,13 +72,28 @@ function TabLabel({ label, focused }) {
   );
 }
 
+// Une erreur Firestore ne doit jamais rester invisible : les écrans conservent
+// les données localement, mais l'utilisateur sait immédiatement que la copie
+// cloud attend une nouvelle connexion.
+function SyncIndicator() {
+  const { syncError } = useUser();
+  const { t } = useTranslation('common');
+  if (!syncError) return null;
+  return (
+    <View pointerEvents="none" style={styles.syncIndicator}>
+      <Text style={styles.syncIndicatorText}>☁ {t('syncPending')}</Text>
+    </View>
+  );
+}
+
 // ── Navigator ─────────────────────────────────────────────────────────────────
 
 export default function MainTabNavigator() {
   const { t } = useTranslation('common');
 
   return (
-    <Tab.Navigator
+    <View style={styles.navigatorWrap}>
+      <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarStyle: styles.tabBar,
@@ -86,7 +102,7 @@ export default function MainTabNavigator() {
         tabBarShowLabel: true,
         tabBarLabelStyle: styles.label,
       })}
-    >
+      >
       <Tab.Screen
         name="Accueil"
         component={DashboardScreen}
@@ -119,11 +135,21 @@ export default function MainTabNavigator() {
           tabBarLabel: ({ focused }) => <TabLabel label={t('tabs.profile')} focused={focused} />,
         }}
       />
-    </Tab.Navigator>
+      </Tab.Navigator>
+      <SyncIndicator />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  navigatorWrap: { flex: 1 },
+  syncIndicator: {
+    position: 'absolute', left: 16, right: 16, bottom: 74,
+    backgroundColor: '#FEF3C7', borderWidth: 1, borderColor: '#FDE68A',
+    borderRadius: 12, paddingVertical: 8, paddingHorizontal: 12,
+    alignItems: 'center', zIndex: 20,
+  },
+  syncIndicatorText: { color: '#854D0E', fontSize: 12, fontWeight: '700' },
   tabBar: {
     backgroundColor: '#FFFFFF',
     borderTopColor: '#F0F0F0',

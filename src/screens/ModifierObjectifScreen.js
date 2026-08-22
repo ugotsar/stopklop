@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { useUser } from '../context/UserContext';
 import { colors, spacing, font, radius, shadow } from '../theme';
 import { UI } from '../assets/uiKit';
+import { formatCurrency } from '../utils/currency';
 
 const OBJECTIFS_META = [
   { key: 'stop',   img: UI.cigarette_barree,        iconBg: colors.primaryLight },
@@ -26,6 +27,7 @@ export default function ModifierObjectifScreen({ navigation }) {
 
   const prixCig    = stats?.prixCig ?? 0.5;
   const consoAvant = stats?.consoAvant ?? 10;
+  const currency   = profile?.monnaie ?? 'EUR';
 
   // Cigarettes évitées cumulées sur `jours`, selon le mode choisi.
   // En mode "réduire", l'objectif baisse de `rythme` chaque semaine jusqu'à 0 :
@@ -45,9 +47,9 @@ export default function ModifierObjectifScreen({ navigation }) {
   const eviteesAn   = evitees(365);
   const evitees10   = evitees(3650);
 
-  const ecoMois = (eviteesMois * prixCig).toFixed(0);
-  const ecoAn   = (eviteesAn   * prixCig).toFixed(0);
-  const eco10   = Math.round(evitees10 * prixCig).toLocaleString(i18n.language);
+  const ecoMois = eviteesMois * prixCig;
+  const ecoAn   = eviteesAn   * prixCig;
+  const eco10   = evitees10   * prixCig;
 
   // Temps de vie récupéré (5 min / cigarette évitée)
   const vieMoisH = Math.round(eviteesMois * 5 / 60);
@@ -261,15 +263,15 @@ export default function ModifierObjectifScreen({ navigation }) {
             </View>
             <View style={styles.apercuCols}>
               <View style={styles.apercuColBox}>
-                <Text style={styles.apercuColVal}>+{ecoMois} €</Text>
+                <Text style={styles.apercuColVal}>+{formatCurrency(ecoMois, currency, i18n.language, { maximumFractionDigits: 0 })}</Text>
                 <Text style={styles.apercuColLbl}>{t('overview.perMonth')}</Text>
               </View>
               <View style={styles.apercuColBox}>
-                <Text style={styles.apercuColVal}>+{ecoAn} €</Text>
+                <Text style={styles.apercuColVal}>+{formatCurrency(ecoAn, currency, i18n.language, { maximumFractionDigits: 0 })}</Text>
                 <Text style={styles.apercuColLbl}>{t('overview.perYear')}</Text>
               </View>
               <View style={styles.apercuColBox}>
-                <Text style={styles.apercuColVal}>+{eco10} €</Text>
+                <Text style={styles.apercuColVal}>+{formatCurrency(eco10, currency, i18n.language, { maximumFractionDigits: 0 })}</Text>
                 <Text style={styles.apercuColLbl}>{t('overview.per10Years')}</Text>
               </View>
             </View>

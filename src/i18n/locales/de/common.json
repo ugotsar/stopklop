@@ -13,6 +13,7 @@
   "no": "Nein",
   "loading": "Wird geladen…",
   "error": "Fehler",
+  "syncPending": "Synchronisierung ausstehend — deine Daten bleiben auf diesem Gerät",
   "or": "ODER",
   "manualEntry": "Manuell eingeben",
   "day_one": "Tag",

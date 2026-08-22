@@ -8,7 +8,7 @@
     "title": "Datenschutzerklärung",
     "updated": "Zuletzt aktualisiert: 18. August 2026",
     "summaryLabel": "Kurz gesagt:",
-    "summaryBody": "deine Rauchdaten bleiben auf deinem Gerät. Sie werden nur an unseren Cloud-Dienst (Firebase) gesendet, wenn du ein Konto erstellst, um deine Daten geräteübergreifend zu synchronisieren. Wir verkaufen sie nicht und geben sie nicht zu Werbezwecken an Dritte weiter.",
+    "summaryBody": "deine Rauchdaten werden in einem sicheren Cache auf deinem Gerät gespeichert und mit unserem Firebase-Cloud-Dienst synchronisiert, sobald du fortfährst. Wir verkaufen sie nicht und geben sie nicht zu Werbezwecken an Dritte weiter.",
     "dataTitle": "Erhobene Daten",
     "dataRows": [
       { "label": "Zigarettenverlauf (Datum, Menge)", "reason": "Berechnung deiner Statistiken, Ersparnisse und Fortschritte" },
@@ -19,7 +19,7 @@
       { "label": "Abonnementstatus", "reason": "Freischaltung kostenpflichtiger Funktionen" }
     ],
     "storageTitle": "Wo deine Daten gespeichert werden",
-    "storageBody": "Standardmäßig bleibt alles lokal auf deinem Gerät (Offline-Speicherung). Wenn du ein Konto erstellst, wird zusätzlich eine Kopie bei Firebase (Google Cloud) gespeichert, damit du deine Daten bei einem Gerätewechsel wiederfindest.",
+    "storageBody": "Eine Offline-Kopie bleibt auf deinem Gerät, damit die App auch ohne Netzwerk nutzbar bleibt. Deine Daten werden außerdem unter deiner Stopklop-ID bei Firebase (Google Cloud) gespeichert, damit du sie auf einem anderen Gerät wiederfindest.",
     "notDoTitle": "Was wir nicht tun",
     "notDoBody": "Wir verkaufen deine Daten nicht. Wir geben sie nicht zu Werbezwecken weiter. Wir nutzen sie ausschließlich für den Betrieb der App.",
     "rightsTitle": "Deine Rechte",
@@ -34,7 +34,7 @@
     "healthLabel": "Gesundheitshinweis:",
     "healthBody": "bei Fragen zur Rauchentwöhnung, deiner Gesundheit oder einer Behandlung wende dich an einen Arzt oder eine qualifizierte Fachperson.",
     "accountTitle": "Konto und Daten",
-    "accountBody": "Du kannst die App ohne Konto nutzen (Daten nur auf deinem Gerät gespeichert) oder ein Konto erstellen, um deine Daten geräteübergreifend zu synchronisieren. Details zu den verarbeiteten Daten findest du in der Datenschutzerklärung.",
+    "accountBody": "Beim Start der App wird eine Stopklop-ID erstellt. Anschließend kannst du Google oder Apple wählen, um deine Daten auf mehreren Geräten zu sichern und wiederzufinden. Details findest du in der Datenschutzerklärung.",
     "subscriptionTitle": "Stopklop Pro Abonnement",
     "subscriptionItems": [
       "Das Abonnement verlängert sich automatisch, sofern es nicht vor Ende des laufenden Zeitraums gekündigt wird.",

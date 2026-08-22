@@ -2,12 +2,28 @@
   "tagline": "Deja de fumar, un día a la vez.",
   "google": { "button": "Continuar con Google" },
   "apple": { "button": "Continuar con Apple" },
+  "email": {
+    "createEntry": "Crear una cuenta con correo electrónico",
+    "loginEntry": "Ya tengo una cuenta",
+    "createTitle": "Crear mi cuenta",
+    "loginTitle": "Iniciar sesión",
+    "emailPlaceholder": "Correo electrónico",
+    "passwordPlaceholder": "Contraseña",
+    "createButton": "Crear mi cuenta",
+    "loginButton": "Iniciar sesión",
+    "alreadyHaveAccount": "Ya tengo una cuenta",
+    "createInstead": "Crear una cuenta",
+    "back": "Volver a las opciones de acceso"
+  },
   "divider": { "or": "o" },
   "guest": { "button": "Continuar sin cuenta" },
   "errors": {
     "google": "Error al iniciar sesión con Google. Inténtalo de nuevo.",
     "apple": "Error al iniciar sesión con Apple. Inténtalo de nuevo.",
-    "guest": "Error de conexión. Inténtalo de nuevo."
+    "guest": "Error de conexión. Inténtalo de nuevo.",
+    "email": "No se pudo iniciar sesión por correo. Revisa tus datos o inténtalo de nuevo.",
+    "emailInvalid": "Introduce un correo electrónico y una contraseña válidos.",
+    "passwordShort": "La contraseña debe tener al menos 8 caracteres."
   },
   "legal": {
     "prefix": "Al continuar, aceptas nuestros",

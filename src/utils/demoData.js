@@ -6,7 +6,10 @@
 
 const DAY_MS = 86400000;
 const iso = d => d.toISOString();
-const key = d => d.toISOString().slice(0, 10);
+const key = d => {
+  const x = new Date(d);
+  return `${x.getFullYear()}-${String(x.getMonth() + 1).padStart(2, '0')}-${String(x.getDate()).padStart(2, '0')}`;
+};
 
 // Générateur pseudo-aléatoire déterministe (mêmes données à chaque chargement)
 function mulberry32(seed) {

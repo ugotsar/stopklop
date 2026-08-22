@@ -13,6 +13,7 @@
   "no": "No",
   "loading": "Cargando…",
   "error": "Error",
+  "syncPending": "Sincronización pendiente — tus datos permanecen en este dispositivo",
   "or": "O",
   "manualEntry": "Introducir manualmente",
   "day_one": "día",

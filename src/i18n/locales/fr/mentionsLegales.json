@@ -8,7 +8,7 @@
     "title": "Politique de confidentialité",
     "updated": "Dernière mise à jour : 18 août 2026",
     "summaryLabel": "En résumé :",
-    "summaryBody": "vos données de consommation restent sur votre appareil. Elles ne sont envoyées vers notre service cloud (Firebase) que si vous créez un compte, afin de synchroniser vos données entre appareils. Elles ne sont ni vendues ni partagées avec des tiers à des fins publicitaires.",
+    "summaryBody": "vos données de consommation sont conservées dans un cache sécurisé sur votre appareil et synchronisées avec notre service cloud Firebase dès que vous choisissez de continuer. Elles ne sont ni vendues ni partagées avec des tiers à des fins publicitaires.",
     "dataTitle": "Données collectées",
     "dataRows": [
       { "label": "Historique de cigarettes (dates, quantités)", "reason": "Calculer vos statistiques, économies et progression" },
@@ -19,7 +19,7 @@
       { "label": "Statut d'abonnement", "reason": "Débloquer les fonctionnalités payantes" }
     ],
     "storageTitle": "Où sont stockées vos données",
-    "storageBody": "Par défaut, tout reste en local sur votre appareil (stockage hors-ligne). Si vous créez un compte, une copie est aussi stockée sur Firebase (Google Cloud), pour que vous retrouviez vos données si vous changez d'appareil.",
+    "storageBody": "Une copie hors-ligne est conservée sur votre appareil pour que l'application reste utilisable sans réseau. Vos données sont aussi stockées sur Firebase (Google Cloud) sous votre identifiant Stopklop afin de pouvoir les retrouver sur un autre appareil.",
     "notDoTitle": "Ce que nous ne faisons pas",
     "notDoBody": "Nous ne vendons pas vos données. Nous ne les partageons pas à des fins publicitaires. Nous ne les utilisons pas en dehors du fonctionnement de l'application.",
     "rightsTitle": "Vos droits",
@@ -34,7 +34,7 @@
     "healthLabel": "Avertissement santé :",
     "healthBody": "si vous avez des questions sur le sevrage tabagique, votre santé ou un traitement, consultez un médecin ou un professionnel de santé qualifié.",
     "accountTitle": "Compte et données",
-    "accountBody": "Vous pouvez utiliser l'application sans compte (données stockées uniquement sur votre appareil) ou créer un compte pour synchroniser vos données entre appareils. Voir la politique de confidentialité pour le détail des données traitées.",
+    "accountBody": "Un identifiant Stopklop est créé lorsque vous commencez à utiliser l'application. Vous pouvez ensuite choisir Google ou Apple pour sécuriser et retrouver vos données sur plusieurs appareils. Voir la politique de confidentialité pour le détail des données traitées.",
     "subscriptionTitle": "Abonnement Stopklop Pro",
     "subscriptionItems": [
       "L'abonnement se renouvelle automatiquement sauf annulation avant la fin de la période en cours.",

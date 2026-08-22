@@ -2,12 +2,28 @@
   "tagline": "Hör auf zu rauchen, einen Tag nach dem anderen.",
   "google": { "button": "Weiter mit Google" },
   "apple": { "button": "Weiter mit Apple" },
+  "email": {
+    "createEntry": "Konto mit E-Mail erstellen",
+    "loginEntry": "Ich habe bereits ein Konto",
+    "createTitle": "Mein Konto erstellen",
+    "loginTitle": "Anmelden",
+    "emailPlaceholder": "E-Mail-Adresse",
+    "passwordPlaceholder": "Passwort",
+    "createButton": "Mein Konto erstellen",
+    "loginButton": "Anmelden",
+    "alreadyHaveAccount": "Ich habe bereits ein Konto",
+    "createInstead": "Konto erstellen",
+    "back": "Zurück zu den Anmeldeoptionen"
+  },
   "divider": { "or": "oder" },
   "guest": { "button": "Ohne Konto fortfahren" },
   "errors": {
     "google": "Google-Anmeldung fehlgeschlagen. Versuch es erneut.",
     "apple": "Apple-Anmeldung fehlgeschlagen. Versuch es erneut.",
-    "guest": "Verbindungsfehler. Versuch es erneut."
+    "guest": "Verbindungsfehler. Versuch es erneut.",
+    "email": "Anmeldung per E-Mail fehlgeschlagen. Prüfe deine Daten oder versuche es erneut.",
+    "emailInvalid": "Gib eine gültige E-Mail-Adresse und ein Passwort ein.",
+    "passwordShort": "Das Passwort muss mindestens 8 Zeichen enthalten."
   },
   "legal": {
     "prefix": "Indem du fortfährst, akzeptierst du unsere",

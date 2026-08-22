@@ -9,6 +9,7 @@ import { useUser } from '../context/UserContext';
 import { colors, spacing, font, radius } from '../theme';
 import { SUPPORTED_LANGUAGES, changeLanguage } from '../i18n';
 import { isRecentLoginRequired } from '../services/authService';
+import { currencySymbol, formatCurrency } from '../utils/currency';
 
 const ACCOUNT_DELETION_URL = 'https://stopklop-413e1.web.app/delete-account';
 
@@ -380,6 +381,8 @@ export default function ProfilScreen({ navigation }) {
     : `${vieGagneeMin} ${t('common:minuteShort')}`;
   const motivation       = profile?.niveauMotivation ?? 8;
   const diffJours        = stats?.diffJours ?? 0;
+  const sansCigJ         = stats?.sansCigJ ?? 0;
+  const serie            = stats?.serie ?? 0;
   const objectifCig      = stats?.objectifJour ?? 8;
   const reductionSem     = stats?.reductionSem ?? 0;
   const objectifLabel    =
@@ -389,8 +392,8 @@ export default function ProfilScreen({ navigation }) {
     ? t('goal.detailReduce', { count: objectifCig, reduction: reductionSem })
     : t('goal.detailSimple', { count: objectifCig });
 
-  // Formatage monétaire adapté à la langue (séparateur décimal), symbole € conservé
-  const eur = n => `${new Intl.NumberFormat(i18n.language, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n)} €`;
+  const currency = profile?.monnaie ?? 'EUR';
+  const money = n => formatCurrency(n, currency, i18n.language);
 
   async function handleDeleteAccount() {
     const subscriptionUrl = Platform.OS === 'ios'
@@ -403,10 +406,8 @@ export default function ProfilScreen({ navigation }) {
       try {
         await deleteAccount();
         Alert.alert(t('deleteAccount.successTitle'), t('deleteAccount.successBody'));
-        navigation.getParent()?.getParent()?.reset({
-          index: 0,
-          routes: [{ name: 'Onboarding' }],
-        });
+        // AppNavigator observe la déconnexion Firebase et affiche l'écran
+        // d'accès ; ne pas recréer silencieusement un compte invité ici.
       } catch (error) {
         if (isRecentLoginRequired(error)) {
           Alert.alert(
@@ -461,8 +462,8 @@ export default function ProfilScreen({ navigation }) {
             </View>
             <View style={styles.dayBlock}>
               <View style={styles.dayRow}>
-                <Text style={styles.dayNum}>{diffJours}</Text>
-                <Text style={styles.dayUnit}>{t('common:day', { count: diffJours })}</Text>
+                <Text style={styles.dayNum}>{sansCigJ}</Text>
+                <Text style={styles.dayUnit}>{t('common:day', { count: sansCigJ })}</Text>
               </View>
               <Text style={styles.daySub}>{t('sansCigarette')}</Text>
               <View style={styles.userDivider} />
@@ -479,13 +480,13 @@ export default function ProfilScreen({ navigation }) {
 
         {/* ── Statistiques clés (liste) ── */}
         <View style={styles.listCard}>
-          <StatRow icon="wallet"   label={t('stats.savings')}       value={eur(argentEco)}      unit={t('stats.savingsUnit')} />
+          <StatRow icon="wallet"   label={t('stats.savings')}       value={money(argentEco)}    unit={t('stats.savingsUnit')} />
           <View style={styles.listDivider} />
           <StatRow icon="clock"    label={t('stats.lifeGained')}    value={vieStr}               unit={t('stats.lifeGainedUnit')} />
           <View style={styles.listDivider} />
           <StatRow icon="target"   label={t('stats.motivation')}    value={`${motivation}/10`}    unit={t('stats.motivationUnit')} />
           <View style={styles.listDivider} />
-          <StatRow icon="calendar" label={t('stats.currentStreak')} value={t('stats.daysUnit', { count: diffJours })} unit={t('stats.currentStreakUnit')} />
+          <StatRow icon="calendar" label={t('stats.currentStreak')} value={t('stats.daysUnit', { count: serie })} unit={t('stats.currentStreakUnit')} />
         </View>
 
         {/* ── Mon objectif actuel ── */}
@@ -515,7 +516,7 @@ export default function ProfilScreen({ navigation }) {
             </View>
             <View style={{ flex: 1 }}>
               <Text style={styles.listItemTitle}>{t('consumption.packPrice')}</Text>
-              <Text style={styles.listItemSub}>{eur(prixPaquet)}</Text>
+              <Text style={styles.listItemSub}>{money(prixPaquet)}</Text>
             </View>
             <Text style={styles.listModifier}>{t('common:modifyArrow')}</Text>
           </TouchableOpacity>
@@ -606,7 +607,7 @@ export default function ProfilScreen({ navigation }) {
             </View>
             <View style={{ flex: 1 }}>
               <Text style={styles.listItemTitle}>{t('preferences.units')}</Text>
-              <Text style={styles.listItemSub}>{t('preferences.unitsSub')}</Text>
+              <Text style={styles.listItemSub}>{t('preferences.unitsSub', { currency })}</Text>
             </View>
             <Text style={styles.chevron}>›</Text>
           </TouchableOpacity>
@@ -713,7 +714,7 @@ export default function ProfilScreen({ navigation }) {
         onClose={() => setModalPrix(false)}
         title={t('editModal.packPriceTitle')}
         currentValue={prixPaquet}
-        unit="€"
+        unit={currencySymbol(currency, i18n.language)}
         step={0.5}
         onSave={v => updateProfile({ prixPaquet: v })}
       />

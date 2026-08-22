@@ -15,7 +15,7 @@
       "modalTitle": "Argent économisé",
       "explanationIntro_one": "Avant l'app, vous fumiez {{consoAvant}} cigarettes par jour. Votre objectif actuel est de {{objectif}} par jour : cela fait {{count}} cigarette évitée chaque jour.",
       "explanationIntro_other": "Avant l'app, vous fumiez {{consoAvant}} cigarettes par jour. Votre objectif actuel est de {{objectif}} par jour : cela fait {{count}} cigarettes évitées chaque jour.",
-      "explanationDetail": "Chaque cigarette coûte {{prixCig}} €\n(prix du paquet ÷ cigarettes par paquet).\n{{count}} × {{prixCig}} € × 30 jours = {{ecoMois}} € / mois.",
+      "explanationDetail": "Chaque cigarette coûte {{prixCig}}\n(prix du paquet ÷ cigarettes par paquet).\n{{count}} × {{prixCig}} × 30 jours = {{ecoMois}} / mois.",
       "beforeLabel": "Avant l'app",
       "goalLabel": "Objectif actuel",
       "unitPerDay": "/ jour",
@@ -64,6 +64,7 @@
   },
   "projection": {
     "sectionTitle": "Projection annuelle",
+    "referenceEstimated": "Votre consommation avant Stopklop n’a pas été renseignée : cette projection utilise une référence estimée.",
     "herosSub": "resteront dans votre poche en 1 an",
     "herosHint": "en suivant votre plan",
     "beforeApp": {

@@ -13,6 +13,7 @@
   "no": "Non",
   "loading": "Chargement…",
   "error": "Erreur",
+  "syncPending": "Synchronisation en attente — vos données restent sur cet appareil",
   "or": "OU",
   "manualEntry": "Saisir manuellement",
   "day_one": "jour",

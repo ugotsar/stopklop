@@ -9,6 +9,7 @@ import { Image } from 'react-native';
 import { useUser } from '../context/UserContext';
 import { colors, spacing, font, radius, shadow, getScreenWidth } from '../theme';
 import { UI } from '../assets/uiKit';
+import { formatCurrency } from '../utils/currency';
 
 const SCREEN_W = getScreenWidth();
 const CHART_W = SCREEN_W - spacing.md * 4;
@@ -18,7 +19,7 @@ const CHART_H = 80;
 // Deux courbes qui mesurent la MÊME chose (argent brûlé cumulé) : la rouge
 // plonge si on continue, la verte s'aplatit quand le plan atteint 0 cigarette.
 // L'espace entre les deux = l'argent qui reste dans la poche.
-function ProjectionChart({ badSerie, planSerie, gain, width = CHART_W, height = 120 }) {
+function ProjectionChart({ badSerie, planSerie, gain, currency, width = CHART_W, height = 120 }) {
   const { t, i18n } = useTranslation('plan');
   const bad  = badSerie  ?? [0, -100];
   const plan = planSerie ?? [0, -40];
@@ -62,7 +63,7 @@ function ProjectionChart({ badSerie, planSerie, gain, width = CHART_W, height = 
 
       {/* Libellé du gain, au cœur de la zone */}
       <SvgText x={width * 0.60} y={midY} fontSize={12} fontWeight="700" fill={colors.primaryDeep} textAnchor="middle">
-        {`💚 ${new Intl.NumberFormat(i18n.language).format(gain)} € ${t('projection.chartRemaining')}`}
+        {`💚 ${formatCurrency(gain, currency, i18n.language, { maximumFractionDigits: 0 })} ${t('projection.chartRemaining')}`}
       </SvgText>
       <SvgText x={width * 0.60} y={midY + 13} fontSize={11} fontWeight="700" fill={colors.primaryDeep} textAnchor="middle">
         {t('projection.chartInPocket')}
@@ -423,19 +424,20 @@ export default function PlanScreen({ navigation }) {
     cout: 0, coutPlan: 0, gain: 0, coutReel: 0,
     badSerie: [0, 0], planSerie: [0, 0], consoRecente: 0, planActif: false,
   };
-  const fmtEur = n => `${new Intl.NumberFormat(i18n.language).format(n)} €`;
+  const currency = profile?.monnaie ?? 'EUR';
+  const fmtMoney = n => formatCurrency(n, currency, i18n.language, { maximumFractionDigits: 0 });
   const equivalence = equivalenceGain(proj.gain, t);
   // Économies réelles depuis le début (jours enregistrés, vs conso d'avant)
   const argentDejaEco = stats?.argentEcoCumul ?? 0;
 
   // Détails pour les fiches explicatives "Votre impact"
   const consoAvantAff  = stats?.consoAvant ?? 10;
-  const prixCigAff     = (stats?.prixCig ?? 0.5).toFixed(2);
+  const prixCigAff     = formatCurrency(stats?.prixCig ?? 0.5, currency, i18n.language);
   const cigEviteesJour = Math.max(0, consoAvantAff - objectifJour); // rythme d'aujourd'hui, pour le texte explicatif
   // "par an" / "10 ans" : dérivés de stats.ecoAnSiReduit / stats.argentEco10Ans / stats.vieGagneeJ10Ans
   // (mêmes valeurs que la Projection annuelle — réduction progressive prise en compte si plan actif).
-  const ecoAnAff  = (stats?.ecoAnSiReduit ?? 0).toLocaleString(i18n.language);
-  const eco10Aff  = (stats?.argentEco10Ans ?? 0).toLocaleString(i18n.language);
+  const ecoAnAff  = stats?.ecoAnSiReduit ?? 0;
+  const eco10Aff  = stats?.argentEco10Ans ?? 0;
   const vie10Aff  = stats?.vieGagneeJ10Ans ?? 0;
 
   // Habitudes réelles (issues des envies enregistrées)
@@ -489,16 +491,16 @@ export default function PlanScreen({ navigation }) {
         <View style={styles.card}>
           <View style={styles.impactGrid}>
             <ImpactCard
-              img={UI.sac_euros} valeur={`+${argentEcoMois.toFixed(0)} €`} label={t('impact.savings.label')} sublabel={t('labels.perMonth')}
+              img={UI.sac_euros} valeur={`+${fmtMoney(argentEcoMois)}`} label={t('impact.savings.label')} sublabel={t('labels.perMonth')}
               onPress={() => setImpactModal({
                 type: 'savings',
                 titre: t('impact.savings.modalTitle'),
                 savings: { consoAvant: consoAvantAff, objectif: objectifJour, cigEviteesJour },
-                formula: t('impact.savings.explanationDetail', { count: cigEviteesJour, prixCig: prixCigAff, ecoMois: argentEcoMois.toFixed(0) }),
+                formula: t('impact.savings.explanationDetail', { count: cigEviteesJour, prixCig: prixCigAff, ecoMois: fmtMoney(argentEcoMois) }),
                 projections: [
-                  { valeur: `+${argentEcoMois.toFixed(0)} €`, label: t('labels.perMonth') },
-                  { valeur: `+${ecoAnAff} €`, label: t('labels.perYear') },
-                  { valeur: `+${eco10Aff} €`, label: t('labels.per10Years') },
+                  { valeur: `+${fmtMoney(argentEcoMois)}`, label: t('labels.perMonth') },
+                  { valeur: `+${fmtMoney(ecoAnAff)}`, label: t('labels.perYear') },
+                  { valeur: `+${fmtMoney(eco10Aff)}`, label: t('labels.per10Years') },
                 ],
                 note: t('impact.savings.note'),
               })}
@@ -544,9 +546,14 @@ export default function PlanScreen({ navigation }) {
         {/* ── Projection annuelle ── */}
         <Text style={styles.subSectionTitle}>{t('projection.sectionTitle')}</Text>
         <View style={styles.card}>
+          {stats?.consoEstimee && (
+            <View style={styles.projReferenceNotice}>
+              <Text style={styles.projReferenceNoticeText}>{t('projection.referenceEstimated')}</Text>
+            </View>
+          )}
           {/* ── Le chiffre héros ── */}
           <View style={{ alignItems: 'center', marginTop: spacing.sm, marginBottom: spacing.md }}>
-            <Text style={styles.projHeros}>{fmtEur(proj.gain)}</Text>
+            <Text style={styles.projHeros}>{fmtMoney(proj.gain)}</Text>
             <Text style={styles.projHerosSous}>{t('projection.herosSub')}</Text>
             <Text style={styles.projHerosHint}>{t('projection.herosHint')}</Text>
           </View>
@@ -556,21 +563,21 @@ export default function PlanScreen({ navigation }) {
             icone="↓" iconeBg="#FEE2E2" iconeCouleur="#DC2626"
             titre={t('projection.beforeApp.title')}
             sous={t('projection.beforeApp.sub')}
-            valeur={t('projection.beforeApp.value', { amount: fmtEur(proj.cout) })}
+            valeur={t('projection.beforeApp.value', { amount: fmtMoney(proj.cout) })}
             valeurCouleur="#DC2626"
           />
           <LigneProjection
             icone="↑" iconeBg={colors.primaryLight} iconeCouleur={colors.primaryDeep}
             titre={t('projection.alreadySaved.title')}
             sous={t('projection.alreadySaved.sub')}
-            valeur={t('projection.alreadySaved.value', { amount: fmtEur(Math.round(argentDejaEco)) })}
+            valeur={t('projection.alreadySaved.value', { amount: fmtMoney(Math.round(argentDejaEco)) })}
             valeurCouleur={colors.primaryDeep}
           />
           <LigneProjection
             icone="✓" iconeBg={colors.primaryLight} iconeCouleur={colors.primaryDeep}
             titre={t('projection.planRespected.title')}
             sous={t('projection.planRespected.sub')}
-            valeur={t('projection.planRespected.value', { amount: fmtEur(proj.gain) })}
+            valeur={t('projection.planRespected.value', { amount: fmtMoney(proj.gain) })}
             valeurCouleur={colors.primaryDeep}
           />
 
@@ -578,7 +585,7 @@ export default function PlanScreen({ navigation }) {
           {equivalence && (
             <View style={styles.projEquivPill}>
               <Text style={styles.projEquivLabel}>
-                {t('projection.equivalenceLabel', { amount: fmtEur(proj.gain) })}
+                {t('projection.equivalenceLabel', { amount: fmtMoney(proj.gain) })}
               </Text>
               <Text style={styles.projEquivText}>💚  {equivalence}</Text>
             </View>
@@ -900,6 +907,8 @@ const styles = StyleSheet.create({
 
   // Projection annuelle (bilan simple)
   projHeros:     { fontSize: 40, fontWeight: '900', color: colors.primaryDeep, lineHeight: 46 },
+  projReferenceNotice: { backgroundColor: '#FEF3C7', borderWidth: 1, borderColor: '#FDE68A', borderRadius: radius.md, padding: spacing.sm, marginBottom: spacing.sm },
+  projReferenceNoticeText: { color: '#854D0E', fontSize: 11, lineHeight: 15, textAlign: 'center' },
   projHerosSous: { fontSize: 14, fontWeight: '700', color: colors.primaryDeep, marginTop: 2 },
   projHerosHint: { fontSize: 12, color: colors.gray, marginTop: 2 },
   ligneProj: {

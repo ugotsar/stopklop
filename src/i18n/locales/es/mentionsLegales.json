@@ -8,7 +8,7 @@
     "title": "Política de privacidad",
     "updated": "Última actualización: 18 de agosto de 2026",
     "summaryLabel": "En resumen:",
-    "summaryBody": "tus datos de consumo permanecen en tu dispositivo. Solo se envían a nuestro servicio en la nube (Firebase) si creas una cuenta, para sincronizar tus datos entre dispositivos. No los vendemos ni los compartimos con terceros con fines publicitarios.",
+    "summaryBody": "tus datos de consumo se conservan en una caché segura en tu dispositivo y se sincronizan con nuestro servicio en la nube Firebase cuando eliges continuar. No los vendemos ni los compartimos con terceros con fines publicitarios.",
     "dataTitle": "Datos recopilados",
     "dataRows": [
       { "label": "Historial de cigarrillos (fechas, cantidades)", "reason": "Calcular tus estadísticas, ahorros y progreso" },
@@ -19,7 +19,7 @@
       { "label": "Estado de la suscripción", "reason": "Desbloquear las funciones de pago" }
     ],
     "storageTitle": "Dónde se almacenan tus datos",
-    "storageBody": "Por defecto, todo permanece localmente en tu dispositivo (almacenamiento sin conexión). Si creas una cuenta, también se guarda una copia en Firebase (Google Cloud), para que recuperes tus datos si cambias de dispositivo.",
+    "storageBody": "Se conserva una copia sin conexión en tu dispositivo para que la aplicación siga funcionando sin red. Tus datos también se guardan en Firebase (Google Cloud) bajo tu identificador Stopklop para recuperarlos en otro dispositivo.",
     "notDoTitle": "Lo que no hacemos",
     "notDoBody": "No vendemos tus datos. No los compartimos con fines publicitarios. No los usamos fuera del funcionamiento de la aplicación.",
     "rightsTitle": "Tus derechos",
@@ -34,7 +34,7 @@
     "healthLabel": "Aviso de salud:",
     "healthBody": "si tienes preguntas sobre dejar de fumar, tu salud o un tratamiento, consulta a un médico o profesional de la salud cualificado.",
     "accountTitle": "Cuenta y datos",
-    "accountBody": "Puedes usar la aplicación sin cuenta (datos almacenados solo en tu dispositivo) o crear una cuenta para sincronizar tus datos entre dispositivos. Consulta la política de privacidad para más detalles sobre los datos tratados.",
+    "accountBody": "Se crea un identificador Stopklop cuando empiezas a usar la aplicación. Después puedes elegir Google o Apple para proteger y recuperar tus datos en varios dispositivos. Consulta la política de privacidad para más detalles.",
     "subscriptionTitle": "Suscripción Stopklop Pro",
     "subscriptionItems": [
       "La suscripción se renueva automáticamente salvo cancelación antes del final del periodo en curso.",

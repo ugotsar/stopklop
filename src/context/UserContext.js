@@ -7,11 +7,22 @@ import {
 } from '../services/authService';
 import {
   deleteUserData,
-  getProfile,
+  getUserData,
+  migrateLegacyActivity,
+  restoreUserData,
+  saveDailyActivity,
   saveProfile as saveFirestore,
+  saveCravings,
+  subscribeToUserData,
 } from '../services/firestore';
-import { configurePurchases } from '../services/purchases';
+import {
+  configurePurchases,
+  getSubscriptionStatus,
+  isPro,
+  logoutPurchases,
+} from '../services/purchases';
 import i18n from '../i18n';
+import { addLocalDays, localDateKey } from '../utils/dateKeys';
 
 // ─── Contexte ────────────────────────────────────────────────────────────────
 const UserContext = createContext(null);
@@ -21,6 +32,15 @@ export function UserProvider({ children }) {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [firebaseUser, setFirebaseUser] = useState(undefined); // undefined = pas encore connu
+  const [syncError, setSyncError] = useState(null);
+  const [subscription, setSubscription] = useState({
+    loading: true,
+    available: false,
+    isPro: false,
+    customerInfo: null,
+    errorCode: null,
+    error: null,
+  });
   // Miroir synchrone de `profile`, lu par updateProfile() pour fusionner sur
   // l'état le plus frais plutôt que sur le `profile` capturé par la closure
   // du render en cours — évite qu'un appel écrase le résultat d'un appel
@@ -32,10 +52,61 @@ export function UserProvider({ children }) {
   useEffect(() => {
     const unsub = subscribeToAuth((user) => {
       setFirebaseUser(user ?? null);
-      if (user) configurePurchases(user.uid);
     });
     return unsub;
   }, []);
+
+  // RevenueCat suit strictement l'identité Firebase active. Le statut est
+  // conservé ici afin que la navigation ne dépende jamais d'un simple écran
+  // de paywall ou d'une valeur locale modifiable.
+  useEffect(() => {
+    let active = true;
+
+    if (firebaseUser === undefined) return () => { active = false; };
+
+    if (!firebaseUser) {
+      setSubscription({
+        loading: false,
+        available: false,
+        isPro: false,
+        customerInfo: null,
+        errorCode: null,
+        error: null,
+      });
+      logoutPurchases().catch(() => {});
+      return () => { active = false; };
+    }
+
+    setSubscription(previous => ({ ...previous, loading: true, error: null }));
+    configurePurchases(firebaseUser.uid).then(status => {
+      if (active) setSubscription({ loading: false, ...status });
+    });
+
+    return () => { active = false; };
+  }, [firebaseUser]);
+
+  async function refreshSubscription(customerInfo = null) {
+    if (!firebaseUser) {
+      const status = {
+        loading: false,
+        available: false,
+        isPro: false,
+        customerInfo: null,
+        errorCode: 'missing-user-id',
+        error: null,
+      };
+      setSubscription(status);
+      return status;
+    }
+
+    setSubscription(previous => ({ ...previous, loading: true, error: null }));
+    const status = customerInfo
+      ? { available: true, isPro: isPro(customerInfo), customerInfo, errorCode: null, error: null }
+      : await getSubscriptionStatus();
+    const next = { loading: false, ...status };
+    setSubscription(next);
+    return next;
+  }
 
   // Charge le profil quand l'auth est connue
   useEffect(() => {
@@ -49,7 +120,7 @@ export function UserProvider({ children }) {
           // 1. Essayer Firestore (timeout 5s pour ne pas bloquer)
           let cloudProfile = null;
           try {
-            const firestorePromise = getProfile(firebaseUser.uid);
+            const firestorePromise = getUserData(firebaseUser.uid);
             const timeout = new Promise(r => setTimeout(() => r(null), 5000));
             cloudProfile = await Promise.race([firestorePromise, timeout]);
           } catch (_) {}
@@ -58,6 +129,7 @@ export function UserProvider({ children }) {
           // récents faits hors-ligne sur cet appareil, jamais synchronisés).
           const localProfile = await loadProfile();
 
+          let shouldSyncStaticProfile = false;
           if (cloudProfile && localProfile) {
             // Fusion : la source la plus récente (`updatedAt`) l'emporte sur
             // les champs en conflit, mais aucun champ présent dans une seule
@@ -67,14 +139,50 @@ export function UserProvider({ children }) {
             loaded = localTime > cloudTime
               ? { ...cloudProfile, ...localProfile }
               : { ...localProfile, ...cloudProfile };
-            // Re-synchronise les deux côtés sur le résultat fusionné.
-            saveFirestore(firebaseUser.uid, loaded).catch(e => console.warn('Sync cloud échouée (fusion)', e));
+            shouldSyncStaticProfile = true;
             saveProfile(loaded);
           } else if (cloudProfile) {
             loaded = cloudProfile;
           } else if (localProfile) {
             loaded = localProfile;
-            saveFirestore(firebaseUser.uid, loaded).catch(e => console.warn('Sync cloud échouée (migration)', e));
+            shouldSyncStaticProfile = true;
+          }
+
+          // Quand il n'existe encore aucun document cloud, on crée d'abord le
+          // profil léger. La migration peut ensuite déposer les journées et
+          // les envies dans leurs sous-collections sans créer un document
+          // incomplet.
+          if (loaded && !cloudProfile) {
+            try {
+              await saveFirestore(firebaseUser.uid, loaded);
+            } catch (e) {
+              console.warn('Création du profil cloud échouée', e);
+              setSyncError(e);
+            }
+          }
+
+          // Migration atomique des anciens profils volumineux. On l'attend
+          // avant tout nouvel update du profil : ainsi les nouvelles règles
+          // Firestore qui interdisent les tableaux historiques ne bloquent
+          // jamais l'ouverture de comptes existants.
+          if (loaded) {
+            try {
+              await migrateLegacyActivity(firebaseUser.uid, loaded);
+            } catch (e) {
+              console.warn('Migration activité cloud échouée', e);
+              setSyncError(e);
+            }
+          }
+
+          // Re-synchronise la partie statique uniquement après la migration.
+          // Les champs d'activité sont filtrés dans saveFirestore().
+          if (loaded && cloudProfile && shouldSyncStaticProfile) {
+            try {
+              await saveFirestore(firebaseUser.uid, loaded);
+            } catch (e) {
+              console.warn('Sync cloud échouée (fusion)', e);
+              setSyncError(e);
+            }
           }
         } else {
           loaded = await loadProfile();
@@ -90,6 +198,26 @@ export function UserProvider({ children }) {
     })();
   }, [firebaseUser]);
 
+  // Les changements cloud (autre appareil, relance après réseau coupé) sont
+  // reflétés automatiquement dans tous les écrans sans devoir redémarrer l'app.
+  useEffect(() => {
+    if (!firebaseUser) return undefined;
+    return subscribeToUserData(
+      firebaseUser.uid,
+      cloudProfile => {
+        if (!cloudProfile) return;
+        profileRef.current = cloudProfile;
+        setProfile(cloudProfile);
+        saveProfile(cloudProfile);
+        setSyncError(null);
+      },
+      error => {
+        console.warn('Écoute Firestore indisponible', error);
+        setSyncError(error);
+      },
+    );
+  }, [firebaseUser]);
+
   // Met à jour une ou plusieurs clés du profil + persiste (local + cloud).
   // Fusionne sur `profileRef.current` (toujours à jour de façon synchrone),
   // pas sur `profile` capturé par la closure du render — deux appels très
@@ -101,8 +229,83 @@ export function UserProvider({ children }) {
     // Sauvegarde locale (cache offline)
     await saveProfile(updated);
     // Sauvegarde cloud si connecté
-    if (firebaseUser) {
-      await saveFirestore(firebaseUser.uid, updated).catch(e => console.warn('Sync cloud échouée (updateProfile)', e));
+    if (!firebaseUser) return { synced: false, offline: true };
+    try {
+      await saveFirestore(firebaseUser.uid, updated);
+      setSyncError(null);
+      return { synced: true };
+    } catch (error) {
+      console.warn('Sync cloud échouée (updateProfile)', error);
+      setSyncError(error);
+      return { synced: false, error };
+    }
+  }
+
+  // Enregistre une journée entière dans un document Firestore dédié. En mémoire
+  // on conserve la forme historique actuelle afin de ne pas dédoubler les
+  // calculs dans les écrans pendant la migration.
+  async function saveDailyConsumption({ dateKey = localDateKey(), cigarettes, entries = [], cravings = [] }) {
+    const current = profileRef.current ?? {};
+    const count = Math.max(0, Math.round(Number(cigarettes) || 0));
+    const historique = { ...(current.historique ?? {}), [dateKey]: count };
+    const existingLog = Array.isArray(current.cigLog) ? current.cigLog : [];
+    const cigLog = [
+      ...existingLog.filter(ts => localDateKey(ts) !== dateKey),
+      ...entries.filter(ts => typeof ts === 'string'),
+    ].sort();
+    const oldEnvies = Array.isArray(current.envies) ? current.envies : [];
+    const existingIds = new Set(oldEnvies.map(item => item.id).filter(Boolean));
+    const newCravings = cravings.map((item, index) => ({
+      ...item,
+      id: item.id ?? `craving_${Date.now()}_${index}`,
+    })).filter(item => !existingIds.has(item.id));
+    const updated = {
+      ...current,
+      historique,
+      cigLog,
+      envies: [...oldEnvies, ...newCravings],
+      cigarettesToday: dateKey === localDateKey() ? count : (current.cigarettesToday ?? 0),
+      lastSavedDate: dateKey === localDateKey() ? dateKey : current.lastSavedDate,
+    };
+    profileRef.current = updated;
+    setProfile(updated);
+    await saveProfile(updated);
+
+    if (!firebaseUser) return { synced: false, offline: true };
+    try {
+      await saveDailyActivity(firebaseUser.uid, dateKey, {
+        cigarettes: count,
+        entries,
+        cravings: newCravings,
+      });
+      setSyncError(null);
+      return { synced: true };
+    } catch (error) {
+      console.warn('Sync de la journée échouée', error);
+      setSyncError(error);
+      return { synced: false, error };
+    }
+  }
+
+  async function recordCraving(craving) {
+    const current = profileRef.current ?? {};
+    const item = {
+      ...craving,
+      id: craving.id ?? `craving_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+    };
+    const updated = { ...current, envies: [...(current.envies ?? []), item] };
+    profileRef.current = updated;
+    setProfile(updated);
+    await saveProfile(updated);
+    if (!firebaseUser) return { synced: false, offline: true, item };
+    try {
+      await saveCravings(firebaseUser.uid, [item]);
+      setSyncError(null);
+      return { synced: true, item };
+    } catch (error) {
+      console.warn('Sync de l’envie échouée', error);
+      setSyncError(error);
+      return { synced: false, error, item };
     }
   }
 
@@ -119,23 +322,42 @@ export function UserProvider({ children }) {
   // l'utilisateur soit encore authentifié pour supprimer ses données.
   async function deleteAccount() {
     const user = firebaseUser;
+    const backup = profileRef.current;
+    try {
+      if (user) await deleteUserData(user.uid);
+      if (user) await deleteCurrentUser();
 
-    if (user) await deleteUserData(user.uid);
-
-    // Ne jamais laisser une copie locale susceptible d'être re-synchronisée
-    // si Firebase exige exceptionnellement une authentification récente.
-    await clearProfile();
-    profileRef.current = null;
-    setProfile(null);
-
-    if (user) await deleteCurrentUser();
+      // On ne supprime le cache qu'une fois les deux suppressions confirmées.
+      await clearProfile();
+      profileRef.current = null;
+      setProfile(null);
+    } catch (error) {
+      // Si l'identité Firebase refuse sa suppression (reconnexion récente
+      // requise), remettre immédiatement les données cloud depuis le cache.
+      // L'utilisateur conserve alors son compte et peut se reconnecter avant
+      // de refaire la demande, au lieu de perdre ses données à moitié.
+      if (user && backup) {
+        try {
+          await restoreUserData(user.uid, backup);
+          setSyncError(null);
+        } catch (restoreError) {
+          console.warn('Restauration après suppression interrompue échouée', restoreError);
+          setSyncError(restoreError);
+        }
+      }
+      throw error;
+    }
   }
 
   // ── Calculs dérivés (accessibles partout dans l'app) ──────────────────────
   const stats = profile ? computeStats(profile) : null;
 
   return (
-    <UserContext.Provider value={{ profile, loading, firebaseUser, updateProfile, resetProfile, deleteAccount, stats }}>
+    <UserContext.Provider value={{
+      profile, loading, firebaseUser, syncError, subscription,
+      updateProfile, saveDailyConsumption, recordCraving,
+      resetProfile, deleteAccount, refreshSubscription, stats,
+    }}>
       {children}
     </UserContext.Provider>
   );
@@ -153,6 +375,8 @@ function computeStats(profile) {
   const {
     dateArretSouhaitee,
     consoAvantApp   = 10,
+    consoAvantDeclaree,
+    consoDeclaree,
     prixPaquet      = 10,
     cigarettesParPaquet = 20,
     createdAt,
@@ -167,13 +391,18 @@ function computeStats(profile) {
   } = profile;
 
   const now      = new Date();
-  const todayKey = now.toISOString().slice(0, 10);
+  const todayKey = localDateKey(now);
   const prixCig  = cigarettesParPaquet > 0 ? prixPaquet / cigarettesParPaquet : 0;
 
   // ── Résolution consoAvant / objectifJour cohérents ──────────────────────────
   // Règle : objectifJour doit toujours être INFÉRIEUR à consoAvant.
   // Si ce n'est pas le cas (données incomplètes ou compte test), on infère.
-  let objectifJour, consoAvant, consoEstimee = false;
+  // Les anciens comptes pouvaient hériter du 10 par défaut sans que la
+  // personne l'ait réellement renseigné. On ne le présente pas comme une
+  // référence certaine : l'onboarding moderne pose explicitement ce flag.
+  const baselineDeclared = consoAvantDeclaree === true
+    || (consoDeclaree !== null && consoDeclaree !== undefined && Number.isFinite(Number(consoDeclaree)));
+  let objectifJour, consoAvant, consoEstimee = !baselineDeclared;
   if (objectifCigarettes != null) {
     objectifJour = objectifCigarettes;
     // consoAvantApp non renseigné ou incohérent → on l'infère : objectif ≈ 80% de l'ancienne conso.
@@ -247,6 +476,7 @@ function computeStats(profile) {
 
   // Historique complet incluant aujourd'hui
   const hist = { ...historique, ...(lastSavedDate === todayKey ? { [todayKey]: cigarettesToday } : {}) };
+  const jourRenseigne = hist[todayKey] !== undefined;
 
   // ── Temps sans fumer ────────────────────────────────────────────────────────
   const startDate  = dateArretSouhaitee ? new Date(dateArretSouhaitee)
@@ -294,8 +524,8 @@ function computeStats(profile) {
   // Les économies/vie de la semaine ne comptent que les jours RÉELLEMENT
   // enregistrés (comme le cumul depuis le début) — un jour non renseigné
   // n'est ni une bonne ni une mauvaise journée, il ne doit rien ajouter.
-  const week7 = Array.from({ length: 7 }, (_, i) => { const d = new Date(); d.setDate(d.getDate() - (6-i)); return d; });
-  const weekKeys   = week7.map(d => d.toISOString().slice(0, 10));
+  const week7 = Array.from({ length: 7 }, (_, i) => addLocalDays(now, -(6 - i)));
+  const weekKeys   = week7.map(localDateKey);
   const weekData   = weekKeys.map(k => hist[k] ?? 0);
   const weekLabels = week7.map(d => d.toLocaleDateString(i18n.language, { weekday: 'short' }).slice(0,3));
   const weekSum    = weekData.reduce((s,v) => s+v, 0);
@@ -305,8 +535,8 @@ function computeStats(profile) {
     : 0;
 
   // ── 30 derniers jours ───────────────────────────────────────────────────────
-  const month30   = Array.from({ length: 30 }, (_, i) => { const d = new Date(); d.setDate(d.getDate() - (29-i)); return d; });
-  const monthKeys  = month30.map(d => d.toISOString().slice(0, 10));
+  const month30   = Array.from({ length: 30 }, (_, i) => addLocalDays(now, -(29 - i)));
+  const monthKeys  = month30.map(localDateKey);
   const monthData  = monthKeys.map(k => hist[k] ?? 0);
   const monthLabels = month30.map((d,i) => i % 5 === 0 ? String(d.getDate()) : '');
   const monthSum   = monthData.reduce((s,v) => s+v, 0);
@@ -360,8 +590,8 @@ function computeStats(profile) {
   }
   let serie = 0;
   for (let i = 0; i < 30; i++) {
-    const d = new Date(); d.setDate(d.getDate() - i);
-    const k = d.toISOString().slice(0, 10);
+    const d = addLocalDays(now, -i);
+    const k = localDateKey(d);
     if (hist[k] === undefined) { if (i === 0) continue; break; }
     if (hist[k] <= objectifPourJour(d)) serie++; else break;
   }
@@ -397,10 +627,10 @@ function computeStats(profile) {
   }
   return {
     // Bases
-    objectifJour, consoAvant, consoEstimee, consoRecente, prixCig, todayKey,
+    objectifJour, consoAvant, consoEstimee, consoRecente, prixCig, todayKey, jourRenseigne,
 
     // Temps depuis la dernière cigarette (se remet à zéro à chaque cigarette)
-    dureeSansCigStr, sansCigMs, aDejaFume: !!lastCig,
+    dureeSansCigStr, sansCigMs, sansCigJ, sansCigH, aDejaFume: !!lastCig,
 
     // Aujourd'hui — vs le plan (métrique principale, peut être négative)
     ecartPlanJour, argentVsPlanJour, vieVsPlanJour,

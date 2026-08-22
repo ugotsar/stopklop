@@ -14,6 +14,7 @@
       "label": "Jährlich",
       "price": "49,99 €",
       "pricePerMonth": "4,17 € / Monat",
+      "period": "Jährliche Abrechnung",
       "badge": "BESTES ANGEBOT",
       "trial": "7 Tage kostenlos"
     },
@@ -21,10 +22,20 @@
       "label": "Monatlich",
       "price": "9,99 €",
       "pricePerMonth": "9,99 € / Monat",
+      "period": "Monatliche Abrechnung",
       "trial": "3 Tage kostenlos"
+    },
+    "lifetime": {
+      "label": "Lebenslang",
+      "pricePerMonth": "Einmalzahlung"
     }
   },
   "ctaButton": "Testphase starten →",
+  "purchasingLabel": "Zahlung wird verarbeitet…",
+  "unavailableTitle": "Abonnement nicht verfügbar",
+  "unavailableBody": "Zahlungen sind für diese Version von Stopklop noch nicht eingerichtet. Versuche es später erneut.",
+  "purchaseErrorTitle": "Kauf nicht möglich",
+  "purchaseErrorBody": "Die Zahlung konnte nicht abgeschlossen werden. Versuche es später erneut.",
   "skipButton": "Ohne Abonnement fortfahren",
   "restoreButton": "Käufe wiederherstellen",
   "restoringLabel": "Wiederherstellung…",

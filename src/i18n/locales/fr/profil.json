@@ -56,7 +56,7 @@
     "notifications": "Notifications",
     "notificationsSub": "Rappels, motivation, conseils",
     "units": "Unités",
-    "unitsSub": "Euro (€) · Heures · Cigarettes",
+    "unitsSub": "{{currency}} · Heures · Cigarettes",
     "language": "Langue",
     "languageSub": "Changer la langue de l'application"
   },

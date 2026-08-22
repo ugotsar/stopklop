@@ -5,6 +5,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useUser } from '../context/UserContext';
 import { colors, spacing, font, radius } from '../theme';
+import { formatCurrency } from '../utils/currency';
 
 const MONNAIES_META = [
   { code: 'EUR',   flag: '🇪🇺', recommande: true },
@@ -17,7 +18,7 @@ const MONNAIES_META = [
 ];
 
 export default function UniteMonnaieScreen({ navigation }) {
-  const { t } = useTranslation('uniteMonnaie');
+  const { t, i18n } = useTranslation('uniteMonnaie');
   const { profile, updateProfile } = useUser();
   const [selected, setSelected] = useState(profile?.monnaie ?? 'EUR');
 
@@ -33,7 +34,7 @@ export default function UniteMonnaieScreen({ navigation }) {
   }
 
   const currentMonnaie = MONNAIES.find(m => m.code === selected) ?? MONNAIES[0];
-  const prixParJour = ((profile?.prixPaquet ?? 11) / (profile?.cigarettesParPaquet ?? 20) * (profile?.consoAvantApp ?? 10)).toFixed(2);
+  const prixParJour = (profile?.prixPaquet ?? 11) / (profile?.cigarettesParPaquet ?? 20) * (profile?.consoAvantApp ?? 10);
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -115,7 +116,7 @@ export default function UniteMonnaieScreen({ navigation }) {
             </Text>
             <View style={{ alignItems: 'flex-end' }}>
               <Text style={styles.apercuLabel}>{t('preview.currentSpendingLabel')}</Text>
-              <Text style={styles.apercuValue}>{prixParJour} €</Text>
+              <Text style={styles.apercuValue}>{formatCurrency(prixParJour, selected, i18n.language)}</Text>
               <Text style={styles.apercuSub}>{t('common:perDay')}</Text>
             </View>
           </View>

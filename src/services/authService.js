@@ -2,8 +2,10 @@ import { auth } from './firebase';
 import {
   GoogleAuthProvider,
   OAuthProvider,
+  createUserWithEmailAndPassword,
   signInWithCredential,
   signInAnonymously,
+  signInWithEmailAndPassword,
   deleteUser,
   signOut as firebaseSignOut,
   onAuthStateChanged,
@@ -11,6 +13,7 @@ import {
 import * as Google from 'expo-auth-session/providers/google';
 import * as AppleAuthentication from 'expo-apple-authentication';
 import * as Crypto from 'expo-crypto';
+import { useEffect, useState } from 'react';
 
 // ── Écouter l'état de connexion ───────────────────────────────────────────────
 export function subscribeToAuth(callback) {
@@ -37,24 +40,57 @@ export async function signInAsGuest() {
   return signInAnonymously(auth);
 }
 
+// ── Connexion e-mail / mot de passe ─────────────────────────────────────────
+// Le provider Email/Password doit être activé dans Firebase Authentication.
+// Les erreurs Firebase sont volontairement propagées à l'écran afin de ne pas
+// faire croire à l'utilisateur qu'un compte a été créé lorsqu'il ne l'est pas.
+export async function createAccountWithEmail(email, password) {
+  return createUserWithEmailAndPassword(auth, email.trim(), password);
+}
+
+export async function signInWithEmail(email, password) {
+  return signInWithEmailAndPassword(auth, email.trim(), password);
+}
+
 // ── Connexion Google ──────────────────────────────────────────────────────────
 export function useGoogleAuth() {
   const [request, response, promptAsync] = Google.useAuthRequest({
-    // À remplacer par ton vrai Client ID Web depuis Firebase Console
-    // Paramètres > Général > Vos applications > Clé API web
+    // Client Web Firebase. Les client IDs iOS / Android pourront être ajoutés
+    // dans app.json lors de la préparation des builds stores.
     webClientId: '96875002607-7f342hira5brbv9qiokn2qt5fn6b25ft.apps.googleusercontent.com',
   });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    if (response?.type === 'success') {
+      const idToken = response.params?.id_token ?? response.authentication?.idToken;
+      if (!idToken) {
+        setError(new Error('google-id-token-missing'));
+        setLoading(false);
+        return;
+      }
+      signInWithCredential(auth, GoogleAuthProvider.credential(idToken))
+        .catch(setError)
+        .finally(() => setLoading(false));
+    } else if (response?.type === 'error') {
+      setError(response.error ?? new Error('google-auth-failed'));
+      setLoading(false);
+    }
+  }, [response]);
 
   async function signInWithGoogle() {
-    await promptAsync();
-    if (response?.type === 'success') {
-      const { id_token } = response.params;
-      const credential = GoogleAuthProvider.credential(id_token);
-      return signInWithCredential(auth, credential);
+    setLoading(true);
+    setError(null);
+    try {
+      await promptAsync();
+    } catch (e) {
+      setError(e);
+      setLoading(false);
     }
   }
 
-  return { request, signInWithGoogle };
+  return { request, signInWithGoogle, loading, error };
 }
 
 // ── Connexion Apple ───────────────────────────────────────────────────────────

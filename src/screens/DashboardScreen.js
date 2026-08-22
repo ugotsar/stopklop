@@ -19,6 +19,8 @@ import { colors, spacing, font, radius, shadow, getScreenWidth } from '../theme'
 import { annulerNotificationSoir } from '../services/notifications';
 import { jouerSon } from '../services/sounds';
 import { buildDemoProfile } from '../utils/demoData';
+import { localDateKey } from '../utils/dateKeys';
+import { formatCurrency } from '../utils/currency';
 
 const SCREEN_W = getScreenWidth();
 
@@ -26,7 +28,7 @@ const SCREEN_W = getScreenWidth();
 const MOTIVATIONS_COUNT = 5;
 
 // ── Modal journée parfaite ──────────────────────────────────────────────────
-function ModalParfait({ visible, serie, objectifJour, prixCig, onClose }) {
+function ModalParfait({ visible, serie, objectifJour, prixCig, currency, onClose }) {
   const { t, i18n } = useTranslation('dashboard');
   // Ne pas garder le <Modal> monté avec visible=false : sur web, le portail
   // de react-native-web peut laisser une couche invisible qui intercepte les
@@ -38,7 +40,7 @@ function ModalParfait({ visible, serie, objectifJour, prixCig, onClose }) {
   const vieGagneeStr = vieGagneeMins >= 60
     ? `+${Math.floor(vieGagneeMins/60)}h ${vieGagneeMins%60}min`
     : `+${vieGagneeMins}min`;
-  const spentZero = `${new Intl.NumberFormat(i18n.language, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(0)} €`;
+  const spentZero = formatCurrency(0, currency, i18n.language);
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <View style={mp.overlay}>
@@ -145,7 +147,7 @@ const ringStyles = StyleSheet.create({
 });
 
 // ── Modal feedback journée (variante A = ok, variante B = dépassé) ───────────
-function ModalObjectif({ visible, count, objectif, prixCigarette, serie, onClose }) {
+function ModalObjectif({ visible, count, objectif, prixCigarette, currency, serie, onClose }) {
   const { t, i18n } = useTranslation('dashboard');
   if (!visible) return null;
   const isOk      = count <= objectif;
@@ -153,7 +155,7 @@ function ModalObjectif({ visible, count, objectif, prixCigarette, serie, onClose
   // (comme sous l'objectif), ni rouge — pour rester cohérent avec l'anneau
   // orange affiché sur l'Accueil dans ce même cas (0 marge = prudence).
   const isPile    = count === objectif && count > 0;
-  const depense   = new Intl.NumberFormat(i18n.language, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(count * prixCigarette);
+  const depense   = formatCurrency(count * prixCigarette, currency, i18n.language);
   const streak    = serie || 0;
 
   // Variante A — objectif respecté
@@ -178,7 +180,7 @@ function ModalObjectif({ visible, count, objectif, prixCigarette, serie, onClose
             <View style={mp.statsRow}>
               <StatColonne valeur={`+${viePreservee} ${t('common:min')}`} label={t('goalModal.lifePreserved')} color={colors.primary} />
               <View style={mp.statDiv} />
-              <StatColonne valeur={`${depense} €`} label={t('goalModal.spent')} color={colors.black} />
+              <StatColonne valeur={depense} label={t('goalModal.spent')} color={colors.black} />
               <View style={mp.statDiv} />
               <StatColonne valeur={`🔥 ${streak}${t('common:dayShort')}`} label={t('perfectDayModal.streak')} color={colors.warning} />
             </View>
@@ -206,7 +208,7 @@ function ModalObjectif({ visible, count, objectif, prixCigarette, serie, onClose
             <View style={mp.statsRow}>
               <StatColonne valeur={`+${viePreservee} ${t('common:min')}`} label={t('goalModal.lifePreserved')} color={colors.primary} />
               <View style={mp.statDiv} />
-              <StatColonne valeur={`${depense} €`} label={t('goalModal.spent')} color={colors.black} />
+              <StatColonne valeur={depense} label={t('goalModal.spent')} color={colors.black} />
               <View style={mp.statDiv} />
               <StatColonne valeur={`🔥 ${streak}${t('common:dayShort')}`} label={t('perfectDayModal.streak')} color={colors.warning} />
             </View>
@@ -234,7 +236,7 @@ function ModalObjectif({ visible, count, objectif, prixCigarette, serie, onClose
           <View style={[mp.statsRow, { backgroundColor: '#FAECE7' }]}>
             <StatColonne valeur={`${count}`} label={t('goalModal.smokedCigarettes')} color="#4A1B0C" />
             <View style={[mp.statDiv, { backgroundColor: '#F0997B' }]} />
-            <StatColonne valeur={`${depense} €`} label={t('goalModal.spent')} color="#4A1B0C" />
+            <StatColonne valeur={depense} label={t('goalModal.spent')} color="#4A1B0C" />
             <View style={[mp.statDiv, { backgroundColor: '#F0997B' }]} />
             <StatColonne valeur={`-${viePerdue} ${t('common:min')}`} label={t('goalModal.lifeLostLabel')} color="#4A1B0C" />
           </View>
@@ -449,7 +451,10 @@ function CircularProgress({ current, total, size = 110 }) {
 // ── Composant principal ─────────────────────────────────────────────────────
 export default function DashboardScreen({ navigation }) {
   const { t, i18n } = useTranslation('dashboard');
-  const { profile, stats, resetProfile, updateProfile } = useUser();
+  const {
+    profile, stats, resetProfile, updateProfile,
+    saveDailyConsumption, recordCraving,
+  } = useUser();
   const [, setTick]          = useState(0);
   const [quoteIdx]           = useState(() => Math.floor(Math.random() * MOTIVATIONS_COUNT));
   const [liked, setLiked]    = useState(false);
@@ -459,25 +464,27 @@ export default function DashboardScreen({ navigation }) {
 
   const motivationQuotes = t('motivation.quotes', { returnObjects: true });
 
-  // Formatage monétaire adapté à la langue (séparateur décimal), symbole € conservé
-  const fmtEur = n => new Intl.NumberFormat(i18n.language, { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
+  const currency = profile?.monnaie ?? 'EUR';
+  const fmtMoney = n => formatCurrency(n, currency, i18n.language);
 
   // Enregistre une envie de fumer (heure + jour + déclencheur + note + issue).
   // Si l'utilisateur a fumé, la cigarette est aussi comptée partout (compteur + historique + cloud).
   async function handleEnvie({ ts, trigger, note, fume }) {
-    const envies = Array.isArray(profile?.envies) ? profile.envies : [];
-    const changes = {
-      envies: [...envies, { ts, trigger, ...(note ? { note } : {}), fume: !!fume }],
-    };
+    const craving = { ts, trigger, ...(note ? { note } : {}), fume: !!fume };
     if (fume) {
-      const todayKey = new Date().toISOString().slice(0, 10);
+      const todayKey = localDateKey();
       const current  = profile?.lastSavedDate === todayKey ? (profile.cigarettesToday ?? 0) : 0;
-      changes.cigarettesToday = current + 1;
-      changes.lastSavedDate   = todayKey;
-      changes.historique      = { ...(profile?.historique ?? {}), [todayKey]: current + 1 };
-      changes.cigLog          = [...(Array.isArray(profile?.cigLog) ? profile.cigLog : []), ts];
+      const entries = (Array.isArray(profile?.cigLog) ? profile.cigLog : [])
+        .filter(value => localDateKey(value) === todayKey);
+      await saveDailyConsumption({
+        dateKey: todayKey,
+        cigarettes: current + 1,
+        entries: [...entries, ts],
+        cravings: [craving],
+      });
+      return;
     }
-    await updateProfile(changes);
+    await recordCraving(craving);
   }
   const milestonesJoues      = React.useRef(new Set());
 
@@ -518,7 +525,7 @@ export default function DashboardScreen({ navigation }) {
 
   const {
     diffJours, dureeStr, dureeSansCigStr, aDejaFume,
-    objectifJour, cigarettesToday,
+    objectifJour, cigarettesToday, jourRenseigne, consoEstimee,
     ecartPlanJour, argentVsPlanJour, vieVsPlanJour,
     progressionJour: progression,
     prixCig, serie,
@@ -534,6 +541,7 @@ export default function DashboardScreen({ navigation }) {
         visible={modalParfait}
         serie={serie}
         objectifJour={objectifJour}
+        currency={currency}
         onClose={() => setModalParfait(false)}
       />
       <ModalObjectif
@@ -541,6 +549,7 @@ export default function DashboardScreen({ navigation }) {
         count={cigarettesToday}
         objectif={objectifJour}
         prixCigarette={prixCig}
+        currency={currency}
         serie={serie}
         onClose={() => setModalObjectif(false)}
       />
@@ -600,8 +609,10 @@ export default function DashboardScreen({ navigation }) {
 
             {/* Label au centre */}
             <View style={styles.todayCenter}>
-              <Text style={styles.todaySubtitle}>{t('today.subtitle')}</Text>
-              <Text style={styles.todayObjectif}>{t('today.goal', { count: objectifJour })}</Text>
+              <Text style={styles.todaySubtitle}>{jourRenseigne ? t('today.subtitle') : t('today.notLoggedTitle')}</Text>
+              <Text style={styles.todayObjectif}>
+                {jourRenseigne ? t('today.goal', { count: objectifJour }) : t('today.notLoggedGoal', { count: objectifJour })}
+              </Text>
             </View>
 
             {/* Illustration paquet à droite */}
@@ -611,9 +622,19 @@ export default function DashboardScreen({ navigation }) {
           {/* Bouton valider — pilule pleine largeur avec check */}
           <TouchableOpacity
             style={styles.validateBtn}
-            onPress={() => {
+            onPress={async () => {
               jouerSon(cigarettesToday === 0 ? 'enregistrer_zero' : 'valider_journee');
               annulerNotificationSoir();
+              // Avant ce clic, 0 veut dire « pas encore renseigné ». Valider
+              // crée donc explicitement une journée à 0 cigarette.
+              if (!jourRenseigne) {
+                await saveDailyConsumption({
+                  dateKey: localDateKey(),
+                  cigarettes: 0,
+                  entries: [],
+                  cravings: [],
+                });
+              }
               if (cigarettesToday === 0) setModalParfait(true);
               else setModalObjectif(true);
             }}
@@ -641,7 +662,7 @@ export default function DashboardScreen({ navigation }) {
           />
           <StatBox
             img={PICTOS.economie}
-            valeur={`${argentVsPlanJour >= 0 ? '+' : '-'}${fmtEur(Math.abs(argentVsPlanJour))}€`}
+            valeur={`${argentVsPlanJour >= 0 ? '+' : '-'}${fmtMoney(Math.abs(argentVsPlanJour))}`}
             label={argentVsPlanJour >= 0 ? t('stats.moneyPreserved') : t('stats.moneyOver')}
             valeurColor={argentVsPlanJour >= 0 ? colors.primaryDeep : colors.danger}
           />
@@ -654,7 +675,7 @@ export default function DashboardScreen({ navigation }) {
           <StatBox
             img={PICTOS.evitees}
             valeur={t('stats.progressionValue', { sign: progression > 0 ? '+' : '', count: progression })}
-            label={t('stats.progressionLabel')}
+            label={consoEstimee ? t('stats.progressionEstimatedLabel') : t('stats.progressionLabel')}
             valeurColor={progressionPositif ? colors.primaryDeep : colors.danger}
           />
         </View>

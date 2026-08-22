@@ -2,12 +2,28 @@
   "tagline": "Quit smoking, one day at a time.",
   "google": { "button": "Continue with Google" },
   "apple": { "button": "Continue with Apple" },
+  "email": {
+    "createEntry": "Create an account with email",
+    "loginEntry": "I already have an account",
+    "createTitle": "Create my account",
+    "loginTitle": "Sign in",
+    "emailPlaceholder": "Email address",
+    "passwordPlaceholder": "Password",
+    "createButton": "Create my account",
+    "loginButton": "Sign in",
+    "alreadyHaveAccount": "I already have an account",
+    "createInstead": "Create an account",
+    "back": "Back to sign-in options"
+  },
   "divider": { "or": "or" },
   "guest": { "button": "Continue without an account" },
   "errors": {
     "google": "Google sign-in failed. Try again.",
     "apple": "Apple sign-in failed. Try again.",
-    "guest": "Connection error. Try again."
+    "guest": "Connection error. Try again.",
+    "email": "Email sign-in failed. Check your details or try again.",
+    "emailInvalid": "Enter a valid email address and password.",
+    "passwordShort": "Your password must contain at least 8 characters."
   },
   "legal": {
     "prefix": "By continuing, you accept our",

@@ -14,6 +14,7 @@
       "label": "Anual",
       "price": "49,99 €",
       "pricePerMonth": "4,17 € / mes",
+      "period": "Facturado cada año",
       "badge": "MEJOR OFERTA",
       "trial": "7 días gratis"
     },
@@ -21,10 +22,20 @@
       "label": "Mensual",
       "price": "9,99 €",
       "pricePerMonth": "9,99 € / mes",
+      "period": "Facturado cada mes",
       "trial": "3 días gratis"
+    },
+    "lifetime": {
+      "label": "De por vida",
+      "pricePerMonth": "Pago único"
     }
   },
   "ctaButton": "Comenzar mi prueba →",
+  "purchasingLabel": "Procesando el pago…",
+  "unavailableTitle": "Suscripción no disponible",
+  "unavailableBody": "Los pagos aún no están configurados para esta versión de Stopklop. Inténtalo más tarde.",
+  "purchaseErrorTitle": "Compra imposible",
+  "purchaseErrorBody": "No se pudo completar el pago. Inténtalo más tarde.",
   "skipButton": "Continuar sin suscripción",
   "restoreButton": "Restaurar mis compras",
   "restoringLabel": "Restaurando…",

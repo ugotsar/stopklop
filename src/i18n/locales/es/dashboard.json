@@ -12,6 +12,8 @@
     "sectionTitle": "Hoy",
     "subtitle": "cigarrillos\nhoy",
     "goal": "Objetivo: {{count}} máx.",
+    "notLoggedTitle": "Balance pendiente",
+    "notLoggedGoal": "Objetivo: {{count}} máx.",
     "validateButton": "Confirmar mi día",
     "smokedLink": "Hoy he fumado  ›"
   },
@@ -90,7 +92,8 @@
     "lifePreservedVsPlan": "Vida preservada vs. plan\n(5 min / cigarrillo)",
     "lifeLostVsPlan": "Vida perdida vs. plan\n(5 min / cigarrillo)",
     "progressionValue": "{{sign}}{{count}}%",
-    "progressionLabel": "Progreso\nvs. antes de la app"
+    "progressionLabel": "Progreso\nvs. antes de la app",
+    "progressionEstimatedLabel": "Progreso\nreferencia estimada"
   },
   "envieCard": {
     "title": "¿Ganas de fumar ahora mismo?",

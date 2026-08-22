@@ -6,6 +6,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { getOfferings, purchasePackage, restorePurchases, isPro } from '../services/purchases';
 import { colors, spacing, font, radius } from '../theme';
+import { useUser } from '../context/UserContext';
 
 const FEATURES = [
   { icon: '📊', key: 'stats' },
@@ -17,31 +18,46 @@ const FEATURES = [
 
 export default function PaywallScreen({ navigation }) {
   const { t } = useTranslation('paywall');
+  const { subscription, refreshSubscription } = useUser();
   const [offering, setOffering]       = useState(null);
   const [selected, setSelected]       = useState(null);
   const [loading, setLoading]         = useState(true);
   const [purchasing, setPurchasing]   = useState(false);
+  const [loadError, setLoadError]     = useState(null);
 
   useEffect(() => {
     (async () => {
-      const o = await getOfferings();
-      setOffering(o);
-      // Sélectionner l'annuel par défaut
-      const yearly = o?.availablePackages?.find(p => p.packageType === 'ANNUAL');
-      if (yearly) setSelected(yearly);
-      setLoading(false);
+      if (!subscription.available) {
+        setLoading(false);
+        return;
+      }
+      try {
+        const o = await getOfferings();
+        setOffering(o);
+        // Sélectionner l'annuel par défaut
+        const yearly = o?.availablePackages?.find(p => p.packageType === 'ANNUAL');
+        setSelected(yearly ?? o?.availablePackages?.[0] ?? null);
+        if (!o?.availablePackages?.length) setLoadError('no-offering');
+      } catch (error) {
+        setLoadError(error);
+      } finally {
+        setLoading(false);
+      }
     })();
-  }, []);
+  }, [subscription.available]);
 
   async function handlePurchase() {
     if (!selected) return;
     try {
       setPurchasing(true);
       const info = await purchasePackage(selected);
-      if (isPro(info)) {
+      const result = await refreshSubscription(info);
+      if (isPro(info) && result.isPro) {
         Alert.alert(t('alerts.welcomeTitle'), t('alerts.welcomeBody'), [
           { text: t('alerts.welcomeButton'), onPress: () => navigation.goBack() },
         ]);
+      } else {
+        Alert.alert(t('common:error'), t('alerts.purchaseErrorBody'));
       }
     } catch (e) {
       if (!e.userCancelled) {
@@ -56,7 +72,8 @@ export default function PaywallScreen({ navigation }) {
     try {
       setPurchasing(true);
       const info = await restorePurchases();
-      if (isPro(info)) {
+      const result = await refreshSubscription(info);
+      if (isPro(info) && result.isPro) {
         Alert.alert(t('alerts.restoredTitle'), '', [
           { text: t('common:ok'), onPress: () => navigation.goBack() },
         ]);
@@ -77,6 +94,8 @@ export default function PaywallScreen({ navigation }) {
       </SafeAreaView>
     );
   }
+
+  const unavailable = !subscription.available || loadError || !offering?.availablePackages?.length;
 
   return (
     <SafeAreaView style={s.safe}>
@@ -102,7 +121,12 @@ export default function PaywallScreen({ navigation }) {
         </View>
 
         {/* Plans */}
-        {offering?.availablePackages?.map(pkg => {
+        {unavailable ? (
+          <View style={s.unavailableCard}>
+            <Text style={s.unavailableTitle}>{t('alerts.unavailableTitle')}</Text>
+            <Text style={s.unavailableText}>{t('alerts.unavailableBody')}</Text>
+          </View>
+        ) : offering?.availablePackages?.map(pkg => {
           const isSelected = selected?.identifier === pkg.identifier;
           const isYearly   = pkg.packageType === 'ANNUAL';
           return (
@@ -136,7 +160,7 @@ export default function PaywallScreen({ navigation }) {
         <TouchableOpacity
           style={[s.cta, purchasing && s.ctaDisabled]}
           onPress={handlePurchase}
-          disabled={purchasing || !selected}
+          disabled={purchasing || !selected || unavailable}
         >
           {purchasing
             ? <ActivityIndicator color="#fff" />
@@ -146,7 +170,7 @@ export default function PaywallScreen({ navigation }) {
 
         <Text style={s.trial}>{t('cta.trial')}</Text>
 
-        <TouchableOpacity onPress={handleRestore}>
+        <TouchableOpacity onPress={handleRestore} disabled={purchasing || unavailable}>
           <Text style={s.restore}>{t('cta.restore')}</Text>
         </TouchableOpacity>
 
@@ -167,6 +191,9 @@ const s = StyleSheet.create({
   featureRow:   { flexDirection: 'row', alignItems: 'center', gap: 12 },
   featureIcon:  { fontSize: 20 },
   featureLabel: { fontSize: font.sm, color: colors.black, fontWeight: '500' },
+  unavailableCard: { width: '100%', backgroundColor: '#FFF7ED', borderWidth: 1, borderColor: '#FED7AA', borderRadius: radius.lg, padding: spacing.md, marginBottom: 16 },
+  unavailableTitle: { color: '#9A3412', fontSize: font.md, fontWeight: '800', textAlign: 'center', marginBottom: 6 },
+  unavailableText: { color: '#9A3412', fontSize: font.sm, textAlign: 'center', lineHeight: 20 },
   plan: {
     width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     borderWidth: 1.5, borderColor: '#E5E7EB', borderRadius: radius.lg,

@@ -30,6 +30,8 @@
     "noSubscriptionTitle": "Kein Abonnement gefunden",
     "noSubscriptionBody": "Kein Kauf zum Wiederherstellen.",
     "purchaseErrorBody": "Kauf fehlgeschlagen. Versuch es erneut.",
-    "restoreErrorBody": "Wiederherstellung fehlgeschlagen."
+    "restoreErrorBody": "Wiederherstellung fehlgeschlagen.",
+    "unavailableTitle": "Abonnement nicht verfügbar",
+    "unavailableBody": "Zahlungen sind für diese Version von Stopklop noch nicht eingerichtet."
   }
 }

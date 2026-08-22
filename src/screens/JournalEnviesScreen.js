@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { useUser } from '../context/UserContext';
 import { colors, spacing, font, radius } from '../theme';
 import { UI } from '../assets/uiKit';
+import { addLocalDays, localDateKey } from '../utils/dateKeys';
 
 // Illustrations 3D du kit UI (page 09) — mêmes assets que la grille de choix
 // du déclencheur, pour rester cohérent dans toute l'app.
@@ -27,7 +28,7 @@ function grouperParJour(envies) {
   envies.forEach(e => {
     const d = new Date(e.ts);
     if (isNaN(d)) return;
-    const key = d.toISOString().slice(0, 10);
+    const key = localDateKey(d);
     (parJour[key] = parJour[key] || []).push(e);
   });
   return Object.entries(parJour)
@@ -42,8 +43,8 @@ function grouperParJour(envies) {
 
 function labelJour(key, t, lang) {
   const d = new Date(key + 'T12:00:00');
-  const todayKey = new Date().toISOString().slice(0, 10);
-  const hierKey  = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+  const todayKey = localDateKey();
+  const hierKey  = localDateKey(addLocalDays(new Date(), -1));
   if (key === todayKey) return t('day.today');
   if (key === hierKey)  return t('day.yesterday');
   const s = d.toLocaleDateString(lang, { weekday: 'long', day: 'numeric', month: 'long' });

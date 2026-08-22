@@ -15,7 +15,7 @@
       "modalTitle": "Gespartes Geld",
       "explanationIntro_one": "Vor der App hast du {{consoAvant}} Zigaretten pro Tag geraucht. Dein aktuelles Ziel liegt bei {{objectif}} pro Tag: Das sind {{count}} vermiedene Zigarette pro Tag.",
       "explanationIntro_other": "Vor der App hast du {{consoAvant}} Zigaretten pro Tag geraucht. Dein aktuelles Ziel liegt bei {{objectif}} pro Tag: Das sind {{count}} vermiedene Zigaretten pro Tag.",
-      "explanationDetail": "Jede Zigarette kostet {{prixCig}} €\n(Packungspreis ÷ Zigaretten pro Packung).\n{{count}} × {{prixCig}} € × 30 Tage = {{ecoMois}} € / Monat.",
+      "explanationDetail": "Jede Zigarette kostet {{prixCig}}\n(Packungspreis ÷ Zigaretten pro Packung).\n{{count}} × {{prixCig}} × 30 Tage = {{ecoMois}} / Monat.",
       "beforeLabel": "Vor der App",
       "goalLabel": "Aktuelles Ziel",
       "unitPerDay": "/ Tag",
@@ -64,6 +64,7 @@
   },
   "projection": {
     "sectionTitle": "Jahresprognose",
+    "referenceEstimated": "Dein Konsum vor Stopklop wurde nicht erfasst: Diese Prognose nutzt einen geschätzten Ausgangswert.",
     "herosSub": "bleiben in einem Jahr in deiner Tasche",
     "herosHint": "wenn du deinem Plan folgst",
     "beforeApp": {

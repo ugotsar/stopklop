@@ -13,6 +13,7 @@
   "no": "No",
   "loading": "Loading…",
   "error": "Error",
+  "syncPending": "Sync pending — your data remains on this device",
   "or": "OR",
   "manualEntry": "Enter manually",
   "day_one": "day",

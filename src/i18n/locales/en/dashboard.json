@@ -12,6 +12,8 @@
     "sectionTitle": "Today",
     "subtitle": "cigarettes\ntoday",
     "goal": "Goal: {{count}} max",
+    "notLoggedTitle": "Your day is not logged yet",
+    "notLoggedGoal": "Goal: {{count}} max",
     "validateButton": "Log my day",
     "smokedLink": "I smoked today  ›"
   },
@@ -90,7 +92,8 @@
     "lifePreservedVsPlan": "Life preserved vs plan\n(5 min / cigarette)",
     "lifeLostVsPlan": "Life lost vs plan\n(5 min / cigarette)",
     "progressionValue": "{{sign}}{{count}}%",
-    "progressionLabel": "Progress\nvs before the app"
+    "progressionLabel": "Progress\nvs before the app",
+    "progressionEstimatedLabel": "Progress\nestimated baseline"
   },
   "envieCard": {
     "title": "Craving a cigarette right now?",

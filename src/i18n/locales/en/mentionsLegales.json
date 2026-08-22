@@ -8,7 +8,7 @@
     "title": "Privacy policy",
     "updated": "Last updated: August 18, 2026",
     "summaryLabel": "In short:",
-    "summaryBody": "your smoking data stays on your device. It's only sent to our cloud service (Firebase) if you create an account, to sync your data across devices. We don't sell it or share it with third parties for advertising purposes.",
+    "summaryBody": "your smoking data is kept in a secure cache on your device and synced with our Firebase cloud service as soon as you choose to continue. We don't sell it or share it with third parties for advertising purposes.",
     "dataTitle": "Data collected",
     "dataRows": [
       { "label": "Cigarette history (dates, quantities)", "reason": "Calculate your stats, savings and progress" },
@@ -19,7 +19,7 @@
       { "label": "Subscription status", "reason": "Unlock paid features" }
     ],
     "storageTitle": "Where your data is stored",
-    "storageBody": "By default, everything stays local on your device (offline storage). If you create an account, a copy is also stored on Firebase (Google Cloud), so you can find your data again if you switch devices.",
+    "storageBody": "An offline copy stays on your device so the app remains usable without a connection. Your data is also stored in Firebase (Google Cloud) under your Stopklop identifier so you can find it on another device.",
     "notDoTitle": "What we don't do",
     "notDoBody": "We don't sell your data. We don't share it for advertising purposes. We don't use it outside of running the app.",
     "rightsTitle": "Your rights",
@@ -34,7 +34,7 @@
     "healthLabel": "Health notice:",
     "healthBody": "if you have questions about smoking cessation, your health, or a treatment, consult a doctor or qualified health professional.",
     "accountTitle": "Account and data",
-    "accountBody": "You can use the app without an account (data stored only on your device) or create an account to sync your data across devices. See the privacy policy for details on data processed.",
+    "accountBody": "A Stopklop identifier is created when you start using the app. You can then choose Google or Apple to secure and recover your data across devices. See the privacy policy for details on data processed.",
     "subscriptionTitle": "Stopklop Pro subscription",
     "subscriptionItems": [
       "The subscription renews automatically unless cancelled before the end of the current period.",

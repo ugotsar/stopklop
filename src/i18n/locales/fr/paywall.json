@@ -30,6 +30,8 @@
     "noSubscriptionTitle": "Aucun abonnement trouvé",
     "noSubscriptionBody": "Aucun achat à restaurer.",
     "purchaseErrorBody": "Achat impossible. Réessaie.",
-    "restoreErrorBody": "Restauration impossible."
+    "restoreErrorBody": "Restauration impossible.",
+    "unavailableTitle": "Abonnement indisponible",
+    "unavailableBody": "Le paiement n’est pas encore configuré pour cette version de Stopklop."
   }
 }

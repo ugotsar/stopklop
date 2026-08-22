@@ -1,18 +1,73 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    function owns(userId) {
+      return request.auth != null && request.auth.uid == userId;
+    }
 
-    // Profil utilisateur : chacun ne peut lire/écrire QUE son propre document
+    // Le profil est volontairement léger. Les tableaux historiques ne sont pas
+    // admis ici : ils vivent dans days/ et cravings/ afin d'éviter la limite de
+    // 1 Mio par document Firestore.
+    function validProfile() {
+      return request.resource.data.keys().size() <= 60
+        && !('historique' in request.resource.data)
+        && !('cigLog' in request.resource.data)
+        && !('envies' in request.resource.data)
+        && !('cigarettesToday' in request.resource.data)
+        && !('lastSavedDate' in request.resource.data)
+        && (!('prixPaquet' in request.resource.data)
+          || (request.resource.data.prixPaquet is number
+            && request.resource.data.prixPaquet >= 0
+            && request.resource.data.prixPaquet <= 1000))
+        && (!('cigarettesParPaquet' in request.resource.data)
+          || (request.resource.data.cigarettesParPaquet is int
+            && request.resource.data.cigarettesParPaquet > 0
+            && request.resource.data.cigarettesParPaquet <= 100))
+        && (!('objectifCigarettes' in request.resource.data)
+          || (request.resource.data.objectifCigarettes is int
+            && request.resource.data.objectifCigarettes >= 0
+            && request.resource.data.objectifCigarettes <= 200));
+    }
+
+    function validDay(dayKey) {
+      return request.resource.data.dateKey == dayKey
+        && request.resource.data.cigarettes is int
+        && request.resource.data.cigarettes >= 0
+        && request.resource.data.cigarettes <= 200
+        && request.resource.data.entries is list
+        && request.resource.data.entries.size() <= 200;
+    }
+
+    function validCraving() {
+      return request.resource.data.ts is string
+        && request.resource.data.dayKey is string
+        && request.resource.data.trigger is string
+        && request.resource.data.trigger.size() <= 80
+        && request.resource.data.fume is bool
+        && (!('note' in request.resource.data)
+          || (request.resource.data.note is string
+            && request.resource.data.note.size() <= 500));
+    }
+
     match /users/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow read: if owns(userId);
+      allow create, update: if owns(userId) && validProfile();
+      allow delete: if owns(userId);
 
-      // Sous-collections (journées, etc.) : même règle
-      match /{document=**} {
-        allow read, write: if request.auth != null && request.auth.uid == userId;
+      match /days/{dayKey} {
+        allow read: if owns(userId);
+        allow create, update: if owns(userId) && validDay(dayKey);
+        allow delete: if owns(userId);
+      }
+
+      match /cravings/{cravingId} {
+        allow read: if owns(userId);
+        allow create, update: if owns(userId) && validCraving();
+        allow delete: if owns(userId);
       }
     }
 
-    // Tout le reste est interdit
+    // Tout le reste est interdit.
     match /{document=**} {
       allow read, write: if false;
     }

@@ -6,6 +6,8 @@
     "period": "Período"
   },
   "vsBeforeApp": "vs. antes de la app",
+  "referenceEstimated": "referencia estimada",
+  "referenceEstimatedNotice": "No se ha registrado tu consumo antes de Stopklop. Por ahora, las comparaciones son estimadas.",
   "dates": {
     "today": "Hoy",
     "yesterday": "Ayer"
@@ -37,6 +39,7 @@
   "smokedCard": {
     "title": "Cigarrillos fumados",
     "chartTitle": "Consumo por hora",
+    "unreportedLegend": "Gris: período sin registrar",
     "unit": "cigarrillos",
     "vsBeforeAppValue": "{{arrow}} {{percent}} %",
     "hoursTitle": "Horas de los cigarrillos",
@@ -68,14 +71,14 @@
   },
   "gridTiles": {
     "vs": "vs {{ref}} ({{value}})",
-    "cumulMoney": "Total: {{amount}} €",
+    "cumulMoney": "Total: {{amount}}",
     "cumulLife": "Total: {{value}}"
   },
   "goalProgress": {
     "title": "Progreso hacia tu próximo hito de ahorro",
     "titleCustom": "Progreso hacia tu objetivo de ahorro",
     "reached": "alcanzado",
-    "remaining": "Te faltan {{amount}} €",
+    "remaining": "Te faltan {{amount}}",
     "goalReached": "Objetivo alcanzado 🎉",
     "setGoal": "Definir mi objetivo ›",
     "editGoal": "Editar mi objetivo ›",
@@ -87,6 +90,7 @@
     "titleAverage": "Objetivo diario",
     "stayUnder_one": "Mantente por debajo de {{count}} cigarrillo",
     "stayUnder_other": "Mantente por debajo de {{count}} cigarrillos",
+    "noData": "Pendiente de registrar",
     "onTrack": "¡Bien hecho, sigue así!",
     "overGoal": "Objetivo superado"
   },
@@ -101,10 +105,11 @@
   },
   "summaryCard": {
     "title": "Resumen",
+    "noData": "No hay datos registrados para este período. Añade o confirma tu día para iniciar tus estadísticas.",
     "narrative": "Has fumado {{count}} {{unit}}{{comparison}}. {{moneyPhrase}} y {{lifePhrase}}. Sigue así, cada pequeño paso cuenta!",
     "narrativeComparison": ", {{diff}} {{unit}} {{dir}} {{ref}}",
-    "moneySavedPhrase": "Has ahorrado {{amount}} €",
-    "moneyOverspentPhrase": "Has gastado {{amount}} € más de lo previsto",
+    "moneySavedPhrase": "Has ahorrado {{amount}}",
+    "moneyOverspentPhrase": "Has gastado {{amount}} más de lo previsto",
     "lifeGainedPhrase": "recuperado {{value}} de vida",
     "lifeLostPhrase": "perdido {{value}} de vida",
     "less": "menos que",
@@ -120,8 +125,8 @@
     "overPlan_other": "⚠️ {{count}} cigarrillos por encima de tu plan en el período",
     "underPlan_one": "✅ Plan cumplido: {{count}} cigarrillo por debajo del objetivo",
     "underPlan_other": "✅ Plan cumplido: {{count}} cigarrillos por debajo del objetivo",
-    "moneyPositive": "+{{amount}} € vs. antes de la app",
-    "moneyNegative": "{{amount}} € vs. antes de la app (fumas más que antes)",
+    "moneyPositive": "+{{amount}} vs. antes de la app",
+    "moneyNegative": "{{amount}} vs. antes de la app (fumas más que antes)",
     "messagePositive": "↓ {{percent}}% vs. antes de la app 💚",
     "messageNegative": "↑ {{percent}}% vs. antes de la app — aguanta 💪",
     "messageNeutral": "Cada día registrado cuenta."

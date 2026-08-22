@@ -37,8 +37,18 @@ yarn-error.*
 .DS_Store
 *.pem
 
-# local env files
-.env*.local
+# local env files and store credentials
+.env
+.env.*
+!.env.example
+google-service-account.json
+.firebase/
+
+# temporary audit exports
+.audit-web-*/
+audit-export-*.log
+firebase-*-check.log
+firestore-*-deploy.log
 
 # typescript
 *.tsbuildinfo

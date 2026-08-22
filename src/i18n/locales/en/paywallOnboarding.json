@@ -14,6 +14,7 @@
       "label": "Annual",
       "price": "€49.99",
       "pricePerMonth": "€4.17 / month",
+      "period": "Billed yearly",
       "badge": "BEST VALUE",
       "trial": "7-day free trial"
     },
@@ -21,10 +22,20 @@
       "label": "Monthly",
       "price": "€9.99",
       "pricePerMonth": "€9.99 / month",
+      "period": "Billed monthly",
       "trial": "3-day free trial"
+    },
+    "lifetime": {
+      "label": "Lifetime",
+      "pricePerMonth": "One-time payment"
     }
   },
   "ctaButton": "Start my trial →",
+  "purchasingLabel": "Processing payment…",
+  "unavailableTitle": "Subscription unavailable",
+  "unavailableBody": "Payments are not configured for this version of Stopklop yet. Please try again later.",
+  "purchaseErrorTitle": "Purchase unavailable",
+  "purchaseErrorBody": "The payment could not be completed. Please try again later.",
   "skipButton": "Continue without subscription",
   "restoreButton": "Restore purchases",
   "restoringLabel": "Restoring…",

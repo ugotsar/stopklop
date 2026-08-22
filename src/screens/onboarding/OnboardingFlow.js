@@ -12,6 +12,7 @@ import PrimaryButton from '../../components/PrimaryButton';
 import NatureBackground from '../../components/NatureBackground';
 import { useUser } from '../../context/UserContext';
 import { jouerSon } from '../../services/sounds';
+import { localDateKey } from '../../utils/dateKeys';
 
 const { height: SCREEN_H } = Dimensions.get('window');
 
@@ -89,7 +90,7 @@ const initialAnswers = {
   consoUnite: 'jour',                  // 'jour' | 'semaine'
   cigarettesParPaquet: 20,
   prixPaquet: '12.50',
-  dateDebut: new Date().toISOString().slice(0, 10),
+  dateDebut: localDateKey(),
   objectifQuotidien: 8,
   monnaie: 'EUR',
   motivations: [],
@@ -128,7 +129,7 @@ export default function OnboardingFlow({ navigation }) {
             cigarettesParPaquet: profile.cigarettesParPaquet ?? a.cigarettesParPaquet,
             prixPaquet: profile.prixPaquet != null ? String(profile.prixPaquet) : a.prixPaquet,
             monnaie: profile.monnaie ?? a.monnaie,
-            objectifQuotidien: profile.objectifCigarettes || a.objectifQuotidien,
+            objectifQuotidien: profile.objectifCigarettes ?? a.objectifQuotidien,
             motivations: Array.isArray(profile.motivations) && profile.motivations.every(m => typeof m === 'string')
               ? profile.motivations.filter(m => MOTIVATIONS_CHOIX.some(c => c.key === m))
               : a.motivations,
@@ -220,7 +221,7 @@ export default function OnboardingFlow({ navigation }) {
     try {
       const now = new Date().toISOString();
       const debutISO = new Date(answers.dateDebut + 'T00:00:00').toISOString();
-      await updateProfile({
+      const result = await updateProfile({
         // Identification (3 affirmations oui/non)
         identification: {
           echecPasse:  answers.identification[0],
@@ -232,6 +233,7 @@ export default function OnboardingFlow({ navigation }) {
         consoDeclaree: answers.consoDeclaree,
         consoUnite: answers.consoUnite,                  // 'jour' | 'semaine'
         consoAvantApp: consoNormalisee,                  // référence quotidienne normalisée
+        consoAvantDeclaree: true,
         objectifCigarettes: objectifFinal,
         reductionParSemaine: answers.typeObjectif === 'reduce' ? 2 : null,
         planStartDate: answers.typeObjectif === 'reduce' ? debutISO : null,
@@ -251,6 +253,9 @@ export default function OnboardingFlow({ navigation }) {
         onboardingComplete: true,
         onboardingCompletedAt: now,
       });
+      // Ne jamais marquer l'onboarding terminé si Firestore n'a pas confirmé
+      // l'écriture : le brouillon local est conservé pour une reprise sûre.
+      if (!result?.synced) throw result?.error ?? new Error('cloud-save-failed');
       await AsyncStorage.removeItem(DRAFT_KEY).catch(() => {});
       navigation.replace('Paywall');
     } catch (e) {
@@ -745,7 +750,7 @@ function Calendrier({ selected, onSelect }) {
   const nbJours = new Date(annee, moisIdx + 1, 0).getDate();
   const premier = (new Date(annee, moisIdx, 1).getDay() + 6) % 7; // 0 = lundi
   const titre   = mois.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
-  const todayKey = today.toISOString().slice(0, 10);
+  const todayKey = localDateKey(today);
 
   const cells = [
     ...Array.from({ length: premier }, () => null),

@@ -7,9 +7,11 @@ import Svg, { Circle } from 'react-native-svg';
 import { Image } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useUser } from '../context/UserContext';
+import { localDateKey } from '../utils/dateKeys';
 import { colors, spacing, font, radius, shadow } from '../theme';
 import { UI } from '../assets/uiKit';
 import { jouerSon } from '../services/sounds';
+import { formatCurrency } from '../utils/currency';
 
 // ── Arc circulaire ──────────────────────────────────────────────────────────
 // Règle simple : sous l'objectif = vert · pile à l'objectif = orange ·
@@ -227,8 +229,8 @@ const rm = StyleSheet.create({
 });
 
 // ── Modal feedback ──────────────────────────────────────────────────────────
-function FeedbackModal({ visible, count, objectif, prixCigarette, serie, onClose, onNavigate }) {
-  const { t } = useTranslation('jaifume');
+function FeedbackModal({ visible, count, objectif, prixCigarette, currency, serie, onClose, onNavigate }) {
+  const { t, i18n } = useTranslation('jaifume');
   if (!visible) return null;
   const isParfait  = count === 0;
   const isOk       = count > 0 && count <= objectif;
@@ -247,7 +249,7 @@ function FeedbackModal({ visible, count, objectif, prixCigarette, serie, onClose
     ? t('feedbackModal.okSub')
     : t('feedbackModal.exceededSub');
 
-  const argentDepense = (count * prixCigarette).toFixed(2);
+  const argentDepense = formatCurrency(count * prixCigarette, currency, i18n.language);
   const vieGagnee     = isParfait ? objectif * 5 : null;
   const streak        = serie || 0;
   const pctGreen       = isDepasse && count > 0 ? Math.round((objectif / count) * 100) : 0;
@@ -291,7 +293,7 @@ function FeedbackModal({ visible, count, objectif, prixCigarette, serie, onClose
               <View style={modal.statsRow}>
                 <StatItem valeur={`+${vieGagnee}min`} label={t('feedbackModal.lifeGained')} color={colors.primary} />
                 <View style={modal.statDiv} />
-                <StatItem valeur={`0,00 €`} label={t('feedbackModal.spent')} color={colors.black} />
+                <StatItem valeur={formatCurrency(0, currency, i18n.language)} label={t('feedbackModal.spent')} color={colors.black} />
                 <View style={modal.statDiv} />
                 <StatItem valeur={`🔥 ${streak}${t('common:dayShort')}`} label={t('feedbackModal.streak')} color={colors.warning} />
               </View>
@@ -305,7 +307,7 @@ function FeedbackModal({ visible, count, objectif, prixCigarette, serie, onClose
                 <View style={modal.statsRow}>
                   <StatItem valeur={`+${viePreservee}min`} label={t('feedbackModal.lifePreserved')} color={colors.primary} />
                   <View style={modal.statDiv} />
-                  <StatItem valeur={`${argentDepense} €`} label={t('feedbackModal.spent')} color={colors.black} />
+                  <StatItem valeur={argentDepense} label={t('feedbackModal.spent')} color={colors.black} />
                   <View style={modal.statDiv} />
                   <StatItem valeur={`🔥 ${streak}${t('common:dayShort')}`} label={t('feedbackModal.streak')} color={colors.warning} />
                 </View>
@@ -323,7 +325,7 @@ function FeedbackModal({ visible, count, objectif, prixCigarette, serie, onClose
                 </View>
                 <View style={modal.depStatDiv} />
                 <View style={modal.depStatCol}>
-                  <Text style={modal.depStatVal}>{argentDepense} €</Text>
+                  <Text style={modal.depStatVal}>{argentDepense}</Text>
                   <Text style={modal.depStatLbl}>{t('feedbackModal.spent')}</Text>
                 </View>
                 <View style={modal.depStatDiv} />
@@ -364,8 +366,8 @@ function StatItem({ valeur, label, color }) {
 
 // ── Écran principal ─────────────────────────────────────────────────────────
 export default function JaiFumeScreen({ navigation }) {
-  const { t } = useTranslation('jaifume');
-  const { profile, updateProfile, stats } = useUser();
+  const { t, i18n } = useTranslation('jaifume');
+  const { profile, updateProfile, saveDailyConsumption, stats } = useUser();
 
   const objectifJour  = stats?.objectifJour ?? 8;
   const prixCigarette = stats?.prixCig ?? 0.5;
@@ -373,7 +375,7 @@ export default function JaiFumeScreen({ navigation }) {
   // Ne reprendre le compteur existant que s'il date d'AUJOURD'HUI — sinon
   // (nouveau jour, rien encore saisi) on repart de 0, comme le fait déjà
   // computeStats() pour `cigarettesToday` ailleurs dans l'app.
-  const todayKeyInit = new Date().toISOString().slice(0, 10);
+  const todayKeyInit = localDateKey();
   const [count, setCount]           = useState(
     profile?.lastSavedDate === todayKeyInit ? (profile?.cigarettesToday ?? 0) : 0
   );
@@ -387,7 +389,8 @@ export default function JaiFumeScreen({ navigation }) {
 
   const persoList = Array.isArray(profile?.declencheursPerso) ? profile.declencheursPerso : [];
 
-  const argentDepense = (count * prixCigarette).toFixed(2);
+  const currency = profile?.monnaie ?? 'EUR';
+  const argentDepense = formatCurrency(count * prixCigarette, currency, i18n.language);
   const viePerdue     = count * 5;
 
   function decrement() {
@@ -426,32 +429,27 @@ export default function JaiFumeScreen({ navigation }) {
     else if (count <= objectifJour) jouerSon('enregistrer_objectif');
     else jouerSon('enregistrer_depasse');
 
-    const todayKey = new Date().toISOString().slice(0, 10); // "YYYY-MM-DD"
-    const historique = { ...(profile?.historique ?? {}), [todayKey]: count };
-
+    const todayKey = localDateKey();
     // cigLog : une entrée horodatée par cigarette. On reconstruit celles du jour
     // pour rester cohérent avec le compteur (ajouts et retraits compris).
     const cigLog     = Array.isArray(profile?.cigLog) ? profile.cigLog : [];
-    const autresJours = cigLog.filter(ts => ts.slice(0, 10) !== todayKey);
-    let aujourdhui    = cigLog.filter(ts => ts.slice(0, 10) === todayKey).sort();
+    let aujourdhui    = cigLog.filter(ts => localDateKey(ts) === todayKey).sort();
     aujourdhui = [...aujourdhui, ...addedTimes];
     if (aujourdhui.length > count) aujourdhui = aujourdhui.slice(0, count);
     while (aujourdhui.length < count) aujourdhui.push(new Date().toISOString());
 
     // Les raisons rejoignent le journal des envies (fume: true) pour l'analyse
     // des habitudes — uniquement celles des cigarettes encore comptées.
-    const enviesExistantes = Array.isArray(profile?.envies) ? profile.envies : [];
     const raisonsValides = raisons.filter(r => aujourdhui.includes(r.ts));
     const nouvellesEnvies = raisonsValides.map(r => ({
       ts: r.ts, trigger: r.trigger, ...(r.note ? { note: r.note } : {}), fume: true,
     }));
 
-    await updateProfile({
-      cigarettesToday: count,
-      lastSavedDate: todayKey,
-      historique,
-      cigLog: [...autresJours, ...aujourdhui],
-      envies: [...enviesExistantes, ...nouvellesEnvies],
+    await saveDailyConsumption({
+      dateKey: todayKey,
+      cigarettes: count,
+      entries: aujourdhui,
+      cravings: nouvellesEnvies,
     });
     setModal(true);
   }
@@ -475,6 +473,7 @@ export default function JaiFumeScreen({ navigation }) {
         count={count}
         objectif={objectifJour}
         prixCigarette={prixCigarette}
+        currency={currency}
         serie={stats?.serie ?? 0}
         onClose={handleCloseModal}
         onNavigate={handleNavigate}
@@ -577,7 +576,7 @@ export default function JaiFumeScreen({ navigation }) {
           <View style={styles.recapRow}>
             <RecapItem img={UI.cigarette_fumee} valeur={`${count}`} label={t('common:cigarette', { count })} />
             <View style={styles.recapDivider} />
-            <RecapItem img={UI.argent_depense} valeur={`${argentDepense}€`} label={t('recap.spent')} valeurColor={colors.danger} />
+            <RecapItem img={UI.argent_depense} valeur={argentDepense} label={t('recap.spent')} valeurColor={colors.danger} />
             <View style={styles.recapDivider} />
             <RecapItem
               img={UI.sablier_vie}
