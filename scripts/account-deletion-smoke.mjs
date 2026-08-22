@@ -40,6 +40,7 @@ async function deleteCollectionInBatches(collectionRef) {
 
 async function deleteUserData(uid) {
   await deleteCollectionInBatches(collection(db, 'users', uid, 'days'));
+  await deleteCollectionInBatches(collection(db, 'users', uid, 'cravings'));
   await deleteDoc(doc(db, 'users', uid));
 }
 
@@ -49,18 +50,25 @@ const uid = user.uid;
 const idToken = await user.getIdToken();
 
 try {
-  await setDoc(doc(db, 'users', uid), { smokeTest: true });
-  await setDoc(doc(db, 'users', uid, 'days', 'day-1'), { cigarettes: 1 });
-  await setDoc(doc(db, 'users', uid, 'days', 'day-2'), { cigarettes: 0 });
+  // Le schéma actuel (post-migration sous-collections) exige `dateKey` sur
+  // chaque jour et `ts`/`trigger`/`fume` sur chaque envie — voir firestore.rules.
+  await setDoc(doc(db, 'users', uid), { onboardingComplete: true });
+  await setDoc(doc(db, 'users', uid, 'days', 'day-1'), { dateKey: 'day-1', cigarettes: 1, entries: [] });
+  await setDoc(doc(db, 'users', uid, 'days', 'day-2'), { dateKey: 'day-2', cigarettes: 0, entries: [] });
+  await setDoc(doc(db, 'users', uid, 'cravings', 'craving-1'), {
+    ts: new Date().toISOString(), dayKey: 'day-1', trigger: 'stress', fume: false,
+  });
 
   await deleteUserData(uid);
 
-  const [profile, days] = await Promise.all([
+  const [profile, days, cravings] = await Promise.all([
     getDoc(doc(db, 'users', uid)),
     getDocs(collection(db, 'users', uid, 'days')),
+    getDocs(collection(db, 'users', uid, 'cravings')),
   ]);
   if (profile.exists()) throw new Error('The /users/{uid} document still exists.');
   if (!days.empty) throw new Error('The /users/{uid}/days collection still contains data.');
+  if (!cravings.empty) throw new Error('The /users/{uid}/cravings collection still contains data.');
 
   await deleteUser(user);
   if (auth.currentUser !== null) throw new Error('Firebase Auth still has a current user.');
@@ -81,6 +89,7 @@ try {
       guestAccountDeleted: true,
       firestoreProfileDeleted: true,
       firestoreDaysDeleted: true,
+      firestoreCravingsDeleted: true,
       firebaseAuthDeleted: true,
     },
   }, null, 2));
