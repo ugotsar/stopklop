@@ -2,7 +2,7 @@
   "expo": {
     "name": "Stopklop",
     "slug": "stopklop",
-    "version": "1.0.0",
+    "version": "1.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -51,6 +51,11 @@
       "@react-native-community/datetimepicker",
       "expo-localization"
     ],
-    "extra": {}
+    "extra": {
+      "eas": {
+        "projectId": "7ba05228-71fa-40e2-b17f-56b43250c363"
+      }
+    },
+    "owner": "lepetitroi"
   }
 }
