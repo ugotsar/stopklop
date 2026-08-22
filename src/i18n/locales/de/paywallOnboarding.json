@@ -12,9 +12,16 @@
   "plans": {
     "annual": {
       "label": "Jährlich",
-      "price": "49,99 €",
-      "pricePerMonth": "4,17 € / Monat",
+      "price": "89,99 €",
+      "pricePerMonth": "7,50 € / Monat",
       "period": "Jährliche Abrechnung",
+      "trial": "7 Tage kostenlos"
+    },
+    "quarterly": {
+      "label": "Vierteljährlich",
+      "price": "14,99 €",
+      "pricePerMonth": "5,00 € / Monat",
+      "period": "Abrechnung alle 3 Monate",
       "badge": "BESTES ANGEBOT",
       "trial": "7 Tage kostenlos"
     },

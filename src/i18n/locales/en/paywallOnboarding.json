@@ -12,9 +12,16 @@
   "plans": {
     "annual": {
       "label": "Annual",
-      "price": "€49.99",
-      "pricePerMonth": "€4.17 / month",
+      "price": "€89.99",
+      "pricePerMonth": "€7.50 / month",
       "period": "Billed yearly",
+      "trial": "7-day free trial"
+    },
+    "quarterly": {
+      "label": "Quarterly",
+      "price": "€14.99",
+      "pricePerMonth": "€5.00 / month",
+      "period": "Billed every 3 months",
       "badge": "BEST VALUE",
       "trial": "7-day free trial"
     },

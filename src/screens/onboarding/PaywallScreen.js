@@ -13,6 +13,7 @@ import { useUser } from '../../context/UserContext';
 
 function planKey(pkg) {
   if (pkg.packageType === 'ANNUAL') return 'annual';
+  if (pkg.packageType === 'THREE_MONTH') return 'quarterly';
   if (pkg.packageType === 'LIFETIME') return 'lifetime';
   return 'monthly';
 }
@@ -38,7 +39,13 @@ export default function PaywallScreen({ navigation }) {
         if (!active) return;
         setOffering(current);
         const packages = current?.availablePackages ?? [];
-        setSelectedPlan(packages.find(pkg => pkg.packageType === 'ANNUAL') ?? packages[0] ?? null);
+        // Le trimestriel est le plan mis en avant (meilleur rapport prix/engagement
+        // réel une fois renouvelé 4x sur l'année) — présélectionné par défaut.
+        setSelectedPlan(
+          packages.find(pkg => pkg.packageType === 'THREE_MONTH')
+          ?? packages.find(pkg => pkg.packageType === 'ANNUAL')
+          ?? packages[0] ?? null
+        );
         if (!packages.length) setLoadError('no-offering');
       } catch (error) {
         if (active) setLoadError(error);

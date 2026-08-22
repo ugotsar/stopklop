@@ -12,9 +12,16 @@
   "plans": {
     "annual": {
       "label": "Annuel",
-      "price": "49,99 €",
-      "pricePerMonth": "4,17 € / mois",
+      "price": "89,99 €",
+      "pricePerMonth": "7,50 € / mois",
       "period": "Facturé chaque année",
+      "trial": "7 jours gratuits"
+    },
+    "quarterly": {
+      "label": "Trimestriel",
+      "price": "14,99 €",
+      "pricePerMonth": "5,00 € / mois",
+      "period": "Facturé tous les 3 mois",
       "badge": "MEILLEURE OFFRE",
       "trial": "7 jours gratuits"
     },
