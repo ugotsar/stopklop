@@ -48,6 +48,26 @@ export function UserProvider({ children }) {
   const profileRef = useRef(null);
   useEffect(() => { profileRef.current = profile; }, [profile]);
 
+  // `computeStats()` lit `new Date()` à chaque appel, mais ne se ré-exécute
+  // que lorsque `profile` change. Si l'app reste ouverte sans aucune action
+  // pendant qu'on passe minuit, "aujourd'hui" reste figé sur la veille —
+  // et avec lui l'argent économisé, les cigarettes du jour, les totaux
+  // semaine/mois — jusqu'à ce qu'une action quelconque touche le profil.
+  // Ce timer vérifie régulièrement le jour calendrier et force un nouveau
+  // rendu (donc un nouveau computeStats) dès qu'il a changé.
+  const [, forceDayRefresh] = useState(0);
+  const lastDayKeyRef = useRef(localDateKey());
+  useEffect(() => {
+    const id = setInterval(() => {
+      const current = localDateKey();
+      if (current !== lastDayKeyRef.current) {
+        lastDayKeyRef.current = current;
+        forceDayRefresh(v => v + 1);
+      }
+    }, 30000); // vérification toutes les 30s : largement assez précis pour un changement de jour
+    return () => clearInterval(id);
+  }, []);
+
   // Écoute l'état Firebase auth
   useEffect(() => {
     const unsub = subscribeToAuth((user) => {
