@@ -23,6 +23,8 @@ import {
 } from '../services/purchases';
 import i18n from '../i18n';
 import { addLocalDays, localDateKey } from '../utils/dateKeys';
+import { IS_DEMO_BUILD } from '../config/demoMode';
+import { buildDemoProfile } from '../utils/demoData';
 
 // ─── Contexte ────────────────────────────────────────────────────────────────
 const UserContext = createContext(null);
@@ -31,7 +33,10 @@ const UserContext = createContext(null);
 export function UserProvider({ children }) {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [firebaseUser, setFirebaseUser] = useState(undefined); // undefined = pas encore connu
+  // undefined = pas encore connu. En mode démo il n'y a jamais de compte réel :
+  // on part directement de `null` pour ne jamais afficher l'écran de connexion
+  // (voir AppNavigator) et ne jamais tenter d'appel Firebase.
+  const [firebaseUser, setFirebaseUser] = useState(IS_DEMO_BUILD ? null : undefined);
   const [syncError, setSyncError] = useState(null);
   const [subscription, setSubscription] = useState({
     loading: true,
@@ -68,8 +73,9 @@ export function UserProvider({ children }) {
     return () => clearInterval(id);
   }, []);
 
-  // Écoute l'état Firebase auth
+  // Écoute l'état Firebase auth (jamais en mode démo : aucun compte réel).
   useEffect(() => {
+    if (IS_DEMO_BUILD) return undefined;
     const unsub = subscribeToAuth((user) => {
       setFirebaseUser(user ?? null);
     });
@@ -206,6 +212,14 @@ export function UserProvider({ children }) {
           }
         } else {
           loaded = await loadProfile();
+          // Mode démo : aucun compte, donc jamais de profil cloud à charger.
+          // Un profil type réaliste (5 semaines d'usage) est chargé au tout
+          // premier lancement, une fois, puis persiste localement comme
+          // n'importe quel profil normal.
+          if (IS_DEMO_BUILD && !loaded) {
+            loaded = buildDemoProfile();
+            await saveProfile(loaded);
+          }
         }
 
         setProfile(loaded);
@@ -341,6 +355,16 @@ export function UserProvider({ children }) {
   // Firebase Auth. L'ordre est important : les règles Firestore exigent que
   // l'utilisateur soit encore authentifié pour supprimer ses données.
   async function deleteAccount() {
+    // Mode démo : aucun compte réel à supprimer. On recharge simplement un
+    // profil type frais, pour qu'un visiteur curieux qui teste ce bouton
+    // retombe sur la démo plutôt que sur un écran cassé.
+    if (IS_DEMO_BUILD) {
+      const fresh = buildDemoProfile();
+      await saveProfile(fresh);
+      profileRef.current = fresh;
+      setProfile(fresh);
+      return;
+    }
     const user = firebaseUser;
     const backup = profileRef.current;
     try {

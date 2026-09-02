@@ -23,6 +23,7 @@ import NotificationsScreen          from '../screens/NotificationsScreen';
 import PersonnaliserHorairesScreen  from '../screens/PersonnaliserHorairesScreen';
 import MentionsLegalesScreen        from '../screens/MentionsLegalesScreen';
 import { isPaywallBypassEnabled } from '../services/purchases';
+import { IS_DEMO_BUILD } from '../config/demoMode';
 
 const AppTheme = {
   ...DefaultTheme,
@@ -47,7 +48,9 @@ export default function AppNavigator({ navigationRef }) {
   // Aucun compte actif : l'utilisateur choisit explicitement Google, Apple ou
   // le mode invité. Cela évite la recréation silencieuse d'un compte anonyme
   // après la suppression d'un compte.
-  if (firebaseUser === null) {
+  // En mode démo, il n'y a jamais de compte réel : on saute directement
+  // à l'app (le profil type est déjà chargé localement, voir UserContext).
+  if (firebaseUser === null && !IS_DEMO_BUILD) {
     return (
       <NavigationContainer theme={AppTheme} ref={navigationRef}>
         <Stack.Navigator screenOptions={{ headerShown: false }}>

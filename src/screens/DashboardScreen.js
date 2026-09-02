@@ -19,6 +19,7 @@ import { colors, spacing, font, radius, shadow, getScreenWidth } from '../theme'
 import { annulerNotificationSoir } from '../services/notifications';
 import { jouerSon } from '../services/sounds';
 import { buildDemoProfile } from '../utils/demoData';
+import { IS_DEMO_BUILD } from '../config/demoMode';
 import { localDateKey } from '../utils/dateKeys';
 import { formatCurrency } from '../utils/currency';
 
@@ -727,7 +728,7 @@ export default function DashboardScreen({ navigation }) {
         {/* ── Boutons dev — 2 cartes horizontales côte à côte ──
              Outils de développement uniquement : jamais montrés à un vrai
              utilisateur en production (Expo Go / build dev = __DEV__ true). */}
-        {__DEV__ && (
+        {__DEV__ && !IS_DEMO_BUILD && (
           <View style={styles.devRow}>
             <TouchableOpacity
               style={styles.devCard}
