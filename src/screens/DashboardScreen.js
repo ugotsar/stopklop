@@ -472,6 +472,13 @@ export default function DashboardScreen({ navigation }) {
   async function handleEnvie({ ts, trigger, note, fume }) {
     const craving = { ts, trigger, ...(note ? { note } : {}), fume: !!fume };
     if (fume) {
+      // `ts` date de la SÉLECTION du déclencheur (début de l'envie) — utile
+      // pour l'analyse des habitudes, mais pas pour le compteur "sans
+      // cigarette depuis" : l'utilisateur peut ensuite passer par un écran
+      // de note avant de confirmer. On horodate la cigarette elle-même à
+      // l'instant précis où ce bouton est pressé, pour que le compteur
+      // reparte bien de zéro à ce moment-là et pas avant.
+      const cigaretteTs = new Date().toISOString();
       const todayKey = localDateKey();
       const current  = profile?.lastSavedDate === todayKey ? (profile.cigarettesToday ?? 0) : 0;
       const entries = (Array.isArray(profile?.cigLog) ? profile.cigLog : [])
@@ -479,7 +486,7 @@ export default function DashboardScreen({ navigation }) {
       await saveDailyConsumption({
         dateKey: todayKey,
         cigarettes: current + 1,
-        entries: [...entries, ts],
+        entries: [...entries, cigaretteTs],
         cravings: [craving],
       });
       return;
