@@ -724,29 +724,33 @@ export default function DashboardScreen({ navigation }) {
           <Image source={UI.coeur_feuilles} style={styles.motivIllus} resizeMode="contain" />
         </TouchableOpacity>
 
-        {/* ── Boutons dev — 2 cartes horizontales côte à côte ── */}
-        <View style={styles.devRow}>
-          <TouchableOpacity
-            style={styles.devCard}
-            onPress={async () => { await updateProfile(buildDemoProfile()); }}
-          >
-            <Text style={styles.devIcon}>🎬</Text>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.devText}>{t('devButtons.loadDemo')}</Text>
-              <View style={styles.devProgress}>
-                <View style={styles.devProgressFill} />
+        {/* ── Boutons dev — 2 cartes horizontales côte à côte ──
+             Outils de développement uniquement : jamais montrés à un vrai
+             utilisateur en production (Expo Go / build dev = __DEV__ true). */}
+        {__DEV__ && (
+          <View style={styles.devRow}>
+            <TouchableOpacity
+              style={styles.devCard}
+              onPress={async () => { await updateProfile(buildDemoProfile()); }}
+            >
+              <Text style={styles.devIcon}>🎬</Text>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.devText}>{t('devButtons.loadDemo')}</Text>
+                <View style={styles.devProgress}>
+                  <View style={styles.devProgressFill} />
+                </View>
               </View>
-            </View>
-          </TouchableOpacity>
-          <View style={styles.devDivider} />
-          <TouchableOpacity
-            style={styles.devCard}
-            onPress={async () => { await resetProfile(); }}
-          >
-            <Text style={styles.devIcon}>↺</Text>
-            <Text style={styles.devText}>{t('devButtons.resetOnboarding')}</Text>
-          </TouchableOpacity>
-        </View>
+            </TouchableOpacity>
+            <View style={styles.devDivider} />
+            <TouchableOpacity
+              style={styles.devCard}
+              onPress={async () => { await resetProfile(); }}
+            >
+              <Text style={styles.devIcon}>↺</Text>
+              <Text style={styles.devText}>{t('devButtons.resetOnboarding')}</Text>
+            </TouchableOpacity>
+          </View>
+        )}
 
       </ScrollView>
     </SafeAreaView>
