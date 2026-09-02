@@ -2,6 +2,7 @@
   "expo": {
     "name": "Stopklop",
     "slug": "stopklop",
+    "scheme": "stopklop",
     "version": "1.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",

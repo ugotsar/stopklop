@@ -1,6 +1,6 @@
 {
   "tagline": "Deja de fumar, un día a la vez.",
-  "google": { "button": "Continuar con Google" },
+  "google": { "button": "Continuar con Google", "unavailable": "El inicio de sesión con Google estará disponible próximamente." },
   "apple": { "button": "Continuar con Apple" },
   "email": {
     "createEntry": "Crear una cuenta con correo electrónico",

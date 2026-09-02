@@ -1,6 +1,6 @@
 {
   "tagline": "Hör auf zu rauchen, einen Tag nach dem anderen.",
-  "google": { "button": "Weiter mit Google" },
+  "google": { "button": "Weiter mit Google", "unavailable": "Die Google-Anmeldung wird in Kürze verfügbar sein." },
   "apple": { "button": "Weiter mit Apple" },
   "email": {
     "createEntry": "Konto mit E-Mail erstellen",

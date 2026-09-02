@@ -1,6 +1,6 @@
 {
   "tagline": "Arrête de fumer, un jour à la fois.",
-  "google": { "button": "Continuer avec Google" },
+  "google": { "button": "Continuer avec Google", "unavailable": "La connexion Google sera activée prochainement." },
   "apple": { "button": "Continuer avec Apple" },
   "email": {
     "createEntry": "Créer un compte avec un e-mail",

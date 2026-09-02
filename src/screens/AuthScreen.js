@@ -119,13 +119,16 @@ export default function AuthScreen() {
           ) : (
             <>
               <TouchableOpacity
-                style={[s.btnGoogle, !google.request && s.btnDisabled]}
-                disabled={!google.request}
+                style={[s.btnGoogle, (!google.request || !google.configured) && s.btnDisabled]}
+                disabled={!google.request || !google.configured}
                 onPress={handleGoogle}
               >
                 <Text style={s.btnGoogleIcon}>G</Text>
                 <Text style={s.btnGoogleText}>{t('google.button')}</Text>
               </TouchableOpacity>
+              {!google.configured && (
+                <Text style={s.providerHint}>{t('google.unavailable')}</Text>
+              )}
 
               {Platform.OS === 'ios' && (
                 <TouchableOpacity style={s.btnAppleCustom} onPress={handleApple}>
@@ -185,6 +188,7 @@ const s = StyleSheet.create({
   btnGoogleText: { fontSize: font.md, fontWeight: '600', color: colors.black },
   btnAppleCustom: { height: 50, width: '100%', backgroundColor: '#000', borderRadius: 30, alignItems: 'center', justifyContent: 'center' },
   btnDisabled:   { opacity: 0.35 },
+  providerHint:  { color: colors.gray, fontSize: 11, textAlign: 'center', marginTop: -5 },
   divider:       { flexDirection: 'row', alignItems: 'center', gap: 10 },
   divLine:       { flex: 1, height: 1, backgroundColor: '#E5E7EB' },
   divText:       { fontSize: 12, color: colors.gray },

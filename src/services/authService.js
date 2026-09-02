@@ -14,7 +14,19 @@ import * as Google from 'expo-auth-session/providers/google';
 import * as AppleAuthentication from 'expo-apple-authentication';
 import * as Crypto from 'expo-crypto';
 import { useEffect, useState } from 'react';
+import { Platform } from 'react-native';
 
+// Chaque plateforme a son propre client OAuth Google. Un client Web ne peut
+// pas servir de client iOS lors d'une authentification native.
+const GOOGLE_WEB_CLIENT_ID = process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID
+  ?? '96875002607-7f342hira5brbv9qiokn2qt5fn6b25ft.apps.googleusercontent.com';
+const GOOGLE_IOS_CLIENT_ID = process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID ?? '';
+const GOOGLE_ANDROID_CLIENT_ID = process.env.EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID ?? '';
+
+// Le hook expo-auth-session exige une valeur native au rendu. Ce repli ne sert
+// qu'à empêcher l'écran de planter : le bouton reste bloqué sans vraie clé.
+const GOOGLE_HOOK_FALLBACK_CLIENT_ID = GOOGLE_WEB_CLIENT_ID
+  || 'stopklop-placeholder.apps.googleusercontent.com';
 // ── Écouter l'état de connexion ───────────────────────────────────────────────
 export function subscribeToAuth(callback) {
   return onAuthStateChanged(auth, callback);
@@ -54,10 +66,17 @@ export async function signInWithEmail(email, password) {
 
 // ── Connexion Google ──────────────────────────────────────────────────────────
 export function useGoogleAuth() {
+  const configured = Platform.select({
+    ios: Boolean(GOOGLE_IOS_CLIENT_ID),
+    android: Boolean(GOOGLE_ANDROID_CLIENT_ID),
+    default: Boolean(GOOGLE_WEB_CLIENT_ID),
+  });
+
   const [request, response, promptAsync] = Google.useAuthRequest({
-    // Client Web Firebase. Les client IDs iOS / Android pourront être ajoutés
-    // dans app.json lors de la préparation des builds stores.
-    webClientId: '96875002607-7f342hira5brbv9qiokn2qt5fn6b25ft.apps.googleusercontent.com',
+    webClientId: GOOGLE_WEB_CLIENT_ID || GOOGLE_HOOK_FALLBACK_CLIENT_ID,
+    iosClientId: GOOGLE_IOS_CLIENT_ID || GOOGLE_HOOK_FALLBACK_CLIENT_ID,
+    androidClientId: GOOGLE_ANDROID_CLIENT_ID || GOOGLE_HOOK_FALLBACK_CLIENT_ID,
+    selectAccount: true,
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -80,6 +99,10 @@ export function useGoogleAuth() {
   }, [response]);
 
   async function signInWithGoogle() {
+    if (!configured) {
+      setError(new Error('google-auth-not-configured'));
+      return;
+    }
     setLoading(true);
     setError(null);
     try {
@@ -90,7 +113,7 @@ export function useGoogleAuth() {
     }
   }
 
-  return { request, signInWithGoogle, loading, error };
+  return { request, signInWithGoogle, loading, error, configured };
 }
 
 // ── Connexion Apple ───────────────────────────────────────────────────────────
