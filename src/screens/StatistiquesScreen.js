@@ -514,7 +514,7 @@ export default function StatistiquesScreen() {
   }
 
   // ── Données de base ──────────────────────────────────────────────────────────
-  const { allKeys, allValues, consoAvant, consoEstimee, prixCig, serie, objectifJour, argentEcoCumul, vieGagneeStrCumul } = stats;
+  const { allKeys, allValues, consoAvant, consoEstimee, prixCig, serie, objectifJour, argentEcoCumul, vieGagneeStrCumul, nbJoursEnregistres } = stats;
   const currency = profile?.monnaie ?? 'EUR';
   const hist = Object.fromEntries(allKeys.map((k, i) => [k, allValues[i]]));
   const cigLog   = Array.isArray(profile?.cigLog) ? profile.cigLog : [];
@@ -699,6 +699,13 @@ export default function StatistiquesScreen() {
   const goalPct       = goalTarget > 0 ? Math.min(100, Math.round((argentEcoCumul / goalTarget) * 100)) : 0;
   const goalRemaining = Math.max(0, goalTarget - argentEcoCumul);
   const goalReached   = argentEcoCumul >= goalTarget;
+
+  // Rythme d'économie moyen depuis le début (basé sur les jours réellement
+  // renseignés, comme le reste des stats cumulées) → projection concrète du
+  // nombre de jours restants pour atteindre le palier, plutôt qu'une barre
+  // de progression sans indication de "quoi faire pour y arriver".
+  const goalDailyRate = nbJoursEnregistres > 0 ? argentEcoCumul / nbJoursEnregistres : 0;
+  const goalEtaDays    = goalDailyRate > 0 ? Math.ceil(goalRemaining / goalDailyRate) : null;
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -906,7 +913,7 @@ export default function StatistiquesScreen() {
             pill={t('gridTiles.cumulMoney', { amount: fmtMoney(argentEcoCumul) })}
           />
           <StatGridTile
-            tone="purple" illus={UI.sablier}
+            tone="purple" illus={UI.sablier_vie}
             title={t('lifeCard.title')} value={hasPeriodData ? fmtVie(p.vieMins) : '—'}
             sub={periodeLabel}
             pill={t('gridTiles.cumulLife', { value: vieGagneeStrCumul })}
@@ -934,6 +941,19 @@ export default function StatistiquesScreen() {
               {goalReached ? t('goalProgress.goalReached') : t('goalProgress.remaining', { amount: fmtMoney(goalRemaining) })}
             </Text>
           </View>
+          {/* Quoi faire pour y arriver, pas juste où on en est : rythme moyen
+              réel + projection du nombre de jours restants au même rythme. */}
+          {!goalReached && (
+            <Text style={styles.progressHint}>
+              {goalEtaDays != null
+                ? t('goalProgress.etaHint', {
+                    rate: fmtMoney(goalDailyRate),
+                    days: goalEtaDays,
+                    unit: t('common:day', { count: goalEtaDays }),
+                  })
+                : t('goalProgress.noProgressHint')}
+            </Text>
+          )}
           <TouchableOpacity onPress={() => setGoalModalOpen(true)} style={styles.progressEditBtn} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}>
             <Text style={styles.progressEditText}>
               {objectifEconomiePerso ? t('goalProgress.editGoal') : t('goalProgress.setGoal')}
@@ -1191,6 +1211,7 @@ const styles = StyleSheet.create({
   progressFooter: { flexDirection: 'row', justifyContent: 'space-between', marginTop: spacing.sm },
   progressPct:   { fontSize: 12, fontWeight: '700', color: colors.primaryDeep },
   progressRemaining: { fontSize: 12, color: colors.gray },
+  progressHint:  { fontSize: 12, color: colors.gray, marginTop: spacing.xs, fontStyle: 'italic' },
   progressEditBtn:  { alignSelf: 'flex-start', marginTop: spacing.sm },
   progressEditText: { fontSize: 12, fontWeight: '700', color: colors.primary },
 });

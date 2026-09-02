@@ -80,6 +80,8 @@
     "reached": "erreicht",
     "remaining": "Noch {{amount}} bis zum Ziel",
     "goalReached": "Ziel erreicht 🎉",
+    "etaHint": "Bei Ihrem aktuellen Tempo (durchschnittlich {{rate}}/Tag) erreichen Sie es in etwa {{days}} {{unit}}.",
+    "noProgressHint": "Reduzieren Sie Ihren Konsum, um bei diesem Etappenziel voranzukommen.",
     "setGoal": "Mein Ziel festlegen ›",
     "editGoal": "Mein Ziel bearbeiten ›",
     "modalTitle": "Mein Sparziel",

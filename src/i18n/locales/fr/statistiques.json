@@ -80,6 +80,8 @@
     "reached": "atteint",
     "remaining": "Il vous reste {{amount}}",
     "goalReached": "Objectif atteint 🎉",
+    "etaHint": "À votre rythme actuel ({{rate}}/jour en moyenne), vous l'atteindrez dans environ {{days}} {{unit}}.",
+    "noProgressHint": "Réduisez votre consommation pour commencer à progresser vers ce palier.",
     "setGoal": "Définir mon objectif ›",
     "editGoal": "Modifier mon objectif ›",
     "modalTitle": "Mon objectif d'économies",

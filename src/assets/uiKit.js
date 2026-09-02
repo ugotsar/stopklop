@@ -28,7 +28,6 @@ export const UI = {
   pousse_resume:         require('../../assets/ui-kit/pousse_resume_3d.png'),
   resume_graphique:      require('../../assets/ui-kit/resume_graphique_3d.png'),
   reveil:                require('../../assets/ui-kit/reveil_3d.png'),
-  sablier:               require('../../assets/ui-kit/sablier_3d.png'),
   tendance_baisse:       require('../../assets/ui-kit/tendance_baisse_3d.png'),
   tirelire:              require('../../assets/ui-kit/tirelire_3d.png'),
 

@@ -80,6 +80,8 @@
     "reached": "reached",
     "remaining": "You have {{amount}} to go",
     "goalReached": "Goal reached 🎉",
+    "etaHint": "At your current pace ({{rate}}/day on average), you'll reach it in about {{days}} {{unit}}.",
+    "noProgressHint": "Cut down your consumption to start making progress toward this milestone.",
     "setGoal": "Set my goal ›",
     "editGoal": "Edit my goal ›",
     "modalTitle": "My savings goal",
