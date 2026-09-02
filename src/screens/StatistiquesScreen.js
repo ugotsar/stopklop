@@ -974,7 +974,7 @@ export default function StatistiquesScreen() {
         {/* ── Objectif (réf. "Objectif du jour" de la maquette) ── */}
         <View style={styles.card}>
           <View style={styles.cardHeader}>
-            <Image source={UI.cible_objectif} style={styles.cardIllus} resizeMode="contain" />
+            <Image source={UI.cible_fleche_feuillue} style={styles.cardIllus} resizeMode="contain" />
             <Text style={styles.cardTitle}>
               {activeTab === 'jour' ? t('goalCard.titleDay') : t('goalCard.titleAverage')}
             </Text>

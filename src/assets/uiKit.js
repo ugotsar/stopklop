@@ -16,6 +16,12 @@ export const UI = {
   pile_pieces_feuilles:  require('../../assets/ui-kit/pile_pieces_feuilles_3d.png'),
   progression_fleche:    require('../../assets/ui-kit/progression_fleche_3d.png'),
 
+  // 01bis — Nouveaux picto 2×2 accueil (+ "objectif du jour" sur Statistiques)
+  cible_fleche_feuillue:      require('../../assets/ui-kit/cible_fleche_feuillue_3d.png'),
+  portefeuille_euros_feuilles: require('../../assets/ui-kit/portefeuille_euros_feuilles_3d.png'),
+  sablier_bois_feuilles:      require('../../assets/ui-kit/sablier_bois_feuilles_3d.png'),
+  escalier_progression_drapeau: require('../../assets/ui-kit/escalier_progression_drapeau_3d.png'),
+
   // 02 — Statistiques
   bocal_economies:       require('../../assets/ui-kit/bocal_economies_3d.png'),
   cible_objectif:        require('../../assets/ui-kit/cible_objectif_3d.png'),

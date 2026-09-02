@@ -9,10 +9,10 @@ import { useTranslation } from 'react-i18next';
 
 import { UI } from '../assets/uiKit';
 const PICTOS = {
-  temps:    UI.chrono_vie_preservee,
-  evitees:  UI.progression_fleche,
-  objectif: UI.cible_objectif,
-  economie: UI.pile_pieces_feuilles,
+  temps:    UI.sablier_bois_feuilles,
+  evitees:  UI.escalier_progression_drapeau,
+  objectif: UI.cible_fleche_feuillue,
+  economie: UI.portefeuille_euros_feuilles,
 };
 import { useUser } from '../context/UserContext';
 import { colors, spacing, font, radius, shadow, getScreenWidth } from '../theme';
