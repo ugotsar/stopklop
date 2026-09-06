@@ -1,39 +1,109 @@
 {
+  "chart": {
+    "dayShort": "T"
+  },
   "affirmations": {
-    "title": "Erkennst du dich\nin dieser Situation wieder?",
+    "title": "Erkennst du dich in\ndieser Situation wieder?",
     "quoted": "„{{text}}“",
     "items": [
-      "Ich habe schon versucht, das Rauchen zu reduzieren oder aufzuhören, aber ich habe es nicht durchgehend geschafft.",
-      "Manchmal zünde ich mir automatisch eine Zigarette an, ohne wirklich Lust darauf zu haben.",
-      "Ich weiß nicht wirklich, wie ich schrittweise reduzieren kann, ohne in meine alten Gewohnheiten zurückzufallen."
-    ]
+      "Ich habe schon versucht zu reduzieren oder aufzuhören, aber ich schaffe es nicht, dranzubleiben.",
+      "Manchmal zünde ich mir aus Reflex eine Zigarette an, ohne wirklich Lust darauf zu haben.",
+      "Ich möchte schrittweise reduzieren, weiß aber nicht, wo ich anfangen soll."
+    ],
+    "footer": "Jeder Weg ist anders.",
+    "pathReduce": "Reduzieren",
+    "pathStop": "Aufhören"
   },
   "deculpabilisation": {
-    "title": "Keine Sorge, es ist nicht\neinfach nur mangelnde Willenskraft",
-    "subtitle": "Die Abhängigkeit basiert auf Gewohnheiten, Auslösern und Automatismen. Wenn du sie verstehst, kannst du nach und nach die Kontrolle zurückgewinnen.",
-    "withoutSupport": "Ohne Begleitung",
-    "withStopklop": "Mit Stopklop",
-    "note": "Veranschaulichung des Prinzips — dein Weg wird einzigartig sein."
+    "title": "Ein konkreter Plan,\num voranzukommen",
+    "subtitle": "Beobachte deinen Konsum, setz dir ein Ziel und sieh deine Fortschritte mit Stopklop.",
+    "chartTitle": "Deine Reduktion, Tag für Tag",
+    "chartUnit": "Zigaretten / Tag",
+    "legendStart": "Ausgangsniveau",
+    "legendDaily": "Tägliche Erfassung",
+    "lead": "Ein Tagesziel und eine Erfassung, damit du weißt, wo du stehst.",
+    "disclaimer": "Beispielhafte Darstellung, kein garantiertes Ergebnis."
   },
   "solution": {
-    "title": "Geh in deinem eigenen Tempo voran,\nmit einem passenden Plan",
-    "subtitle": "Jeder Raucher ist anders. Stopklop erstellt einen individuellen Plan basierend auf deinem Konsum, deinen Gewohnheiten und deinem Ziel: schrittweise reduzieren oder komplett aufhören."
+    "title": "Geh in deinem Tempo voran,\nmit einem passenden Plan",
+    "subtitle": "Dein Ausgangspunkt, deine Gewohnheiten, dein Ziel: ein Weg, der zu dir passt.",
+    "chips": {
+      "consumption": "Konsum",
+      "habits": "Gewohnheiten",
+      "goal": "Ziel"
+    }
   },
   "benefits": {
     "items": [
-      { "emoji": "🚬", "title": "Jede Zigarette wird zu einer Entscheidung", "text": "Erfasse deine Zigaretten ganz einfach und entdecke, welche du aus Verlangen rauchst… und welche einfach aus Gewohnheit." },
-      { "emoji": "🔍", "title": "Erkenne, was dein Rauchverlangen auslöst", "text": "Stopklop analysiert die Momente, Situationen und Emotionen, die mit deinem Konsum verbunden sind, damit du Verlangen besser vorhersehen kannst." },
-      { "emoji": "📉", "title": "Reduziere in deinem Tempo, ohne unnötigen Druck", "text": "Dein Ziel entwickelt sich entsprechend deinem Konsum und deinen Fortschritten. Jeder Schritt bleibt realistisch, messbar und an deinen Alltag angepasst." },
-      { "emoji": "💚", "title": "Jede vermiedene Zigarette zählt wirklich", "text": "Verfolge in Echtzeit die vermiedenen Zigaretten, das gesparte Geld und die schrittweise zurückgewonnene Zeit." }
-    ]
+      {
+        "title": "Erkenne die Momente,\nin denen du rauchst",
+        "text": "Erfasse jede Zigarette und ihren Kontext, um zu verstehen, was immer wiederkehrt."
+      },
+      {
+        "title": "Erkenne, was dein\nRauchverlangen auslöst",
+        "text": "Kaffee, Stress, Freunde oder Pause: verbinde jede Zigarette mit ihrem Kontext."
+      },
+      {
+        "title": "Reduziere in deinem Tempo,\nohne unnötigen Druck",
+        "text": "Ein klares Ziel bei jedem Schritt, um schrittweise zum Rauchstopp zu kommen."
+      },
+      {
+        "title": "Jede vermiedene Zigarette\nzählt wirklich",
+        "text": "Weniger Zigaretten, mehr Ersparnis: sieh konkret, wie weit du gekommen bist."
+      }
+    ],
+    "journal": {
+      "title": "Dein Tagebuch",
+      "tag": "Beispiel",
+      "rows": [
+        { "time": "09:00", "label": "Nach dem Kaffee" },
+        { "time": "13:15", "label": "Während einer Pause" },
+        { "time": "16:00", "label": "Mit einem Kaffee" }
+      ],
+      "insightTitle": "Kaffee kommt oft vor",
+      "insightText": "In diesem Beispiel hängen 2 von 3 Zigaretten mit Kaffee zusammen."
+    },
+    "triggers": {
+      "coffee": "Kaffee",
+      "stress": "Stress",
+      "alcohol": "Alkohol",
+      "friends": "Freunde",
+      "pause": "Pause",
+      "energy": "Energie",
+      "footer": "Deine Impulse verstehen, ohne dich zu verurteilen."
+    },
+    "pace": {
+      "title": "Ein schrittweiser Weg",
+      "unit": "Zig./T",
+      "note": "Beispiel für anpassbare Stufen",
+      "goalTitle": "Dein Ziel für heute",
+      "goalValue": "Maximal 8 Zigaretten · Beispiel"
+    },
+    "stats": {
+      "avoidedValue": "47 vermiedene Zigaretten",
+      "avoidedNote": "Im Vergleich zu deinem Ausgangskonsum",
+      "savedValue": "28,20 € gespart",
+      "savedNote": "47 Zigaretten × 0,60 €",
+      "timeValue": "3 Std. 55 gewonnen",
+      "timeNote": "Schätzung: 5 Minuten pro Zigarette",
+      "chartTitle": "Vermiedene Zigaretten · kumuliert",
+      "disclaimer": "Beispieldaten über 7 Tage."
+    }
   },
   "goalType": {
     "title": "Was ist dein Ziel?",
-    "subtitle": "Wähle das Ziel, das dich heute am meisten motiviert.",
+    "subtitle": "Wähle, was heute zu dir passt. Du kannst deinen Weg später anpassen.",
     "options": {
-      "reduce": { "title": "Schrittweise reduzieren", "desc": "Schritt für Schritt reduzieren, in deinem eigenen Tempo" },
-      "stop": { "title": "Komplett aufhören", "desc": "0 Zigaretten, ab deinem Startdatum" }
-    }
+      "reduce": {
+        "title": "Schrittweise reduzieren",
+        "desc": "Meinen Konsum verringern, Schritt für Schritt."
+      },
+      "stop": {
+        "title": "Komplett aufhören",
+        "desc": "Meinen Rauchstopp vorbereiten und rauchfrei leben."
+      }
+    },
+    "note": "Du bestimmst dein Tempo."
   },
   "consumption": {
     "title": "Wie viele Zigaretten\nrauchst du derzeit?",
@@ -67,22 +137,26 @@
     "error": "Dein Ziel muss unter deinem aktuellen Konsum liegen ({{count}} / Tag)."
   },
   "currency": {
-    "title": "Wähle deine Währung",
-    "subtitle": "Um deine Ersparnisse genau zu verfolgen.",
-    "options": { "EUR": "Euro", "CHF": "Schweizer Franken", "GBP": "Britisches Pfund" }
+    "title": "Welche Währung\nnutzt du?",
+    "subtitle": "Um deine Ausgaben und Ersparnisse in der richtigen Währung anzuzeigen.",
+    "options": {
+      "EUR": { "name": "Euro", "code": "EUR · €" },
+      "CHF": { "name": "Schweizer Franken", "code": "CHF" },
+      "GBP": { "name": "Britisches Pfund", "code": "GBP · £" }
+    }
   },
   "motivations": {
-    "title": "Was sind deine\nHauptmotivationen?",
-    "subtitle": "Wähle bis zu 3 Motivationen aus, die dir am wichtigsten sind.",
+    "title": "Was motiviert dich\nam meisten?",
+    "subtitle": "Wähle die Gründe, die dir wichtig sind. Du kannst mehrere auswählen.",
     "options": {
       "health": "Meine Gesundheit",
-      "family": "Meine Familie",
+      "family": "Meine Angehörigen",
       "appearance": "Mein Aussehen",
       "money": "Geld sparen",
-      "breathing": "Bessere Atmung",
-      "fitness": "Fitness zurückgewinnen"
+      "breathing": "Meine Atmung",
+      "fitness": "Meine Fitness"
     },
-    "personalTitle": "✏️  Meine eigene Motivation schreiben",
+    "personalTitle": "Eigenen Grund hinzufügen",
     "personalPlaceholder": "Deine Motivation…",
     "personalA11y": "Persönliche Motivation"
   },

@@ -4,7 +4,7 @@ import {
   TextInput, ActivityIndicator, KeyboardAvoidingView, Platform, Image,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Svg, { Path, Circle } from 'react-native-svg';
+import Svg, { Path, Circle, Line, Text as SvgText } from 'react-native-svg';
 import { Dimensions } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { colors, spacing, font, radius } from '../../theme';
@@ -18,33 +18,65 @@ const { height: SCREEN_H } = Dimensions.get('window');
 
 const DRAFT_KEY = '@stopklop_onboarding_draft';
 
-// Illustrations HD (pack stopklop-illustrations-hd, sans texte incrusté)
-const ILLUS = {
-  affirmation0:      require('../../../assets/onboarding/stopklop-illustrations-hd/illustrations/02-tentatives-precedentes.jpg'),
-  affirmation1:      require('../../../assets/onboarding/stopklop-illustrations-hd/illustrations/03-cigarette-automatique.jpg'),
-  affirmation2:      require('../../../assets/onboarding/stopklop-illustrations-hd/illustrations/04-choix-parcours.jpg'),
-  deculpabilisation: require('../../../assets/onboarding/stopklop-illustrations-hd/illustrations/05-comparaison-accompagnement.jpg'),
-  solution:          require('../../../assets/onboarding/stopklop-illustrations-hd/illustrations/06-plan-adapte.jpg'),
-  benefice0:         require('../../../assets/onboarding/stopklop-illustrations-hd/illustrations/07-enregistrement-cigarettes.jpg'),
-  benefice1:         require('../../../assets/onboarding/stopklop-illustrations-hd/illustrations/08-declencheurs.jpg'),
-  benefice2:         require('../../../assets/onboarding/stopklop-illustrations-hd/illustrations/09-reduction-progressive.jpg'),
-  benefice3:         require('../../../assets/onboarding/stopklop-illustrations-hd/illustrations/10-benefices-concrets.jpg'),
-  objReduire:        require('../../../assets/onboarding/stopklop-illustrations-hd/illustrations/11-objectif-reduire.jpg'),
-  objArreter:        require('../../../assets/onboarding/stopklop-illustrations-hd/illustrations/12-objectif-arreter.jpg'),
-};
+// Pictogrammes de la synthèse (pack stopklop-illustrations-hd)
 const PICTOS_PLAN = {
   objectif: require('../../../assets/onboarding/stopklop-illustrations-hd/pictogrammes/07-plan-objectif.jpg'),
   palier:   require('../../../assets/onboarding/stopklop-illustrations-hd/pictogrammes/08-plan-palier-protege.jpg'),
   economie: require('../../../assets/onboarding/stopklop-illustrations-hd/pictogrammes/09-plan-economies.jpg'),
 };
-const PICTOS_MOTIV = {
-  health:     require('../../../assets/onboarding/stopklop-illustrations-hd/pictogrammes/01-motivation-sante.jpg'),
-  family:     require('../../../assets/onboarding/stopklop-illustrations-hd/pictogrammes/02-motivation-famille.jpg'),
-  appearance: require('../../../assets/onboarding/stopklop-illustrations-hd/pictogrammes/03-motivation-apparence.jpg'),
-  money:      require('../../../assets/onboarding/stopklop-illustrations-hd/pictogrammes/04-motivation-economies.jpg'),
-  breathing:  require('../../../assets/onboarding/stopklop-illustrations-hd/pictogrammes/05-motivation-souffle.jpg'),
-  fitness:    require('../../../assets/onboarding/stopklop-illustrations-hd/pictogrammes/06-motivation-condition.jpg'),
+// ── Pack « Stopklop_Design_Assets_V2 » ───────────────────────────────────────
+// Les 3 scènes illustrées sont des PNG RGB sur fond blanc opaque (volontaire :
+// ne pas les détourer, cf. GUIDE-CLAUDE.md). Les icônes sont des RGBA
+// transparents. Les courbes des écrans 05 et 10 sont dessinées nativement.
+const V2 = {
+  illusTentatives:  require('../../../assets/onboarding/v2/02-identification-tentatives/illustration-tentatives/illustration-tentatives.png'),
+  actionNon:        require('../../../assets/onboarding/v2/02-identification-tentatives/non/non.png'),
+  actionOui:        require('../../../assets/onboarding/v2/02-identification-tentatives/oui/oui.png'),
+  illusAutomatisme: require('../../../assets/onboarding/v2/03-identification-automatisme/illustration-automatisme/illustration-automatisme.png'),
+  illusChemins:     require('../../../assets/onboarding/v2/04-identification-reduction/illustration-chemins/illustration-chemins.png'),
+  illusPlan:        require('../../../assets/onboarding/v2/06-plan-adapte/illustration-plan/illustration-plan.png'),
+  etapeConso:       require('../../../assets/onboarding/v2/06-plan-adapte/etape-consommation/etape-consommation.png'),
+  etapeHabitudes:   require('../../../assets/onboarding/v2/06-plan-adapte/etape-habitudes/etape-habitudes.png'),
+  etapeObjectif:    require('../../../assets/onboarding/v2/06-plan-adapte/etape-objectif/etape-objectif.png'),
+  habitudesReperees: require('../../../assets/onboarding/v2/07-cigarette-choix/habitudes-reperees/habitudes-reperees.png'),
+  journalCoffee:    require('../../../assets/onboarding/v2/07-cigarette-choix/journal-coffee/journal-coffee.png'),
+  journalPause:     require('../../../assets/onboarding/v2/07-cigarette-choix/journal-pause/journal-pause.png'),
+  illusDeclencheurs: require('../../../assets/onboarding/v2/08-declencheurs/illustration-declencheurs/illustration-declencheurs.png'),
+  decCoffee:        require('../../../assets/onboarding/v2/08-declencheurs/declencheur-coffee/declencheur-coffee.png'),
+  decStress:        require('../../../assets/onboarding/v2/08-declencheurs/declencheur-stress/declencheur-stress.png'),
+  decWine:          require('../../../assets/onboarding/v2/08-declencheurs/declencheur-wine/declencheur-wine.png'),
+  decFriends:       require('../../../assets/onboarding/v2/08-declencheurs/declencheur-friends/declencheur-friends.png'),
+  decPause:         require('../../../assets/onboarding/v2/08-declencheurs/declencheur-pause/declencheur-pause.png'),
+  decEnergy:        require('../../../assets/onboarding/v2/08-declencheurs/declencheur-energy/declencheur-energy.png'),
+  objectifDuJour:   require('../../../assets/onboarding/v2/09-reduction-rythme/objectif-du-jour/objectif-du-jour.png'),
+  statAvoided:      require('../../../assets/onboarding/v2/10-benefices-concrets/avoided/avoided.png'),
+  statWallet:       require('../../../assets/onboarding/v2/10-benefices-concrets/wallet/wallet.png'),
+  statTime:         require('../../../assets/onboarding/v2/10-benefices-concrets/time/time.png'),
+  goalReduce:       require('../../../assets/onboarding/v2/11-objectif/reduce/reduce.png'),
+  goalStop:         require('../../../assets/onboarding/v2/11-objectif/stop/stop.png'),
+  devEur:           require('../../../assets/onboarding/v2/17-devise/eur/eur.png'),
+  devChf:           require('../../../assets/onboarding/v2/17-devise/chf/chf.png'),
+  devGbp:           require('../../../assets/onboarding/v2/17-devise/gbp/gbp.png'),
+  motivHealth:      require('../../../assets/onboarding/v2/18-motivations/health/health.png'),
+  motivFriends:     require('../../../assets/onboarding/v2/18-motivations/friends/friends.png'),
+  motivSpark:       require('../../../assets/onboarding/v2/18-motivations/spark/spark.png'),
+  motivWallet:      require('../../../assets/onboarding/v2/18-motivations/wallet/wallet.png'),
+  motivBreath:      require('../../../assets/onboarding/v2/18-motivations/breath/breath.png'),
+  motivTrend:       require('../../../assets/onboarding/v2/18-motivations/trend/trend.png'),
+  motivPerso:       require('../../../assets/onboarding/v2/18-motivations/motivation-personnelle/motivation-personnelle.png'),
 };
+const AFFIRMATION_HERO = [V2.illusTentatives, V2.illusAutomatisme, V2.illusChemins];
+const DEVISE_ICONS = { EUR: V2.devEur, CHF: V2.devChf, GBP: V2.devGbp };
+const MOTIV_ICONS_V2 = {
+  health: V2.motivHealth, family: V2.motivFriends, appearance: V2.motivSpark,
+  money: V2.motivWallet, breathing: V2.motivBreath, fitness: V2.motivTrend,
+};
+
+// Données d'exemple des graphiques (cf. GUIDE-CLAUDE.md § Graphiques) :
+// illustratives uniquement, à remplacer par les données réelles en production.
+const SUIVI_QUOTIDIEN = [12, 11, 12, 9, 8, 7, 5];   // écran 05 — cig./jour
+const CUMUL_EVITEES   = [4, 10, 15, 23, 29, 36, 47]; // écran 10 — cumul évitées
+const PALIERS_V2      = [12, 10, 8, 5];              // écran 09 — cig./jour
 
 // ── Contenus statiques ────────────────────────────────────────────────────────
 // Les libellés (titre/texte/label) sont désormais résolus via i18n au moment
@@ -66,18 +98,61 @@ const DEVISES = [
   { code: 'GBP', symbole: '£' },
 ];
 
-// ── Graphique illustratif (page déculpabilisation) ───────────────────────────
-function IllustrativeChart({ width = 260, height = 110 }) {
-  // Purement illustratif — aucune statistique réelle.
-  const bad  = 'M0,30 L40,45 L75,25 L115,55 L150,40 L195,70 L230,55 L260,75';
-  const good = 'M0,30 C60,38 120,70 180,88 C210,96 240,100 260,102';
+// ── Icône « Non » ────────────────────────────────────────────────────────────
+// Le pack V2 livre une icône « pause » (deux barres) à la place d'une croix
+// pour assets/non/non.png. On dessine la croix nativement, dans le même style
+// que oui.png (pastille menthe + trait vert foncé) en attendant l'asset corrigé.
+function IconNon({ size = 32 }) {
   return (
-    <Svg width={width} height={height}>
-      <Path d={bad}  stroke="#EF4444" strokeWidth={2.5} fill="none" strokeLinecap="round" opacity={0.8} />
-      <Path d={good} stroke={colors.primary} strokeWidth={2.5} fill="none" strokeLinecap="round" />
-      <Circle cx={260} cy={75}  r={4} fill="#EF4444" />
-      <Circle cx={260} cy={102} r={4} fill={colors.primary} />
+    <Svg width={size} height={size} viewBox="0 0 40 40">
+      <Circle cx={20} cy={20} r={20} fill={colors.primaryLight} />
+      <Path d="M13,13 L27,27 M27,13 L13,27" stroke={colors.primaryDeep}
+        strokeWidth={3.2} strokeLinecap="round" />
     </Svg>
+  );
+}
+
+// ── Graphique en courbe, dessiné nativement ──────────────────────────────────
+// Le pack fournit des PNG de courbes à titre de référence seulement : le guide
+// demande un graphique natif, pour garder axes, unité et légendes accessibles
+// et pouvoir brancher les vraies données en production.
+function LineChart({ data, maxY, ticks, refValue, dayShort }) {
+  const [w, setW] = useState(0);
+  const H = 176, padL = 30, padR = 10, padT = 12, padB = 26;
+  const innerW = Math.max(0, w - padL - padR);
+  const innerH = H - padT - padB;
+  const x = i => padL + (innerW * i) / (data.length - 1);
+  const y = v => padT + innerH * (1 - v / maxY);
+  const d = data.map((v, i) => `${i ? 'L' : 'M'}${x(i)},${y(v)}`).join(' ');
+
+  return (
+    <View onLayout={e => setW(e.nativeEvent.layout.width)}>
+      {w > 0 && (
+        <Svg width={w} height={H}>
+          {ticks.map(t => (
+            <Line key={`g${t}`} x1={padL} y1={y(t)} x2={w - padR} y2={y(t)}
+              stroke="#E8ECE9" strokeWidth={1} />
+          ))}
+          {ticks.map(t => (
+            <SvgText key={`l${t}`} x={padL - 7} y={y(t) + 4} fontSize={10}
+              fill={colors.gray} textAnchor="end">{String(t)}</SvgText>
+          ))}
+          {refValue != null && (
+            <Line x1={padL} y1={y(refValue)} x2={w - padR} y2={y(refValue)}
+              stroke="#C8A88A" strokeWidth={2} strokeDasharray="6 5" />
+          )}
+          <Path d={d} stroke={colors.primary} strokeWidth={3} fill="none"
+            strokeLinecap="round" strokeLinejoin="round" />
+          {data.map((v, i) => (
+            <Circle key={`p${i}`} cx={x(i)} cy={y(v)} r={3.5} fill={colors.primary} />
+          ))}
+          {data.map((_, i) => (
+            <SvgText key={`d${i}`} x={x(i)} y={H - 7} fontSize={10}
+              fill={colors.gray} textAnchor="middle">{`${dayShort}${i + 1}`}</SvgText>
+          ))}
+        </Svg>
+      )}
+    </View>
   );
 }
 
@@ -292,8 +367,20 @@ export default function OnboardingFlow({ navigation }) {
         <View style={st.affirmationCard}>
           <Text style={st.affirmationText}>{t('affirmations.quoted', { text: affirmationItems[idx] })}</Text>
         </View>
-        <View style={st.illusBox}>
-          <Image source={ILLUS[page]} style={st.illusImg} resizeMode="contain" />
+        {/* Les panneaux de l'illustration 04 sont vides : leurs libellés sont
+            natifs (positions reprises de page-redesignee.svg). */}
+        <View style={idx === 2 ? st.illusBoxRatio : st.illusBoxBlanc}>
+          <Image source={AFFIRMATION_HERO[idx]} style={st.illusImg} resizeMode="contain" />
+          {idx === 2 && (
+            <>
+              <Text style={[st.cheminLabel, { left: '14.2%', top: '29%', color: colors.primaryDeep }]}>
+                {t('affirmations.pathReduce')}
+              </Text>
+              <Text style={[st.cheminLabel, { left: '70.9%', top: '29%', color: '#A9653C' }]}>
+                {t('affirmations.pathStop')}
+              </Text>
+            </>
+          )}
         </View>
         <View style={st.ouiNonRow}>
           <TouchableOpacity
@@ -303,7 +390,7 @@ export default function OnboardingFlow({ navigation }) {
               set('identification', id); next();
             }}
           >
-            <Text style={st.ouiNonIcon}>✕</Text>
+            <IconNon size={32} />
             <Text style={st.ouiNonLabel}>{t('common:no')}</Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -313,10 +400,11 @@ export default function OnboardingFlow({ navigation }) {
               set('identification', id); next();
             }}
           >
-            <Text style={[st.ouiNonIcon, { color: colors.primary }]}>✓</Text>
+            <Image source={V2.actionOui} style={st.ouiNonImg} resizeMode="contain" />
             <Text style={st.ouiNonLabel}>{t('common:yes')}</Text>
           </TouchableOpacity>
         </View>
+        <Text style={st.footerNote}>{t('affirmations.footer')}</Text>
       </>
     );
     cta = null; // les boutons Oui/Non font avancer
@@ -329,20 +417,29 @@ export default function OnboardingFlow({ navigation }) {
         <Text style={st.subtitle}>
           {t('deculpabilisation.subtitle')}
         </Text>
-        <View style={[st.illusBox, { height: 280 }]}>
-          <Image source={ILLUS.deculpabilisation} style={st.illusImg} resizeMode="contain" />
-        </View>
-        <View style={{ flexDirection: 'row', justifyContent: 'center', gap: spacing.lg, marginTop: 4 }}>
-          <View style={st.chartLegRow}>
-            <View style={[st.legDot, { backgroundColor: '#EF4444' }]} />
-            <Text style={st.legText}>{t('deculpabilisation.withoutSupport')}</Text>
+        <View style={st.chartCard}>
+          <Text style={st.chartCardTitre}>{t('deculpabilisation.chartTitle')}</Text>
+          <Text style={st.chartCardUnite}>{t('deculpabilisation.chartUnit')}</Text>
+          <LineChart
+            data={SUIVI_QUOTIDIEN}
+            maxY={15}
+            ticks={[0, 5, 10, 15]}
+            refValue={SUIVI_QUOTIDIEN[0]}
+            dayShort={t('chart.dayShort')}
+          />
+          <View style={st.legendRow}>
+            <View style={st.legendItem}>
+              <View style={[st.legendDash, { backgroundColor: '#C8A88A' }]} />
+              <Text style={st.legendLabel}>{t('deculpabilisation.legendStart')}</Text>
+            </View>
+            <View style={st.legendItem}>
+              <View style={[st.legendDash, { backgroundColor: colors.primary }]} />
+              <Text style={st.legendLabel}>{t('deculpabilisation.legendDaily')}</Text>
+            </View>
           </View>
-          <View style={st.chartLegRow}>
-            <View style={[st.legDot, { backgroundColor: colors.primary }]} />
-            <Text style={st.legText}>{t('deculpabilisation.withStopklop')}</Text>
-          </View>
         </View>
-        <Text style={st.chartNote}>{t('deculpabilisation.note')}</Text>
+        <Text style={st.leadText}>{t('deculpabilisation.lead')}</Text>
+        <Text style={st.disclaimer}>{t('deculpabilisation.disclaimer')}</Text>
       </>
     );
   }
@@ -351,12 +448,26 @@ export default function OnboardingFlow({ navigation }) {
     body = (
       <>
         <Text style={st.title}>{t('solution.title')}</Text>
-        <View style={[st.illusBox, { height: 260, marginBottom: spacing.lg }]}>
-          <Image source={ILLUS.solution} style={st.illusImg} resizeMode="contain" />
-        </View>
         <Text style={st.subtitle}>
           {t('solution.subtitle')}
         </Text>
+        <View style={st.illusBoxBlanc}>
+          <Image source={V2.illusPlan} style={st.illusImg} resizeMode="contain" />
+        </View>
+        <View style={st.solutionChipsRow}>
+          <View style={st.solutionChip}>
+            <Image source={V2.etapeConso} style={st.solutionChipIcon} resizeMode="contain" />
+            <Text style={st.solutionChipText}>{t('solution.chips.consumption')}</Text>
+          </View>
+          <View style={st.solutionChip}>
+            <Image source={V2.etapeHabitudes} style={st.solutionChipIcon} resizeMode="contain" />
+            <Text style={st.solutionChipText}>{t('solution.chips.habits')}</Text>
+          </View>
+          <View style={st.solutionChip}>
+            <Image source={V2.etapeObjectif} style={st.solutionChipIcon} resizeMode="contain" />
+            <Text style={st.solutionChipText}>{t('solution.chips.goal')}</Text>
+          </View>
+        </View>
       </>
     );
   }
@@ -364,13 +475,115 @@ export default function OnboardingFlow({ navigation }) {
   else if (page.startsWith('benefice')) {
     const beneficeIdx = Number(page.slice(-1));
     const b = t(`benefits.items.${beneficeIdx}`, { returnObjects: true });
+    const journalRows = t('benefits.journal.rows', { returnObjects: true });
+    const JOURNAL_ICONS = [V2.journalCoffee, V2.journalPause, V2.journalCoffee];
+    const TRIGGERS = [
+      { img: V2.decCoffee,  k: 'coffee'  }, { img: V2.decStress, k: 'stress' },
+      { img: V2.decWine,    k: 'alcohol' }, { img: V2.decFriends, k: 'friends' },
+      { img: V2.decPause,   k: 'pause'   }, { img: V2.decEnergy, k: 'energy' },
+    ];
     body = (
       <>
         <Text style={st.title}>{b.title}</Text>
         <Text style={st.subtitle}>{b.text}</Text>
-        <View style={[st.illusBox, { height: 300 }]}>
-          <Image source={ILLUS[page]} style={st.illusImg} resizeMode="contain" />
-        </View>
+
+        {/* 07 — journal d'exemple + habitude repérée */}
+        {beneficeIdx === 0 && (
+          <>
+            <View style={st.mockCard}>
+              <View style={st.journalHeader}>
+                <Text style={st.journalTitre}>{t('benefits.journal.title')}</Text>
+                <View style={st.tagPill}><Text style={st.tagPillText}>{t('benefits.journal.tag')}</Text></View>
+              </View>
+              {journalRows.map((r, i) => (
+                <View key={r.time} style={[st.mockRow, i === journalRows.length - 1 && { borderBottomWidth: 0 }]}>
+                  <Text style={st.mockHeure}>{r.time}</Text>
+                  <Image source={JOURNAL_ICONS[i]} style={st.journalIcon} resizeMode="contain" />
+                  <Text style={st.mockTexte}>{r.label}</Text>
+                </View>
+              ))}
+            </View>
+            <View style={st.persoRow}>
+              <View style={st.persoBadge}>
+                <Image source={V2.habitudesReperees} style={{ width: 30, height: 30 }} resizeMode="contain" />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={st.persoTitre}>{t('benefits.journal.insightTitle')}</Text>
+                <Text style={st.persoText}>{t('benefits.journal.insightText')}</Text>
+              </View>
+            </View>
+          </>
+        )}
+
+        {/* 08 — scène + les 6 contextes validés du pack */}
+        {beneficeIdx === 1 && (
+          <>
+            <View style={st.illusBoxBlanc}>
+              <Image source={V2.illusDeclencheurs} style={st.illusImg} resizeMode="contain" />
+            </View>
+            <View style={st.trigGrid}>
+              {TRIGGERS.map(tr => (
+                <View key={tr.k} style={st.trigChip}>
+                  <Image source={tr.img} style={st.trigChipIcon} resizeMode="contain" />
+                  <Text style={st.trigChipText}>{t(`benefits.triggers.${tr.k}`)}</Text>
+                </View>
+              ))}
+            </View>
+            <Text style={st.footerNote}>{t('benefits.triggers.footer')}</Text>
+          </>
+        )}
+
+        {/* 09 — paliers chiffrés, entièrement natifs */}
+        {beneficeIdx === 2 && (
+          <>
+            <View style={st.mockCard}>
+              <Text style={st.chartCardTitre}>{t('benefits.pace.title')}</Text>
+              <View style={st.paliersRow}>
+                {PALIERS_V2.map((v, i) => (
+                  <React.Fragment key={v}>
+                    {i > 0 && <Text style={st.paliersFleche}>→</Text>}
+                    <View style={[st.palierCard, i === PALIERS_V2.length - 1 && st.palierCardFinal]}>
+                      <Text style={st.palierNum}>{v}</Text>
+                      <Text style={st.palierUnit}>{t('benefits.pace.unit')}</Text>
+                    </View>
+                  </React.Fragment>
+                ))}
+              </View>
+              <Text style={st.disclaimer}>{t('benefits.pace.note')}</Text>
+            </View>
+            <View style={st.persoRow}>
+              <View style={st.persoBadge}>
+                <Image source={V2.objectifDuJour} style={{ width: 30, height: 30 }} resizeMode="contain" />
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={st.persoTitre}>{t('benefits.pace.goalTitle')}</Text>
+                <Text style={st.persoText}>{t('benefits.pace.goalValue')}</Text>
+              </View>
+            </View>
+          </>
+        )}
+
+        {/* 10 — bénéfices chiffrés + cumul des cigarettes évitées */}
+        {beneficeIdx === 3 && (
+          <View style={st.statsPanel}>
+            <StatCard img={V2.statAvoided} teinte={colors.primaryLight}
+              valeur={t('benefits.stats.avoidedValue')} label={t('benefits.stats.avoidedNote')} />
+            <StatCard img={V2.statWallet} teinte={colors.primaryLight}
+              valeur={t('benefits.stats.savedValue')} label={t('benefits.stats.savedNote')} />
+            <StatCard img={V2.statTime} teinte="#EFE9FB"
+              valeur={t('benefits.stats.timeValue')} label={t('benefits.stats.timeNote')} />
+            <View style={st.chartCard}>
+              <Text style={st.chartCardTitre}>{t('benefits.stats.chartTitle')}</Text>
+              <LineChart
+                data={CUMUL_EVITEES}
+                maxY={50}
+                ticks={[0, 25, 50]}
+                dayShort={t('chart.dayShort')}
+              />
+            </View>
+            <Text style={st.disclaimer}>{t('benefits.stats.disclaimer')}</Text>
+          </View>
+        )}
       </>
     );
   }
@@ -381,15 +594,15 @@ export default function OnboardingFlow({ navigation }) {
         <Text style={st.title}>{t('goalType.title')}</Text>
         <Text style={st.subtitle}>{t('goalType.subtitle')}</Text>
         {[
-          { key: 'reduce', img: ILLUS.objReduire, titre: t('goalType.options.reduce.title'), desc: t('goalType.options.reduce.desc') },
-          { key: 'stop',   img: ILLUS.objArreter, titre: t('goalType.options.stop.title'),    desc: t('goalType.options.stop.desc') },
+          { key: 'reduce', img: V2.goalReduce, titre: t('goalType.options.reduce.title'), desc: t('goalType.options.reduce.desc') },
+          { key: 'stop',   img: V2.goalStop,   titre: t('goalType.options.stop.title'),   desc: t('goalType.options.stop.desc') },
         ].map(o => (
           <TouchableOpacity
             key={o.key}
-            style={[st.choixCard, answers.typeObjectif === o.key && st.choixCardActive]}
+            style={[st.objectifCard, answers.typeObjectif === o.key && st.choixCardActive]}
             onPress={() => set('typeObjectif', o.key)}
           >
-            <Image source={o.img} style={st.choixImg} resizeMode="cover" />
+            <Image source={o.img} style={st.objectifImg} resizeMode="contain" />
             <View style={{ flex: 1 }}>
               <Text style={st.choixTitre}>{o.titre}</Text>
               <Text style={st.choixDesc}>{o.desc}</Text>
@@ -399,6 +612,7 @@ export default function OnboardingFlow({ navigation }) {
             )}
           </TouchableOpacity>
         ))}
+        <Text style={st.footerNote}>{t('goalType.note')}</Text>
       </>
     );
   }
@@ -544,10 +758,10 @@ export default function OnboardingFlow({ navigation }) {
             style={[st.choixCard, answers.monnaie === d.code && st.choixCardActive]}
             onPress={() => set('monnaie', d.code)}
           >
-            <Text style={{ fontSize: 22, fontWeight: '800', width: 44, textAlign: 'center', color: colors.primary }}>{d.symbole}</Text>
+            <Image source={DEVISE_ICONS[d.code]} style={{ width: 48, height: 48 }} resizeMode="contain" />
             <View style={{ flex: 1 }}>
-              <Text style={st.choixTitre}>{d.code}</Text>
-              <Text style={st.choixDesc}>{t(`currency.options.${d.code}`)}</Text>
+              <Text style={st.choixTitre}>{t(`currency.options.${d.code}.name`)}</Text>
+              <Text style={st.choixDesc}>{t(`currency.options.${d.code}.code`)}</Text>
             </View>
             {answers.monnaie === d.code && (
               <View style={st.checkBadge}><Text style={{ color: '#fff', fontWeight: '800' }}>✓</Text></View>
@@ -561,8 +775,8 @@ export default function OnboardingFlow({ navigation }) {
   else if (page === 'motivations') {
     body = (
       <>
-        <Text style={st.title}>Quelles sont vos{'\n'}principales motivations ?</Text>
-        <Text style={st.subtitle}>Sélectionnez jusqu'à 3 motivations qui comptent le plus pour vous.</Text>
+        <Text style={st.title}>{t('motivations.title')}</Text>
+        <Text style={st.subtitle}>{t('motivations.subtitle')}</Text>
         <View style={st.motivGrid}>
           {MOTIVATIONS_CHOIX.map(m => {
             const active = answers.motivations.includes(m.key);
@@ -575,22 +789,25 @@ export default function OnboardingFlow({ navigation }) {
                   else if (answers.motivations.length < 3) set('motivations', [...answers.motivations, m.key]);
                 }}
               >
-                <Image source={PICTOS_MOTIV[m.key]} style={st.motivImg} resizeMode="contain" />
+                <Image source={MOTIV_ICONS_V2[m.key]} style={st.motivImg} resizeMode="contain" />
                 <Text style={[st.motivLabel, active && { color: colors.primary, fontWeight: '700' }]}>{t(`motivations.options.${m.key}`)}</Text>
               </TouchableOpacity>
             );
           })}
         </View>
         <View style={st.motivPersoCard}>
-          <Text style={st.motivPersoTitre}>✏️  Écrire ma propre motivation</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: spacing.sm }}>
+            <Image source={V2.motivPerso} style={{ width: 26, height: 26 }} resizeMode="contain" />
+            <Text style={[st.motivPersoTitre, { marginBottom: 0 }]}>{t('motivations.personalTitle')}</Text>
+          </View>
           <TextInput
             style={st.motivPersoInput}
             value={answers.motivationPerso}
             onChangeText={v => set('motivationPerso', v)}
-            placeholder="Votre motivation…"
+            placeholder={t('motivations.personalPlaceholder')}
             placeholderTextColor="#B0B0B0"
             maxLength={120}
-            accessibilityLabel="Motivation personnalisée"
+            accessibilityLabel={t('motivations.personalA11y')}
           />
         </View>
       </>
@@ -601,8 +818,8 @@ export default function OnboardingFlow({ navigation }) {
     const lvl = answers.niveauMotivation;
     body = (
       <>
-        <Text style={st.title}>Quel est votre niveau{'\n'}de motivation ?</Text>
-        <Text style={st.subtitle}>Soyez honnête avec vous-même.</Text>
+        <Text style={st.title}>{t('motivationLevel.title')}</Text>
+        <Text style={st.subtitle}>{t('motivationLevel.subtitle')}</Text>
         <View style={{ alignItems: 'center', marginVertical: spacing.lg }}>
           <View style={st.nivCircle}>
             <Text style={st.nivNum}>{lvl}</Text>
@@ -615,13 +832,13 @@ export default function OnboardingFlow({ navigation }) {
               key={n}
               style={[st.nivDot, { backgroundColor: n <= lvl ? colors.primary : colors.grayBorder }]}
               onPress={() => set('niveauMotivation', n)}
-              accessibilityLabel={`Niveau ${n}`}
+              accessibilityLabel={t('motivationLevel.levelA11y', { n })}
             />
           ))}
         </View>
         <View style={st.nivLabels}>
-          <Text style={st.hint}>Faible</Text>
-          <Text style={st.hint}>Élevé</Text>
+          <Text style={st.hint}>{t('motivationLevel.low')}</Text>
+          <Text style={st.hint}>{t('motivationLevel.high')}</Text>
         </View>
         <View style={st.nivManuelRow}>
           <Text style={{ flex: 1, fontSize: font.sm, color: colors.black, fontWeight: '600' }}>Saisir manuellement</Text>
@@ -785,6 +1002,21 @@ function Calendrier({ selected, onSelect }) {
   );
 }
 
+// ── Carte statistique (page bénéfice "bénéfices concrets") ───────────────────
+function StatCard({ img, teinte, valeur, label }) {
+  return (
+    <View style={st.statCard}>
+      <View style={[st.statBadge, { backgroundColor: teinte }]}>
+        <Image source={img} style={st.statBadgeImg} resizeMode="contain" />
+      </View>
+      <View style={{ flex: 1 }}>
+        <Text style={st.statValeur}>{valeur}</Text>
+        <Text style={st.statLabel}>{label}</Text>
+      </View>
+    </View>
+  );
+}
+
 function SyntheseRow({ emoji, img, label, valeur }) {
   return (
     <View style={st.synthRow}>
@@ -840,18 +1072,72 @@ const st = StyleSheet.create({
   },
   ouiNonBtnOui: { borderColor: colors.primary, backgroundColor: colors.primaryLight },
   ouiNonBtnNon: { borderColor: '#FCA5A5', backgroundColor: '#FEF2F2' },
-  ouiNonIcon:  { fontSize: 26, color: '#EF4444', fontWeight: '800' },
+  ouiNonImg:   { width: 32, height: 32 },
   ouiNonLabel: { fontSize: font.md, fontWeight: '700', color: colors.black },
 
   // Déculpabilisation
   chartCard: {
     borderWidth: 1, borderColor: colors.grayBorder, borderRadius: radius.xl,
-    padding: spacing.md, marginTop: spacing.sm,
+    padding: spacing.md, marginVertical: spacing.md, backgroundColor: colors.white,
   },
+  chartCardTitre: { fontSize: font.md, fontWeight: '800', color: colors.primaryDeep },
+  chartCardUnite: { fontSize: 11, color: colors.gray, marginTop: 4 },
+  legendRow:  { flexDirection: 'row', gap: spacing.lg, marginTop: spacing.sm },
+  legendItem: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  legendDash: { width: 18, height: 3, borderRadius: 2 },
+  legendLabel: { fontSize: 11, color: colors.gray },
+  leadText: {
+    fontSize: font.md, fontWeight: '800', color: colors.primaryDeep,
+    lineHeight: 22, marginTop: spacing.xs,
+  },
+  disclaimer: { fontSize: 11, color: colors.gray, marginTop: spacing.sm },
   chartLegRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 4 },
+  // Comparatif « avec / sans accompagnement » (page 05) — chart width 370 pt
+  comparCard: {
+    borderWidth: 1, borderColor: colors.grayBorder, borderRadius: radius.xl,
+    paddingVertical: spacing.md, marginVertical: spacing.md,
+    backgroundColor: colors.white,
+  },
+  comparImg: { width: '100%', height: 195 },
+  comparLeg: {
+    position: 'absolute', left: spacing.md,
+    flexDirection: 'row', alignItems: 'center', gap: 6,
+  },
+  comparLegText: { fontSize: 12, fontWeight: '700' },
+  persoRow: {
+    flexDirection: 'row', alignItems: 'center', gap: spacing.md,
+    borderWidth: 1, borderColor: colors.grayBorder, borderRadius: radius.xl,
+    padding: spacing.md, backgroundColor: colors.white,
+  },
+  persoBadge: {
+    width: 52, height: 52, borderRadius: 26, backgroundColor: colors.primaryLight,
+    alignItems: 'center', justifyContent: 'center',
+  },
+  persoTitre: { fontSize: 16, fontWeight: '800', color: colors.black, marginBottom: 2 },
+  // Parcours de réduction (page 09) — paliers natifs posés sur le PNG
+  parcoursWrap: {
+    height: 240, marginVertical: spacing.md, borderRadius: radius.xl,
+    overflow: 'hidden', backgroundColor: '#FBF8F1',
+  },
+  parcoursImg: { width: '100%', height: '100%' },
+  parcoursPalier: { position: 'absolute', width: '20%', alignItems: 'center' },
+  parcoursNum: { fontSize: 17, fontWeight: '900', color: colors.black, lineHeight: 20 },
+  parcoursLbl: { fontSize: 9, color: colors.gray, textAlign: 'center', lineHeight: 11 },
+  persoText: { fontSize: 13, color: colors.black, lineHeight: 19 },
   legDot:  { width: 8, height: 8, borderRadius: 4 },
   legText: { fontSize: 12, color: colors.gray },
   chartNote: { fontSize: 10, color: colors.gray, textAlign: 'center', marginTop: spacing.sm, fontStyle: 'italic' },
+
+  // Puces "La consommation / Tes habitudes / Ton objectif" (page solution)
+  // Puces sur une seule ligne, comme la maquette 06
+  solutionChipsRow: { flexDirection: 'row', gap: 6 },
+  solutionChip: {
+    flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 4,
+    backgroundColor: colors.primaryLight, borderRadius: radius.full,
+    paddingVertical: 8, paddingHorizontal: 6,
+  },
+  solutionChipIcon: { width: 16, height: 16 },
+  solutionChipText: { fontSize: 10, fontWeight: '700', color: colors.primaryDeep, flexShrink: 1 },
 
   // Bénéfices
   beneficeCircle: {
@@ -911,13 +1197,66 @@ const st = StyleSheet.create({
     paddingVertical: 8, alignItems: 'center', marginTop: spacing.md,
   },
 
-  // Stats exemple
-  statExRow: {
-    flexDirection: 'row', alignItems: 'center', gap: spacing.sm,
-    paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: '#F5F5F5',
+  // Stats concrètes (page bénéfice 10) — cartes de 80 pt, cf. layout-ios.json
+  statsPanel:  { marginTop: spacing.sm, gap: 10 },
+  statsHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  statsPill: {
+    borderWidth: 1, borderColor: colors.grayBorder, borderRadius: radius.full,
+    paddingVertical: 6, paddingHorizontal: 14,
   },
-  statExVal: { fontSize: 20, fontWeight: '900', color: colors.primary, width: 90 },
-  statExLbl: { flex: 1, fontSize: 12, color: colors.gray },
+  statsPillText: { fontSize: 12, fontWeight: '600', color: colors.gray },
+  statCard: {
+    flexDirection: 'row', alignItems: 'center', gap: spacing.md,
+    minHeight: 80, paddingHorizontal: spacing.md, paddingVertical: spacing.sm,
+    borderWidth: 1, borderColor: colors.grayBorder, borderRadius: radius.xl,
+    backgroundColor: colors.white,
+  },
+  statBadge:    { width: 56, height: 56, borderRadius: 28, alignItems: 'center', justifyContent: 'center' },
+  statBadgeImg: { width: 32, height: 32 },
+  statValeur:   { fontSize: 16, fontWeight: '800', color: colors.primaryDeep, lineHeight: 21 },
+  statLabel:    { fontSize: 11, color: colors.gray, marginTop: 2, lineHeight: 15 },
+
+  // Écran 02/03/04 et 06/08 : scènes du pack, fond blanc opaque (ne pas détourer)
+  illusBoxBlanc: {
+    height: 230, borderRadius: radius.xl, overflow: 'hidden',
+    marginVertical: spacing.md, backgroundColor: colors.white,
+  },
+  footerNote: { fontSize: 12, color: colors.gray, textAlign: 'center', marginTop: spacing.md },
+  // Ratio exact de l'illustration 04 (366 × 244) pour caler les libellés natifs
+  illusBoxRatio: {
+    width: '100%', aspectRatio: 366 / 244, borderRadius: radius.xl,
+    overflow: 'hidden', marginVertical: spacing.md, backgroundColor: colors.white,
+  },
+  cheminLabel: { position: 'absolute', fontSize: 11, fontWeight: '700' },
+
+  // Écran 07 — journal d'exemple
+  journalHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing.sm },
+  journalTitre:  { fontSize: font.md, fontWeight: '800', color: colors.primaryDeep },
+  journalIcon:   { width: 22, height: 22 },
+  tagPill:     { backgroundColor: colors.primaryLight, borderRadius: radius.full, paddingVertical: 3, paddingHorizontal: 10 },
+  tagPillText: { fontSize: 10, fontWeight: '700', color: colors.primaryDeep },
+
+  // Écran 08 — contextes déclencheurs
+  trigGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, justifyContent: 'center' },
+  trigChip: {
+    width: '31.5%', alignItems: 'center', justifyContent: 'center', gap: 6,
+    paddingVertical: spacing.sm,
+    borderWidth: 1, borderColor: colors.grayBorder, borderRadius: radius.lg,
+    backgroundColor: colors.white,
+  },
+  trigChipIcon: { width: 30, height: 30 },
+  trigChipText: { fontSize: 11, fontWeight: '600', color: colors.black },
+
+  // Écran 09 — paliers chiffrés
+  paliersRow:    { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginVertical: spacing.md },
+  paliersFleche: { fontSize: 14, color: colors.primary, fontWeight: '700' },
+  palierCard: {
+    flex: 1, alignItems: 'center', paddingVertical: spacing.sm,
+    borderRadius: radius.lg, backgroundColor: '#F2F7F3',
+  },
+  palierCardFinal: { backgroundColor: colors.primaryLight },
+  palierNum:  { fontSize: 20, fontWeight: '900', color: colors.primaryDeep, lineHeight: 24 },
+  palierUnit: { fontSize: 9, color: colors.gray },
 
   // Calendrier
   calCard: {
@@ -949,6 +1288,13 @@ const st = StyleSheet.create({
     padding: spacing.md, marginBottom: spacing.sm, minHeight: 72,
   },
   choixCardActive: { borderColor: colors.primary, backgroundColor: colors.primaryLight },
+  // Cartes d'objectif (page 11) — hauteur 124 pt, icône 96 px, cf. layout-ios.json
+  objectifCard: {
+    flexDirection: 'row', alignItems: 'center', gap: spacing.md,
+    borderWidth: 1.5, borderColor: colors.grayBorder, borderRadius: radius.xl,
+    paddingHorizontal: spacing.md, marginBottom: spacing.md, height: 124,
+  },
+  objectifImg: { width: 96, height: 96 },
   choixTitre: { fontSize: font.md, fontWeight: '700', color: colors.black },
   choixDesc:  { fontSize: 12, color: colors.gray, marginTop: 2 },
   choixImg:   { width: 52, height: 52, borderRadius: 26 },
@@ -1003,11 +1349,12 @@ const st = StyleSheet.create({
   dateText: { fontSize: font.sm, color: colors.black },
 
   // Motivations
-  motivGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
+  // Grille 3 colonnes, cartes 111 × 119 pt (cf. layout-ios.json — 18-motivations)
+  motivGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   motivChip: {
-    width: '48%', flexGrow: 1,
+    width: '31.5%', height: 119,
     borderWidth: 1.5, borderColor: colors.grayBorder, borderRadius: radius.xl,
-    padding: spacing.md, alignItems: 'center', gap: 6, minHeight: 84,
+    paddingHorizontal: 6, alignItems: 'center', justifyContent: 'center', gap: 8,
   },
   motivChipActive: { borderColor: colors.primary, backgroundColor: colors.primaryLight },
   motivLabel: { fontSize: 12, color: colors.black, textAlign: 'center' },

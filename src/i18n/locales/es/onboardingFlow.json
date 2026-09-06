@@ -1,39 +1,109 @@
 {
+  "chart": {
+    "dayShort": "D"
+  },
   "affirmations": {
     "title": "¿Te reconoces\nen esta situación?",
     "quoted": "«{{text}}»",
     "items": [
-      "Ya he intentado reducir o dejar de fumar, pero no he conseguido mantenerlo en el tiempo.",
-      "A veces enciendo un cigarrillo automáticamente, sin tener realmente ganas.",
-      "No sé muy bien cómo reducir progresivamente sin volver a mis viejos hábitos."
-    ]
+      "Ya he intentado reducir o dejarlo, pero me cuesta mantenerlo con el tiempo.",
+      "A veces enciendo un cigarrillo por reflejo, sin tener realmente ganas.",
+      "Me gustaría reducir progresivamente, pero no sé por dónde empezar."
+    ],
+    "footer": "Cada recorrido es diferente.",
+    "pathReduce": "Reducir",
+    "pathStop": "Dejarlo"
   },
   "deculpabilisation": {
-    "title": "Tranquilo, no se trata\nsimplemente de falta de voluntad",
-    "subtitle": "La dependencia se basa en hábitos, desencadenantes y automatismos. Al comprenderlos, puedes recuperar progresivamente el control.",
-    "withoutSupport": "Sin acompañamiento",
-    "withStopklop": "Con Stopklop",
-    "note": "Ilustración del principio — tu recorrido será único."
+    "title": "Un plan concreto\npara avanzar",
+    "subtitle": "Observa tu consumo, fija una meta y visualiza tus progresos con Stopklop.",
+    "chartTitle": "Tu reducción, día a día",
+    "chartUnit": "Cigarrillos / día",
+    "legendStart": "Nivel de partida",
+    "legendDaily": "Seguimiento diario",
+    "lead": "Un objetivo diario y un seguimiento para saber dónde estás.",
+    "disclaimer": "Ejemplo ilustrativo, sin resultado garantizado."
   },
   "solution": {
     "title": "Avanza a tu ritmo,\ncon un plan adaptado",
-    "subtitle": "Cada fumador es diferente. Stopklop crea un recorrido personalizado a partir de tu consumo, tus hábitos y tu objetivo: reducir progresivamente o dejarlo por completo."
+    "subtitle": "Tu punto de partida, tus hábitos, tu objetivo: un recorrido que se ajusta a ti.",
+    "chips": {
+      "consumption": "Consumo",
+      "habits": "Hábitos",
+      "goal": "Objetivo"
+    }
   },
   "benefits": {
     "items": [
-      { "emoji": "🚬", "title": "Cada cigarrillo se convierte en una elección", "text": "Registra fácilmente tus cigarrillos y descubre cuáles fumas por ganas… y cuáles son simplemente un automatismo." },
-      { "emoji": "🔍", "title": "Identifica lo que desencadena tus ganas de fumar", "text": "Stopklop analiza los momentos, las situaciones y las emociones asociadas a tu consumo para ayudarte a anticipar mejor las ganas." },
-      { "emoji": "📉", "title": "Reduce a tu ritmo, sin presión innecesaria", "text": "Tu objetivo evoluciona según tu consumo y tus progresos. Cada etapa se mantiene realista, medible y adaptada a tu día a día." },
-      { "emoji": "💚", "title": "Cada cigarrillo evitado cuenta de verdad", "text": "Observa en tiempo real los cigarrillos evitados, el dinero ahorrado y el tiempo recuperado progresivamente." }
-    ]
+      {
+        "title": "Detecta los momentos\nen los que fumas",
+        "text": "Registra cada cigarrillo y su contexto para entender qué se repite."
+      },
+      {
+        "title": "Identifica lo que desencadena\ntus ganas de fumar",
+        "text": "Café, estrés, amigos o pausa: relaciona cada cigarrillo con su contexto."
+      },
+      {
+        "title": "Reduce a tu ritmo,\nsin presión innecesaria",
+        "text": "Un objetivo claro en cada etapa, para avanzar progresivamente hacia dejarlo."
+      },
+      {
+        "title": "Cada cigarrillo evitado\ncuenta de verdad",
+        "text": "Menos cigarrillos, más ahorro: comprueba el camino recorrido."
+      }
+    ],
+    "journal": {
+      "title": "Tu registro",
+      "tag": "Ejemplo",
+      "rows": [
+        { "time": "09:00", "label": "Después del café" },
+        { "time": "13:15", "label": "Durante una pausa" },
+        { "time": "16:00", "label": "Con un café" }
+      ],
+      "insightTitle": "El café aparece a menudo",
+      "insightText": "En este ejemplo, 2 de cada 3 cigarrillos están ligados al café."
+    },
+    "triggers": {
+      "coffee": "Café",
+      "stress": "Estrés",
+      "alcohol": "Alcohol",
+      "friends": "Amigos",
+      "pause": "Pausa",
+      "energy": "Energía",
+      "footer": "Entender tus ganas, sin juzgarte."
+    },
+    "pace": {
+      "title": "Un recorrido progresivo",
+      "unit": "cig./d",
+      "note": "Ejemplo de etapas personalizables",
+      "goalTitle": "Tu objetivo de hoy",
+      "goalValue": "8 cigarrillos máximo · ejemplo"
+    },
+    "stats": {
+      "avoidedValue": "47 cigarrillos evitados",
+      "avoidedNote": "En comparación con tu consumo de partida",
+      "savedValue": "28,20 € ahorrados",
+      "savedNote": "47 cigarrillos × 0,60 €",
+      "timeValue": "3 h 55 recuperadas",
+      "timeNote": "Estimación: 5 minutos por cigarrillo",
+      "chartTitle": "Cigarrillos evitados · acumulado",
+      "disclaimer": "Datos de ejemplo en 7 días."
+    }
   },
   "goalType": {
     "title": "¿Cuál es tu objetivo?",
-    "subtitle": "Elige el objetivo que más te motive hoy.",
+    "subtitle": "Elige lo que te convenga hoy. Podrás ajustar tu recorrido más adelante.",
     "options": {
-      "reduce": { "title": "Reducir progresivamente", "desc": "Disminuir paso a paso, a tu ritmo" },
-      "stop": { "title": "Dejarlo por completo", "desc": "0 cigarrillos, desde tu fecha de inicio" }
-    }
+      "reduce": {
+        "title": "Reducir progresivamente",
+        "desc": "Disminuir mi consumo, una etapa tras otra."
+      },
+      "stop": {
+        "title": "Dejarlo por completo",
+        "desc": "Preparar mi abandono y avanzar hacia una vida sin tabaco."
+      }
+    },
+    "note": "Tú mantienes el control de tu ritmo."
   },
   "consumption": {
     "title": "¿Cuántos cigarrillos\nfumas actualmente?",
@@ -67,22 +137,26 @@
     "error": "Tu objetivo debe ser inferior a tu consumo actual ({{count}} / día)."
   },
   "currency": {
-    "title": "Elige tu moneda",
-    "subtitle": "Para seguir tus ahorros con precisión.",
-    "options": { "EUR": "Euro", "CHF": "Franco suizo", "GBP": "Libra esterlina" }
+    "title": "¿Qué moneda\nutilizas?",
+    "subtitle": "Para mostrar tus gastos y tus ahorros en la moneda correcta.",
+    "options": {
+      "EUR": { "name": "Euro", "code": "EUR · €" },
+      "CHF": { "name": "Franco suizo", "code": "CHF" },
+      "GBP": { "name": "Libra esterlina", "code": "GBP · £" }
+    }
   },
   "motivations": {
-    "title": "¿Cuáles son tus\nprincipales motivaciones?",
-    "subtitle": "Selecciona hasta 3 motivaciones que más te importen.",
+    "title": "¿Qué es lo que más\nte motiva?",
+    "subtitle": "Elige las razones que cuentan para ti. Puedes seleccionar varias.",
     "options": {
       "health": "Mi salud",
-      "family": "Mi familia",
+      "family": "Mis seres queridos",
       "appearance": "Mi aspecto",
-      "money": "Ahorrar dinero",
-      "breathing": "Mejor respiración",
-      "fitness": "Recuperar mi forma física"
+      "money": "Ahorrar",
+      "breathing": "Mi respiración",
+      "fitness": "Mi forma física"
     },
-    "personalTitle": "✏️  Escribir mi propia motivación",
+    "personalTitle": "Añadir mi propia razón",
     "personalPlaceholder": "Tu motivación…",
     "personalA11y": "Motivación personalizada"
   },

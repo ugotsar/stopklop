@@ -1,39 +1,109 @@
 {
+  "chart": {
+    "dayShort": "D"
+  },
   "affirmations": {
     "title": "Do you recognize yourself\nin this situation?",
     "quoted": "“{{text}}”",
     "items": [
-      "I've already tried to cut down or quit smoking, but I couldn't stick with it long-term.",
-      "Sometimes I light a cigarette automatically, without even really wanting to.",
-      "I don't really know how to cut down gradually without falling back into my old habits."
-    ]
+      "I've already tried to cut down or quit, but I struggle to keep it up over time.",
+      "Sometimes I light a cigarette out of reflex, without really wanting one.",
+      "I'd like to cut down gradually, but I don't know where to start."
+    ],
+    "footer": "Every journey is different.",
+    "pathReduce": "Reduce",
+    "pathStop": "Quit"
   },
   "deculpabilisation": {
-    "title": "Rest assured, it's not\njust a lack of willpower",
-    "subtitle": "Addiction is built on habits, triggers and automatic behaviors. By understanding them, you can gradually take back control.",
-    "withoutSupport": "Without support",
-    "withStopklop": "With Stopklop",
-    "note": "Illustration of the principle — your journey will be unique."
+    "title": "A concrete plan\nto move forward",
+    "subtitle": "Track your smoking, set a target and see your progress with Stopklop.",
+    "chartTitle": "Your reduction, day by day",
+    "chartUnit": "Cigarettes / day",
+    "legendStart": "Starting level",
+    "legendDaily": "Daily tracking",
+    "lead": "A daily goal and tracking, so you always know where you stand.",
+    "disclaimer": "Illustrative example, no guaranteed result."
   },
   "solution": {
     "title": "Move at your own pace,\nwith a tailored plan",
-    "subtitle": "Every smoker is different. Stopklop builds a personalized plan based on your consumption, your habits and your goal: gradually reducing or quitting completely."
+    "subtitle": "Your starting point, your habits, your goal: a journey that fits you.",
+    "chips": {
+      "consumption": "Consumption",
+      "habits": "Habits",
+      "goal": "Goal"
+    }
   },
   "benefits": {
     "items": [
-      { "emoji": "🚬", "title": "Every cigarette becomes a choice", "text": "Easily log your cigarettes and discover the ones you smoke out of craving… and the ones that are just a habit." },
-      { "emoji": "🔍", "title": "Identify what triggers your urge to smoke", "text": "Stopklop analyzes the moments, situations and emotions linked to your smoking to help you better anticipate cravings." },
-      { "emoji": "📉", "title": "Reduce at your own pace, without unnecessary pressure", "text": "Your goal evolves according to your consumption and your progress. Every step stays realistic, measurable and suited to your daily life." },
-      { "emoji": "💚", "title": "Every cigarette avoided really counts", "text": "Watch in real time the cigarettes avoided, the money saved and the time gradually regained." }
-    ]
+      {
+        "title": "Spot the moments\nwhen you smoke",
+        "text": "Log each cigarette and its context to understand what keeps coming back."
+      },
+      {
+        "title": "Identify what triggers\nyour urge to smoke",
+        "text": "Coffee, stress, friends or a break: link each cigarette to its context."
+      },
+      {
+        "title": "Cut down at your pace,\nwithout needless pressure",
+        "text": "A clear goal at every step, to move gradually towards quitting."
+      },
+      {
+        "title": "Every cigarette avoided\nreally counts",
+        "text": "Fewer cigarettes, more savings: see concretely how far you've come."
+      }
+    ],
+    "journal": {
+      "title": "Your log",
+      "tag": "Example",
+      "rows": [
+        { "time": "09:00", "label": "After coffee" },
+        { "time": "13:15", "label": "During a break" },
+        { "time": "16:00", "label": "With a coffee" }
+      ],
+      "insightTitle": "Coffee comes up often",
+      "insightText": "In this example, 2 out of 3 cigarettes are linked to coffee."
+    },
+    "triggers": {
+      "coffee": "Coffee",
+      "stress": "Stress",
+      "alcohol": "Alcohol",
+      "friends": "Friends",
+      "pause": "Break",
+      "energy": "Energy",
+      "footer": "Understanding your urges, without judging yourself."
+    },
+    "pace": {
+      "title": "A step-by-step journey",
+      "unit": "cig./d",
+      "note": "Example of adjustable steps",
+      "goalTitle": "Your goal for today",
+      "goalValue": "8 cigarettes maximum · example"
+    },
+    "stats": {
+      "avoidedValue": "47 cigarettes avoided",
+      "avoidedNote": "Compared with your starting consumption",
+      "savedValue": "€28.20 saved",
+      "savedNote": "47 cigarettes × €0.60",
+      "timeValue": "3 h 55 freed up",
+      "timeNote": "Estimate: 5 minutes per cigarette",
+      "chartTitle": "Cigarettes avoided · cumulative",
+      "disclaimer": "Example data over 7 days."
+    }
   },
   "goalType": {
     "title": "What's your goal?",
-    "subtitle": "Choose the goal that motivates you most today.",
+    "subtitle": "Choose what suits you today. You can adjust your journey later.",
     "options": {
-      "reduce": { "title": "Reduce gradually", "desc": "Cut down step by step, at your own pace" },
-      "stop": { "title": "Quit completely", "desc": "0 cigarettes, starting from your start date" }
-    }
+      "reduce": {
+        "title": "Reduce gradually",
+        "desc": "Cut down my smoking, one step at a time."
+      },
+      "stop": {
+        "title": "Quit completely",
+        "desc": "Prepare my quit and move towards a smoke-free life."
+      }
+    },
+    "note": "You stay in control of your pace."
   },
   "consumption": {
     "title": "How many cigarettes\ndo you currently smoke?",
@@ -67,22 +137,26 @@
     "error": "Your goal must be lower than your current consumption ({{count}} / day)."
   },
   "currency": {
-    "title": "Choose your currency",
-    "subtitle": "To track your savings accurately.",
-    "options": { "EUR": "Euro", "CHF": "Swiss franc", "GBP": "Pound sterling" }
+    "title": "Which currency\ndo you use?",
+    "subtitle": "To show your spending and your savings in the right currency.",
+    "options": {
+      "EUR": { "name": "Euro", "code": "EUR · €" },
+      "CHF": { "name": "Swiss franc", "code": "CHF" },
+      "GBP": { "name": "Pound sterling", "code": "GBP · £" }
+    }
   },
   "motivations": {
-    "title": "What are your\nmain motivations?",
-    "subtitle": "Select up to 3 motivations that matter most to you.",
+    "title": "What motivates\nyou most?",
+    "subtitle": "Choose the reasons that matter to you. You can select several.",
     "options": {
       "health": "My health",
-      "family": "My family",
+      "family": "My loved ones",
       "appearance": "My appearance",
       "money": "Save money",
-      "breathing": "Better breathing",
-      "fitness": "Get back in shape"
+      "breathing": "My breathing",
+      "fitness": "My fitness"
     },
-    "personalTitle": "✏️  Write my own motivation",
+    "personalTitle": "Add my own reason",
     "personalPlaceholder": "Your motivation…",
     "personalA11y": "Custom motivation"
   },

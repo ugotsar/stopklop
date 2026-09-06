@@ -1,39 +1,109 @@
 {
+  "chart": {
+    "dayShort": "J"
+  },
   "affirmations": {
-    "title": "Est-ce que tu te reconnais\ndans cette situation ?",
+    "title": "Tu te reconnais dans\ncette situation ?",
     "quoted": "« {{text}} »",
     "items": [
-      "J'ai déjà essayé de réduire ou d'arrêter de fumer, mais je n'ai pas réussi à tenir sur la durée.",
-      "Il m'arrive d'allumer une cigarette automatiquement, sans même en avoir réellement envie.",
-      "Je ne sais pas vraiment comment réduire progressivement sans reprendre mes anciennes habitudes."
-    ]
+      "J'ai déjà essayé de réduire ou d'arrêter, mais j'ai du mal à tenir dans la durée.",
+      "Il m'arrive d'allumer une cigarette par réflexe, sans en avoir vraiment envie.",
+      "Je voudrais réduire progressivement, mais je ne sais pas par où commencer."
+    ],
+    "footer": "Chaque parcours est différent.",
+    "pathReduce": "Réduire",
+    "pathStop": "Arrêter"
   },
   "deculpabilisation": {
-    "title": "Rassure-toi, ce n'est pas\nsimplement un manque de volonté",
-    "subtitle": "La dépendance repose sur des habitudes, des déclencheurs et des automatismes. En les comprenant, tu peux progressivement reprendre le contrôle.",
-    "withoutSupport": "Sans accompagnement",
-    "withStopklop": "Avec Stopklop",
-    "note": "Illustration du principe — votre parcours sera unique."
+    "title": "Un plan concret\npour avancer",
+    "subtitle": "Observe ta consommation, fixe un cap et visualise tes progrès avec Stopklop.",
+    "chartTitle": "Ta réduction, jour après jour",
+    "chartUnit": "Cigarettes / jour",
+    "legendStart": "Niveau de départ",
+    "legendDaily": "Suivi quotidien",
+    "lead": "Un objectif quotidien et un suivi pour savoir où tu en es.",
+    "disclaimer": "Exemple illustratif, sans résultat garanti."
   },
   "solution": {
     "title": "Avance à ton rythme,\navec un plan adapté",
-    "subtitle": "Chaque fumeur est différent. Stopklop crée un parcours personnalisé à partir de ta consommation, de tes habitudes et de ton objectif : réduire progressivement ou arrêter complètement."
+    "subtitle": "Ton point de départ, tes habitudes, ton objectif : un parcours qui te correspond.",
+    "chips": {
+      "consumption": "Consommation",
+      "habits": "Habitudes",
+      "goal": "Objectif"
+    }
   },
   "benefits": {
     "items": [
-      { "emoji": "🚬", "title": "Chaque cigarette devient un choix", "text": "Enregistre facilement tes cigarettes et découvre celles que tu fumes par envie… et celles qui relèvent simplement d'un automatisme." },
-      { "emoji": "🔍", "title": "Identifie ce qui déclenche ton envie de fumer", "text": "Stopklop analyse les moments, les situations et les émotions associés à ta consommation pour t'aider à mieux anticiper les envies." },
-      { "emoji": "📉", "title": "Réduis à ton rythme, sans pression inutile", "text": "Ton objectif évolue selon ta consommation et tes progrès. Chaque étape reste réaliste, mesurable et adaptée à ton quotidien." },
-      { "emoji": "💚", "title": "Chaque cigarette évitée compte vraiment", "text": "Observe en temps réel les cigarettes évitées, l'argent économisé et le temps progressivement regagné." }
-    ]
+      {
+        "title": "Repère les moments\noù tu fumes",
+        "text": "Note chaque cigarette et son contexte pour comprendre ce qui revient souvent."
+      },
+      {
+        "title": "Identifie ce qui déclenche\nton envie de fumer",
+        "text": "Café, stress, amis ou pause : relie chaque cigarette à son contexte."
+      },
+      {
+        "title": "Réduis à ton rythme,\nsans pression inutile",
+        "text": "Un objectif clair à chaque étape, pour avancer progressivement vers ton arrêt."
+      },
+      {
+        "title": "Chaque cigarette évitée\ncompte vraiment",
+        "text": "Moins de cigarettes, plus d'économies : vois concrètement le chemin parcouru."
+      }
+    ],
+    "journal": {
+      "title": "Ton journal",
+      "tag": "Exemple",
+      "rows": [
+        { "time": "09:00", "label": "Après le café" },
+        { "time": "13:15", "label": "Pendant une pause" },
+        { "time": "16:00", "label": "Avec un café" }
+      ],
+      "insightTitle": "Le café revient souvent",
+      "insightText": "Dans cet exemple, 2 cigarettes sur 3 sont liées au café."
+    },
+    "triggers": {
+      "coffee": "Café",
+      "stress": "Stress",
+      "alcohol": "Alcool",
+      "friends": "Amis",
+      "pause": "Pause",
+      "energy": "Énergie",
+      "footer": "Comprendre tes envies, sans te juger."
+    },
+    "pace": {
+      "title": "Un parcours progressif",
+      "unit": "cig./j",
+      "note": "Exemple de paliers personnalisables",
+      "goalTitle": "Ton objectif du jour",
+      "goalValue": "8 cigarettes maximum · exemple"
+    },
+    "stats": {
+      "avoidedValue": "47 cigarettes évitées",
+      "avoidedNote": "Par rapport à ta consommation de départ",
+      "savedValue": "28,20 € économisés",
+      "savedNote": "47 cigarettes × 0,60 €",
+      "timeValue": "3 h 55 libérées",
+      "timeNote": "Estimation : 5 minutes par cigarette",
+      "chartTitle": "Cigarettes évitées · cumul",
+      "disclaimer": "Données d'exemple sur 7 jours."
+    }
   },
   "goalType": {
     "title": "Quel est ton objectif ?",
-    "subtitle": "Choisis l'objectif qui te motive le plus aujourd'hui.",
+    "subtitle": "Choisis ce qui te convient aujourd'hui. Tu pourras ajuster ton parcours ensuite.",
     "options": {
-      "reduce": { "title": "Réduire progressivement", "desc": "Diminuer étape par étape, à ton rythme" },
-      "stop": { "title": "Arrêter complètement", "desc": "0 cigarette, dès ta date de début" }
-    }
+      "reduce": {
+        "title": "Réduire progressivement",
+        "desc": "Diminuer ma consommation, une étape après l'autre."
+      },
+      "stop": {
+        "title": "Arrêter complètement",
+        "desc": "Préparer mon arrêt et avancer vers une vie sans cigarette."
+      }
+    },
+    "note": "Tu gardes la main sur ton rythme."
   },
   "consumption": {
     "title": "Combien de cigarettes\nfumes-tu actuellement ?",
@@ -67,28 +137,32 @@
     "error": "Ton objectif doit être inférieur à ta consommation actuelle ({{count}} / jour)."
   },
   "currency": {
-    "title": "Choisis ta monnaie",
-    "subtitle": "Pour suivre tes économies avec précision.",
-    "options": { "EUR": "Euro", "CHF": "Franc suisse", "GBP": "Livre sterling" }
+    "title": "Quelle devise\nutilises-tu ?",
+    "subtitle": "Pour afficher tes dépenses et tes économies avec la bonne monnaie.",
+    "options": {
+      "EUR": { "name": "Euro", "code": "EUR · €" },
+      "CHF": { "name": "Franc suisse", "code": "CHF" },
+      "GBP": { "name": "Livre sterling", "code": "GBP · £" }
+    }
   },
   "motivations": {
-    "title": "Quelles sont vos\nprincipales motivations ?",
-    "subtitle": "Sélectionnez jusqu'à 3 motivations qui comptent le plus pour vous.",
+    "title": "Qu'est-ce qui te\nmotive le plus ?",
+    "subtitle": "Choisis les raisons qui comptent pour toi. Tu peux en sélectionner plusieurs.",
     "options": {
       "health": "Ma santé",
-      "family": "Ma famille",
+      "family": "Mes proches",
       "appearance": "Mon apparence",
-      "money": "Économiser de l'argent",
-      "breathing": "Un meilleur souffle",
-      "fitness": "Retrouver ma condition"
+      "money": "Économiser",
+      "breathing": "Mon souffle",
+      "fitness": "Ma forme"
     },
-    "personalTitle": "✏️  Écrire ma propre motivation",
-    "personalPlaceholder": "Votre motivation…",
+    "personalTitle": "Ajouter ma propre raison",
+    "personalPlaceholder": "Ta motivation…",
     "personalA11y": "Motivation personnalisée"
   },
   "motivationLevel": {
-    "title": "Quel est votre niveau\nde motivation ?",
-    "subtitle": "Soyez honnête avec vous-même.",
+    "title": "Quel est ton niveau\nde motivation ?",
+    "subtitle": "Sois honnête avec toi-même.",
     "low": "Faible",
     "high": "Élevé",
     "levelA11y": "Niveau {{n}}",
@@ -105,7 +179,7 @@
       "start": "Début",
       "estimatedSavings": "Économie estimée",
       "motivations": "Motivations",
-      "personalNote": "Votre mot",
+      "personalNote": "Ton mot",
       "motivationLevel": "Motivation"
     },
     "cigPerDayValue": "{{count}} cig / jour",
@@ -114,7 +188,7 @@
     "savingsValue": "≈ {{monthly}} {{currency}} / mois\n≈ {{yearly}} {{currency}} / an",
     "quoted": "« {{text}} »",
     "savingIndicator": "Enregistrement de ton parcours…",
-    "saveError": "Impossible d'enregistrer. Vérifiez votre connexion et réessayez.",
+    "saveError": "Impossible d'enregistrer. Vérifie ta connexion et réessaie.",
     "startButton": "Commencer  🚀"
   }
 }
