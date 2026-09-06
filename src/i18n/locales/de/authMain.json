@@ -1,9 +1,17 @@
 {
   "tagline": "Hör auf zu rauchen, einen Tag nach dem anderen.",
+  "hero": {
+    "headline": "Schritt für Schritt\nRichtung null",
+    "subtitle": "Sieh jeden Fortschritt und\nbleib motiviert.",
+    "progressValue": "-35 %", "progressLabel": "FORTSCHRITT",
+    "savingsValue": "42,80 €", "savingsLabel": "ERSPARNIS",
+    "paceValue": "7 Tage", "paceLabel": "TEMPO"
+  },
   "google": { "button": "Weiter mit Google", "unavailable": "Die Google-Anmeldung wird in Kürze verfügbar sein." },
   "apple": { "button": "Weiter mit Apple" },
+  "footer": { "question": "Hast du bereits ein Konto?", "cta": "Anmelden" },
   "email": {
-    "createEntry": "Konto mit E-Mail erstellen",
+    "createEntry": "Weiter mit einer E-Mail-Adresse",
     "loginEntry": "Ich habe bereits ein Konto",
     "createTitle": "Mein Konto erstellen",
     "loginTitle": "Anmelden",

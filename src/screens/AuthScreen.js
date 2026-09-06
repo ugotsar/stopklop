@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity,
-  SafeAreaView, ActivityIndicator, Platform, TextInput,
+  SafeAreaView, ScrollView, ActivityIndicator, Image, TextInput,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import {
@@ -9,6 +9,15 @@ import {
   signInWithEmail, useGoogleAuth,
 } from '../services/authService';
 import { colors, spacing, font } from '../theme';
+
+// Visuel de la page 1 de l'onboarding (proposition n°2) : illustration figée
+// (anneau 68% + info-bulles), pas de données réelles — l'utilisateur n'a pas
+// encore de compte à ce stade. Icônes fournies en PNG transparents pour
+// coller exactement à la maquette (glyphe Google/Apple/e-mail réels).
+const HERO = require('../../assets/auth-hero/01-illustration-complete.png');
+const ICON_GOOGLE = require('../../assets/auth-hero/06-icone-google.png');
+const ICON_APPLE  = require('../../assets/auth-hero/07-icone-apple.png');
+const ICON_EMAIL  = require('../../assets/auth-hero/08-icone-email.png');
 
 export default function AuthScreen() {
   const { t } = useTranslation('authMain');
@@ -70,52 +79,81 @@ export default function AuthScreen() {
     }
   }
 
+  // ── Formulaire e-mail (créer / se connecter) ───────────────────────────────
+  if (emailMode) {
+    return (
+      <SafeAreaView style={s.safe}>
+        <ScrollView contentContainerStyle={s.emailContainer} keyboardShouldPersistTaps="handled">
+          <Text style={s.emailTitle}>{t(emailMode === 'create' ? 'email.createTitle' : 'email.loginTitle')}</Text>
+          <TextInput
+            style={s.emailInput}
+            value={email}
+            onChangeText={setEmail}
+            placeholder={t('email.emailPlaceholder')}
+            placeholderTextColor={colors.gray}
+            autoCapitalize="none"
+            autoCorrect={false}
+            keyboardType="email-address"
+            textContentType="emailAddress"
+          />
+          <TextInput
+            style={s.emailInput}
+            value={password}
+            onChangeText={setPassword}
+            placeholder={t('email.passwordPlaceholder')}
+            placeholderTextColor={colors.gray}
+            secureTextEntry
+            textContentType={emailMode === 'create' ? 'newPassword' : 'password'}
+          />
+          {loading ? (
+            <ActivityIndicator size="large" color={colors.primary} style={{ marginTop: spacing.md }} />
+          ) : (
+            <TouchableOpacity style={s.btnEmailSolid} onPress={handleEmail}>
+              <Text style={s.btnEmailSolidText}>{t(emailMode === 'create' ? 'email.createButton' : 'email.loginButton')}</Text>
+            </TouchableOpacity>
+          )}
+          {error && <Text style={s.errorText}>{error}</Text>}
+          <TouchableOpacity onPress={() => { setEmailMode(emailMode === 'create' ? 'login' : 'create'); setError(null); }}>
+            <Text style={s.emailLink}>{t(emailMode === 'create' ? 'email.alreadyHaveAccount' : 'email.createInstead')}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => { setEmailMode(null); setError(null); }}>
+            <Text style={s.emailBack}>{t('email.back')}</Text>
+          </TouchableOpacity>
+        </ScrollView>
+      </SafeAreaView>
+    );
+  }
+
+  // ── Page principale (proposition n°2) ──────────────────────────────────────
   return (
     <SafeAreaView style={s.safe}>
-      <View style={s.container}>
+      <ScrollView contentContainerStyle={s.container} showsVerticalScrollIndicator={false}>
 
-        <View style={s.hero}>
-          <Text style={s.logo}>🚭</Text>
-          <Text style={s.appName}>Stopklop</Text>
-          <Text style={s.tagline}>{t('tagline')}</Text>
+        <Text style={s.logo}>Stopklop</Text>
+
+        <Image source={HERO} style={s.hero} resizeMode="contain" />
+
+        <Text style={s.headline}>{t('hero.headline')}</Text>
+        <Text style={s.subtitle}>{t('hero.subtitle')}</Text>
+
+        <View style={s.chipsRow}>
+          <View style={s.chip}>
+            <Text style={s.chipValue}>{t('hero.progressValue')}</Text>
+            <Text style={s.chipLabel}>{t('hero.progressLabel')}</Text>
+          </View>
+          <View style={s.chip}>
+            <Text style={s.chipValue}>{t('hero.savingsValue')}</Text>
+            <Text style={s.chipLabel}>{t('hero.savingsLabel')}</Text>
+          </View>
+          <View style={s.chip}>
+            <Text style={s.chipValue}>{t('hero.paceValue')}</Text>
+            <Text style={s.chipLabel}>{t('hero.paceLabel')}</Text>
+          </View>
         </View>
 
         <View style={s.btnContainer}>
           {loading || google.loading ? (
             <ActivityIndicator size="large" color={colors.primary} />
-          ) : emailMode ? (
-            <>
-              <Text style={s.emailTitle}>{t(emailMode === 'create' ? 'email.createTitle' : 'email.loginTitle')}</Text>
-              <TextInput
-                style={s.emailInput}
-                value={email}
-                onChangeText={setEmail}
-                placeholder={t('email.emailPlaceholder')}
-                placeholderTextColor={colors.gray}
-                autoCapitalize="none"
-                autoCorrect={false}
-                keyboardType="email-address"
-                textContentType="emailAddress"
-              />
-              <TextInput
-                style={s.emailInput}
-                value={password}
-                onChangeText={setPassword}
-                placeholder={t('email.passwordPlaceholder')}
-                placeholderTextColor={colors.gray}
-                secureTextEntry
-                textContentType={emailMode === 'create' ? 'newPassword' : 'password'}
-              />
-              <TouchableOpacity style={s.btnGuest} onPress={handleEmail}>
-                <Text style={s.btnGuestText}>{t(emailMode === 'create' ? 'email.createButton' : 'email.loginButton')}</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => { setEmailMode(emailMode === 'create' ? 'login' : 'create'); setError(null); }}>
-                <Text style={s.emailLink}>{t(emailMode === 'create' ? 'email.alreadyHaveAccount' : 'email.createInstead')}</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => { setEmailMode(null); setError(null); }}>
-                <Text style={s.emailBack}>{t('email.back')}</Text>
-              </TouchableOpacity>
-            </>
           ) : (
             <>
               <TouchableOpacity
@@ -123,40 +161,31 @@ export default function AuthScreen() {
                 disabled={!google.request || !google.configured}
                 onPress={handleGoogle}
               >
-                <Text style={s.btnGoogleIcon}>G</Text>
+                <Image source={ICON_GOOGLE} style={s.btnIcon} resizeMode="contain" />
                 <Text style={s.btnGoogleText}>{t('google.button')}</Text>
               </TouchableOpacity>
               {!google.configured && (
                 <Text style={s.providerHint}>{t('google.unavailable')}</Text>
               )}
 
-              {Platform.OS === 'ios' && (
-                <TouchableOpacity style={s.btnAppleCustom} onPress={handleApple}>
-                  <Text style={{ color: '#fff', fontSize: font.md, fontWeight: '600' }}>{t('apple.button')}</Text>
-                </TouchableOpacity>
-              )}
-
-              <View style={s.divider}>
-                <View style={s.divLine} />
-                <Text style={s.divText}>{t('divider.or')}</Text>
-                <View style={s.divLine} />
-              </View>
+              <TouchableOpacity style={s.btnApple} onPress={handleApple}>
+                <Image source={ICON_APPLE} style={s.btnIcon} resizeMode="contain" />
+                <Text style={s.btnAppleText}>{t('apple.button')}</Text>
+              </TouchableOpacity>
 
               <TouchableOpacity style={s.btnEmail} onPress={() => setEmailMode('create')}>
+                <Image source={ICON_EMAIL} style={s.btnIcon} resizeMode="contain" />
                 <Text style={s.btnEmailText}>{t('email.createEntry')}</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => setEmailMode('login')}>
-                <Text style={s.emailLink}>{t('email.loginEntry')}</Text>
-              </TouchableOpacity>
-
-              {/* Mode invité — disponible dans Expo Go */}
-              <TouchableOpacity style={s.btnGuest} onPress={handleGuest}>
-                <Text style={s.btnGuestText}>{t('guest.button')}</Text>
               </TouchableOpacity>
             </>
           )}
           {(error || google.error) && <Text style={s.errorText}>{error ?? t('errors.google')}</Text>}
         </View>
+
+        <TouchableOpacity onPress={() => setEmailMode('login')} style={s.footerRow}>
+          <Text style={s.footerQuestion}>{t('footer.question')} </Text>
+          <Text style={s.footerCta}>{t('footer.cta')}</Text>
+        </TouchableOpacity>
 
         <Text style={s.legal}>
           {t('legal.prefix')}{' '}
@@ -165,48 +194,81 @@ export default function AuthScreen() {
           <Text style={s.legalLink}>{t('legal.privacy')}</Text>.
         </Text>
 
-      </View>
+        {/* Mode invité — outil de développement, jamais montré à un vrai
+            utilisateur. Retiré définitivement au moment du build EAS de sortie. */}
+        {__DEV__ && (
+          <TouchableOpacity onPress={handleGuest} style={s.devGuest}>
+            <Text style={s.devGuestText}>{t('guest.button')} (dev)</Text>
+          </TouchableOpacity>
+        )}
+
+      </ScrollView>
     </SafeAreaView>
   );
 }
 
 const s = StyleSheet.create({
-  safe:         { flex: 1, backgroundColor: colors.white },
-  container:    { flex: 1, paddingHorizontal: spacing.xl, justifyContent: 'space-between', paddingVertical: spacing.xxl },
-  hero:         { flex: 1, alignItems: 'center', justifyContent: 'center', gap: 12 },
-  logo:         { fontSize: 72 },
-  appName:      { fontSize: 32, fontWeight: '900', color: colors.primary },
-  tagline:      { fontSize: font.md, color: colors.gray, textAlign: 'center' },
-  btnContainer: { gap: 12, marginBottom: spacing.xl },
+  safe:      { flex: 1, backgroundColor: '#FBF8EF' },
+  container: { flexGrow: 1, paddingHorizontal: spacing.xl, paddingTop: spacing.lg, paddingBottom: spacing.xxl, alignItems: 'center' },
+
+  logo: { alignSelf: 'flex-start', fontSize: 26, fontWeight: '800', color: '#197A47', marginBottom: spacing.sm },
+
+  hero: { width: '100%', height: 220, marginVertical: spacing.sm },
+
+  headline: { fontSize: 26, fontWeight: '800', color: '#0B4B31', textAlign: 'center', lineHeight: 32, marginTop: spacing.sm },
+  subtitle: { fontSize: font.md, color: colors.gray, textAlign: 'center', lineHeight: 22, marginTop: 8, marginBottom: spacing.lg },
+
+  chipsRow: { flexDirection: 'row', gap: 8, width: '100%', marginBottom: spacing.lg },
+  chip: {
+    flex: 1, backgroundColor: '#EAF5ED', borderRadius: 16,
+    paddingVertical: 12, alignItems: 'center', gap: 2,
+  },
+  chipValue: { fontSize: 16, fontWeight: '800', color: '#197A47' },
+  chipLabel: { fontSize: 10, fontWeight: '700', color: '#5C8A6E', letterSpacing: 0.3 },
+
+  btnContainer: { gap: 12, width: '100%' },
+  btnIcon: { width: 22, height: 22 },
+
   btnGoogle: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
     gap: 10, backgroundColor: colors.white,
     borderWidth: 1.5, borderColor: '#E5E7EB',
     borderRadius: 30, paddingVertical: 14,
   },
-  btnGoogleIcon: { fontSize: 18, fontWeight: '700', color: '#4285F4' },
-  btnGoogleText: { fontSize: font.md, fontWeight: '600', color: colors.black },
-  btnAppleCustom: { height: 50, width: '100%', backgroundColor: '#000', borderRadius: 30, alignItems: 'center', justifyContent: 'center' },
+  btnGoogleText: { fontSize: font.md, fontWeight: '700', color: '#0B4B31' },
   btnDisabled:   { opacity: 0.35 },
   providerHint:  { color: colors.gray, fontSize: 11, textAlign: 'center', marginTop: -5 },
-  divider:       { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  divLine:       { flex: 1, height: 1, backgroundColor: '#E5E7EB' },
-  divText:       { fontSize: 12, color: colors.gray },
-  btnGuest: {
-    backgroundColor: colors.primary, borderRadius: 30,
-    paddingVertical: 14, alignItems: 'center',
+
+  btnApple: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
+    gap: 10, height: 50, width: '100%', backgroundColor: '#0B0B0B', borderRadius: 30,
   },
-  btnGuestText:  { color: '#fff', fontSize: font.md, fontWeight: '700' },
+  btnAppleText: { color: '#fff', fontSize: font.md, fontWeight: '700' },
+
   btnEmail: {
-    backgroundColor: colors.primaryLight, borderRadius: 30,
-    paddingVertical: 14, alignItems: 'center', borderWidth: 1, borderColor: '#C8E2CF',
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
+    gap: 10, backgroundColor: '#197A47', borderRadius: 30, paddingVertical: 14,
   },
-  btnEmailText: { color: colors.primaryDeep, fontSize: font.md, fontWeight: '700' },
-  emailTitle: { fontSize: 18, color: colors.black, fontWeight: '800', textAlign: 'center', marginBottom: 2 },
+  btnEmailText: { color: '#fff', fontSize: font.md, fontWeight: '700' },
+
+  footerRow: { flexDirection: 'row', justifyContent: 'center', paddingTop: spacing.md },
+  footerQuestion: { color: colors.gray, fontSize: font.sm },
+  footerCta: { color: '#197A47', fontSize: font.sm, fontWeight: '800' },
+
+  legal: { fontSize: 11, color: colors.gray, textAlign: 'center', lineHeight: 16, marginTop: spacing.md },
+  legalLink: { color: '#197A47', fontWeight: '600' },
+
+  errorText: { color: '#EF4444', fontSize: font.sm, textAlign: 'center', marginTop: 8 },
+
+  devGuest: { marginTop: spacing.lg, alignItems: 'center' },
+  devGuestText: { color: '#B0B7B2', fontSize: 11, textDecorationLine: 'underline' },
+
+  // ── Formulaire e-mail ──────────────────────────────────────────────────────
+  emailContainer: { flexGrow: 1, paddingHorizontal: spacing.xl, justifyContent: 'center', gap: 12 },
+  emailTitle: { fontSize: 20, color: '#0B4B31', fontWeight: '800', textAlign: 'center', marginBottom: 4 },
   emailInput: { borderWidth: 1, borderColor: '#D1D5DB', borderRadius: 14, backgroundColor: colors.white, paddingHorizontal: 14, paddingVertical: 13, color: colors.black, fontSize: font.md },
-  emailLink: { color: colors.primary, fontSize: font.sm, fontWeight: '700', textAlign: 'center', paddingVertical: 4 },
+  btnEmailSolid: { backgroundColor: '#197A47', borderRadius: 30, paddingVertical: 14, alignItems: 'center' },
+  btnEmailSolidText: { color: '#fff', fontSize: font.md, fontWeight: '700' },
+  emailLink: { color: '#197A47', fontSize: font.sm, fontWeight: '700', textAlign: 'center', paddingVertical: 4 },
   emailBack: { color: colors.gray, fontSize: font.sm, textAlign: 'center', paddingVertical: 4 },
-  errorText:     { color: '#EF4444', fontSize: font.sm, textAlign: 'center', marginTop: 8 },
-  legal:         { fontSize: 11, color: colors.gray, textAlign: 'center', lineHeight: 16 },
-  legalLink:     { color: colors.primary, fontWeight: '600' },
 });

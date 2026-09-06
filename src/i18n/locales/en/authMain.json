@@ -1,9 +1,17 @@
 {
   "tagline": "Quit smoking, one day at a time.",
+  "hero": {
+    "headline": "Move toward zero\nwithout pressure",
+    "subtitle": "Visualize every bit of progress and\nkeep your motivation.",
+    "progressValue": "-35%", "progressLabel": "PROGRESS",
+    "savingsValue": "€42.80", "savingsLabel": "SAVINGS",
+    "paceValue": "7 days", "paceLabel": "PACE"
+  },
   "google": { "button": "Continue with Google", "unavailable": "Google sign-in will be available soon." },
   "apple": { "button": "Continue with Apple" },
+  "footer": { "question": "Already have an account?", "cta": "Sign in" },
   "email": {
-    "createEntry": "Create an account with email",
+    "createEntry": "Continue with an email address",
     "loginEntry": "I already have an account",
     "createTitle": "Create my account",
     "loginTitle": "Sign in",

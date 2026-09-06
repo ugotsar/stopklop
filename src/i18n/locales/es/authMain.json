@@ -1,9 +1,17 @@
 {
   "tagline": "Deja de fumar, un día a la vez.",
+  "hero": {
+    "headline": "Avanza hacia cero\nsin presión",
+    "subtitle": "Visualiza cada progreso y\nmantén tu motivación.",
+    "progressValue": "-35 %", "progressLabel": "PROGRESO",
+    "savingsValue": "42,80 €", "savingsLabel": "AHORROS",
+    "paceValue": "7 días", "paceLabel": "RITMO"
+  },
   "google": { "button": "Continuar con Google", "unavailable": "El inicio de sesión con Google estará disponible próximamente." },
   "apple": { "button": "Continuar con Apple" },
+  "footer": { "question": "¿Ya tienes una cuenta?", "cta": "Iniciar sesión" },
   "email": {
-    "createEntry": "Crear una cuenta con correo electrónico",
+    "createEntry": "Continuar con un correo electrónico",
     "loginEntry": "Ya tengo una cuenta",
     "createTitle": "Crear mi cuenta",
     "loginTitle": "Iniciar sesión",
