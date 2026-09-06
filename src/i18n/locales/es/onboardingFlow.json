@@ -1,10 +1,4 @@
 {
-  "welcome": {
-    "titlePrefix": "Bienvenido a",
-    "subtitle": "Tu compañero para dejar\nde fumar y recuperar el control\nde tu vida.",
-    "startButton": "Empezar  →",
-    "alreadyHaveAccount": "Ya tengo una cuenta"
-  },
   "affirmations": {
     "title": "¿Te reconoces\nen esta situación?",
     "quoted": "«{{text}}»",

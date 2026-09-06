@@ -6,7 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 // ── Namespaces (un fichier par écran/domaine, pour éviter les conflits) ──────
 const NAMESPACES = [
   'common', 'profil', 'userStats',
-  'onboardingFlow', 'onboardingLegacy', 'paywallOnboarding',
+  'onboardingFlow', 'paywallOnboarding',
   'dashboard', 'statistiques', 'plan', 'modifierObjectif',
   'jaifume', 'journalEnvies', 'notifications',
   'personnaliserHoraires', 'uniteMonnaie', 'paywall',
@@ -18,7 +18,6 @@ import fr_common from './locales/fr/common.json';
 import fr_profil from './locales/fr/profil.json';
 import fr_userStats from './locales/fr/userStats.json';
 import fr_onboardingFlow from './locales/fr/onboardingFlow.json';
-import fr_onboardingLegacy from './locales/fr/onboardingLegacy.json';
 import fr_paywallOnboarding from './locales/fr/paywallOnboarding.json';
 import fr_dashboard from './locales/fr/dashboard.json';
 import fr_statistiques from './locales/fr/statistiques.json';
@@ -40,7 +39,6 @@ import en_common from './locales/en/common.json';
 import en_profil from './locales/en/profil.json';
 import en_userStats from './locales/en/userStats.json';
 import en_onboardingFlow from './locales/en/onboardingFlow.json';
-import en_onboardingLegacy from './locales/en/onboardingLegacy.json';
 import en_paywallOnboarding from './locales/en/paywallOnboarding.json';
 import en_dashboard from './locales/en/dashboard.json';
 import en_statistiques from './locales/en/statistiques.json';
@@ -62,7 +60,6 @@ import de_common from './locales/de/common.json';
 import de_profil from './locales/de/profil.json';
 import de_userStats from './locales/de/userStats.json';
 import de_onboardingFlow from './locales/de/onboardingFlow.json';
-import de_onboardingLegacy from './locales/de/onboardingLegacy.json';
 import de_paywallOnboarding from './locales/de/paywallOnboarding.json';
 import de_dashboard from './locales/de/dashboard.json';
 import de_statistiques from './locales/de/statistiques.json';
@@ -84,7 +81,6 @@ import es_common from './locales/es/common.json';
 import es_profil from './locales/es/profil.json';
 import es_userStats from './locales/es/userStats.json';
 import es_onboardingFlow from './locales/es/onboardingFlow.json';
-import es_onboardingLegacy from './locales/es/onboardingLegacy.json';
 import es_paywallOnboarding from './locales/es/paywallOnboarding.json';
 import es_dashboard from './locales/es/dashboard.json';
 import es_statistiques from './locales/es/statistiques.json';
@@ -105,7 +101,7 @@ import es_mentionsLegales from './locales/es/mentionsLegales.json';
 export const resources = {
   fr: {
     common: fr_common, profil: fr_profil, userStats: fr_userStats,
-    onboardingFlow: fr_onboardingFlow, onboardingLegacy: fr_onboardingLegacy, paywallOnboarding: fr_paywallOnboarding,
+    onboardingFlow: fr_onboardingFlow, paywallOnboarding: fr_paywallOnboarding,
     dashboard: fr_dashboard, statistiques: fr_statistiques, plan: fr_plan, modifierObjectif: fr_modifierObjectif,
     jaifume: fr_jaifume, journalEnvies: fr_journalEnvies, notifications: fr_notifications,
     personnaliserHoraires: fr_personnaliserHoraires, uniteMonnaie: fr_uniteMonnaie, paywall: fr_paywall,
@@ -114,7 +110,7 @@ export const resources = {
   },
   en: {
     common: en_common, profil: en_profil, userStats: en_userStats,
-    onboardingFlow: en_onboardingFlow, onboardingLegacy: en_onboardingLegacy, paywallOnboarding: en_paywallOnboarding,
+    onboardingFlow: en_onboardingFlow, paywallOnboarding: en_paywallOnboarding,
     dashboard: en_dashboard, statistiques: en_statistiques, plan: en_plan, modifierObjectif: en_modifierObjectif,
     jaifume: en_jaifume, journalEnvies: en_journalEnvies, notifications: en_notifications,
     personnaliserHoraires: en_personnaliserHoraires, uniteMonnaie: en_uniteMonnaie, paywall: en_paywall,
@@ -123,7 +119,7 @@ export const resources = {
   },
   de: {
     common: de_common, profil: de_profil, userStats: de_userStats,
-    onboardingFlow: de_onboardingFlow, onboardingLegacy: de_onboardingLegacy, paywallOnboarding: de_paywallOnboarding,
+    onboardingFlow: de_onboardingFlow, paywallOnboarding: de_paywallOnboarding,
     dashboard: de_dashboard, statistiques: de_statistiques, plan: de_plan, modifierObjectif: de_modifierObjectif,
     jaifume: de_jaifume, journalEnvies: de_journalEnvies, notifications: de_notifications,
     personnaliserHoraires: de_personnaliserHoraires, uniteMonnaie: de_uniteMonnaie, paywall: de_paywall,
@@ -132,7 +128,7 @@ export const resources = {
   },
   es: {
     common: es_common, profil: es_profil, userStats: es_userStats,
-    onboardingFlow: es_onboardingFlow, onboardingLegacy: es_onboardingLegacy, paywallOnboarding: es_paywallOnboarding,
+    onboardingFlow: es_onboardingFlow, paywallOnboarding: es_paywallOnboarding,
     dashboard: es_dashboard, statistiques: es_statistiques, plan: es_plan, modifierObjectif: es_modifierObjectif,
     jaifume: es_jaifume, journalEnvies: es_journalEnvies, notifications: es_notifications,
     personnaliserHoraires: es_personnaliserHoraires, uniteMonnaie: es_uniteMonnaie, paywall: es_paywall,

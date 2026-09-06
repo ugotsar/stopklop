@@ -20,7 +20,6 @@ const DRAFT_KEY = '@stopklop_onboarding_draft';
 
 // Illustrations HD (pack stopklop-illustrations-hd, sans texte incrusté)
 const ILLUS = {
-  bienvenue:         require('../../../assets/onboarding/stopklop-illustrations-hd/illustrations/01-decor-accueil-montgolfiere.jpg'),
   affirmation0:      require('../../../assets/onboarding/stopklop-illustrations-hd/illustrations/02-tentatives-precedentes.jpg'),
   affirmation1:      require('../../../assets/onboarding/stopklop-illustrations-hd/illustrations/03-cigarette-automatique.jpg'),
   affirmation2:      require('../../../assets/onboarding/stopklop-illustrations-hd/illustrations/04-choix-parcours.jpg'),
@@ -118,7 +117,7 @@ export default function OnboardingFlow({ navigation }) {
         if (raw) {
           const draft = JSON.parse(raw);
           setAnswers(a => ({ ...a, ...draft.answers }));
-          if (typeof draft.step === 'number') setStep(Math.min(draft.step, 19));
+          if (typeof draft.step === 'number') setStep(Math.min(draft.step, PAGES.length - 1));
         } else if (profile) {
           // Préremplissage depuis les données existantes (profil incomplet)
           setAnswers(a => ({
@@ -153,22 +152,25 @@ export default function OnboardingFlow({ navigation }) {
   }
 
   // ── Séquence des pages (l'objectif quotidien saute en mode arrêt complet) ──
+  // Plus de page "Bienvenue" distincte : l'utilisateur vient de se connecter
+  // sur AuthScreen (Google/Apple/Email), une deuxième page d'accueil quasi
+  // identique juste après n'apportait rien et proposait même un lien "j'ai
+  // déjà un compte" mort (aucune route 'Login' dans ce stack).
   const PAGES = [
-    'bienvenue',                       // 1
-    'affirmation0', 'affirmation1', 'affirmation2', // 2-4
-    'deculpabilisation',               // 5
-    'solution',                        // 6
-    'benefice0', 'benefice1', 'benefice2', 'benefice3', // 7-10
-    'objectif',                        // 11
-    'conso',                           // 12
-    'paquet',                          // 13
-    'prix',                            // 14
-    'dateDebut',                       // 15
-    'objectifQuotidien',               // 16 (si réduction)
-    'devise',                          // 17
-    'motivations',                     // 18
-    'niveauMotivation',                // 19
-    'synthese',                        // 20
+    'affirmation0', 'affirmation1', 'affirmation2', // 1-3
+    'deculpabilisation',               // 4
+    'solution',                        // 5
+    'benefice0', 'benefice1', 'benefice2', 'benefice3', // 6-9
+    'objectif',                        // 10
+    'conso',                           // 11
+    'paquet',                          // 12
+    'prix',                            // 13
+    'dateDebut',                       // 14
+    'objectifQuotidien',               // 15 (si réduction)
+    'devise',                          // 16
+    'motivations',                     // 17
+    'niveauMotivation',                // 18
+    'synthese',                        // 19
   ];
   const pages = answers.typeObjectif === 'stop'
     ? PAGES.filter(p => p !== 'objectifQuotidien')
@@ -271,31 +273,6 @@ export default function OnboardingFlow({ navigation }) {
       <SafeAreaView style={st.safe}>
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
           <ActivityIndicator size="large" color={colors.primary} />
-        </View>
-      </SafeAreaView>
-    );
-  }
-
-  // ── Page 1 : Bienvenue (plein écran, sans header) ──────────────────────────
-  if (page === 'bienvenue') {
-    return (
-      <SafeAreaView style={[st.safe, { backgroundColor: '#EAF4EC' }]}>
-        <Image
-          source={ILLUS.bienvenue}
-          style={{ position: 'absolute', top: 0, left: 0, right: 0, width: '100%', height: SCREEN_H * 0.68 }}
-          resizeMode="cover"
-        />
-        <View style={[st.welcomeCard, { position: 'absolute', bottom: 0, left: 0, right: 0 }]}>
-          <Text style={st.welcomeTitle}>
-            {t('welcome.titlePrefix')}{'\n'}<Text style={{ color: colors.primary }}>Stopklop</Text>
-          </Text>
-          <Text style={st.welcomeSub}>
-            {t('welcome.subtitle')}
-          </Text>
-          <PrimaryButton title={t('welcome.startButton')} onPress={next} />
-          <TouchableOpacity onPress={() => navigation.navigate('Login')} style={{ alignItems: 'center', paddingTop: spacing.sm }}>
-            <Text style={{ color: colors.gray, fontSize: font.md }}>{t('welcome.alreadyHaveAccount')}</Text>
-          </TouchableOpacity>
         </View>
       </SafeAreaView>
     );
