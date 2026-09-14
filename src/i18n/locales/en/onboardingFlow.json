@@ -15,14 +15,11 @@
     "pathStop": "Quit"
   },
   "deculpabilisation": {
-    "title": "A concrete plan\nto move forward",
-    "subtitle": "Track your smoking, set a target and see your progress with Stopklop.",
-    "chartTitle": "Your reduction, day by day",
-    "chartUnit": "Cigarettes / day",
-    "legendStart": "Starting level",
-    "legendDaily": "Daily tracking",
-    "lead": "A daily goal and tracking, so you always know where you stand.",
-    "disclaimer": "Illustrative example, no guaranteed result."
+    "title": "Rest assured, it's not just a lack of willpower",
+    "subtitle": "Addiction is built on habits, triggers and automatic behaviours.",
+    "withoutSupport": "Without support",
+    "withStopklop": "With Stopklop",
+    "note": "Stopklop adapts your journey to your consumption, your habits and your goal."
   },
   "solution": {
     "title": "Move at your own pace,\nwith a tailored plan",
@@ -53,17 +50,31 @@
       }
     ],
     "journal": {
+      "hdTitle": "Every cigarette becomes a choice",
+      "hdSubtitle": "Record the context of each cigarette and discover what influences your mood or smoking over time.",
+      "hdInsightTitle": "Pattern detected",
+      "hdInsightText": "You often smoke after coffee when feeling stressed.",
       "title": "Your log",
       "tag": "Example",
       "rows": [
-        { "time": "09:00", "label": "After coffee" },
-        { "time": "13:15", "label": "During a break" },
-        { "time": "16:00", "label": "With a coffee" }
+        {
+          "time": "09:00",
+          "label": "After coffee"
+        },
+        {
+          "time": "13:15",
+          "label": "During a break"
+        },
+        {
+          "time": "16:00",
+          "label": "With a coffee"
+        }
       ],
       "insightTitle": "Coffee comes up often",
       "insightText": "In this example, 2 out of 3 cigarettes are linked to coffee."
     },
     "triggers": {
+      "hdSubtitle": "Stopklop looks at the situations and emotions linked to your smoking to help you understand them better.",
       "coffee": "Coffee",
       "stress": "Stress",
       "alcohol": "Alcohol",
@@ -109,8 +120,14 @@
     "title": "How many cigarettes\ndo you currently smoke?",
     "subtitle": "Be honest, this stays 100% confidential.",
     "cigarettesPerUnit": "cigarettes / {{unit}}",
-    "unit": { "jour": "day", "semaine": "week" },
-    "toggle": { "jour": "Per day", "semaine": "Per week" },
+    "unit": {
+      "jour": "day",
+      "semaine": "week"
+    },
+    "toggle": {
+      "jour": "Per day",
+      "semaine": "Per week"
+    },
     "estimatedPerDay": "≈ {{count}} cigarettes per day"
   },
   "packSize": {
@@ -128,7 +145,15 @@
     "title": "When would you like\nto start?",
     "subtitle": "Choose the date that suits you best.",
     "hint": "Start: {{date}}",
-    "calendarWeekdays": ["M", "T", "W", "T", "F", "S", "S"]
+    "calendarWeekdays": [
+      "M",
+      "T",
+      "W",
+      "T",
+      "F",
+      "S",
+      "S"
+    ]
   },
   "dailyGoal": {
     "title": "What goal\ndo you want to reach?",
@@ -140,9 +165,18 @@
     "title": "Which currency\ndo you use?",
     "subtitle": "To show your spending and your savings in the right currency.",
     "options": {
-      "EUR": { "name": "Euro", "code": "EUR · €" },
-      "CHF": { "name": "Swiss franc", "code": "CHF" },
-      "GBP": { "name": "Pound sterling", "code": "GBP · £" }
+      "EUR": {
+        "name": "Euro",
+        "code": "EUR · €"
+      },
+      "CHF": {
+        "name": "Swiss franc",
+        "code": "CHF"
+      },
+      "GBP": {
+        "name": "Pound sterling",
+        "code": "GBP · £"
+      }
     }
   },
   "motivations": {

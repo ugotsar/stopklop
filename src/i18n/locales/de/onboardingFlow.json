@@ -15,14 +15,11 @@
     "pathStop": "Aufhören"
   },
   "deculpabilisation": {
-    "title": "Ein konkreter Plan,\num voranzukommen",
-    "subtitle": "Beobachte deinen Konsum, setz dir ein Ziel und sieh deine Fortschritte mit Stopklop.",
-    "chartTitle": "Deine Reduktion, Tag für Tag",
-    "chartUnit": "Zigaretten / Tag",
-    "legendStart": "Ausgangsniveau",
-    "legendDaily": "Tägliche Erfassung",
-    "lead": "Ein Tagesziel und eine Erfassung, damit du weißt, wo du stehst.",
-    "disclaimer": "Beispielhafte Darstellung, kein garantiertes Ergebnis."
+    "title": "Keine Sorge, es ist nicht einfach nur mangelnde Willenskraft",
+    "subtitle": "Die Abhängigkeit basiert auf Gewohnheiten, Auslösern und Automatismen.",
+    "withoutSupport": "Ohne Begleitung",
+    "withStopklop": "Mit Stopklop",
+    "note": "Stopklop passt deinen Weg an deinen Konsum, deine Gewohnheiten und dein Ziel an."
   },
   "solution": {
     "title": "Geh in deinem Tempo voran,\nmit einem passenden Plan",
@@ -53,17 +50,31 @@
       }
     ],
     "journal": {
+      "hdTitle": "Jede Zigarette wird zur Entscheidung",
+      "hdSubtitle": "Halte den Kontext jeder Zigarette fest und entdecke, was deine Stimmung oder deinen Konsum mit der Zeit beeinflusst.",
+      "hdInsightTitle": "Gewohnheit erkannt",
+      "hdInsightText": "Du rauchst oft nach dem Kaffee, wenn du gestresst bist.",
       "title": "Dein Tagebuch",
       "tag": "Beispiel",
       "rows": [
-        { "time": "09:00", "label": "Nach dem Kaffee" },
-        { "time": "13:15", "label": "Während einer Pause" },
-        { "time": "16:00", "label": "Mit einem Kaffee" }
+        {
+          "time": "09:00",
+          "label": "Nach dem Kaffee"
+        },
+        {
+          "time": "13:15",
+          "label": "Während einer Pause"
+        },
+        {
+          "time": "16:00",
+          "label": "Mit einem Kaffee"
+        }
       ],
       "insightTitle": "Kaffee kommt oft vor",
       "insightText": "In diesem Beispiel hängen 2 von 3 Zigaretten mit Kaffee zusammen."
     },
     "triggers": {
+      "hdSubtitle": "Stopklop betrachtet Situationen und Gefühle rund um deinen Konsum, damit du sie besser verstehen kannst.",
       "coffee": "Kaffee",
       "stress": "Stress",
       "alcohol": "Alkohol",
@@ -109,8 +120,14 @@
     "title": "Wie viele Zigaretten\nrauchst du derzeit?",
     "subtitle": "Sei ehrlich, das bleibt zu 100 % vertraulich.",
     "cigarettesPerUnit": "Zigaretten / {{unit}}",
-    "unit": { "jour": "Tag", "semaine": "Woche" },
-    "toggle": { "jour": "Pro Tag", "semaine": "Pro Woche" },
+    "unit": {
+      "jour": "Tag",
+      "semaine": "Woche"
+    },
+    "toggle": {
+      "jour": "Pro Tag",
+      "semaine": "Pro Woche"
+    },
     "estimatedPerDay": "≈ {{count}} Zigaretten pro Tag"
   },
   "packSize": {
@@ -128,7 +145,15 @@
     "title": "Wann möchtest du\nstarten?",
     "subtitle": "Wähle das Datum, das dir am besten passt.",
     "hint": "Beginn: {{date}}",
-    "calendarWeekdays": ["M", "D", "M", "D", "F", "S", "S"]
+    "calendarWeekdays": [
+      "M",
+      "D",
+      "M",
+      "D",
+      "F",
+      "S",
+      "S"
+    ]
   },
   "dailyGoal": {
     "title": "Welches Ziel\nmöchtest du erreichen?",
@@ -140,9 +165,18 @@
     "title": "Welche Währung\nnutzt du?",
     "subtitle": "Um deine Ausgaben und Ersparnisse in der richtigen Währung anzuzeigen.",
     "options": {
-      "EUR": { "name": "Euro", "code": "EUR · €" },
-      "CHF": { "name": "Schweizer Franken", "code": "CHF" },
-      "GBP": { "name": "Britisches Pfund", "code": "GBP · £" }
+      "EUR": {
+        "name": "Euro",
+        "code": "EUR · €"
+      },
+      "CHF": {
+        "name": "Schweizer Franken",
+        "code": "CHF"
+      },
+      "GBP": {
+        "name": "Britisches Pfund",
+        "code": "GBP · £"
+      }
     }
   },
   "motivations": {

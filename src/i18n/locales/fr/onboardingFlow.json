@@ -6,8 +6,8 @@
     "title": "Tu te reconnais dans\ncette situation ?",
     "quoted": "« {{text}} »",
     "items": [
-      "J'ai déjà essayé de réduire ou d'arrêter, mais j'ai du mal à tenir dans la durée.",
-      "Il m'arrive d'allumer une cigarette par réflexe, sans en avoir vraiment envie.",
+      "J’ai déjà essayé de réduire ou d’arrêter, mais j’ai du mal à tenir dans la durée.",
+      "Il m’arrive d’allumer une cigarette par réflexe, sans en avoir vraiment envie.",
       "Je voudrais réduire progressivement, mais je ne sais pas par où commencer."
     ],
     "footer": "Chaque parcours est différent.",
@@ -15,22 +15,19 @@
     "pathStop": "Arrêter"
   },
   "deculpabilisation": {
-    "title": "Un plan concret\npour avancer",
-    "subtitle": "Observe ta consommation, fixe un cap et visualise tes progrès avec Stopklop.",
-    "chartTitle": "Ta réduction, jour après jour",
-    "chartUnit": "Cigarettes / jour",
-    "legendStart": "Niveau de départ",
-    "legendDaily": "Suivi quotidien",
-    "lead": "Un objectif quotidien et un suivi pour savoir où tu en es.",
-    "disclaimer": "Exemple illustratif, sans résultat garanti."
+    "title": "Rassure-toi, ce n’est pas simplement un manque de volonté",
+    "subtitle": "La dépendance repose sur des habitudes, des déclencheurs et des automatismes.",
+    "withoutSupport": "Sans accompagnement",
+    "withStopklop": "Avec Stopklop",
+    "note": "Stopklop adapte ton parcours à ta consommation, tes habitudes et ton objectif."
   },
   "solution": {
     "title": "Avance à ton rythme,\navec un plan adapté",
-    "subtitle": "Ton point de départ, tes habitudes, ton objectif : un parcours qui te correspond.",
+    "subtitle": "Chaque fumeur est différent. Stopklop crée un parcours personnalisé selon ta consommation, tes habitudes et ton objectif.",
     "chips": {
-      "consumption": "Consommation",
-      "habits": "Habitudes",
-      "goal": "Objectif"
+      "consumption": "Ta consommation",
+      "habits": "Tes habitudes",
+      "goal": "Ton objectif"
     }
   },
   "benefits": {
@@ -49,21 +46,35 @@
       },
       {
         "title": "Chaque cigarette évitée\ncompte vraiment",
-        "text": "Moins de cigarettes, plus d'économies : vois concrètement le chemin parcouru."
+        "text": "Moins de cigarettes, plus d’économies : vois concrètement le chemin parcouru."
       }
     ],
     "journal": {
+      "hdTitle": "Chaque cigarette devient un choix",
+      "hdSubtitle": "Enregistre le contexte de chaque cigarette et découvre ce qui influence ton humeur ou ta consommation au fil du temps.",
+      "hdInsightTitle": "Habitude détectée",
+      "hdInsightText": "Tu fumes souvent après le café en situation de stress.",
       "title": "Ton journal",
       "tag": "Exemple",
       "rows": [
-        { "time": "09:00", "label": "Après le café" },
-        { "time": "13:15", "label": "Pendant une pause" },
-        { "time": "16:00", "label": "Avec un café" }
+        {
+          "time": "09:00",
+          "label": "Après le café"
+        },
+        {
+          "time": "13:15",
+          "label": "Pendant une pause"
+        },
+        {
+          "time": "16:00",
+          "label": "Avec un café"
+        }
       ],
       "insightTitle": "Le café revient souvent",
       "insightText": "Dans cet exemple, 2 cigarettes sur 3 sont liées au café."
     },
     "triggers": {
+      "hdSubtitle": "Stopklop analyse les situations et les émotions associées à ta consommation pour t’aider à mieux les comprendre.",
       "coffee": "Café",
       "stress": "Stress",
       "alcohol": "Alcool",
@@ -87,16 +98,16 @@
       "timeValue": "3 h 55 libérées",
       "timeNote": "Estimation : 5 minutes par cigarette",
       "chartTitle": "Cigarettes évitées · cumul",
-      "disclaimer": "Données d'exemple sur 7 jours."
+      "disclaimer": "Données d’exemple sur 7 jours."
     }
   },
   "goalType": {
     "title": "Quel est ton objectif ?",
-    "subtitle": "Choisis ce qui te convient aujourd'hui. Tu pourras ajuster ton parcours ensuite.",
+    "subtitle": "Choisis ce qui te convient aujourd’hui. Tu pourras ajuster ton parcours ensuite.",
     "options": {
       "reduce": {
         "title": "Réduire progressivement",
-        "desc": "Diminuer ma consommation, une étape après l'autre."
+        "desc": "Diminuer ma consommation, une étape après l’autre."
       },
       "stop": {
         "title": "Arrêter complètement",
@@ -109,13 +120,19 @@
     "title": "Combien de cigarettes\nfumes-tu actuellement ?",
     "subtitle": "Sois honnête, cela reste 100 % confidentiel.",
     "cigarettesPerUnit": "cigarettes / {{unit}}",
-    "unit": { "jour": "jour", "semaine": "semaine" },
-    "toggle": { "jour": "Par jour", "semaine": "Par semaine" },
+    "unit": {
+      "jour": "jour",
+      "semaine": "semaine"
+    },
+    "toggle": {
+      "jour": "Par jour",
+      "semaine": "Par semaine"
+    },
     "estimatedPerDay": "≈ {{count}} cigarettes par jour"
   },
   "packSize": {
     "title": "Combien de cigarettes\ncontient ton paquet ?",
-    "subtitle": "Une information clé pour t'aider à mieux suivre ton budget.",
+    "subtitle": "Une information clé pour t’aider à mieux suivre ton budget.",
     "unit": "cigarettes par paquet"
   },
   "packPrice": {
@@ -128,7 +145,15 @@
     "title": "Quand souhaites-tu\ncommencer ?",
     "subtitle": "Choisis la date qui te convient le mieux.",
     "hint": "Début : {{date}}",
-    "calendarWeekdays": ["L", "M", "M", "J", "V", "S", "D"]
+    "calendarWeekdays": [
+      "L",
+      "M",
+      "M",
+      "J",
+      "V",
+      "S",
+      "D"
+    ]
   },
   "dailyGoal": {
     "title": "Quel objectif\nveux-tu atteindre ?",
@@ -140,13 +165,22 @@
     "title": "Quelle devise\nutilises-tu ?",
     "subtitle": "Pour afficher tes dépenses et tes économies avec la bonne monnaie.",
     "options": {
-      "EUR": { "name": "Euro", "code": "EUR · €" },
-      "CHF": { "name": "Franc suisse", "code": "CHF" },
-      "GBP": { "name": "Livre sterling", "code": "GBP · £" }
+      "EUR": {
+        "name": "Euro",
+        "code": "EUR · €"
+      },
+      "CHF": {
+        "name": "Franc suisse",
+        "code": "CHF"
+      },
+      "GBP": {
+        "name": "Livre sterling",
+        "code": "GBP · £"
+      }
     }
   },
   "motivations": {
-    "title": "Qu'est-ce qui te\nmotive le plus ?",
+    "title": "Qu’est-ce qui te\nmotive le plus ?",
     "subtitle": "Choisis les raisons qui comptent pour toi. Tu peux en sélectionner plusieurs.",
     "options": {
       "health": "Ma santé",
@@ -188,7 +222,7 @@
     "savingsValue": "≈ {{monthly}} {{currency}} / mois\n≈ {{yearly}} {{currency}} / an",
     "quoted": "« {{text}} »",
     "savingIndicator": "Enregistrement de ton parcours…",
-    "saveError": "Impossible d'enregistrer. Vérifie ta connexion et réessaie.",
+    "saveError": "Impossible d’enregistrer. Vérifie ta connexion et réessaie.",
     "startButton": "Commencer  🚀"
   }
 }

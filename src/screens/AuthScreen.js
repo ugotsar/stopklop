@@ -19,7 +19,7 @@ const ICON_GOOGLE = require('../../assets/auth-hero/06-icone-google.png');
 const ICON_APPLE  = require('../../assets/auth-hero/07-icone-apple.png');
 const ICON_EMAIL  = require('../../assets/auth-hero/08-icone-email.png');
 
-export default function AuthScreen() {
+export default function AuthScreen({ navigation }) {
   const { t } = useTranslation('authMain');
   const [loading, setLoading] = useState(false);
   const [error, setError]     = useState(null);
@@ -194,6 +194,16 @@ export default function AuthScreen() {
           <Text style={s.legalLink}>{t('legal.privacy')}</Text>.
         </Text>
 
+        {__DEV__ && (
+          <TouchableOpacity
+            onPress={() => navigation.navigate('OnboardingPreview', { previewMode: true })}
+            style={s.devPreview}
+            accessibilityRole="button"
+          >
+            <Text style={s.devPreviewText}>Voir l’onboarding (aperçu)</Text>
+          </TouchableOpacity>
+        )}
+
         {/* Mode invité — outil de développement, jamais montré à un vrai
             utilisateur. Retiré définitivement au moment du build EAS de sortie. */}
         {__DEV__ && (
@@ -262,6 +272,8 @@ const s = StyleSheet.create({
 
   devGuest: { marginTop: spacing.lg, alignItems: 'center' },
   devGuestText: { color: '#B0B7B2', fontSize: 11, textDecorationLine: 'underline' },
+  devPreview: { marginTop: spacing.lg, paddingVertical: 13, paddingHorizontal: 20, borderWidth: 1, borderColor: '#197A47', borderRadius: 30, alignItems: 'center', alignSelf: 'stretch' },
+  devPreviewText: { color: '#197A47', fontSize: font.sm, fontWeight: '700' },
 
   // ── Formulaire e-mail ──────────────────────────────────────────────────────
   emailContainer: { flexGrow: 1, paddingHorizontal: spacing.xl, justifyContent: 'center', gap: 12 },

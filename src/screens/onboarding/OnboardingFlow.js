@@ -1,19 +1,39 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
-  View, Text, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity,
+  View, Text as RNText, StyleSheet, SafeAreaView, ScrollView, TouchableOpacity,
   TextInput, ActivityIndicator, KeyboardAvoidingView, Platform, Image,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Svg, { Path, Circle } from 'react-native-svg';
+import Svg, { Path } from 'react-native-svg';
 import { useTranslation } from 'react-i18next';
+import { useFonts } from 'expo-font';
 import { colors, spacing, font, radius } from '../../theme';
-import PrimaryButton from '../../components/PrimaryButton';
 import NatureBackground from '../../components/NatureBackground';
 import { useUser } from '../../context/UserContext';
 import { jouerSon } from '../../services/sounds';
 import { localDateKey } from '../../utils/dateKeys';
 
 const DRAFT_KEY = '@stopklop_onboarding_draft';
+const PLAN_HD = {
+  hero: require('../../../assets/onboarding/plan-adapte-hd/hero-plan-adapte.png'),
+  back: require('../../../assets/onboarding/plan-adapte-hd/navigation-retour.png'),
+  consumption: require('../../../assets/onboarding/plan-adapte-hd/consommation.png'),
+  habits: require('../../../assets/onboarding/plan-adapte-hd/habitudes.png'),
+  goal: require('../../../assets/onboarding/plan-adapte-hd/objectif.png'),
+};
+const CIGARETTE_CHOIX_HD = {
+  hero: require('../../../assets/onboarding/cigarette-choix-hd/hero-suivi-cigarette.png'),
+  insight: require('../../../assets/onboarding/cigarette-choix-hd/habitude-detectee.png'),
+};
+const DECLENCHEURS_HD = require('../../../assets/onboarding/declencheurs-hd/hero-declencheurs.png');
+const DESIGN = { ink: '#0B5135', green: '#0AA85B', muted: '#4B6358', mint: '#DDF5E8', border: '#E6EEE9' };
+
+// Police livrée avec la maquette finale, limitée à l'onboarding.
+function Text({ style, ...props }) {
+  const weight = StyleSheet.flatten(style)?.fontWeight;
+  const bold = weight === 'bold' || Number(weight) >= 600;
+  return <RNText {...props} style={[{ fontFamily: bold ? 'DejaVuSans-Bold' : 'DejaVuSans' }, style]} />;
+}
 
 // ── Pack « Stopklop_Design_Assets_V2 » ───────────────────────────────────────
 // Les 3 scènes illustrées sont des PNG RGB sur fond blanc opaque (volontaire :
@@ -21,15 +41,16 @@ const DRAFT_KEY = '@stopklop_onboarding_draft';
 // transparents. Les courbes des écrans 05 et 10 sont dessinées nativement.
 const V2 = {
   illusTentatives:  require('../../../assets/onboarding/v2/02-identification-tentatives/illustration-tentatives/illustration-tentatives.png'),
-  actionNon:        require('../../../assets/onboarding/v2/02-identification-tentatives/non/non.png'),
-  actionOui:        require('../../../assets/onboarding/v2/02-identification-tentatives/oui/oui.png'),
+  // Le pack V2 livre pour « Non » une icône « pause » (deux barres vertes) :
+  // on garde les boutons du premier pack, croix rouge et coche verte.
+  actionNon:        require('../../../assets/onboarding/v2/02-identification-tentatives/non-rouge/non-rouge.png'),
+  actionOui:        require('../../../assets/onboarding/v2/02-identification-tentatives/oui-vert/oui-vert.png'),
   illusAutomatisme: require('../../../assets/onboarding/v2/03-identification-automatisme/illustration-automatisme/illustration-automatisme.png'),
   illusChemins:     require('../../../assets/onboarding/v2/04-identification-reduction/illustration-chemins/illustration-chemins.png'),
-  courbeAccompagnement: require('../../../assets/onboarding/v2/05-deculpabilisation/courbe-accompagnement/courbe-accompagnement.png'),
   illusPlan:        require('../../../assets/onboarding/v2/06-plan-adapte/illustration-plan/illustration-plan.png'),
-  etapeConso:       require('../../../assets/onboarding/v2/06-plan-adapte/etape-consommation/etape-consommation.png'),
-  etapeHabitudes:   require('../../../assets/onboarding/v2/06-plan-adapte/etape-habitudes/etape-habitudes.png'),
-  etapeObjectif:    require('../../../assets/onboarding/v2/06-plan-adapte/etape-objectif/etape-objectif.png'),
+  planConso:        require('../../../assets/onboarding/v2/06-plan-adapte/consommation/consommation.png'),
+  planHabitudes:    require('../../../assets/onboarding/v2/06-plan-adapte/habitudes/habitudes.png'),
+  planObjectif:     require('../../../assets/onboarding/v2/06-plan-adapte/objectif/objectif.png'),
   habitudesReperees: require('../../../assets/onboarding/v2/07-cigarette-choix/habitudes-reperees/habitudes-reperees.png'),
   journalCoffee:    require('../../../assets/onboarding/v2/07-cigarette-choix/journal-coffee/journal-coffee.png'),
   journalPause:     require('../../../assets/onboarding/v2/07-cigarette-choix/journal-pause/journal-pause.png'),
@@ -87,20 +108,6 @@ const DEVISES = [
   { code: 'GBP', symbole: '£' },
 ];
 
-// ── Icône « Non » ────────────────────────────────────────────────────────────
-// Le pack V2 livre une icône « pause » (deux barres) à la place d'une croix
-// pour assets/non/non.png. On dessine la croix nativement, dans le même style
-// que oui.png (pastille menthe + trait vert foncé) en attendant l'asset corrigé.
-function IconNon({ size = 32 }) {
-  return (
-    <Svg width={size} height={size} viewBox="0 0 40 40">
-      <Circle cx={20} cy={20} r={20} fill={colors.primaryLight} />
-      <Path d="M13,13 L27,27 M27,13 L13,27" stroke={colors.primaryDeep}
-        strokeWidth={3.2} strokeLinecap="round" />
-    </Svg>
-  );
-}
-
 // ── État initial des réponses ─────────────────────────────────────────────────
 const initialAnswers = {
   identification: [null, null, null],  // réponses oui/non aux 3 affirmations
@@ -118,19 +125,47 @@ const initialAnswers = {
 };
 
 // ── Composant principal ───────────────────────────────────────────────────────
-export default function OnboardingFlow({ navigation }) {
+export default function OnboardingFlow({ navigation, route }) {
+  const previewMode = __DEV__ && route?.params?.previewMode === true;
   const { t, i18n } = useTranslation('onboardingFlow');
   const { profile, updateProfile } = useUser();
+  const [fontsLoaded] = useFonts({
+    'DejaVuSans': require('../../../assets/onboarding/fonts/DejaVuSans.ttf'),
+    'DejaVuSans-Bold': require('../../../assets/onboarding/fonts/DejaVuSans-Bold.ttf'),
+  });
 
   const [step, setStep]       = useState(0);
   const [answers, setAnswers] = useState(initialAnswers);
   const [saving, setSaving]   = useState(false);
   const [saveError, setSaveError] = useState(null);
   const [draftLoaded, setDraftLoaded] = useState(false);
+  const [showPersonalReason, setShowPersonalReason] = useState(false);
+  const [artworkReady, setArtworkReady] = useState(Platform.OS !== 'web');
   const savingRef = useRef(false);
+
+  // Sur le Web, attendre le décodage des grandes scènes avant d'afficher
+  // l'étape : les anciennes captures montraient des panneaux totalement vides.
+  useEffect(() => {
+    if (Platform.OS !== 'web') return;
+    let active = true;
+    const pictures = [...AFFIRMATION_HERO, PLAN_HD.hero, V2.illusDeclencheurs, V2.actionOui, V2.actionNon];
+    // react-native-web n'expose pas Image.resolveAssetSource : y appeler cette
+    // méthode lève, artworkReady reste faux et l'écran ne s'affiche jamais.
+    // Sur le Web, require() d'une image donne déjà l'URL (ou un objet { uri }).
+    const uriOf = source =>
+      typeof source === 'string' ? source : source?.uri ?? Image.resolveAssetSource?.(source)?.uri;
+    Promise.allSettled(pictures.map(uriOf).filter(Boolean).map(uri => Image.prefetch(uri)))
+      .then(() => { if (active) setArtworkReady(true); })
+      .catch(() => { if (active) setArtworkReady(true); });
+    return () => { active = false; };
+  }, []);
 
   // ── Reprise : brouillon local puis données déjà en base ────────────────────
   useEffect(() => {
+    if (previewMode) {
+      setDraftLoaded(true);
+      return;
+    }
     (async () => {
       try {
         const raw = await AsyncStorage.getItem(DRAFT_KEY);
@@ -159,13 +194,13 @@ export default function OnboardingFlow({ navigation }) {
       } catch (_) {}
       setDraftLoaded(true);
     })();
-  }, []);
+  }, [previewMode]);
 
   // Sauvegarde du brouillon à chaque changement (reprise en cas de fermeture)
   useEffect(() => {
-    if (!draftLoaded) return;
+    if (!draftLoaded || previewMode) return;
     AsyncStorage.setItem(DRAFT_KEY, JSON.stringify({ step, answers })).catch(() => {});
-  }, [step, answers, draftLoaded]);
+  }, [step, answers, draftLoaded, previewMode]);
 
   function set(key, value) {
     setAnswers(a => ({ ...a, [key]: value }));
@@ -196,13 +231,16 @@ export default function OnboardingFlow({ navigation }) {
     ? PAGES.filter(p => p !== 'objectifQuotidien')
     : PAGES;
   const page = pages[Math.min(step, pages.length - 1)];
-  const progress = (step + 1) / pages.length;
 
   function next() {
     jouerSon('onboarding_step');
     setStep(s => Math.min(s + 1, pages.length - 1));
   }
   function back() {
+    if (previewMode && step === 0) {
+      navigation.goBack();
+      return;
+    }
     setStep(s => Math.max(0, s - 1));
   }
 
@@ -236,6 +274,10 @@ export default function OnboardingFlow({ navigation }) {
 
   // ── Sauvegarde finale (attend la réussite avant de quitter l'onboarding) ───
   async function handleFinish() {
+    if (previewMode) {
+      navigation.goBack();
+      return;
+    }
     if (savingRef.current) return; // anti double-soumission
     savingRef.current = true;
     setSaving(true);
@@ -288,7 +330,7 @@ export default function OnboardingFlow({ navigation }) {
     }
   }
 
-  if (!draftLoaded) {
+  if (!draftLoaded || !fontsLoaded || !artworkReady) {
     return (
       <SafeAreaView style={st.safe}>
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
@@ -307,10 +349,12 @@ export default function OnboardingFlow({ navigation }) {
     const idx = Number(page.slice(-1));
     const affirmationItems = t('affirmations.items', { returnObjects: true });
     body = (
-      <>
+      <View style={st.affirmationLayout}>
         <Text style={st.title}>{t('affirmations.title')}</Text>
         <View style={st.affirmationCard}>
-          <Text style={st.affirmationText}>{t('affirmations.quoted', { text: affirmationItems[idx] })}</Text>
+          <Text style={st.affirmationText}>
+            {t('affirmations.quoted', { text: affirmationItems[idx] })}
+          </Text>
         </View>
         {/* Les panneaux de l'illustration 04 sont vides : leurs libellés sont
             natifs (positions reprises de page-redesignee.svg). */}
@@ -318,28 +362,29 @@ export default function OnboardingFlow({ navigation }) {
           <Image source={AFFIRMATION_HERO[idx]} style={st.illusImg} resizeMode="contain" fadeDuration={0} />
           {idx === 2 && (
             <>
-              <Text style={[st.cheminLabel, { left: '14.2%', top: '29%', color: colors.primaryDeep }]}>
+              <Text style={[st.cheminLabel, { left: '17%', width: '15%', top: '27.5%', color: colors.primaryDeep }]}>
                 {t('affirmations.pathReduce')}
               </Text>
-              <Text style={[st.cheminLabel, { left: '70.9%', top: '29%', color: '#A9653C' }]}>
+              <Text style={[st.cheminLabel, { left: '68%', width: '16%', top: '27.5%', color: '#A9653C' }]}>
                 {t('affirmations.pathStop')}
               </Text>
             </>
           )}
         </View>
+        <Text style={st.footerNote}>{t('affirmations.footer')}</Text>
         <View style={st.ouiNonRow}>
           <TouchableOpacity
-            style={[st.ouiNonBtn, answers.identification[idx] === false && st.ouiNonBtnNon]}
+            style={[st.ouiNonBtn, st.ouiNonBtnNonBase, answers.identification[idx] === false && st.ouiNonBtnNon]}
             onPress={() => {
               const id = [...answers.identification]; id[idx] = false;
               set('identification', id); next();
             }}
           >
-            <IconNon size={32} />
+            <Image source={V2.actionNon} style={st.ouiNonImg} resizeMode="contain" />
             <Text style={st.ouiNonLabel}>{t('common:no')}</Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[st.ouiNonBtn, answers.identification[idx] === true && st.ouiNonBtnOui]}
+            style={[st.ouiNonBtn, st.ouiNonBtnOuiBase, answers.identification[idx] === true && st.ouiNonBtnOui]}
             onPress={() => {
               const id = [...answers.identification]; id[idx] = true;
               set('identification', id); next();
@@ -349,8 +394,7 @@ export default function OnboardingFlow({ navigation }) {
             <Text style={st.ouiNonLabel}>{t('common:yes')}</Text>
           </TouchableOpacity>
         </View>
-        <Text style={st.footerNote}>{t('affirmations.footer')}</Text>
-      </>
+      </View>
     );
     cta = null; // les boutons Oui/Non font avancer
   }
@@ -358,96 +402,83 @@ export default function OnboardingFlow({ navigation }) {
   else if (page === 'deculpabilisation') {
     body = (
       <>
-        <Text style={st.title}>{t('deculpabilisation.title')}</Text>
-        <Text style={st.subtitle}>
+        <Text style={st.deculpTitle}>{t('deculpabilisation.title')}</Text>
+        <Text style={st.deculpSubtitle}>
           {t('deculpabilisation.subtitle')}
         </Text>
-        <View style={st.chartCard}>
-          <Text style={st.chartCardTitre}>{t('deculpabilisation.chartTitle')}</Text>
-          <Image source={V2.courbeAccompagnement} style={st.chartAsset} resizeMode="contain" />
-          <View style={st.legendRow}>
-            <View style={st.legendItem}>
-              <View style={[st.legendDash, { backgroundColor: '#C8A88A' }]} />
-              <Text style={st.legendLabel}>{t('deculpabilisation.legendStart')}</Text>
+      {/* Proposition C : mêmes tracés, proportions et épaisseurs que la maquette. */}
+        <View style={st.deculpGraph}>
+          <View style={st.deculpLegend}>
+            <View style={st.deculpLegendItem}>
+              <View style={[st.deculpDot, { backgroundColor: '#ED594C' }]} />
+              <Text style={[st.deculpLegendText, { color: '#A33830' }]}>{t('deculpabilisation.withoutSupport')}</Text>
             </View>
-            <View style={st.legendItem}>
-              <View style={[st.legendDash, { backgroundColor: colors.primary }]} />
-              <Text style={st.legendLabel}>{t('deculpabilisation.legendDaily')}</Text>
+            <View style={st.deculpLegendItem}>
+              <View style={[st.deculpDot, { backgroundColor: '#079B58' }]} />
+              <Text style={[st.deculpLegendText, { color: '#087246' }]}>{t('deculpabilisation.withStopklop')}</Text>
             </View>
           </View>
+          <Svg width="100%" height={210} viewBox="0 0 240 170" style={st.deculpChart} accessibilityLabel={`${t('deculpabilisation.withoutSupport')} / ${t('deculpabilisation.withStopklop')}`}>
+            <Path d="M8 25H232 M8 65H232 M8 105H232 M8 145H232" stroke="#E5EDE8" strokeWidth={1.1} />
+            <Path d="M8 83 L32 33 L57 61 L78 29 L104 112 L128 81 L153 82 L176 32 L204 48 L219 108 L232 88" fill="none" stroke="#ED594C" strokeWidth={5} strokeLinecap="round" strokeLinejoin="round" />
+            <Path d="M8 123 L35 126 L59 136 L83 140 L108 151 L128 133 L155 140 L178 153 L207 158 L232 142" fill="none" stroke="#079B58" strokeWidth={5} strokeLinecap="round" strokeLinejoin="round" />
+          </Svg>
         </View>
-        <Text style={st.leadText}>{t('deculpabilisation.lead')}</Text>
-        <Text style={st.disclaimer}>{t('deculpabilisation.disclaimer')}</Text>
+        <View style={st.deculpCallout}>
+          <View style={st.deculpCalloutBadge}>
+          <Text style={st.deculpCalloutSymbol}>✦</Text>
+          </View>
+          <Text style={st.deculpCalloutText}>{t('deculpabilisation.note')}</Text>
+        </View>
       </>
     );
   }
 
   else if (page === 'solution') {
     body = (
-      <>
-        <Text style={st.title}>{t('solution.title')}</Text>
-        <Text style={st.subtitle}>
-          {t('solution.subtitle')}
-        </Text>
-        <View style={st.illusBoxRatio}>
-          <Image source={V2.illusPlan} style={st.illusImg} resizeMode="contain" fadeDuration={0} />
-        </View>
+      <View style={st.planLayout}>
+        <Text style={st.planTitle}>{t('solution.title')}</Text>
+        <Image source={PLAN_HD.hero} style={st.planHero} resizeMode="contain" fadeDuration={0} />
+        <Text style={st.planCopy}>{t('solution.subtitle')}</Text>
         <View style={st.solutionChipsRow}>
           <View style={st.solutionChip}>
-            <Image source={V2.etapeConso} style={st.solutionChipIcon} resizeMode="contain" />
+            <Image source={PLAN_HD.consumption} style={st.solutionChipIcon} resizeMode="contain" />
             <Text style={st.solutionChipText}>{t('solution.chips.consumption')}</Text>
           </View>
           <View style={st.solutionChip}>
-            <Image source={V2.etapeHabitudes} style={st.solutionChipIcon} resizeMode="contain" />
+            <Image source={PLAN_HD.habits} style={st.solutionChipIcon} resizeMode="contain" />
             <Text style={st.solutionChipText}>{t('solution.chips.habits')}</Text>
           </View>
           <View style={st.solutionChip}>
-            <Image source={V2.etapeObjectif} style={st.solutionChipIcon} resizeMode="contain" />
+            <Image source={PLAN_HD.goal} style={st.solutionChipIcon} resizeMode="contain" />
             <Text style={st.solutionChipText}>{t('solution.chips.goal')}</Text>
           </View>
         </View>
-      </>
+      </View>
     );
   }
 
   else if (page.startsWith('benefice')) {
     const beneficeIdx = Number(page.slice(-1));
     const b = t(`benefits.items.${beneficeIdx}`, { returnObjects: true });
-    const journalRows = t('benefits.journal.rows', { returnObjects: true });
-    const JOURNAL_ICONS = [V2.journalCoffee, V2.journalPause, V2.journalCoffee];
-    const TRIGGERS = [
-      { img: V2.decCoffee,  k: 'coffee'  }, { img: V2.decStress, k: 'stress' },
-      { img: V2.decWine,    k: 'alcohol' }, { img: V2.decFriends, k: 'friends' },
-      { img: V2.decPause,   k: 'pause'   }, { img: V2.decEnergy, k: 'energy' },
-    ];
     body = (
       <>
-        <Text style={st.title}>{b.title}</Text>
-        <Text style={st.subtitle}>{b.text}</Text>
+        <Text style={beneficeIdx <= 1 ? st.cigaretteChoixTitle : st.title}>
+          {beneficeIdx === 0 ? t('benefits.journal.hdTitle') : b.title}
+        </Text>
+        <Text style={beneficeIdx <= 1 ? st.cigaretteChoixSubtitle : st.subtitle}>
+          {beneficeIdx === 0 ? t('benefits.journal.hdSubtitle') : beneficeIdx === 1 ? t('benefits.triggers.hdSubtitle') : b.text}
+        </Text>
 
         {/* 07 — journal d'exemple + habitude repérée */}
         {beneficeIdx === 0 && (
           <>
-            <View style={st.mockCard}>
-              <View style={st.journalHeader}>
-                <Text style={st.journalTitre}>{t('benefits.journal.title')}</Text>
-                <View style={st.tagPill}><Text style={st.tagPillText}>{t('benefits.journal.tag')}</Text></View>
-              </View>
-              {journalRows.map((r, i) => (
-                <View key={r.time} style={[st.mockRow, i === journalRows.length - 1 && { borderBottomWidth: 0 }]}>
-                  <Text style={st.mockHeure}>{r.time}</Text>
-                  <Image source={JOURNAL_ICONS[i]} style={st.journalIcon} resizeMode="contain" />
-                  <Text style={st.mockTexte}>{r.label}</Text>
-                </View>
-              ))}
-            </View>
-            <View style={st.persoRow}>
-              <View style={st.persoBadge}>
-                <Image source={V2.habitudesReperees} style={{ width: 30, height: 30 }} resizeMode="contain" />
-              </View>
-              <View style={{ flex: 1 }}>
-                <Text style={st.persoTitre}>{t('benefits.journal.insightTitle')}</Text>
-                <Text style={st.persoText}>{t('benefits.journal.insightText')}</Text>
+            <Image source={CIGARETTE_CHOIX_HD.hero} style={st.cigaretteChoixHero} resizeMode="contain" fadeDuration={0} />
+            <View style={st.cigaretteChoixInsight}>
+              <Image source={CIGARETTE_CHOIX_HD.insight} style={st.cigaretteChoixInsightIcon} resizeMode="contain" />
+              <View style={st.cigaretteChoixInsightCopy}>
+                <Text style={st.cigaretteChoixInsightTitle}>{t('benefits.journal.hdInsightTitle')}</Text>
+                <Text style={st.cigaretteChoixInsightText}>{t('benefits.journal.hdInsightText')}</Text>
               </View>
             </View>
           </>
@@ -456,18 +487,14 @@ export default function OnboardingFlow({ navigation }) {
         {/* 08 — scène + les 6 contextes validés du pack */}
         {beneficeIdx === 1 && (
           <>
-            <View style={st.illusBoxRatio}>
-              <Image source={V2.illusDeclencheurs} style={st.illusImg} resizeMode="contain" fadeDuration={0} />
+            <View style={st.declencheursHeroBox}>
+              <Image source={DECLENCHEURS_HD} style={st.declencheursHeroImage} resizeMode="contain" fadeDuration={0} />
+              <Text style={[st.declencheursHeroLabel, st.declencheursStress]}>{t('benefits.triggers.stress')}</Text>
+              <Text style={[st.declencheursHeroLabel, st.declencheursCoffee]}>{t('benefits.triggers.coffee')}</Text>
+              <Text style={[st.declencheursHeroLabel, st.declencheursAlcohol]}>{t('benefits.triggers.alcohol')}</Text>
+              <Text style={[st.declencheursHeroLabel, st.declencheursPause]}>{t('benefits.triggers.pause')}</Text>
+              <Text style={[st.declencheursHeroLabel, st.declencheursFriends]}>{t('benefits.triggers.friends')}</Text>
             </View>
-            <View style={st.trigGrid}>
-              {TRIGGERS.map(tr => (
-                <View key={tr.k} style={st.trigChip}>
-                  <Image source={tr.img} style={st.trigChipIcon} resizeMode="contain" />
-                  <Text style={st.trigChipText}>{t(`benefits.triggers.${tr.k}`)}</Text>
-                </View>
-              ))}
-            </View>
-            <Text style={st.footerNote}>{t('benefits.triggers.footer')}</Text>
           </>
         )}
 
@@ -480,7 +507,7 @@ export default function OnboardingFlow({ navigation }) {
                 {PALIERS_V2.map((v, i) => (
                   <React.Fragment key={v}>
                     {i > 0 && <Text style={st.paliersFleche}>→</Text>}
-                    <View style={[st.palierCard, i === PALIERS_V2.length - 1 && st.palierCardFinal]}>
+                    <View style={[st.palierCard, { marginTop: i * 12 }, i === 2 && st.palierCardFinal]}>
                       <Text style={st.palierNum}>{v}</Text>
                       <Text style={st.palierUnit}>{t('benefits.pace.unit')}</Text>
                     </View>
@@ -532,7 +559,7 @@ export default function OnboardingFlow({ navigation }) {
         ].map(o => (
           <TouchableOpacity
             key={o.key}
-            style={[st.objectifCard, answers.typeObjectif === o.key && st.choixCardActive]}
+            style={[st.objectifCard, o.key === 'stop' && st.objectifCardStop, answers.typeObjectif === o.key && st.objectifCardActive]}
             onPress={() => set('typeObjectif', o.key)}
           >
             <Image source={o.img} style={st.objectifImg} resizeMode="contain" />
@@ -729,19 +756,21 @@ export default function OnboardingFlow({ navigation }) {
           })}
         </View>
         <View style={st.motivPersoCard}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: spacing.sm }}>
-            <Image source={V2.motivPerso} style={{ width: 26, height: 26 }} resizeMode="contain" />
-            <Text style={[st.motivPersoTitre, { marginBottom: 0 }]}>{t('motivations.personalTitle')}</Text>
-          </View>
-          <TextInput
-            style={st.motivPersoInput}
-            value={answers.motivationPerso}
-            onChangeText={v => set('motivationPerso', v)}
-            placeholder={t('motivations.personalPlaceholder')}
-            placeholderTextColor="#B0B0B0"
-            maxLength={120}
-            accessibilityLabel={t('motivations.personalA11y')}
-          />
+          <TouchableOpacity style={st.personalReasonHeader} onPress={() => setShowPersonalReason(v => !v)} accessibilityRole="button">
+            <Image source={V2.motivPerso} style={{ width: 28, height: 28 }} resizeMode="contain" />
+            <Text style={st.motivPersoTitre}>{t('motivations.personalTitle')}</Text>
+          </TouchableOpacity>
+          {(showPersonalReason || !!answers.motivationPerso) && (
+            <TextInput
+              style={st.motivPersoInput}
+              value={answers.motivationPerso}
+              onChangeText={v => set('motivationPerso', v)}
+              placeholder={t('motivations.personalPlaceholder')}
+              placeholderTextColor="#B0B0B0"
+              maxLength={120}
+              accessibilityLabel={t('motivations.personalA11y')}
+            />
+          )}
         </View>
       </>
     );
@@ -823,20 +852,20 @@ export default function OnboardingFlow({ navigation }) {
         {saveError && <Text style={st.errorHint}>{saveError}</Text>}
       </>
     );
-    cta   = saving ? null : 'Commencer  🚀';
+    cta   = saving ? null : previewMode ? 'Terminer l’aperçu' : 'Commencer  🚀';
     onCta = handleFinish;
   }
 
   return (
     <SafeAreaView style={st.safe}>
-      {/* Header : retour + barre de progression */}
+      {/* En-tête de la maquette finale : retour et marque centrée. */}
       <View style={st.header}>
         <TouchableOpacity onPress={back} style={st.backBtn} accessibilityLabel="Retour">
-          <Text style={{ fontSize: 24, color: colors.black, fontWeight: '300' }}>←</Text>
+          {page === 'solution'
+            ? <Image source={PLAN_HD.back} style={st.planBackIcon} resizeMode="contain" />
+            : <Text style={{ fontSize: 28, color: DESIGN.ink }}>‹</Text>}
         </TouchableOpacity>
-        <View style={st.progressTrack}>
-          <View style={[st.progressFill, { width: `${Math.round(progress * 100)}%` }]} />
-        </View>
+        <Text style={st.brand}>STOPKLOP</Text>
         <View style={{ width: 40 }} />
       </View>
 
@@ -844,13 +873,15 @@ export default function OnboardingFlow({ navigation }) {
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
-        <ScrollView contentContainerStyle={st.content} keyboardShouldPersistTaps="handled">
+        <ScrollView contentContainerStyle={[st.content, page.startsWith('affirmation') && st.affirmationContent, page === 'solution' && st.planContent]} keyboardShouldPersistTaps="handled">
           {body}
         </ScrollView>
 
         {cta && (
-          <View style={st.bottom}>
-            <PrimaryButton title={cta} onPress={onCta} disabled={!isValid()} />
+          <View style={[st.bottom, page === 'solution' && st.planBottom]}>
+            <TouchableOpacity style={[st.designCta, page === 'solution' && st.planCta, !isValid() && st.designCtaDisabled]} onPress={onCta} disabled={!isValid()} accessibilityRole="button">
+              <Text style={st.designCtaText}>{cta}</Text>
+            </TouchableOpacity>
           </View>
         )}
         {saving && (
@@ -950,6 +981,15 @@ function StatCard({ img, teinte, valeur, label }) {
   );
 }
 
+function TriggerItem({ trigger, label }) {
+  return (
+    <View style={st.triggerItem}>
+      <Image source={trigger.img} style={st.triggerIcon} resizeMode="contain" />
+      <Text style={st.triggerLabel}>{label}</Text>
+    </View>
+  );
+}
+
 function SyntheseRow({ emoji, img, label, valeur }) {
   return (
     <View style={st.synthRow}>
@@ -966,19 +1006,34 @@ function SyntheseRow({ emoji, img, label, valeur }) {
 const st = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.white },
 
+  // Maquette : bouton retour à y=43 (28 × 28), marque centrée à y=49.
   header: {
-    flexDirection: 'row', alignItems: 'center', gap: spacing.sm,
-    paddingHorizontal: spacing.md, paddingTop: spacing.sm, paddingBottom: 4,
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    paddingHorizontal: 22, paddingTop: 28, paddingBottom: 8, minHeight: 62,
   },
-  backBtn: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
-  progressTrack: { flex: 1, height: 6, backgroundColor: '#EDEDED', borderRadius: 3, overflow: 'hidden' },
-  progressFill:  { height: '100%', backgroundColor: colors.primary, borderRadius: 3 },
+  backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: DESIGN.mint, alignItems: 'center', justifyContent: 'center' },
+  brand: { fontSize: 11, fontWeight: '700', color: DESIGN.green, letterSpacing: 0.5 },
+  planBackIcon: { width: 28, height: 28 },
 
-  content: { width: '100%', maxWidth: 430, alignSelf: 'center', paddingHorizontal: 20, paddingTop: 8, paddingBottom: 28 },
-  bottom:  { width: '100%', maxWidth: 430, alignSelf: 'center', paddingHorizontal: 20, paddingTop: 10, paddingBottom: 18, backgroundColor: colors.white },
+  content: { width: '100%', maxWidth: 430, alignSelf: 'center', paddingHorizontal: 24, paddingTop: 24, paddingBottom: 28 },
+  planContent: { paddingHorizontal: 22, paddingTop: 18, paddingBottom: 20 },
+  planLayout: { width: '100%', alignItems: 'center' },
+  planTitle: { alignSelf: 'stretch', color: DESIGN.ink, fontSize: 27, lineHeight: 33, fontWeight: '700', textAlign: 'left' },
+  planHero: { width: '86%', maxWidth: 320, aspectRatio: 380 / 448, marginTop: 10 },
+  planCopy: { marginTop: 2, color: DESIGN.ink, fontSize: 15, lineHeight: 22, fontWeight: '500', textAlign: 'center' },
+  planBottom: { paddingHorizontal: 22, paddingBottom: 18 },
+  planCta: { borderRadius: 18, backgroundColor: '#00884A' },
+  // Le titre doit tomber à y=105 : en-tête (≈80 avec son paddingTop) + celui-ci.
+  affirmationContent: { flexGrow: 1, paddingTop: 25 },
+  bottom:  { width: '100%', maxWidth: 430, alignSelf: 'center', paddingHorizontal: 24, paddingTop: 10, paddingBottom: 18, backgroundColor: colors.white },
+  designCta: { minHeight: 54, borderRadius: 16, alignItems: 'center', justifyContent: 'center', backgroundColor: DESIGN.green },
+  designCtaDisabled: { opacity: 0.45 },
+  designCtaText: { color: '#FFFFFF', fontSize: 18, fontWeight: '700' },
 
-  title:    { fontSize: 23, fontWeight: '800', color: colors.black, textAlign: 'center', lineHeight: 29, marginBottom: 8 },
-  subtitle: { fontSize: 14, color: colors.gray, textAlign: 'center', lineHeight: 20, marginBottom: 14 },
+  title:    { fontSize: 27, fontWeight: '700', color: DESIGN.ink, textAlign: 'left', lineHeight: 34, marginBottom: 34 },
+  // Titre nettement plus long que les autres : réduit pour tenir en 3 lignes.
+  titleLong: { fontSize: 23, lineHeight: 30 },
+  subtitle: { fontSize: 15, color: DESIGN.muted, textAlign: 'left', lineHeight: 22, marginBottom: 28 },
   hint:     { fontSize: 12, color: colors.gray, textAlign: 'center', marginTop: spacing.sm },
   errorHint: { fontSize: 12, color: '#DC2626', textAlign: 'center', marginTop: spacing.sm },
 
@@ -993,28 +1048,51 @@ const st = StyleSheet.create({
   welcomeSub:   { fontSize: font.md, color: colors.gray, textAlign: 'center', lineHeight: 24 },
 
   // Affirmations
+  // Rythme vertical repris de page-redesignee.svg (canevas 390 × 844) :
+  // titre y=105, texte y=222, illustration y=328, note y=628, cartes y=691.
+  affirmationLayout: { flexGrow: 1 },
+  // Citation dans une carte menthe, comme avant le passage au pack V2.
   affirmationCard: {
-    backgroundColor: colors.primaryLight, borderRadius: radius.xl,
-    paddingHorizontal: 18, paddingVertical: 14, marginTop: 8, marginBottom: 12,
+    backgroundColor: DESIGN.mint, borderRadius: 18,
+    paddingVertical: 18, paddingHorizontal: 20,
+    marginTop: 15, marginBottom: 40,
   },
-  affirmationText: { fontSize: 15, color: colors.black, lineHeight: 22, textAlign: 'center', fontStyle: 'italic' },
-  ouiNonRow: { flexDirection: 'row', gap: 12, marginTop: 10 },
+  affirmationText: {
+    fontSize: 15, color: DESIGN.ink, lineHeight: 24,
+    textAlign: 'center', fontStyle: 'italic',
+  },
+  ouiNonRow: { flexDirection: 'row', gap: 12, marginTop: 45, marginBottom: 4 },
   ouiNonBtn: {
-    flex: 1, borderWidth: 1.5, borderColor: colors.grayBorder, borderRadius: radius.xl,
-    paddingVertical: 12, alignItems: 'center', gap: 4, minHeight: 68,
+    flex: 1, borderWidth: 1, borderColor: DESIGN.border, borderRadius: 18,
+    paddingVertical: 14, alignItems: 'center', justifyContent: 'center', gap: 8, minHeight: 104,
   },
-  ouiNonBtnOui: { borderColor: colors.primary, backgroundColor: colors.primaryLight },
-  ouiNonBtnNon: { borderColor: '#FCA5A5', backgroundColor: '#FEF2F2' },
-  ouiNonImg:   { width: 32, height: 32 },
-  ouiNonLabel: { fontSize: font.md, fontWeight: '700', color: colors.black },
+  // Bordures teintées comme la maquette : rouge pâle côté Non, vert pâle côté Oui.
+  ouiNonBtnNonBase: { borderColor: '#FFD9D5' },
+  ouiNonBtnOuiBase: { borderColor: '#CDEBDA' },
+  ouiNonBtnOui: { borderColor: DESIGN.green, backgroundColor: '#F6FAF7' },
+  ouiNonBtnNon: { borderColor: '#FF4B3E', backgroundColor: '#FFF6F5' },
+  ouiNonImg:   { width: 52, height: 52 },
+  ouiNonLabel: { fontSize: 17, fontWeight: '700', color: DESIGN.ink },
 
   // Déculpabilisation
+  deculpTitle: { fontSize: 23, lineHeight: 30, fontWeight: '500', color: DESIGN.ink, marginTop: 12 },
+  deculpSubtitle: { fontSize: 14, lineHeight: 21, color: DESIGN.muted, marginTop: 20 },
+  deculpGraph: { marginTop: 28, paddingHorizontal: 12, paddingTop: 14, paddingBottom: 8, backgroundColor: colors.white, borderWidth: 1, borderColor: '#DCEBE2', borderRadius: 22 },
+  deculpChart: { marginTop: 10 },
+  deculpLegend: { flexDirection: 'row', flexWrap: 'wrap', gap: 14 },
+  deculpLegendItem: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  deculpDot: { width: 9, height: 9, borderRadius: 5 },
+  deculpLegendText: { fontSize: 11, fontWeight: '500' },
+  deculpCallout: { flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 18, padding: 16, borderLeftWidth: 4, borderLeftColor: '#079B58', borderTopRightRadius: 16, borderBottomRightRadius: 16, backgroundColor: '#F4FBF6' },
+  deculpCalloutBadge: { width: 48, height: 48, borderRadius: 24, backgroundColor: '#D8F1E1', alignItems: 'center', justifyContent: 'center' },
+  deculpCalloutSymbol: { fontSize: 26, color: '#00884A', lineHeight: 32 },
+  deculpCalloutText: { flex: 1, color: DESIGN.ink, fontSize: 13, lineHeight: 19, fontWeight: '500' },
   chartCard: {
     borderWidth: 1, borderColor: colors.grayBorder, borderRadius: radius.xl,
     padding: 14, marginVertical: 12, backgroundColor: colors.white,
   },
   chartAsset: { width: '100%', aspectRatio: 920 / 550, marginTop: 8 },
-  chartCardTitre: { fontSize: font.md, fontWeight: '800', color: colors.primaryDeep },
+  chartCardTitre: { fontSize: font.md, fontWeight: '700', color: DESIGN.ink },
   chartCardUnite: { fontSize: 11, color: colors.gray, marginTop: 4 },
   legendRow:  { flexDirection: 'row', gap: spacing.lg, marginTop: spacing.sm },
   legendItem: { flexDirection: 'row', alignItems: 'center', gap: 6 },
@@ -1064,14 +1142,15 @@ const st = StyleSheet.create({
 
   // Puces "La consommation / Tes habitudes / Ton objectif" (page solution)
   // Puces sur une seule ligne, comme la maquette 06
-  solutionChipsRow: { flexDirection: 'row', gap: 6 },
+  solutionChipsRow: { width: '100%', flexDirection: 'row', gap: 6, marginTop: 16 },
   solutionChip: {
-    flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 4,
-    backgroundColor: colors.primaryLight, borderRadius: radius.full,
-    paddingVertical: 8, paddingHorizontal: 6,
+    flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 5,
+    backgroundColor: '#FFFFFF', borderRadius: 24,
+    borderWidth: 1, borderColor: '#E6EEE9',
+    minHeight: 40, paddingVertical: 5, paddingHorizontal: 3,
   },
-  solutionChipIcon: { width: 22, height: 22 },
-  solutionChipText: { fontSize: 10, fontWeight: '700', color: colors.primaryDeep, flexShrink: 1 },
+  solutionChipIcon: { width: 24, height: 24 },
+  solutionChipText: { fontSize: 10, fontWeight: '700', color: DESIGN.ink, textAlign: 'center', flexShrink: 1 },
 
   // Bénéfices
   beneficeCircle: {
@@ -1141,24 +1220,42 @@ const st = StyleSheet.create({
   statsPillText: { fontSize: 12, fontWeight: '600', color: colors.gray },
   statCard: {
     flexDirection: 'row', alignItems: 'center', gap: spacing.md,
-    minHeight: 80, paddingHorizontal: spacing.md, paddingVertical: spacing.sm,
-    borderWidth: 1, borderColor: colors.grayBorder, borderRadius: radius.xl,
-    backgroundColor: colors.white,
+    minHeight: 90, paddingHorizontal: spacing.md, paddingVertical: spacing.sm,
+    borderWidth: 1, borderColor: DESIGN.border, borderRadius: radius.xl,
+    backgroundColor: '#FBFEFC',
   },
   statBadge:    { width: 56, height: 56, borderRadius: 28, alignItems: 'center', justifyContent: 'center' },
   statBadgeImg: { width: 32, height: 32 },
   statValeur:   { fontSize: 16, fontWeight: '800', color: colors.primaryDeep, lineHeight: 21 },
   statLabel:    { fontSize: 11, color: colors.gray, marginTop: 2, lineHeight: 15 },
 
-  footerNote: { fontSize: 12, color: colors.gray, textAlign: 'center', marginTop: spacing.md },
-  // Ratio exact de l'illustration 04 (366 × 244) pour caler les libellés natifs
+  footerNote: { fontSize: 14, color: DESIGN.muted, textAlign: 'center', marginTop: 56, marginBottom: 0 },
+  // Illustration 366 × 244 : la maquette la pose à x=12, soit 12 pt au-delà
+  // de la marge de contenu (24) de chaque côté.
   illusBoxRatio: {
-    width: '100%', maxWidth: 366, alignSelf: 'center', aspectRatio: 366 / 244, borderRadius: radius.xl,
-    overflow: 'hidden', marginVertical: 10, backgroundColor: colors.white,
+    alignSelf: 'stretch', marginHorizontal: -12, aspectRatio: 366 / 244,
+    borderRadius: radius.xl, overflow: 'hidden', marginVertical: 0,
+    backgroundColor: colors.white,
   },
-  cheminLabel: { position: 'absolute', fontSize: 11, fontWeight: '700' },
+  cheminLabel: { position: 'absolute', fontSize: 11, lineHeight: 16, fontWeight: '700', textAlign: 'center' },
 
   // Écran 07 — journal d'exemple
+  cigaretteChoixTitle: { color: DESIGN.ink, fontSize: 25, lineHeight: 32, fontWeight: '700', textAlign: 'center', marginTop: 4 },
+  cigaretteChoixSubtitle: { color: DESIGN.muted, fontSize: 15, lineHeight: 22, textAlign: 'center', marginTop: 16 },
+  cigaretteChoixHero: { width: '100%', maxWidth: 350, aspectRatio: 350 / 368, alignSelf: 'center', marginTop: 12 },
+  cigaretteChoixInsight: { flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 4, padding: 14, borderWidth: 1, borderColor: DESIGN.border, borderRadius: 20, backgroundColor: colors.white },
+  cigaretteChoixInsightIcon: { width: 52, height: 52 },
+  cigaretteChoixInsightCopy: { flex: 1 },
+  cigaretteChoixInsightTitle: { color: DESIGN.ink, fontSize: 17, lineHeight: 22, fontWeight: '700' },
+  cigaretteChoixInsightText: { color: DESIGN.muted, fontSize: 13, lineHeight: 19, marginTop: 3 },
+  declencheursHeroBox: { width: '100%', maxWidth: 358, aspectRatio: 350 / 356, alignSelf: 'center', marginTop: 16 },
+  declencheursHeroImage: { width: '100%', height: '100%' },
+  declencheursHeroLabel: { position: 'absolute', color: DESIGN.ink, fontSize: 12, lineHeight: 16, fontWeight: '700', textAlign: 'center' },
+  declencheursStress: { left: '38%', width: '24%', top: '19%' },
+  declencheursCoffee: { left: '3%', width: '29%', top: '32%' },
+  declencheursAlcohol: { left: '69%', width: '28%', top: '32%', color: '#392D70' },
+  declencheursPause: { left: '0%', width: '24%', top: '65%' },
+  declencheursFriends: { left: '72%', width: '28%', top: '65%' },
   journalHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing.sm },
   journalTitre:  { fontSize: font.md, fontWeight: '800', color: colors.primaryDeep },
   journalIcon:   { width: 22, height: 22 },
@@ -1167,6 +1264,13 @@ const st = StyleSheet.create({
 
   // Écran 08 — contextes déclencheurs
   trigGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, justifyContent: 'center' },
+  triggerComposition: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 18, minHeight: 260 },
+  triggerSide: { width: 76, justifyContent: 'space-around', alignItems: 'center', minHeight: 250 },
+  triggerHero: { flex: 1, height: 240, maxWidth: 210 },
+  triggerBottom: { flexDirection: 'row', justifyContent: 'space-evenly', marginTop: 6 },
+  triggerItem: { alignItems: 'center', gap: 4, minWidth: 70 },
+  triggerIcon: { width: 52, height: 52 },
+  triggerLabel: { color: DESIGN.ink, fontSize: 12, fontWeight: '700', textAlign: 'center' },
   trigChip: {
     width: '31.5%', alignItems: 'center', justifyContent: 'center', gap: 6,
     paddingVertical: spacing.sm,
@@ -1177,14 +1281,14 @@ const st = StyleSheet.create({
   trigChipText: { fontSize: 11, fontWeight: '600', color: colors.black },
 
   // Écran 09 — paliers chiffrés
-  paliersRow:    { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginVertical: spacing.md },
+  paliersRow:    { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between', marginVertical: spacing.md, minHeight: 116 },
   paliersFleche: { fontSize: 14, color: colors.primary, fontWeight: '700' },
   palierCard: {
-    flex: 1, alignItems: 'center', paddingVertical: spacing.sm,
-    borderRadius: radius.lg, backgroundColor: '#F2F7F3',
+    flex: 1, alignItems: 'center', justifyContent: 'center', minHeight: 76,
+    borderRadius: radius.lg, backgroundColor: '#E3FAF0',
   },
-  palierCardFinal: { backgroundColor: colors.primaryLight },
-  palierNum:  { fontSize: 20, fontWeight: '900', color: colors.primaryDeep, lineHeight: 24 },
+  palierCardFinal: { backgroundColor: DESIGN.green },
+  palierNum:  { fontSize: 24, fontWeight: '700', color: DESIGN.ink, lineHeight: 28 },
   palierUnit: { fontSize: 9, color: colors.gray },
 
   // Calendrier
@@ -1220,9 +1324,11 @@ const st = StyleSheet.create({
   // Cartes d'objectif (page 11) — hauteur 124 pt, icône 96 px, cf. layout-ios.json
   objectifCard: {
     flexDirection: 'row', alignItems: 'center', gap: spacing.md,
-    borderWidth: 1.5, borderColor: colors.grayBorder, borderRadius: radius.xl,
-    paddingHorizontal: spacing.md, marginBottom: 12, minHeight: 104,
+    borderWidth: 1.5, borderColor: DESIGN.border, borderRadius: radius.xl,
+    paddingHorizontal: spacing.md, marginBottom: 20, minHeight: 142, backgroundColor: '#FBFEFC',
   },
+  objectifCardStop: { backgroundColor: '#FBF8FF', borderColor: '#E5DCF1' },
+  objectifCardActive: { borderColor: DESIGN.green, borderWidth: 2 },
   objectifImg: { width: 78, height: 78 },
   choixTitre: { fontSize: font.md, fontWeight: '700', color: colors.black },
   choixDesc:  { fontSize: 12, color: colors.gray, marginTop: 2 },
@@ -1279,19 +1385,20 @@ const st = StyleSheet.create({
 
   // Motivations
   // Grille 3 colonnes, cartes 111 × 119 pt (cf. layout-ios.json — 18-motivations)
-  motivGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  motivGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
   motivChip: {
-    width: '31.5%', minHeight: 100,
-    borderWidth: 1.5, borderColor: colors.grayBorder, borderRadius: radius.xl,
-    paddingHorizontal: 6, alignItems: 'center', justifyContent: 'center', gap: 8,
+    width: '48%', minHeight: 106,
+    borderWidth: 1, borderColor: DESIGN.border, borderRadius: 17,
+    paddingHorizontal: 6, alignItems: 'center', justifyContent: 'center', gap: 8, backgroundColor: '#F6FAF7',
   },
-  motivChipActive: { borderColor: colors.primary, backgroundColor: colors.primaryLight },
-  motivLabel: { fontSize: 12, color: colors.black, textAlign: 'center' },
+  motivChipActive: { borderColor: DESIGN.green, backgroundColor: '#E3FAF0' },
+  motivLabel: { fontSize: 14, fontWeight: '700', color: DESIGN.ink, textAlign: 'center' },
   motivPersoCard: {
-    borderWidth: 1.5, borderColor: colors.grayBorder, borderRadius: radius.xl,
-    padding: spacing.md, marginTop: spacing.md,
+    borderWidth: 1, borderColor: DESIGN.border, borderRadius: 17,
+    padding: 12, marginTop: 26,
   },
-  motivPersoTitre: { fontSize: font.sm, fontWeight: '700', color: colors.black, marginBottom: spacing.sm },
+  personalReasonHeader: { flexDirection: 'row', alignItems: 'center', gap: 12, minHeight: 36 },
+  motivPersoTitre: { fontSize: font.sm, color: DESIGN.muted },
   motivPersoInput: {
     borderWidth: 1, borderColor: colors.grayBorder, borderRadius: radius.md,
     padding: spacing.sm, fontSize: font.sm, color: colors.black, minHeight: 44,

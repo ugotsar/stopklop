@@ -15,14 +15,11 @@
     "pathStop": "Dejarlo"
   },
   "deculpabilisation": {
-    "title": "Un plan concreto\npara avanzar",
-    "subtitle": "Observa tu consumo, fija una meta y visualiza tus progresos con Stopklop.",
-    "chartTitle": "Tu reducción, día a día",
-    "chartUnit": "Cigarrillos / día",
-    "legendStart": "Nivel de partida",
-    "legendDaily": "Seguimiento diario",
-    "lead": "Un objetivo diario y un seguimiento para saber dónde estás.",
-    "disclaimer": "Ejemplo ilustrativo, sin resultado garantizado."
+    "title": "Tranquilo, no se trata simplemente de falta de voluntad",
+    "subtitle": "La dependencia se basa en hábitos, desencadenantes y automatismos.",
+    "withoutSupport": "Sin acompañamiento",
+    "withStopklop": "Con Stopklop",
+    "note": "Stopklop adapta tu recorrido a tu consumo, tus hábitos y tu objetivo."
   },
   "solution": {
     "title": "Avanza a tu ritmo,\ncon un plan adaptado",
@@ -53,17 +50,31 @@
       }
     ],
     "journal": {
+      "hdTitle": "Cada cigarrillo se convierte en una elección",
+      "hdSubtitle": "Registra el contexto de cada cigarrillo y descubre qué influye en tu estado de ánimo o consumo con el tiempo.",
+      "hdInsightTitle": "Hábito detectado",
+      "hdInsightText": "Sueles fumar después del café cuando estás bajo estrés.",
       "title": "Tu registro",
       "tag": "Ejemplo",
       "rows": [
-        { "time": "09:00", "label": "Después del café" },
-        { "time": "13:15", "label": "Durante una pausa" },
-        { "time": "16:00", "label": "Con un café" }
+        {
+          "time": "09:00",
+          "label": "Después del café"
+        },
+        {
+          "time": "13:15",
+          "label": "Durante una pausa"
+        },
+        {
+          "time": "16:00",
+          "label": "Con un café"
+        }
       ],
       "insightTitle": "El café aparece a menudo",
       "insightText": "En este ejemplo, 2 de cada 3 cigarrillos están ligados al café."
     },
     "triggers": {
+      "hdSubtitle": "Stopklop analiza las situaciones y emociones relacionadas con tu consumo para ayudarte a comprenderlas mejor.",
       "coffee": "Café",
       "stress": "Estrés",
       "alcohol": "Alcohol",
@@ -109,8 +120,14 @@
     "title": "¿Cuántos cigarrillos\nfumas actualmente?",
     "subtitle": "Sé honesto, esto es 100 % confidencial.",
     "cigarettesPerUnit": "cigarrillos / {{unit}}",
-    "unit": { "jour": "día", "semaine": "semana" },
-    "toggle": { "jour": "Por día", "semaine": "Por semana" },
+    "unit": {
+      "jour": "día",
+      "semaine": "semana"
+    },
+    "toggle": {
+      "jour": "Por día",
+      "semaine": "Por semana"
+    },
     "estimatedPerDay": "≈ {{count}} cigarrillos por día"
   },
   "packSize": {
@@ -128,7 +145,15 @@
     "title": "¿Cuándo quieres\nempezar?",
     "subtitle": "Elige la fecha que mejor te convenga.",
     "hint": "Inicio: {{date}}",
-    "calendarWeekdays": ["L", "M", "M", "J", "V", "S", "D"]
+    "calendarWeekdays": [
+      "L",
+      "M",
+      "M",
+      "J",
+      "V",
+      "S",
+      "D"
+    ]
   },
   "dailyGoal": {
     "title": "¿Qué objetivo\nquieres alcanzar?",
@@ -140,9 +165,18 @@
     "title": "¿Qué moneda\nutilizas?",
     "subtitle": "Para mostrar tus gastos y tus ahorros en la moneda correcta.",
     "options": {
-      "EUR": { "name": "Euro", "code": "EUR · €" },
-      "CHF": { "name": "Franco suizo", "code": "CHF" },
-      "GBP": { "name": "Libra esterlina", "code": "GBP · £" }
+      "EUR": {
+        "name": "Euro",
+        "code": "EUR · €"
+      },
+      "CHF": {
+        "name": "Franco suizo",
+        "code": "CHF"
+      },
+      "GBP": {
+        "name": "Libra esterlina",
+        "code": "GBP · £"
+      }
     }
   },
   "motivations": {

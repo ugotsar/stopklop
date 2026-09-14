@@ -55,6 +55,9 @@ export default function AppNavigator({ navigationRef }) {
       <NavigationContainer theme={AppTheme} ref={navigationRef}>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="Auth" component={AuthScreen} />
+          {__DEV__ && (
+            <Stack.Screen name="OnboardingPreview" component={OnboardingFlow} initialParams={{ previewMode: true }} />
+          )}
         </Stack.Navigator>
       </NavigationContainer>
     );
