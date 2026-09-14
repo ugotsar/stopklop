@@ -84,6 +84,9 @@
       "footer": "Understanding your urges, without judging yourself."
     },
     "pace": {
+      "hdTitle": "Cut down at your own pace, without unnecessary pressure",
+      "hdSubtitle": "Your goal evolves. With tailored recommendations, Stopklop adapts your reduction to fit your everyday life.",
+      "hdUnit": "cigarettes\na day",
       "title": "A step-by-step journey",
       "unit": "cig./d",
       "note": "Example of adjustable steps",
@@ -95,7 +98,7 @@
       "avoidedNote": "Compared with your starting consumption",
       "savedValue": "€28.20 saved",
       "savedNote": "47 cigarettes × €0.60",
-      "timeValue": "3 h 55 freed up",
+      "timeValue": "3 h 55 gained",
       "timeNote": "Estimate: 5 minutes per cigarette",
       "chartTitle": "Cigarettes avoided · cumulative",
       "disclaimer": "Example data over 7 days."

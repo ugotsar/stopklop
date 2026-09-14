@@ -25,7 +25,19 @@ const CIGARETTE_CHOIX_HD = {
   hero: require('../../../assets/onboarding/cigarette-choix-hd/hero-suivi-cigarette.png'),
   insight: require('../../../assets/onboarding/cigarette-choix-hd/habitude-detectee.png'),
 };
-const DECLENCHEURS_HD = require('../../../assets/onboarding/declencheurs-hd/hero-declencheurs.png');
+const DECLENCHEURS_HD = {
+  hero: require('../../../assets/onboarding/declencheurs-hd/hero-declencheurs.png'),
+  coffee: require('../../../assets/onboarding/declencheurs-hd/cafe.png'),
+  stress: require('../../../assets/onboarding/declencheurs-hd/stress.png'),
+  alcohol: require('../../../assets/onboarding/declencheurs-hd/alcool.png'),
+  pause: require('../../../assets/onboarding/declencheurs-hd/pause.png'),
+  friends: require('../../../assets/onboarding/declencheurs-hd/entourage.png'),
+};
+const REDUCTION_RYTHME_HD = {
+  path: require('../../../assets/onboarding/reduction-rythme-hd/parcours-reduction.png'),
+  goal: require('../../../assets/onboarding/reduction-rythme-hd/objectif-du-jour.png'),
+  journey: require('../../../assets/onboarding/stopklop-illustrations-hd/illustrations/09-reduction-progressive.jpg'),
+};
 const DESIGN = { ink: '#0B5135', green: '#0AA85B', muted: '#4B6358', mint: '#DDF5E8', border: '#E6EEE9' };
 
 // Police livrée avec la maquette finale, limitée à l'onboarding.
@@ -463,11 +475,11 @@ export default function OnboardingFlow({ navigation, route }) {
     const b = t(`benefits.items.${beneficeIdx}`, { returnObjects: true });
     body = (
       <>
-        <Text style={beneficeIdx <= 1 ? st.cigaretteChoixTitle : st.title}>
-          {beneficeIdx === 0 ? t('benefits.journal.hdTitle') : b.title}
+        <Text style={beneficeIdx <= 2 ? st.cigaretteChoixTitle : st.title}>
+          {beneficeIdx === 0 ? t('benefits.journal.hdTitle') : beneficeIdx === 2 ? t('benefits.pace.hdTitle') : b.title}
         </Text>
-        <Text style={beneficeIdx <= 1 ? st.cigaretteChoixSubtitle : st.subtitle}>
-          {beneficeIdx === 0 ? t('benefits.journal.hdSubtitle') : beneficeIdx === 1 ? t('benefits.triggers.hdSubtitle') : b.text}
+        <Text style={beneficeIdx <= 2 ? st.cigaretteChoixSubtitle : st.subtitle}>
+          {beneficeIdx === 0 ? t('benefits.journal.hdSubtitle') : beneficeIdx === 1 ? t('benefits.triggers.hdSubtitle') : beneficeIdx === 2 ? t('benefits.pace.hdSubtitle') : b.text}
         </Text>
 
         {/* 07 — journal d'exemple + habitude repérée */}
@@ -484,45 +496,51 @@ export default function OnboardingFlow({ navigation, route }) {
           </>
         )}
 
-        {/* 08 — scène + les 6 contextes validés du pack */}
+        {/* 08 — illustration dégagée + contextes dans une carte native */}
         {beneficeIdx === 1 && (
           <>
             <View style={st.declencheursHeroBox}>
-              <Image source={DECLENCHEURS_HD} style={st.declencheursHeroImage} resizeMode="contain" fadeDuration={0} />
-              <Text style={[st.declencheursHeroLabel, st.declencheursStress]}>{t('benefits.triggers.stress')}</Text>
-              <Text style={[st.declencheursHeroLabel, st.declencheursCoffee]}>{t('benefits.triggers.coffee')}</Text>
-              <Text style={[st.declencheursHeroLabel, st.declencheursAlcohol]}>{t('benefits.triggers.alcohol')}</Text>
-              <Text style={[st.declencheursHeroLabel, st.declencheursPause]}>{t('benefits.triggers.pause')}</Text>
-              <Text style={[st.declencheursHeroLabel, st.declencheursFriends]}>{t('benefits.triggers.friends')}</Text>
+              <Image source={DECLENCHEURS_HD.hero} style={st.declencheursHeroImage} resizeMode="contain" fadeDuration={0} />
+            </View>
+            <View style={st.declencheursContextCard}>
+              <Text style={st.declencheursContextTitle}>{t('benefits.triggers.footer')}</Text>
+              <View style={st.declencheursContextRow}>
+                {[
+                  ['coffee', 'coffee'], ['stress', 'stress'], ['alcohol', 'alcohol'],
+                  ['pause', 'pause'], ['friends', 'friends'],
+                ].map(([asset, label]) => (
+                  <View key={asset} style={st.declencheursContextItem}>
+                    <Image source={DECLENCHEURS_HD[asset]} style={st.declencheursContextIcon} resizeMode="contain" />
+                    <Text style={st.declencheursContextLabel}>{t(`benefits.triggers.${label}`)}</Text>
+                  </View>
+                ))}
+              </View>
             </View>
           </>
         )}
 
-        {/* 09 — paliers chiffrés, entièrement natifs */}
+        {/* 09 — parcours illustré, fidèle à la référence */}
         {beneficeIdx === 2 && (
           <>
-            <View style={st.mockCard}>
-              <Text style={st.chartCardTitre}>{t('benefits.pace.title')}</Text>
-              <View style={st.paliersRow}>
+            <View style={st.reductionJourney}>
+              <Image source={REDUCTION_RYTHME_HD.journey} style={st.reductionJourneyImage} resizeMode="stretch" />
+              <View style={st.reductionSteps} pointerEvents="none">
                 {PALIERS_V2.map((v, i) => (
-                  <React.Fragment key={v}>
-                    {i > 0 && <Text style={st.paliersFleche}>→</Text>}
-                    <View style={[st.palierCard, { marginTop: i * 12 }, i === 2 && st.palierCardFinal]}>
-                      <Text style={st.palierNum}>{v}</Text>
-                      <Text style={st.palierUnit}>{t('benefits.pace.unit')}</Text>
-                    </View>
-                  </React.Fragment>
+                  <View key={v} style={[st.reductionStep, st.reductionStepPositions[i]]}>
+                    <Text style={st.reductionStepNumber}>{v}</Text>
+                    <Text style={st.reductionStepLabel}>{t('benefits.pace.hdUnit')}</Text>
+                  </View>
                 ))}
               </View>
-              <Text style={st.disclaimer}>{t('benefits.pace.note')}</Text>
             </View>
-            <View style={st.persoRow}>
-              <View style={st.persoBadge}>
-                <Image source={V2.objectifDuJour} style={{ width: 30, height: 30 }} resizeMode="contain" />
+            <View style={st.goalOfDayCard}>
+              <Image source={REDUCTION_RYTHME_HD.goal} style={st.goalOfDayIcon} resizeMode="contain" />
+              <View style={st.goalOfDayCopy}>
+                <Text style={st.goalOfDayTitle}>{t('benefits.pace.goalTitle')}</Text>
+                <Text style={st.goalOfDayValue}>{t('benefits.pace.goalValue')}</Text>
               </View>
-              <View style={{ flex: 1 }}>
-                <Text style={st.persoTitre}>{t('benefits.pace.goalTitle')}</Text>
-                <Text style={st.persoText}>{t('benefits.pace.goalValue')}</Text>
+              <View style={st.goalOfDayDots}>
+                {[0,1,2,3,4,5,6].map(i => <View key={i} style={[st.goalOfDayDot, i > 4 && st.goalOfDayDotMuted]} />)}
               </View>
             </View>
           </>
@@ -1248,14 +1266,34 @@ const st = StyleSheet.create({
   cigaretteChoixInsightCopy: { flex: 1 },
   cigaretteChoixInsightTitle: { color: DESIGN.ink, fontSize: 17, lineHeight: 22, fontWeight: '700' },
   cigaretteChoixInsightText: { color: DESIGN.muted, fontSize: 13, lineHeight: 19, marginTop: 3 },
-  declencheursHeroBox: { width: '100%', maxWidth: 358, aspectRatio: 350 / 356, alignSelf: 'center', marginTop: 16 },
+  declencheursHeroBox: { width: '100%', maxWidth: 314, aspectRatio: 350 / 356, alignSelf: 'center', marginTop: 10 },
   declencheursHeroImage: { width: '100%', height: '100%' },
-  declencheursHeroLabel: { position: 'absolute', color: DESIGN.ink, fontSize: 12, lineHeight: 16, fontWeight: '700', textAlign: 'center' },
-  declencheursStress: { left: '38%', width: '24%', top: '19%' },
-  declencheursCoffee: { left: '3%', width: '29%', top: '32%' },
-  declencheursAlcohol: { left: '69%', width: '28%', top: '32%', color: '#392D70' },
-  declencheursPause: { left: '0%', width: '24%', top: '65%' },
-  declencheursFriends: { left: '72%', width: '28%', top: '65%' },
+  declencheursContextCard: { marginTop: 4, paddingHorizontal: 14, paddingVertical: 13, borderWidth: 1, borderColor: DESIGN.border, borderRadius: 22, backgroundColor: '#F5FBF7' },
+  declencheursContextTitle: { color: DESIGN.ink, fontSize: 14, lineHeight: 19, fontWeight: '700', textAlign: 'center' },
+  declencheursContextRow: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 },
+  declencheursContextItem: { alignItems: 'center', width: '19%' },
+  declencheursContextIcon: { width: 36, height: 36 },
+  declencheursContextLabel: { color: DESIGN.ink, fontSize: 10, lineHeight: 13, fontWeight: '600', textAlign: 'center', marginTop: 3 },
+  reductionJourney: { width: '100%', maxWidth: 394, height: 372, alignSelf: 'center', marginTop: 12, position: 'relative', overflow: 'hidden' },
+  reductionJourneyImage: { position: 'absolute', top: 0, left: 0, width: '100%', height: 512 },
+  reductionSteps: { position: 'absolute', inset: 0 },
+  reductionStep: { position: 'absolute', width: '22%', height: 76, paddingHorizontal: 9, paddingVertical: 12, borderRadius: 14, borderWidth: 1, borderColor: '#D7E8D7', backgroundColor: '#F9FFF9', alignItems: 'center', justifyContent: 'center' },
+  reductionStepPositions: [
+    { left: '12%', top: 284 },
+    { left: '29%', top: 208 },
+    { left: '48%', top: 128 },
+    { left: '67%', top: 50 },
+  ],
+  reductionStepNumber: { color: DESIGN.ink, fontSize: 21, lineHeight: 24, fontWeight: '700', textAlign: 'center' },
+  reductionStepLabel: { color: DESIGN.ink, fontSize: 8, lineHeight: 10, fontWeight: '600', textAlign: 'center', marginTop: 5 },
+  goalOfDayCard: { position: 'relative', flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 12, marginTop: 14, padding: 16, borderWidth: 1, borderColor: DESIGN.border, borderRadius: 20, backgroundColor: colors.white },
+  goalOfDayIcon: { width: 52, height: 52 },
+  goalOfDayCopy: { flex: 1 },
+  goalOfDayTitle: { color: DESIGN.ink, fontSize: 17, lineHeight: 21, fontWeight: '700' },
+  goalOfDayValue: { color: DESIGN.ink, fontSize: 18, lineHeight: 23, fontWeight: '700' },
+  goalOfDayDots: { width: '100%', flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 3, marginTop: 3 },
+  goalOfDayDot: { width: 20, height: 20, borderRadius: 10, backgroundColor: '#0AA85B', borderWidth: 3, borderColor: '#E4F5EB' },
+  goalOfDayDotMuted: { backgroundColor: '#D7E0DB', borderColor: '#F0F4F1' },
   journalHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing.sm },
   journalTitre:  { fontSize: font.md, fontWeight: '800', color: colors.primaryDeep },
   journalIcon:   { width: 22, height: 22 },

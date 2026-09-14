@@ -84,6 +84,9 @@
       "footer": "Entender tus ganas, sin juzgarte."
     },
     "pace": {
+      "hdTitle": "Reduce a tu ritmo, sin presión innecesaria",
+      "hdSubtitle": "Tu objetivo evoluciona. Con recomendaciones adaptadas, Stopklop ajusta tu reducción a tu día a día.",
+      "hdUnit": "cigarrillos\nal día",
       "title": "Un recorrido progresivo",
       "unit": "cig./d",
       "note": "Ejemplo de etapas personalizables",
@@ -95,7 +98,7 @@
       "avoidedNote": "En comparación con tu consumo de partida",
       "savedValue": "28,20 € ahorrados",
       "savedNote": "47 cigarrillos × 0,60 €",
-      "timeValue": "3 h 55 recuperadas",
+      "timeValue": "3 h 55 ganadas",
       "timeNote": "Estimación: 5 minutos por cigarrillo",
       "chartTitle": "Cigarrillos evitados · acumulado",
       "disclaimer": "Datos de ejemplo en 7 días."

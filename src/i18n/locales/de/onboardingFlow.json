@@ -84,6 +84,9 @@
       "footer": "Deine Impulse verstehen, ohne dich zu verurteilen."
     },
     "pace": {
+      "hdTitle": "Reduziere in deinem Tempo, ohne unnötigen Druck",
+      "hdSubtitle": "Dein Ziel entwickelt sich weiter. Mit passenden Empfehlungen passt Stopklop deine Reduktion an deinen Alltag an.",
+      "hdUnit": "Zigaretten\npro Tag",
       "title": "Ein schrittweiser Weg",
       "unit": "Zig./T",
       "note": "Beispiel für anpassbare Stufen",
@@ -95,7 +98,7 @@
       "avoidedNote": "Im Vergleich zu deinem Ausgangskonsum",
       "savedValue": "28,20 € gespart",
       "savedNote": "47 Zigaretten × 0,60 €",
-      "timeValue": "3 Std. 55 gewonnen",
+      "timeValue": "3 Std. 55 zurückgewonnen",
       "timeNote": "Schätzung: 5 Minuten pro Zigarette",
       "chartTitle": "Vermiedene Zigaretten · kumuliert",
       "disclaimer": "Beispieldaten über 7 Tage."
