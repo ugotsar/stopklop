@@ -799,14 +799,6 @@ export default function StatistiquesScreen() {
             <Text style={styles.unreportedLegend}>● {t('smokedCard.unreportedLegend')}</Text>
           )}
 
-          {/* Bannière conseil sous le graphique (réf. maquette) */}
-          <View style={styles.chartTip}>
-            <Text style={styles.chartTipIcon}>🍃</Text>
-            <Text style={styles.chartTipText}>
-              {p.progression >= 0 ? t('smokedCard.tipPositive') : t('smokedCard.tipNegative')}
-            </Text>
-          </View>
-
           {/* Overlay : nombre de cigarettes du jour/mois tapé, sans changer de page */}
           {tappedIndex != null && view.fullLabel && (
             <View style={styles.tapOverlay}>
@@ -993,7 +985,7 @@ export default function StatistiquesScreen() {
 
         {/* ── Résumé narratif (pas de liste à puces — réf. maquette) ── */}
         <View style={styles.summaryCard}>
-          <Image source={UI.pousse_resume} style={styles.summaryIllus} resizeMode="contain" />
+          <Image source={UI.mascotte_entete} style={styles.summaryIllus} resizeMode="contain" />
           <View style={{ flex: 1, minWidth: 0 }}>
             <Text style={styles.summaryTitle}>{t('summaryCard.title')}</Text>
             <Text style={styles.summaryText}>
@@ -1040,7 +1032,7 @@ const styles = StyleSheet.create({
   card:   { backgroundColor: colors.surface, borderRadius: radius.xl, padding: spacing.lg, borderWidth: 1, borderColor: colors.grayBorder, ...shadow.card },
   cardHeader: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: spacing.sm },
   cardIcon:   { fontSize: 18 },
-  cardIllus:  { width: 28, height: 28 },
+  cardIllus:  { width: 38, height: 38 },
   cardTitle:  { fontSize: font.sm, fontWeight: '700', color: colors.black, flex: 1 },
   cardPeriod: { fontSize: 11, color: colors.gray },
 
@@ -1182,9 +1174,6 @@ const styles = StyleSheet.create({
   chartTagText: { fontSize: 11, fontWeight: '700', color: colors.primaryDeep },
 
   // Bannière conseil sous le graphique
-  chartTip: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: colors.primaryLight, borderRadius: radius.md, padding: spacing.sm, marginTop: spacing.sm },
-  chartTipIcon: { fontSize: 14 },
-  chartTipText: { flex: 1, fontSize: 11, color: colors.primaryDeep, fontWeight: '600' },
 
   // Carte 3 colonnes : Total / Moyenne quotidienne / Diminution
   threeColCard: {

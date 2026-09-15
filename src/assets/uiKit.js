@@ -70,6 +70,7 @@ export const UI = {
 
   // 07 — Plan : vie par an
   calendrier_10_ans:     require('../../assets/ui-kit/calendrier_10_ans_3d.png'),
+  calendrier_10_ans_recadre: require('../../assets/ui-kit/calendrier_10_ans_recadre_3d.png'),
   coeur_titre:           require('../../assets/ui-kit/coeur_titre_3d.png'),
   etoile_vie:            require('../../assets/ui-kit/etoile_vie_3d.png'),
 

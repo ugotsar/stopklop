@@ -106,7 +106,7 @@
   },
   "goalType": {
     "title": "What's your goal?",
-    "subtitle": "Choose what suits you today. You can adjust your journey later.",
+    "subtitle": "Choose the goal that motivates you most today.",
     "options": {
       "reduce": {
         "title": "Reduce gradually",

@@ -46,8 +46,6 @@
     "hoursNotRecorded": "Times not recorded for this day.",
     "noCigarettesToday": "No cigarettes this day 🎉",
     "withoutHourCount": "+ {{count}} without a recorded time",
-    "tipPositive": "The less you smoke, the more your curve drops. Well done!",
-    "tipNegative": "Every avoided cigarette counts, keep it up.",
     "totalLabel": "Total",
     "avgLabel": "Daily average",
     "decreaseLabel": "Decrease"

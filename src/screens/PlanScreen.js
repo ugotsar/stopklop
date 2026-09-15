@@ -145,7 +145,6 @@ function ImpactModal({ info, onClose }) {
         <View style={im.card}>
           {info.type === 'savings'   && <SavingsBody info={info} t={t} />}
           {info.type === 'lifeMonth' && <LifeMonthBody info={info} t={t} />}
-          {info.type === 'lifeYear'  && <LifeYearBody info={info} t={t} />}
           {info.type === 'health'    && <HealthBody info={info} t={t} />}
           {!info.type && <GenericBody info={info} />}
 
@@ -178,7 +177,7 @@ function SavingsBody({ info, t }) {
           </View>
           <Text style={im.baArrow}>→</Text>
           <View style={im.baBox}>
-            <Image source={UI.cible_objectif} style={im.baIllus} resizeMode="contain" />
+            <Image source={UI.cible_fleche_feuillue} style={im.baIllus} resizeMode="contain" />
             <Text style={im.baLabel}>{t('impact.savings.goalLabel')}</Text>
             <Text style={im.baValue}>{info.savings.objectif}</Text>
             <Text style={im.baUnit}>{t('impact.savings.unitPerDay')}</Text>
@@ -188,7 +187,7 @@ function SavingsBody({ info, t }) {
 
       {info.savings && (
         <View style={im.evitees}>
-          <Image source={UI.feuille_cigarettes_evitees} style={{ width: 40, height: 40 }} resizeMode="contain" />
+          <Image source={UI.cigarette} style={{ width: 40, height: 40 }} resizeMode="contain" />
           <View style={{ flex: 1 }}>
             <Text style={im.eviteesValue}>{t('impact.savings.avoidedPerDay', { count: info.savings.cigEviteesJour })}</Text>
             <Text style={im.eviteesLabel}>{t('impact.savings.avoidedSub')}</Text>
@@ -207,7 +206,7 @@ function SavingsBody({ info, t }) {
       {/* 3 projections */}
       {info.projections && (
         <View style={im.projRow}>
-          {[UI.calendrier_mois, UI.arbre_annee, UI.montagnes_10_ans].map((img, i) => info.projections[i] && (
+          {[UI.pile_pieces_feuilles, UI.portefeuille_euros_feuilles, UI.tirelire].map((img, i) => info.projections[i] && (
             <View key={i} style={im.projCard}>
               <Image source={img} style={im.projIllus} resizeMode="contain" />
               <Text style={im.projValue}>{info.projections[i].valeur}</Text>
@@ -235,9 +234,9 @@ function LifeMonthBody({ info, t }) {
 
       {info.projections && (
         <View style={im.projRow}>
-          {[UI.horloge_mois, UI.feuille_annee, UI.coeur_10_ans].map((img, i) => info.projections[i] && (
+          {[UI.reveil, UI.calendrier_10_ans_recadre, UI.sablier_bois_feuilles].map((img, i) => info.projections[i] && (
             <View key={i} style={im.projCard}>
-              <Image source={img} style={im.projIllus} resizeMode="contain" />
+              <Image source={img} style={[im.projIllus, i === 1 && { transform: [{ scale: 1.05 }] }]} resizeMode="contain" />
               <Text style={im.projValue}>{info.projections[i].valeur}</Text>
               <Text style={im.projLabel}>{info.projections[i].label}</Text>
             </View>
@@ -246,32 +245,6 @@ function LifeMonthBody({ info, t }) {
       )}
 
       {info.note && <Text style={im.note}>{info.note}</Text>}
-    </>
-  );
-}
-
-// ── Body : Vie récupérée par an (écran 07) ───────────────────────────────────
-function LifeYearBody({ info, t }) {
-  return (
-    <>
-      <View style={im.headerRow}>
-        <Image source={UI.coeur_titre} style={im.headerIllus} resizeMode="contain" />
-        <Text style={im.titre}>{info.titre}</Text>
-      </View>
-
-      <Text style={im.explication}>{info.explication}</Text>
-
-      {info.projections && (
-        <View style={im.projRow}>
-          {[UI.feuille_annee, UI.calendrier_10_ans, UI.etoile_vie].map((img, i) => info.projections[i] && (
-            <View key={i} style={im.projCard}>
-              <Image source={img} style={im.projIllus} resizeMode="contain" />
-              <Text style={im.projValue}>{info.projections[i].valeur}</Text>
-              <Text style={im.projLabel}>{info.projections[i].label}</Text>
-            </View>
-          ))}
-        </View>
-      )}
     </>
   );
 }
@@ -506,10 +479,10 @@ export default function PlanScreen({ navigation }) {
               })}
             />
             <ImpactCard
-              img={UI.chronometre} valeur={`+${vieGagneeHMois}h`} label={t('impact.life.label')} sublabel={t('labels.perMonth')} valeurColor={colors.primary}
+              img={UI.chronometre} valeur={`+${vieGagneeJAn}j`} label={t('impact.life.label')} sublabel={t('labels.perYear')} valeurColor={colors.primary}
               onPress={() => setImpactModal({
                 type: 'lifeMonth',
-                titre: t('impact.lifeMonth.modalTitle'),
+                titre: t('impact.lifeYear.modalTitle'),
                 explication: t('impact.lifeMonth.explanation', { count: cigEviteesJour, minutes: cigEviteesJour * 5, hours: vieGagneeHMois }),
                 projections: [
                   { valeur: `+${vieGagneeHMois}h`, label: t('labels.perMonth') },
@@ -519,20 +492,7 @@ export default function PlanScreen({ navigation }) {
               })}
             />
             <ImpactCard
-              img={UI.coeur_titre} valeur={`+${vieGagneeJAn}j`} label={t('impact.life.label')} sublabel={t('labels.perYear')} valeurColor={colors.primary}
-              onPress={() => setImpactModal({
-                type: 'lifeYear',
-                titre: t('impact.lifeYear.modalTitle'),
-                explication: t('impact.lifeYear.explanation', { count: cigEviteesJour, days: vieGagneeJAn }),
-                projections: [
-                  { valeur: `+${vieGagneeJAn}j`, label: t('labels.perYear') },
-                  { valeur: `+${vie10Aff}j`, label: t('labels.per10Years') },
-                  { valeur: t('impact.lifeYear.monthsValue', { count: Math.round(vie10Aff / 30) }), label: t('impact.lifeYear.moreLifeLabel') },
-                ],
-              })}
-            />
-            <ImpactCard
-              img={UI.poumons_titre} valeur={t('impact.health.value')} label={t('impact.health.label')} sublabel={t('impact.health.sublabel')} valeurColor={colors.primary}
+              img={UI.poumons_titre} valeur={`${t('impact.health.value')} ${t('impact.health.label')}`} sublabel={t('impact.health.sublabel')} valeurColor={colors.primary}
               onPress={() => setImpactModal({
                 type: 'health',
                 titre: t('impact.health.modalTitle'),
@@ -813,13 +773,12 @@ export default function PlanScreen({ navigation }) {
 function ImpactCard({ img, valeur, label, sublabel, valeurColor = colors.black, onPress }) {
   return (
     <TouchableOpacity style={styles.impactCard} onPress={onPress} activeOpacity={0.7}>
-      <View style={{ flexDirection: 'row', width: '100%', justifyContent: 'space-between' }}>
-        <Image source={img} style={styles.impactIllus} resizeMode="contain" />
-        <Text style={{ fontSize: 13, color: colors.gray }}>ⓘ</Text>
+      <Image source={img} style={styles.impactIllus} resizeMode="contain" />
+      <View style={{ flex: 1 }}>
+        <Text style={[styles.impactValeur, { color: valeurColor }]}>{valeur}</Text>
+        <Text style={styles.impactLabel}>{[label, sublabel].filter(Boolean).join(' · ')}</Text>
       </View>
-      <Text style={[styles.impactValeur, { color: valeurColor }]}>{valeur}</Text>
-      <Text style={styles.impactLabel}>{label}</Text>
-      <Text style={styles.impactSub}>{sublabel}</Text>
+      <Text style={{ fontSize: 13, color: colors.gray }}>ⓘ</Text>
     </TouchableOpacity>
   );
 }
@@ -876,16 +835,14 @@ const styles = StyleSheet.create({
   },
 
   // Impact
-  impactGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
+  impactGrid: { gap: spacing.sm },
   impactCard: {
-    width: (SCREEN_W - spacing.md * 4 - spacing.sm) / 2,
+    flexDirection: 'row', alignItems: 'center', gap: spacing.sm,
     backgroundColor: '#F7F8FA', borderRadius: radius.lg, padding: spacing.sm,
-    alignItems: 'flex-start',
   },
-  impactIllus:  { width: 30, height: 30, marginBottom: 4 },
+  impactIllus:  { width: 40, height: 40 },
   impactValeur: { fontSize: font.md, fontWeight: '800', color: colors.black },
-  impactLabel:  { fontSize: 11, color: colors.gray },
-  impactSub:    { fontSize: 10, color: colors.gray },
+  impactLabel:  { fontSize: 11, color: colors.gray, marginTop: 2 },
 
   // Projection
   projRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing.sm },

@@ -106,7 +106,7 @@
   },
   "goalType": {
     "title": "Was ist dein Ziel?",
-    "subtitle": "Wähle, was heute zu dir passt. Du kannst deinen Weg später anpassen.",
+    "subtitle": "Wähle das Ziel, das dich heute am meisten motiviert.",
     "options": {
       "reduce": {
         "title": "Schrittweise reduzieren",

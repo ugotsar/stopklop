@@ -38,6 +38,10 @@ const REDUCTION_RYTHME_HD = {
   goal: require('../../../assets/onboarding/reduction-rythme-hd/objectif-du-jour.png'),
   journey: require('../../../assets/onboarding/stopklop-illustrations-hd/illustrations/09-reduction-progressive.jpg'),
 };
+const OBJECTIF_HD = {
+  reduce: require('../../../assets/onboarding/objectif-hd/reduire-progressivement.png'),
+  stop: require('../../../assets/onboarding/objectif-hd/arreter-completement.png'),
+};
 const DESIGN = { ink: '#0B5135', green: '#0AA85B', muted: '#4B6358', mint: '#DDF5E8', border: '#E6EEE9' };
 
 // Police livrée avec la maquette finale, limitée à l'onboarding.
@@ -231,10 +235,10 @@ export default function OnboardingFlow({ navigation, route }) {
     'objectif',                        // 10
     'conso',                           // 11
     'paquet',                          // 12
-    'prix',                            // 13
-    'dateDebut',                       // 14
-    'objectifQuotidien',               // 15 (si réduction)
-    'devise',                          // 16
+    'devise',                          // 13
+    'prix',                            // 14
+    'dateDebut',                       // 15
+    'objectifQuotidien',               // 16 (si réduction)
     'motivations',                     // 17
     'niveauMotivation',                // 18
     'synthese',                        // 19
@@ -556,7 +560,6 @@ export default function OnboardingFlow({ navigation, route }) {
             <StatCard img={V2.statTime} teinte="#EFE9FB"
               valeur={t('benefits.stats.timeValue')} label={t('benefits.stats.timeNote')} />
             <View style={st.chartCard}>
-              <Text style={st.chartCardTitre}>{t('benefits.stats.chartTitle')}</Text>
               <Image source={V2.courbeEvolution} style={st.chartAsset} resizeMode="contain" />
             </View>
             <Text style={st.disclaimer}>{t('benefits.stats.disclaimer')}</Text>
@@ -569,28 +572,26 @@ export default function OnboardingFlow({ navigation, route }) {
   else if (page === 'objectif') {
     body = (
       <>
-        <Text style={st.title}>{t('goalType.title')}</Text>
-        <Text style={st.subtitle}>{t('goalType.subtitle')}</Text>
+        <Text style={st.goalTypeTitle}>{t('goalType.title')}</Text>
+        <Text style={st.goalTypeSubtitle}>{t('goalType.subtitle')}</Text>
         {[
-          { key: 'reduce', img: V2.goalReduce, titre: t('goalType.options.reduce.title'), desc: t('goalType.options.reduce.desc') },
-          { key: 'stop',   img: V2.goalStop,   titre: t('goalType.options.stop.title'),   desc: t('goalType.options.stop.desc') },
+          { key: 'reduce', img: OBJECTIF_HD.reduce, titre: t('goalType.options.reduce.title') },
+          { key: 'stop',   img: OBJECTIF_HD.stop,   titre: t('goalType.options.stop.title') },
         ].map(o => (
           <TouchableOpacity
             key={o.key}
-            style={[st.objectifCard, o.key === 'stop' && st.objectifCardStop, answers.typeObjectif === o.key && st.objectifCardActive]}
+            style={[st.objectifHdCard, o.key === 'stop' && st.objectifHdCardStop, answers.typeObjectif === o.key && st.objectifCardActive]}
             onPress={() => set('typeObjectif', o.key)}
           >
-            <Image source={o.img} style={st.objectifImg} resizeMode="contain" />
-            <View style={{ flex: 1 }}>
-              <Text style={st.choixTitre}>{o.titre}</Text>
-              <Text style={st.choixDesc}>{o.desc}</Text>
+            <View style={st.objectifHdCopy}>
+              <Text style={[st.objectifHdTitle, o.key === 'stop' && st.objectifHdTitleStop]}>{o.titre}</Text>
             </View>
+            <Image source={o.img} style={st.objectifHdImage} resizeMode="contain" />
             {answers.typeObjectif === o.key && (
-              <View style={st.checkBadge}><Text style={{ color: '#fff', fontWeight: '800' }}>✓</Text></View>
+              <View style={[st.checkBadge, st.objectifHdBadge]}><Text style={{ color: '#fff', fontWeight: '800' }}>✓</Text></View>
             )}
           </TouchableOpacity>
         ))}
-        <Text style={st.footerNote}>{t('goalType.note')}</Text>
       </>
     );
   }
@@ -649,6 +650,31 @@ export default function OnboardingFlow({ navigation, route }) {
             <Text style={st.stepperBtnText}>+</Text>
           </TouchableOpacity>
         </View>
+      </>
+    );
+  }
+
+  else if (page === 'devise') {
+    body = (
+      <>
+        <Text style={st.title}>{t('currency.title')}</Text>
+        <Text style={st.subtitle}>{t('currency.subtitle')}</Text>
+        {DEVISES.map(d => (
+          <TouchableOpacity
+            key={d.code}
+            style={[st.choixCard, answers.monnaie === d.code && st.choixCardActive]}
+            onPress={() => set('monnaie', d.code)}
+          >
+            <Image source={DEVISE_ICONS[d.code]} style={{ width: 48, height: 48 }} resizeMode="contain" />
+            <View style={{ flex: 1 }}>
+              <Text style={st.choixTitre}>{t(`currency.options.${d.code}.name`)}</Text>
+              <Text style={st.choixDesc}>{t(`currency.options.${d.code}.code`)}</Text>
+            </View>
+            {answers.monnaie === d.code && (
+              <View style={st.checkBadge}><Text style={{ color: '#fff', fontWeight: '800' }}>✓</Text></View>
+            )}
+          </TouchableOpacity>
+        ))}
       </>
     );
   }
@@ -721,31 +747,6 @@ export default function OnboardingFlow({ navigation, route }) {
             {t('dailyGoal.error', { count: consoNormalisee })}
           </Text>
         )}
-      </>
-    );
-  }
-
-  else if (page === 'devise') {
-    body = (
-      <>
-        <Text style={st.title}>{t('currency.title')}</Text>
-        <Text style={st.subtitle}>{t('currency.subtitle')}</Text>
-        {DEVISES.map(d => (
-          <TouchableOpacity
-            key={d.code}
-            style={[st.choixCard, answers.monnaie === d.code && st.choixCardActive]}
-            onPress={() => set('monnaie', d.code)}
-          >
-            <Image source={DEVISE_ICONS[d.code]} style={{ width: 48, height: 48 }} resizeMode="contain" />
-            <View style={{ flex: 1 }}>
-              <Text style={st.choixTitre}>{t(`currency.options.${d.code}.name`)}</Text>
-              <Text style={st.choixDesc}>{t(`currency.options.${d.code}.code`)}</Text>
-            </View>
-            {answers.monnaie === d.code && (
-              <View style={st.checkBadge}><Text style={{ color: '#fff', fontWeight: '800' }}>✓</Text></View>
-            )}
-          </TouchableOpacity>
-        ))}
       </>
     );
   }
@@ -1368,6 +1369,20 @@ const st = StyleSheet.create({
   objectifCardStop: { backgroundColor: '#FBF8FF', borderColor: '#E5DCF1' },
   objectifCardActive: { borderColor: DESIGN.green, borderWidth: 2 },
   objectifImg: { width: 78, height: 78 },
+  goalTypeTitle: { color: DESIGN.ink, fontSize: 27, lineHeight: 34, fontWeight: '700', textAlign: 'center', marginTop: 6 },
+  goalTypeSubtitle: { color: DESIGN.muted, fontSize: 16, lineHeight: 23, textAlign: 'center', marginTop: 17, marginBottom: 30, paddingHorizontal: 16 },
+  objectifHdCard: { minHeight: 124, flexDirection: 'row', alignItems: 'center', overflow: 'hidden', borderWidth: 1.5, borderColor: '#D5EBDC', borderRadius: 22, marginBottom: 20, backgroundColor: '#F1FBF4' },
+  objectifHdCardStop: { backgroundColor: '#FBF8FF', borderColor: '#E7DEF4' },
+  objectifHdCopy: { flex: 1, paddingLeft: 20, paddingRight: 6 },
+  // « progressivement » est le mot le plus long : il doit tenir avec de la
+  // marge, sinon il se coupe dès que la bordure de sélection (2 pt) mange un
+  // pixel. 18 pt + illustration 106 pt laissent ~20 pt de jeu.
+  objectifHdTitle: { color: '#0A9C56', fontSize: 18, lineHeight: 24, fontWeight: '700' },
+  objectifHdTitleStop: { color: '#7047B5' },
+  objectifHdImage: { width: 106, height: 88, marginRight: 14 },
+  // Coche posée dans le coin : dans la rangée, elle recomprimait la colonne
+  // de texte et recoupait « progressivement » au milieu du mot.
+  objectifHdBadge: { position: 'absolute', top: 10, right: 10 },
   choixTitre: { fontSize: font.md, fontWeight: '700', color: colors.black },
   choixDesc:  { fontSize: 12, color: colors.gray, marginTop: 2 },
   choixImg:   { width: 52, height: 52, borderRadius: 26 },

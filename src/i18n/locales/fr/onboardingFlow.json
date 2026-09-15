@@ -106,7 +106,7 @@
   },
   "goalType": {
     "title": "Quel est ton objectif ?",
-    "subtitle": "Choisis ce qui te convient aujourd’hui. Tu pourras ajuster ton parcours ensuite.",
+    "subtitle": "Choisis l’objectif qui te motive le plus aujourd’hui.",
     "options": {
       "reduce": {
         "title": "Réduire progressivement",
