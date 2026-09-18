@@ -156,16 +156,16 @@ export default function AuthScreen({ navigation }) {
             <ActivityIndicator size="large" color={colors.primary} />
           ) : (
             <>
-              <TouchableOpacity
-                style={[s.btnGoogle, (!google.request || !google.configured) && s.btnDisabled]}
-                disabled={!google.request || !google.configured}
-                onPress={handleGoogle}
-              >
-                <Image source={ICON_GOOGLE} style={s.btnIcon} resizeMode="contain" />
-                <Text style={s.btnGoogleText}>{t('google.button')}</Text>
-              </TouchableOpacity>
-              {!google.configured && (
-                <Text style={s.providerHint}>{t('google.unavailable')}</Text>
+              {/* Masqué tant que les identifiants Google (EXPO_PUBLIC_GOOGLE_*) ne sont pas renseignés. */}
+              {google.configured && (
+                <TouchableOpacity
+                  style={[s.btnGoogle, !google.request && s.btnDisabled]}
+                  disabled={!google.request}
+                  onPress={handleGoogle}
+                >
+                  <Image source={ICON_GOOGLE} style={s.btnIcon} resizeMode="contain" />
+                  <Text style={s.btnGoogleText}>{t('google.button')}</Text>
+                </TouchableOpacity>
               )}
 
               <TouchableOpacity style={s.btnApple} onPress={handleApple}>
@@ -247,7 +247,6 @@ const s = StyleSheet.create({
   },
   btnGoogleText: { fontSize: font.md, fontWeight: '700', color: '#0B4B31' },
   btnDisabled:   { opacity: 0.35 },
-  providerHint:  { color: colors.gray, fontSize: 11, textAlign: 'center', marginTop: -5 },
 
   btnApple: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',

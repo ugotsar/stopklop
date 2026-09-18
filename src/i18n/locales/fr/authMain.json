@@ -7,7 +7,7 @@
     "savingsValue": "42,80 €", "savingsLabel": "ÉCONOMIES",
     "paceValue": "7 jours", "paceLabel": "RYTHME"
   },
-  "google": { "button": "Continuer avec Google", "unavailable": "La connexion Google sera activée prochainement." },
+  "google": { "button": "Continuer avec Google" },
   "apple": { "button": "Continuer avec Apple" },
   "footer": { "question": "Vous avez déjà un compte ?", "cta": "Se connecter" },
   "email": {

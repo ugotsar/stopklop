@@ -1,6 +1,6 @@
 # Fiche store — Stopklop (FR)
 
-> Brouillon des textes marketing pour l'App Store et Google Play. À relire/ajuster.
+> Textes marketing pour l'App Store et Google Play.
 
 ## Nom
 Stopklop — Arrêter de fumer
@@ -12,43 +12,44 @@ Réduire et arrêter la cigarette
 Stopklop : arrêter de fumer
 
 ## Description courte (Google Play, max 80 caractères)
-Réduis progressivement puis arrête de fumer, à ton rythme. Suivi, économies, motivation.
+Réduis puis arrête de fumer à ton rythme : suivi, économies et motivation.
 
 ## Description longue
 Stopklop t'accompagne pour réduire puis arrêter de fumer, à ton rythme, sans culpabilité.
 
 Plutôt que d'arrêter du jour au lendemain, Stopklop crée un plan de réduction progressive
-adapté à ta consommation et à tes objectifs.
+adapté à ta consommation et à ton objectif : arrêt complet, réduction progressive ou objectif libre.
 
 Ce que tu peux faire avec Stopklop :
-• 📊 Suivre tes cigarettes au quotidien et visualiser ta progression
-• 💶 Voir en temps réel l'argent économisé et le temps de vie regagné
-• 🎯 Fixer un objectif quotidien qui baisse progressivement
-• 🔥 Analyser tes envies et tes déclencheurs pour mieux les anticiper
+• 📊 Noter tes cigarettes du jour et suivre ta progression jour, semaine et mois
+• 💶 Voir l'argent économisé et le temps de vie regagné
+• 🎯 Suivre un objectif quotidien qui baisse palier après palier
+• 🔥 Enregistrer tes envies et comprendre tes déclencheurs (stress, café, soirées…)
+• 📱 Garder ton bilan du jour sur l'écran d'accueil grâce au widget
 • 🔔 Recevoir des rappels et des messages de motivation
-• 📈 Consulter des statistiques détaillées de ta progression
+• 💚 Te laisser guider par Klop, ta mascotte, dès la première ouverture
 
-Stopklop propose un abonnement premium (mensuel ou annuel) pour accéder à toutes les
-fonctionnalités.
+Stopklop propose un abonnement mensuel ou annuel pour accéder à toutes les fonctionnalités.
 
 Reprends le contrôle, une cigarette à la fois. 💚
 
 ## Mots-clés (App Store, max 100 caractères, séparés par des virgules)
-arreter de fumer,tabac,cigarette,sevrage,fumer,reduction,nicotine,sante,economie,motivation
+arreter de fumer,tabac,cigarette,sevrage,reduire,nicotine,sante,economies,motivation,plan
 
 ## Catégorie
 Santé et forme
 
 ## Classification d'âge
-[À définir — probablement 17+ à cause du thème tabac ; à vérifier selon les stores]
+À définir avec le questionnaire de chaque store (références au tabac).
 
 ## Coordonnées / support
-- URL de support : [https://stopklop.app/support]
-- Email de support : [email de contact]
-- URL politique de confidentialité : [https://stopklop.app/confidentialite]
+- URL de support : https://ugotsar.github.io/stopklop-legal/assistance.html
+- Email de support : ugosimonmailpro34@gmail.com
+- URL politique de confidentialité : https://ugotsar.github.io/stopklop-legal/confidentialite.html
+- Conditions d'utilisation : https://ugotsar.github.io/stopklop-legal/cgu.html
 
 ## Notes pour la review Apple/Google
-- L'app utilise un **compte invité anonyme** ; pour tester le contenu, aucun login requis.
-- Pour tester rapidement des données réalistes : ouvrir l'app → écran Accueil →
-  bouton **« 🎬 Charger la démo (5 semaines) »**.
-- Abonnements gérés via RevenueCat ; produits à créer dans App Store Connect / Play Console.
+- La connexion se fait par Apple ou par e-mail. Compte de test : [e-mail à créer] / [mot de passe].
+- Après la connexion, l'onboarding puis l'écran d'abonnement s'affichent. Les abonnements sont gérés via RevenueCat.
+- Une visite guidée présente l'app à la première ouverture ; elle peut être passée.
+- Le widget d'écran d'accueil affiche le bilan du jour ; son bouton « J'ai fumé » ouvre l'écran de saisie.

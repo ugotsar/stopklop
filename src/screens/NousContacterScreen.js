@@ -118,7 +118,7 @@ export default function NousContacterScreen({ navigation }) {
           </View>
           <View style={{ flex: 1 }}>
             <Text style={styles.autresTitre}>{t('otherWays.title')}</Text>
-            <Text style={styles.autresText}>{t('otherWays.emailLabel')} <Text style={styles.autresLink}>support@stopklop.app</Text></Text>
+            <Text style={styles.autresText}>{t('otherWays.emailLabel')} <Text style={styles.autresLink}>{SUPPORT_EMAIL}</Text></Text>
             <Text style={styles.autresText}>{t('otherWays.responseTimeLabel')} <Text style={styles.autresLink}>{t('otherWays.responseTimeValue')}</Text></Text>
           </View>
         </View>

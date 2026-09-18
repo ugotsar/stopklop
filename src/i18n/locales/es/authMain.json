@@ -7,7 +7,7 @@
     "savingsValue": "42,80 €", "savingsLabel": "AHORROS",
     "paceValue": "7 días", "paceLabel": "RITMO"
   },
-  "google": { "button": "Continuar con Google", "unavailable": "El inicio de sesión con Google estará disponible próximamente." },
+  "google": { "button": "Continuar con Google" },
   "apple": { "button": "Continuar con Apple" },
   "footer": { "question": "¿Ya tienes una cuenta?", "cta": "Iniciar sesión" },
   "email": {
