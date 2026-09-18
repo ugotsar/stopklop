@@ -1,0 +1,46 @@
+{
+  "guideLabel": "KLOP TE GUIDE · {{current}}/{{total}}",
+  "skip": "Passer la visite",
+  "next": "Continuer →",
+  "welcome": {
+    "title": "Salut, moi c'est Klop !",
+    "text": "Je vais te montrer comment suivre tes cigarettes, voir tes progrès et avancer à ton rythme.",
+    "start": "Fais-moi visiter",
+    "later": "Plus tard"
+  },
+  "steps": {
+    "smokedLink": {
+      "title": "C'est ici pour noter",
+      "text": "Touche « {{smokedLink}} », sous « {{validate}} ». Ce bouton ouvre le compteur du total fumé dans la journée."
+    },
+    "dailyTotal": {
+      "title": "Le total de ta journée",
+      "text": "Ajuste le nombre avec + et −, puis touche « {{save}} ». Tu notes le total du jour, pas juste une nouvelle cigarette."
+    },
+    "efforts": {
+      "title": "Tes efforts se voient",
+      "text": "Retrouve tes cigarettes, tes économies et ton temps de vie gagné estimé. Ces résultats évoluent avec les jours enregistrés."
+    },
+    "periods": {
+      "title": "Observe ton évolution",
+      "text": "Choisis jour, semaine ou mois pour suivre ta consommation. « {{period}} » te permet aussi de choisir tes propres dates."
+    },
+    "habits": {
+      "title": "Comprends tes envies",
+      "text": "Repère les moments et situations liés aux envies que tu enregistres. Au fil des jours, tu apprends à mieux connaître tes habitudes."
+    },
+    "plan": {
+      "title": "Un palier à la fois",
+      "text": "Retrouve ton objectif et les prochains paliers de ton parcours. « {{modifyPlan}} » te permet d'ajuster ton rythme."
+    },
+    "choice": {
+      "title": "C'est toi qui choisis",
+      "text": "Arrêt complet, réduction progressive ou objectif libre : choisis ce qui te convient. Ton plan reste modifiable."
+    },
+    "finish": {
+      "title": "À toi de jouer !",
+      "text": "Ce bouton enregistre tes modifications d'objectif. La visite ne change rien à ton plan actuel. Retrouvons maintenant ton accueil.",
+      "cta": "Découvrir mon accueil"
+    }
+  }
+}

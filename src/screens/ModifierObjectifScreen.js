@@ -4,6 +4,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { useTourScroll, useTourTarget } from '../tour/TourContext';
 import { useUser } from '../context/UserContext';
 import { colors, spacing, font, radius, shadow } from '../theme';
 import { UI } from '../assets/uiKit';
@@ -18,6 +19,9 @@ const OBJECTIFS_META = [
 export default function ModifierObjectifScreen({ navigation }) {
   const { t, i18n } = useTranslation('modifierObjectif');
   const { profile, stats, updateProfile } = useUser();
+  const tourScroll = useTourScroll('ModifierObjectif');
+  const choicesRef = useTourTarget('objectif.choices');
+  const saveRef = useTourTarget('objectif.save');
 
   const objectifActuel = stats?.objectifJour ?? 8;
 
@@ -108,11 +112,11 @@ export default function ModifierObjectifScreen({ navigation }) {
         <View style={{ width: 40 }} />
       </View>
 
-      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+      <ScrollView {...tourScroll} contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
 
         {/* ── Choisir l'objectif ── */}
         <Text style={styles.sectionTitle}>{t('objectives.sectionTitle')}</Text>
-        <View style={{ gap: spacing.sm }}>
+        <View ref={choicesRef} collapsable={false} style={{ gap: spacing.sm }}>
           {OBJECTIFS_META.map(obj => (
             <TouchableOpacity
               key={obj.key}
@@ -312,7 +316,7 @@ export default function ModifierObjectifScreen({ navigation }) {
         </View>
 
         {/* ── Bouton enregistrer ── */}
-        <TouchableOpacity style={styles.saveBtn} onPress={handleEnregistrer}>
+        <TouchableOpacity ref={saveRef} collapsable={false} style={styles.saveBtn} onPress={handleEnregistrer}>
           <Text style={styles.saveBtnText}>{t('saveButton')}</Text>
         </TouchableOpacity>
 

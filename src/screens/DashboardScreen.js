@@ -6,6 +6,7 @@ import {
 import Svg, { Circle, Path } from 'react-native-svg';
 import { Image } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { useTourScroll, useTourTarget } from '../tour/TourContext';
 
 import { UI } from '../assets/uiKit';
 const PICTOS = {
@@ -452,6 +453,8 @@ function CircularProgress({ current, total, size = 110 }) {
 // ── Composant principal ─────────────────────────────────────────────────────
 export default function DashboardScreen({ navigation }) {
   const { t, i18n } = useTranslation('dashboard');
+  const tourScroll = useTourScroll('Accueil');
+  const smokedLinkRef = useTourTarget('home.smokedLink');
   const {
     profile, stats, resetProfile, updateProfile,
     saveDailyConsumption, recordCraving,
@@ -567,7 +570,7 @@ export default function DashboardScreen({ navigation }) {
         onClose={() => setModalEnvie(false)}
       />
 
-      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+      <ScrollView {...tourScroll} contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
 
         {/* ── Header ── */}
         <View style={styles.header}>
@@ -653,6 +656,8 @@ export default function DashboardScreen({ navigation }) {
 
           {/* Lien "J'ai fumé" */}
           <TouchableOpacity
+            ref={smokedLinkRef}
+            collapsable={false}
             style={styles.fumerLink}
             onPress={() => navigation.navigate('JaiFume')}
           >

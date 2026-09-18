@@ -6,6 +6,7 @@ import {
 import Svg, { Circle } from 'react-native-svg';
 import { Image } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { useTourScroll, useTourTarget } from '../tour/TourContext';
 import { useUser } from '../context/UserContext';
 import { localDateKey } from '../utils/dateKeys';
 import { colors, spacing, font, radius, shadow } from '../theme';
@@ -367,6 +368,8 @@ function StatItem({ valeur, label, color }) {
 // ── Écran principal ─────────────────────────────────────────────────────────
 export default function JaiFumeScreen({ navigation }) {
   const { t, i18n } = useTranslation('jaifume');
+  const tourScroll = useTourScroll('JaiFume');
+  const counterRef = useTourTarget('jaifume.counter');
   const { profile, updateProfile, saveDailyConsumption, stats } = useUser();
 
   const objectifJour  = stats?.objectifJour ?? 8;
@@ -486,7 +489,7 @@ export default function JaiFumeScreen({ navigation }) {
         onSkip={() => { setRaisonModal(false); setRaisonTs(null); }}
       />
 
-      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+      <ScrollView {...tourScroll} contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
 
         {/* ── Header ── */}
         <View style={styles.header}>
@@ -514,7 +517,8 @@ export default function JaiFumeScreen({ navigation }) {
           <Text style={styles.subTitle}>{t('subtitle.none')}</Text>
         )}
 
-        {/* ── Boutons − / + ── */}
+        {/* ── Compteur, conseil et Enregistrer : zone décrite par la visite guidée ── */}
+        <View ref={counterRef} collapsable={false}>
         <View style={styles.controls}>
           <TouchableOpacity
             style={[styles.controlBtn, count === 0 && styles.controlBtnDisabled]}
@@ -569,6 +573,7 @@ export default function JaiFumeScreen({ navigation }) {
         <TouchableOpacity style={styles.saveBtn} onPress={handleEnregistrer}>
           <Text style={styles.saveBtnText}>{t('common:save')}</Text>
         </TouchableOpacity>
+        </View>
 
         {/* ── Récapitulatif ── */}
         <View style={styles.recapCard}>

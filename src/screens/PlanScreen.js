@@ -5,6 +5,7 @@ import {
 } from 'react-native';
 import Svg, { Path, Circle, Text as SvgText } from 'react-native-svg';
 import { useTranslation } from 'react-i18next';
+import { useTourScroll, useTourTarget } from '../tour/TourContext';
 import { Image } from 'react-native';
 import { useUser } from '../context/UserContext';
 import { colors, spacing, font, radius, shadow, getScreenWidth } from '../theme';
@@ -370,6 +371,9 @@ const MOTIV_EMOJIS = {
 // ── Écran principal ──────────────────────────────────────────────────────────
 export default function PlanScreen({ navigation }) {
   const { t, i18n } = useTranslation('plan');
+  const tourScroll = useTourScroll('Plan');
+  const habitsRef = useTourTarget('plan.habits');
+  const modifyRef = useTourTarget('plan.modify');
   const { stats, profile } = useUser();
   const [impactModal, setImpactModal] = useState(null);
 
@@ -451,7 +455,7 @@ export default function PlanScreen({ navigation }) {
 
       <ImpactModal info={impactModal} onClose={() => setImpactModal(null)} />
 
-      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+      <ScrollView {...tourScroll} contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
 
         {/* ── Section 1 : Votre impact ── */}
         <View style={styles.sectionHeader}>
@@ -568,7 +572,7 @@ export default function PlanScreen({ navigation }) {
         <View style={styles.card}>
           {habitudes ? (
             <>
-              <View style={styles.habitudesRow}>
+              <View ref={habitsRef} collapsable={false} style={styles.habitudesRow}>
                 <HabitudeChip
                   img={UI.reveil}
                   titre={habitudes.heurePic}
@@ -665,7 +669,7 @@ export default function PlanScreen({ navigation }) {
               </TouchableOpacity>
             </>
           ) : (
-            <View style={styles.habitudesVide}>
+            <View ref={habitsRef} collapsable={false} style={styles.habitudesVide}>
               <Text style={{ fontSize: 28, marginBottom: 6 }}>🔥</Text>
               <Text style={styles.habitudesVideTitre}>{t('habits.emptyTitle')}</Text>
               <Text style={styles.habitudesVideTexte}>
@@ -690,7 +694,7 @@ export default function PlanScreen({ navigation }) {
           </View>
         </View>
 
-        <View style={styles.card}>
+        <View ref={modifyRef} collapsable={false} style={styles.card}>
           <View style={styles.planRow}>
             {/* Objectif quotidien */}
             <View style={styles.planLeft}>

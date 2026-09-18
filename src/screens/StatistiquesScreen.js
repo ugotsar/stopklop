@@ -5,6 +5,7 @@ import {
 } from 'react-native';
 import Svg, { Circle, Rect, Path, Text as SvgText, G } from 'react-native-svg';
 import { useTranslation } from 'react-i18next';
+import { useTourScroll, useTourTarget } from '../tour/TourContext';
 import { useUser } from '../context/UserContext';
 import { colors, spacing, font, radius, shadow, getScreenWidth } from '../theme';
 import { UI } from '../assets/uiKit';
@@ -475,6 +476,9 @@ const TABS = [
 
 export default function StatistiquesScreen() {
   const { t, i18n } = useTranslation('statistiques');
+  const tourScroll = useTourScroll('Statistiques');
+  const tabsRef = useTourTarget('stats.tabs');
+  const gridRef = useTourTarget('stats.grid');
   const { stats, profile, updateProfile } = useUser();
 
   const [activeTab, setActiveTab]     = useState('jour');
@@ -714,7 +718,7 @@ export default function StatistiquesScreen() {
         <Image source={UI.mascotte_entete} style={styles.headerMascotte} resizeMode="contain" />
       </View>
 
-      <View style={styles.tabBar}>
+      <View ref={tabsRef} collapsable={false} style={styles.tabBar}>
         {TABS.map(tab => (
           <TouchableOpacity
             key={tab.key}
@@ -728,7 +732,7 @@ export default function StatistiquesScreen() {
         ))}
       </View>
 
-      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+      <ScrollView {...tourScroll} contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
 
         {/* ── Sélecteur de période ── */}
         {!view.isRange ? (
@@ -885,7 +889,7 @@ export default function StatistiquesScreen() {
 
         {/* ── Grille 2×2 : Cigarettes / Argent dépensé / Argent économisé / Vie récupérée
               (réf. maquette statistiques_reference_B) ── */}
-        <View style={styles.grid2}>
+        <View ref={gridRef} collapsable={false} style={styles.grid2}>
           <StatGridTile
             tone="green" illus={UI.paquet_cigarettes_feuilles}
             title={t('smokedCard.title')} value={hasPeriodData ? p.sum.toLocaleString(i18n.language) : '—'}

@@ -1,0 +1,46 @@
+{
+  "guideLabel": "KLOP GUIDES YOU · {{current}}/{{total}}",
+  "skip": "Skip the tour",
+  "next": "Continue →",
+  "welcome": {
+    "title": "Hi, I'm Klop!",
+    "text": "I'll show you how to track your cigarettes, see your progress and move forward at your own pace.",
+    "start": "Show me around",
+    "later": "Later"
+  },
+  "steps": {
+    "smokedLink": {
+      "title": "This is where you log",
+      "text": "Tap “{{smokedLink}}”, under “{{validate}}”. It opens the counter for your total smoked today."
+    },
+    "dailyTotal": {
+      "title": "Your daily total",
+      "text": "Adjust the number with + and −, then tap “{{save}}”. You log the total for the day, not just one new cigarette."
+    },
+    "efforts": {
+      "title": "Your efforts show",
+      "text": "See your cigarettes, the money you saved and your estimated life time gained. These results grow with every day you log."
+    },
+    "periods": {
+      "title": "Watch your progress",
+      "text": "Pick day, week or month to follow your consumption. “{{period}}” also lets you choose your own dates."
+    },
+    "habits": {
+      "title": "Understand your cravings",
+      "text": "Spot the moments and situations linked to the cravings you log. Day after day, you get to know your habits better."
+    },
+    "plan": {
+      "title": "One step at a time",
+      "text": "Find your goal and the next milestones of your journey. “{{modifyPlan}}” lets you adjust your pace."
+    },
+    "choice": {
+      "title": "You're in charge",
+      "text": "Quit completely, reduce gradually or set a free goal: pick what suits you. Your plan can always be changed."
+    },
+    "finish": {
+      "title": "Your turn!",
+      "text": "This button saves your goal changes. The tour doesn't change anything in your current plan. Now let's head to your home screen.",
+      "cta": "Discover my home"
+    }
+  }
+}

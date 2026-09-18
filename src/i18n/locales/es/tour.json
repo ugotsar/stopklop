@@ -1,0 +1,46 @@
+{
+  "guideLabel": "KLOP TE GUÍA · {{current}}/{{total}}",
+  "skip": "Saltar la visita",
+  "next": "Continuar →",
+  "welcome": {
+    "title": "¡Hola, soy Klop!",
+    "text": "Te enseñaré a registrar tus cigarrillos, ver tus avances y avanzar a tu ritmo.",
+    "start": "Enséñame la app",
+    "later": "Más tarde"
+  },
+  "steps": {
+    "smokedLink": {
+      "title": "Aquí es donde anotas",
+      "text": "Toca «{{smokedLink}}», debajo de «{{validate}}». Este botón abre el contador del total fumado en el día."
+    },
+    "dailyTotal": {
+      "title": "El total de tu día",
+      "text": "Ajusta el número con + y −, y luego toca «{{save}}». Anotas el total del día, no solo un cigarrillo más."
+    },
+    "efforts": {
+      "title": "Tus esfuerzos se notan",
+      "text": "Consulta tus cigarrillos, tus ahorros y el tiempo de vida ganado estimado. Estos resultados crecen con cada día registrado."
+    },
+    "periods": {
+      "title": "Observa tu evolución",
+      "text": "Elige día, semana o mes para seguir tu consumo. «{{period}}» también te permite elegir tus propias fechas."
+    },
+    "habits": {
+      "title": "Entiende tus ganas",
+      "text": "Identifica los momentos y situaciones ligados a las ganas que registras. Día a día, conoces mejor tus hábitos."
+    },
+    "plan": {
+      "title": "Un escalón a la vez",
+      "text": "Encuentra tu objetivo y los próximos escalones de tu camino. «{{modifyPlan}}» te permite ajustar tu ritmo."
+    },
+    "choice": {
+      "title": "Tú decides",
+      "text": "Dejarlo del todo, reducir poco a poco u objetivo libre: elige lo que te convenga. Tu plan sigue siendo modificable."
+    },
+    "finish": {
+      "title": "¡Te toca!",
+      "text": "Este botón guarda los cambios de tu objetivo. La visita no cambia nada de tu plan actual. Vamos ahora a tu inicio.",
+      "cta": "Descubrir mi inicio"
+    }
+  }
+}

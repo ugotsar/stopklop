@@ -18,13 +18,16 @@
       "buildNumber": "1",
       "infoPlist": {
         "NSUserNotificationUsageDescription": "Stopklop t'envoie des rappels pour noter tes cigarettes."
+      },
+      "entitlements": {
+        "com.apple.security.application-groups": ["group.com.stopklop.app"]
       }
     },
     "android": {
       "package": "com.stopklop.app",
       "versionCode": 1,
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
+        "backgroundColor": "#DDEBD6",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
@@ -51,7 +54,25 @@
       "expo-apple-authentication",
       "@react-native-community/datetimepicker",
       "expo-localization",
-      "expo-font"
+      "expo-font",
+      "@bacons/apple-targets",
+      [
+        "react-native-android-widget",
+        {
+          "widgets": [
+            {
+              "name": "StopklopBilan",
+              "label": "Stopklop – Bilan",
+              "description": "Ton bilan du jour et tes économies de la semaine",
+              "minWidth": "250dp",
+              "minHeight": "250dp",
+              "targetCellWidth": 4,
+              "targetCellHeight": 4,
+              "updatePeriodMillis": 1800000
+            }
+          ]
+        }
+      ]
     ],
     "extra": {
       "eas": {

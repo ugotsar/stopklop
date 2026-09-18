@@ -1,0 +1,46 @@
+{
+  "guideLabel": "KLOP FÜHRT DICH · {{current}}/{{total}}",
+  "skip": "Tour überspringen",
+  "next": "Weiter →",
+  "welcome": {
+    "title": "Hallo, ich bin Klop!",
+    "text": "Ich zeige dir, wie du deine Zigaretten erfasst, deine Fortschritte siehst und in deinem Tempo vorankommst.",
+    "start": "Zeig mir alles",
+    "later": "Später"
+  },
+  "steps": {
+    "smokedLink": {
+      "title": "Hier trägst du ein",
+      "text": "Tippe auf „{{smokedLink}}“ unter „{{validate}}“. Dieser Button öffnet den Zähler für deine heute gerauchte Gesamtzahl."
+    },
+    "dailyTotal": {
+      "title": "Deine Tagessumme",
+      "text": "Passe die Zahl mit + und − an und tippe dann auf „{{save}}“. Du trägst die Gesamtzahl des Tages ein, nicht nur eine weitere Zigarette."
+    },
+    "efforts": {
+      "title": "Deine Mühe zahlt sich aus",
+      "text": "Hier siehst du deine Zigaretten, deine Ersparnisse und die geschätzt gewonnene Lebenszeit. Diese Ergebnisse wachsen mit jedem erfassten Tag."
+    },
+    "periods": {
+      "title": "Verfolge deine Entwicklung",
+      "text": "Wähle Tag, Woche oder Monat, um deinen Konsum zu verfolgen. Mit „{{period}}“ kannst du auch eigene Daten wählen."
+    },
+    "habits": {
+      "title": "Verstehe dein Verlangen",
+      "text": "Erkenne die Momente und Situationen hinter dem Verlangen, das du erfasst. Tag für Tag lernst du deine Gewohnheiten besser kennen."
+    },
+    "plan": {
+      "title": "Eine Stufe nach der anderen",
+      "text": "Hier findest du dein Ziel und die nächsten Stufen deines Wegs. Mit „{{modifyPlan}}“ passt du dein Tempo an."
+    },
+    "choice": {
+      "title": "Du entscheidest",
+      "text": "Ganz aufhören, schrittweise reduzieren oder ein freies Ziel: Wähle, was zu dir passt. Dein Plan bleibt jederzeit änderbar."
+    },
+    "finish": {
+      "title": "Jetzt bist du dran!",
+      "text": "Dieser Button speichert deine Zieländerungen. Die Tour ändert nichts an deinem aktuellen Plan. Jetzt geht's zu deinem Startbildschirm.",
+      "cta": "Zum Startbildschirm"
+    }
+  }
+}

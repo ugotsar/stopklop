@@ -25,6 +25,8 @@ import i18n from '../i18n';
 import { addLocalDays, localDateKey } from '../utils/dateKeys';
 import { IS_DEMO_BUILD } from '../config/demoMode';
 import { buildDemoProfile } from '../utils/demoData';
+import { buildWidgetSnapshot } from '../widget/snapshot';
+import { syncWidget } from '../widget/syncWidget';
 
 // ─── Contexte ────────────────────────────────────────────────────────────────
 const UserContext = createContext(null);
@@ -396,6 +398,13 @@ export function UserProvider({ children }) {
   // ── Calculs dérivés (accessibles partout dans l'app) ──────────────────────
   const stats = profile ? computeStats(profile) : null;
 
+  // Le widget d'écran d'accueil lit un instantané : on ne le réécrit que si son
+  // contenu change, pas à chaque rendu.
+  const widgetSnapshot = stats ? JSON.stringify(buildWidgetSnapshot(stats, profile)) : null;
+  useEffect(() => {
+    if (widgetSnapshot) syncWidget(JSON.parse(widgetSnapshot));
+  }, [widgetSnapshot]);
+
   return (
     <UserContext.Provider value={{
       profile, loading, firebaseUser, syncError, subscription,
@@ -687,6 +696,8 @@ function computeStats(profile) {
 
     // Semaine
     weekData, weekLabels, weekSum, progressionSemaine,
+    weekObjectifs: week7.map(objectifPourJour),
+    weekRenseignes: weekKeys.map(k => hist[k] !== undefined),
     argentEcoSemaine: Math.max(0, (consoAvant*weekEnregistres - weekSum) * prixCig),
     vieGagneeMinSemaine: Math.max(0, (consoAvant*weekEnregistres - weekSum) * 5),
     vieGagneeStrSemaine: fmtVie(Math.max(0, (consoAvant*weekEnregistres - weekSum)*5)),

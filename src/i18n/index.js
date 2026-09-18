@@ -11,6 +11,7 @@ const NAMESPACES = [
   'jaifume', 'journalEnvies', 'notifications',
   'personnaliserHoraires', 'uniteMonnaie', 'paywall',
   'nousContacter', 'centreAide', 'authMain', 'mainTabNav', 'mentionsLegales',
+  'tour', 'widget',
 ];
 
 // ── Imports statiques (Metro ne supporte pas les require() dynamiques) ───────
@@ -98,6 +99,16 @@ import es_authMain from './locales/es/authMain.json';
 import es_mainTabNav from './locales/es/mainTabNav.json';
 import es_mentionsLegales from './locales/es/mentionsLegales.json';
 
+import fr_tour from './locales/fr/tour.json';
+import en_tour from './locales/en/tour.json';
+import de_tour from './locales/de/tour.json';
+import es_tour from './locales/es/tour.json';
+
+import fr_widget from './locales/fr/widget.json';
+import en_widget from './locales/en/widget.json';
+import de_widget from './locales/de/widget.json';
+import es_widget from './locales/es/widget.json';
+
 export const resources = {
   fr: {
     common: fr_common, profil: fr_profil, userStats: fr_userStats,
@@ -106,7 +117,7 @@ export const resources = {
     jaifume: fr_jaifume, journalEnvies: fr_journalEnvies, notifications: fr_notifications,
     personnaliserHoraires: fr_personnaliserHoraires, uniteMonnaie: fr_uniteMonnaie, paywall: fr_paywall,
     nousContacter: fr_nousContacter, centreAide: fr_centreAide, authMain: fr_authMain, mainTabNav: fr_mainTabNav,
-    mentionsLegales: fr_mentionsLegales,
+    mentionsLegales: fr_mentionsLegales, tour: fr_tour, widget: fr_widget,
   },
   en: {
     common: en_common, profil: en_profil, userStats: en_userStats,
@@ -115,7 +126,7 @@ export const resources = {
     jaifume: en_jaifume, journalEnvies: en_journalEnvies, notifications: en_notifications,
     personnaliserHoraires: en_personnaliserHoraires, uniteMonnaie: en_uniteMonnaie, paywall: en_paywall,
     nousContacter: en_nousContacter, centreAide: en_centreAide, authMain: en_authMain, mainTabNav: en_mainTabNav,
-    mentionsLegales: en_mentionsLegales,
+    mentionsLegales: en_mentionsLegales, tour: en_tour, widget: en_widget,
   },
   de: {
     common: de_common, profil: de_profil, userStats: de_userStats,
@@ -124,7 +135,7 @@ export const resources = {
     jaifume: de_jaifume, journalEnvies: de_journalEnvies, notifications: de_notifications,
     personnaliserHoraires: de_personnaliserHoraires, uniteMonnaie: de_uniteMonnaie, paywall: de_paywall,
     nousContacter: de_nousContacter, centreAide: de_centreAide, authMain: de_authMain, mainTabNav: de_mainTabNav,
-    mentionsLegales: de_mentionsLegales,
+    mentionsLegales: de_mentionsLegales, tour: de_tour, widget: de_widget,
   },
   es: {
     common: es_common, profil: es_profil, userStats: es_userStats,
@@ -133,7 +144,7 @@ export const resources = {
     jaifume: es_jaifume, journalEnvies: es_journalEnvies, notifications: es_notifications,
     personnaliserHoraires: es_personnaliserHoraires, uniteMonnaie: es_uniteMonnaie, paywall: es_paywall,
     nousContacter: es_nousContacter, centreAide: es_centreAide, authMain: es_authMain, mainTabNav: es_mainTabNav,
-    mentionsLegales: es_mentionsLegales,
+    mentionsLegales: es_mentionsLegales, tour: es_tour, widget: es_widget,
   },
 };
 

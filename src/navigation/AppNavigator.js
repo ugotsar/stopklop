@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, ActivityIndicator } from 'react-native';
+import { View, ActivityIndicator, Platform } from 'react-native';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
@@ -24,6 +24,7 @@ import PersonnaliserHorairesScreen  from '../screens/PersonnaliserHorairesScreen
 import MentionsLegalesScreen        from '../screens/MentionsLegalesScreen';
 import { isPaywallBypassEnabled } from '../services/purchases';
 import { IS_DEMO_BUILD } from '../config/demoMode';
+import { TourProvider } from '../tour/TourContext';
 
 const AppTheme = {
   ...DefaultTheme,
@@ -31,6 +32,19 @@ const AppTheme = {
 };
 
 const Stack = createNativeStackNavigator();
+
+// Liens ouverts par le widget d'écran d'accueil (stopklop://jaifume). Désactivé
+// sur web pour ne pas réécrire les URL du navigateur.
+const LINKING = {
+  enabled: Platform.OS !== 'web',
+  prefixes: ['stopklop://'],
+  config: {
+    screens: {
+      MainTabs: { screens: { Accueil: '' } },
+      JaiFume: 'jaifume',
+    },
+  },
+};
 
 export default function AppNavigator({ navigationRef }) {
   const { profile, loading, firebaseUser, subscription } = useUser();
@@ -99,7 +113,8 @@ export default function AppNavigator({ navigationRef }) {
   }
 
   return (
-    <NavigationContainer theme={AppTheme} ref={navigationRef}>
+    <TourProvider navigationRef={navigationRef}>
+    <NavigationContainer theme={AppTheme} ref={navigationRef} linking={LINKING}>
       <Stack.Navigator
         key="pro-app"
         initialRouteName="MainTabs"
@@ -121,5 +136,6 @@ export default function AppNavigator({ navigationRef }) {
         <Stack.Screen name="MentionsLegales"  component={MentionsLegalesScreen}  options={{ animation: 'slide_from_right' }} />
       </Stack.Navigator>
     </NavigationContainer>
+    </TourProvider>
   );
 }
