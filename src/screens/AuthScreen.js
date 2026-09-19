@@ -9,12 +9,10 @@ import {
   signInWithEmail, useGoogleAuth,
 } from '../services/authService';
 import { colors, spacing, font } from '../theme';
+import KlopWave from '../components/KlopWave';
 
-// Visuel de la page 1 de l'onboarding (proposition n°2) : illustration figée
-// (anneau 68% + info-bulles), pas de données réelles — l'utilisateur n'a pas
-// encore de compte à ce stade. Icônes fournies en PNG transparents pour
-// coller exactement à la maquette (glyphe Google/Apple/e-mail réels).
-const HERO = require('../../assets/auth-hero/01-illustration-complete.png');
+// Première page (variante A « Klop t'accueille ») : Klop fait coucou et parle
+// en premier, sans aucun chiffre. Icônes Google/Apple/e-mail en PNG transparents.
 const ICON_GOOGLE = require('../../assets/auth-hero/06-icone-google.png');
 const ICON_APPLE  = require('../../assets/auth-hero/07-icone-apple.png');
 const ICON_EMAIL  = require('../../assets/auth-hero/08-icone-email.png');
@@ -129,27 +127,20 @@ export default function AuthScreen({ navigation }) {
     <SafeAreaView style={s.safe}>
       <ScrollView contentContainerStyle={s.container} showsVerticalScrollIndicator={false}>
 
-        <Text style={s.logo}>Stopklop</Text>
+        <Text style={s.logo}>stopklop</Text>
 
-        <Image source={HERO} style={s.hero} resizeMode="contain" />
+        <View style={s.hero}>
+          <View style={s.bubble}>
+            <Text style={s.bubbleText}>{t('hero.bubble')}</Text>
+            <View style={s.bubbleTail} />
+          </View>
+          <KlopWave width={170} />
+        </View>
 
         <Text style={s.headline}>{t('hero.headline')}</Text>
         <Text style={s.subtitle}>{t('hero.subtitle')}</Text>
 
-        <View style={s.chipsRow}>
-          <View style={s.chip}>
-            <Text style={s.chipValue}>{t('hero.progressValue')}</Text>
-            <Text style={s.chipLabel}>{t('hero.progressLabel')}</Text>
-          </View>
-          <View style={s.chip}>
-            <Text style={s.chipValue}>{t('hero.savingsValue')}</Text>
-            <Text style={s.chipLabel}>{t('hero.savingsLabel')}</Text>
-          </View>
-          <View style={s.chip}>
-            <Text style={s.chipValue}>{t('hero.paceValue')}</Text>
-            <Text style={s.chipLabel}>{t('hero.paceLabel')}</Text>
-          </View>
-        </View>
+        <View style={s.spacer} />
 
         <View style={s.btnContainer}>
           {loading || google.loading ? (
@@ -221,20 +212,24 @@ const s = StyleSheet.create({
   safe:      { flex: 1, backgroundColor: '#FBF8EF' },
   container: { flexGrow: 1, paddingHorizontal: spacing.xl, paddingTop: spacing.lg, paddingBottom: spacing.xxl, alignItems: 'center' },
 
-  logo: { alignSelf: 'flex-start', fontSize: 26, fontWeight: '800', color: '#197A47', marginBottom: spacing.sm },
+  logo: { alignSelf: 'flex-start', fontSize: 22, fontWeight: '900', color: '#197A47', letterSpacing: -0.3 },
 
-  hero: { width: '100%', height: 220, marginVertical: spacing.sm },
-
-  headline: { fontSize: 26, fontWeight: '800', color: '#0B4B31', textAlign: 'center', lineHeight: 32, marginTop: spacing.sm },
-  subtitle: { fontSize: font.md, color: colors.gray, textAlign: 'center', lineHeight: 22, marginTop: 8, marginBottom: spacing.lg },
-
-  chipsRow: { flexDirection: 'row', gap: 8, width: '100%', marginBottom: spacing.lg },
-  chip: {
-    flex: 1, backgroundColor: '#EAF5ED', borderRadius: 16,
-    paddingVertical: 12, alignItems: 'center', gap: 2,
+  hero: { alignItems: 'center', marginTop: spacing.lg },
+  bubble: {
+    backgroundColor: colors.white, borderWidth: 1.5, borderColor: '#E4DEC9', borderRadius: 18,
+    paddingVertical: 10, paddingHorizontal: 16, marginBottom: 12,
   },
-  chipValue: { fontSize: 16, fontWeight: '800', color: '#197A47' },
-  chipLabel: { fontSize: 10, fontWeight: '700', color: '#5C8A6E', letterSpacing: 0.3 },
+  bubbleText: { fontSize: 15, fontWeight: '700', color: '#1E5530', textAlign: 'center', lineHeight: 20 },
+  bubbleTail: {
+    position: 'absolute', bottom: -8, left: '50%', marginLeft: -7, width: 14, height: 14,
+    backgroundColor: colors.white, borderRightWidth: 1.5, borderBottomWidth: 1.5, borderColor: '#E4DEC9',
+    transform: [{ rotate: '45deg' }],
+  },
+
+  headline: { fontSize: 28, fontWeight: '900', color: '#1E5530', textAlign: 'center', lineHeight: 33, marginTop: spacing.md },
+  subtitle: { fontSize: font.md, color: colors.gray, textAlign: 'center', lineHeight: 22, marginTop: 8 },
+
+  spacer: { flexGrow: 1, minHeight: spacing.lg },
 
   btnContainer: { gap: 12, width: '100%' },
   btnIcon: { width: 22, height: 22 },

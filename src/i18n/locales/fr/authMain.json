@@ -1,15 +1,13 @@
 {
   "tagline": "Arrête de fumer, un jour à la fois.",
   "hero": {
-    "headline": "Avancez vers zéro\nsans pression",
-    "subtitle": "Visualisez chaque progrès et\ngardez votre motivation.",
-    "progressValue": "-35 %", "progressLabel": "PROGRÈS",
-    "savingsValue": "42,80 €", "savingsLabel": "ÉCONOMIES",
-    "paceValue": "7 jours", "paceLabel": "RYTHME"
+    "bubble": "Salut ! On réduit ensemble,\nà ton rythme.",
+    "headline": "Moins de cigarettes,\nsans culpabiliser.",
+    "subtitle": "Un plan qui baisse doucement,\nsemaine après semaine."
   },
   "google": { "button": "Continuer avec Google" },
   "apple": { "button": "Continuer avec Apple" },
-  "footer": { "question": "Vous avez déjà un compte ?", "cta": "Se connecter" },
+  "footer": { "question": "Tu as déjà un compte ?", "cta": "Se connecter" },
   "email": {
     "createEntry": "Continuer avec une adresse e-mail",
     "loginEntry": "J'ai déjà un compte",

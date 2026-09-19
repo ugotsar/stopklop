@@ -1,11 +1,9 @@
 {
   "tagline": "Deja de fumar, un día a la vez.",
   "hero": {
-    "headline": "Avanza hacia cero\nsin presión",
-    "subtitle": "Visualiza cada progreso y\nmantén tu motivación.",
-    "progressValue": "-35 %", "progressLabel": "PROGRESO",
-    "savingsValue": "42,80 €", "savingsLabel": "AHORROS",
-    "paceValue": "7 días", "paceLabel": "RITMO"
+    "bubble": "¡Hola! Reducimos juntos,\na tu ritmo.",
+    "headline": "Menos cigarrillos,\nsin culpa.",
+    "subtitle": "Un plan que baja poco a poco,\nsemana tras semana."
   },
   "google": { "button": "Continuar con Google" },
   "apple": { "button": "Continuar con Apple" },

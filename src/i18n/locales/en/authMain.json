@@ -1,11 +1,9 @@
 {
   "tagline": "Quit smoking, one day at a time.",
   "hero": {
-    "headline": "Move toward zero\nwithout pressure",
-    "subtitle": "Visualize every bit of progress and\nkeep your motivation.",
-    "progressValue": "-35%", "progressLabel": "PROGRESS",
-    "savingsValue": "€42.80", "savingsLabel": "SAVINGS",
-    "paceValue": "7 days", "paceLabel": "PACE"
+    "bubble": "Hi! Let's cut down together,\nat your pace.",
+    "headline": "Fewer cigarettes,\nno guilt.",
+    "subtitle": "A plan that eases down gently,\nweek after week."
   },
   "google": { "button": "Continue with Google" },
   "apple": { "button": "Continue with Apple" },
