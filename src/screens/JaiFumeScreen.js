@@ -7,6 +7,7 @@ import Svg, { Circle } from 'react-native-svg';
 import { Image } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useTourScroll, useTourTarget } from '../tour/TourContext';
+import { buildDayEntries } from '../utils/dailyConsumption';
 import { useUser } from '../context/UserContext';
 import { localDateKey } from '../utils/dateKeys';
 import { colors, spacing, font, radius, shadow } from '../theme';
@@ -433,13 +434,8 @@ export default function JaiFumeScreen({ navigation }) {
     else jouerSon('enregistrer_depasse');
 
     const todayKey = localDateKey();
-    // cigLog : une entrée horodatée par cigarette. On reconstruit celles du jour
-    // pour rester cohérent avec le compteur (ajouts et retraits compris).
-    const cigLog     = Array.isArray(profile?.cigLog) ? profile.cigLog : [];
-    let aujourdhui    = cigLog.filter(ts => localDateKey(ts) === todayKey).sort();
-    aujourdhui = [...aujourdhui, ...addedTimes];
-    if (aujourdhui.length > count) aujourdhui = aujourdhui.slice(0, count);
-    while (aujourdhui.length < count) aujourdhui.push(new Date().toISOString());
+    // cigLog : une entrée horodatée par cigarette, cohérente avec le compteur.
+    const aujourdhui = buildDayEntries({ cigLog: profile?.cigLog, addedTimes, count, todayKey });
 
     // Les raisons rejoignent le journal des envies (fume: true) pour l'analyse
     // des habitudes — uniquement celles des cigarettes encore comptées.

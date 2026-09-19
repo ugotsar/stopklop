@@ -12,8 +12,9 @@ import NatureBackground from '../../components/NatureBackground';
 import { useUser } from '../../context/UserContext';
 import { jouerSon } from '../../services/sounds';
 import { localDateKey } from '../../utils/dateKeys';
+import { buildOnboardingProfile } from './onboardingProfile';
 
-const DRAFT_KEY = '@stopklop_onboarding_draft';
+import { DRAFT_KEY } from '../../store/onboardingStore';
 const PLAN_HD = {
   hero: require('../../../assets/onboarding/plan-adapte-hd/hero-plan-adapte.png'),
   back: require('../../../assets/onboarding/plan-adapte-hd/navigation-retour.png'),
@@ -299,40 +300,7 @@ export default function OnboardingFlow({ navigation, route }) {
     setSaving(true);
     setSaveError(null);
     try {
-      const now = new Date().toISOString();
-      const debutISO = new Date(answers.dateDebut + 'T00:00:00').toISOString();
-      const result = await updateProfile({
-        // Identification (3 affirmations oui/non)
-        identification: {
-          echecPasse:  answers.identification[0],
-          automatisme: answers.identification[1],
-          perduMethode: answers.identification[2],
-        },
-        // Objectif & consommation
-        typeObjectif: answers.typeObjectif,             // 'reduce' | 'stop'
-        consoDeclaree: answers.consoDeclaree,
-        consoUnite: answers.consoUnite,                  // 'jour' | 'semaine'
-        consoAvantApp: consoNormalisee,                  // référence quotidienne normalisée
-        consoAvantDeclaree: true,
-        objectifCigarettes: objectifFinal,
-        reductionParSemaine: answers.typeObjectif === 'reduce' ? 2 : null,
-        planStartDate: answers.typeObjectif === 'reduce' ? debutISO : null,
-        // Budget
-        cigarettesParPaquet: answers.cigarettesParPaquet,
-        prixPaquet: Math.round(prixNum * 100) / 100,
-        monnaie: answers.monnaie,                        // code ISO 4217
-        // Dates
-        dateArretSouhaitee: debutISO,
-        startDate: debutISO,
-        createdAt: profile?.createdAt ?? now,
-        // Motivations
-        motivations: answers.motivations,                // identifiants stables
-        motivationPerso: answers.motivationPerso.trim() || null,
-        niveauMotivation: answers.niveauMotivation,
-        // Statut
-        onboardingComplete: true,
-        onboardingCompletedAt: now,
-      });
+      const result = await updateProfile(buildOnboardingProfile(answers, profile));
       // Ne jamais marquer l'onboarding terminé si Firestore n'a pas confirmé
       // l'écriture : le brouillon local est conservé pour une reprise sûre.
       if (!result?.synced) throw result?.error ?? new Error('cloud-save-failed');

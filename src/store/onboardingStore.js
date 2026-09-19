@@ -1,6 +1,14 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const STORAGE_KEY = '@airpur_onboarding';
+export const DRAFT_KEY = '@stopklop_onboarding_draft';
+
+// Compte auquel appartient le cache local. Un profil laissé sur le téléphone par
+// un autre compte n'est jamais rechargé, donc jamais fusionné ni renvoyé au cloud.
+let currentOwner = null;
+export function setProfileOwner(uid) {
+  currentOwner = uid ?? null;
+}
 
 export const defaultProfile = {
   // UserProfile
@@ -46,6 +54,7 @@ export async function saveProfile(profile) {
       // Horodatage local, comparé à `updatedAt` (Firestore) au chargement
       // pour savoir quelle source est la plus fraîche en cas de fusion.
       updatedAt: new Date().toISOString(),
+      _owner: currentOwner,
     };
     await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
   } catch (e) {
@@ -57,7 +66,8 @@ export async function loadProfile() {
   try {
     const raw = await AsyncStorage.getItem(STORAGE_KEY);
     if (!raw) return null;
-    const p = JSON.parse(raw);
+    const { _owner, ...p } = JSON.parse(raw);
+    if (_owner && currentOwner && _owner !== currentOwner) return null;
     if (p.createdAt) p.createdAt = new Date(p.createdAt);
     if (p.startDate) p.startDate = new Date(p.startDate);
     if (p.dateArretSouhaitee) p.dateArretSouhaitee = new Date(p.dateArretSouhaitee);
@@ -67,6 +77,8 @@ export async function loadProfile() {
   }
 }
 
+// Efface tout ce que l'app garde du compte sur le téléphone (profil et
+// brouillon d'onboarding).
 export async function clearProfile() {
-  await AsyncStorage.removeItem(STORAGE_KEY);
+  await AsyncStorage.multiRemove([STORAGE_KEY, DRAFT_KEY]);
 }

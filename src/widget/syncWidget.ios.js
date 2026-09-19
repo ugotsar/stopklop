@@ -17,3 +17,14 @@ export function syncWidget(snapshot) {
     // Le widget ne doit jamais faire planter l'app.
   }
 }
+
+// Déconnexion / suppression du compte : le widget ne garde aucun chiffre.
+export function clearWidget() {
+  if (!ExtensionStorage) return;
+  try {
+    new ExtensionStorage(WIDGET_APP_GROUP).remove(WIDGET_STORAGE_KEY);
+    ExtensionStorage.reloadWidget();
+  } catch (_) {
+    // Le widget ne doit jamais faire planter l'app.
+  }
+}

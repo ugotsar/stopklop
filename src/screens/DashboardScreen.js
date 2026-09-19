@@ -7,6 +7,7 @@ import Svg, { Circle, Path } from 'react-native-svg';
 import { Image } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useTourScroll, useTourTarget } from '../tour/TourContext';
+import { validateDayPayload } from '../utils/dailyConsumption';
 
 import { UI } from '../assets/uiKit';
 const PICTOS = {
@@ -638,14 +639,8 @@ export default function DashboardScreen({ navigation }) {
               annulerNotificationSoir();
               // Avant ce clic, 0 veut dire « pas encore renseigné ». Valider
               // crée donc explicitement une journée à 0 cigarette.
-              if (!jourRenseigne) {
-                await saveDailyConsumption({
-                  dateKey: localDateKey(),
-                  cigarettes: 0,
-                  entries: [],
-                  cravings: [],
-                });
-              }
+              const payload = validateDayPayload(jourRenseigne, localDateKey());
+              if (payload) await saveDailyConsumption(payload);
               if (cigarettesToday === 0) setModalParfait(true);
               else setModalObjectif(true);
             }}
@@ -673,23 +668,25 @@ export default function DashboardScreen({ navigation }) {
             label={t('stats.vsGoalLabel', { count: objectifJour })}
             valeurColor={sousObjectif ? colors.primaryDeep : colors.danger}
           />
+          {/* Tant que la journée n'est pas saisie, 0 cigarette n'est pas un
+              résultat : pas d'argent, de temps ni de progression annoncés. */}
           <StatBox
             img={PICTOS.economie}
-            valeur={`${argentVsPlanJour >= 0 ? '+' : '-'}${fmtMoney(Math.abs(argentVsPlanJour))}`}
+            valeur={jourRenseigne ? `${argentVsPlanJour >= 0 ? '+' : '-'}${fmtMoney(Math.abs(argentVsPlanJour))}` : '—'}
             label={argentVsPlanJour >= 0 ? t('stats.moneyPreserved') : t('stats.moneyOver')}
-            valeurColor={argentVsPlanJour >= 0 ? colors.primaryDeep : colors.danger}
+            valeurColor={!jourRenseigne ? colors.gray : argentVsPlanJour >= 0 ? colors.primaryDeep : colors.danger}
           />
           <StatBox
             img={PICTOS.temps}
-            valeur={t('stats.minutesVsPlan', { sign: vieVsPlanJour >= 0 ? '+' : '-', count: Math.abs(vieVsPlanJour) })}
+            valeur={jourRenseigne ? t('stats.minutesVsPlan', { sign: vieVsPlanJour >= 0 ? '+' : '-', count: Math.abs(vieVsPlanJour) }) : '—'}
             label={vieVsPlanJour >= 0 ? t('stats.lifePreservedVsPlan') : t('stats.lifeLostVsPlan')}
-            valeurColor={vieVsPlanJour >= 0 ? colors.primaryDeep : colors.danger}
+            valeurColor={!jourRenseigne ? colors.gray : vieVsPlanJour >= 0 ? colors.primaryDeep : colors.danger}
           />
           <StatBox
             img={PICTOS.evitees}
-            valeur={t('stats.progressionValue', { sign: progression > 0 ? '+' : '', count: progression })}
+            valeur={jourRenseigne ? t('stats.progressionValue', { sign: progression > 0 ? '+' : '', count: progression }) : '—'}
             label={consoEstimee ? t('stats.progressionEstimatedLabel') : t('stats.progressionLabel')}
-            valeurColor={progressionPositif ? colors.primaryDeep : colors.danger}
+            valeurColor={!jourRenseigne ? colors.gray : progressionPositif ? colors.primaryDeep : colors.danger}
           />
         </View>
 

@@ -36,8 +36,10 @@ export function buildWidgetSnapshot(stats, profile) {
     cigarettesToday: stats.cigarettesToday,
     objectifJour: stats.objectifJour,
     todayLogged: stats.jourRenseigne,
-    savedToday: signedMoney(stats.argentEcoAujourdhui, currency, locale),
-    lifeToday: signedLife(stats.vieGagneeMinAujourdhui),
+    // Tant que rien n'est saisi, 0 cigarette ne veut pas dire « journée sans
+    // cigarette » : on n'annonce aucune économie, comme dans les Statistiques.
+    savedToday: stats.jourRenseigne ? signedMoney(stats.argentEcoAujourdhui, currency, locale) : '—',
+    lifeToday: stats.jourRenseigne ? signedLife(stats.vieGagneeMinAujourdhui) : '—',
     savedWeek: signedMoney(stats.argentEcoSemaine, currency, locale),
     week: stats.weekLabels.map((label, i) => ({
       label: i === stats.weekLabels.length - 1 ? t('todayShort') : label.charAt(0).toUpperCase(),

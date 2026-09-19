@@ -15,3 +15,16 @@ export async function syncWidget(snapshot) {
     // Expo Go n'a pas le module natif ; le widget ne doit jamais faire planter l'app.
   }
 }
+
+// Déconnexion / suppression du compte : le widget ne garde aucun chiffre.
+export async function clearWidget() {
+  try {
+    await AsyncStorage.removeItem(WIDGET_STORAGE_KEY);
+    await requestWidgetUpdate({
+      widgetName: WIDGET_NAME,
+      renderWidget: info => <BilanWidget snapshot={null} width={info.width} height={info.height} />,
+    });
+  } catch (_) {
+    // Le widget ne doit jamais faire planter l'app.
+  }
+}
