@@ -1,40 +1,42 @@
 {
   "header": {
-    "title": "Commencez votre\nparcours sans tabac",
-    "subtitle": "Accédez à toutes les fonctionnalités\npour maximiser vos chances de réussite."
+    "title": "Un plan adapté à\nton rythme.",
+    "subtitle": "Réduis progressivement, comprends tes habitudes et vois tes économies."
   },
-  "features": [
-    "Suivi quotidien personnalisé",
-    "Calcul des économies en temps réel",
-    "Conseils et défis quotidiens",
-    "Statistiques détaillées de santé"
-  ],
   "plans": {
     "annual": {
       "label": "Annuel",
       "price": "89,99 €",
       "pricePerMonth": "7,50 € / mois",
-      "period": "Facturé chaque année"
+      "period": "Facturé chaque année",
+      "per": "/ an",
+      "billing": "{{price}} facturés par an. Renouvellement automatique."
     },
     "quarterly": {
       "label": "Trimestriel",
       "price": "14,99 €",
       "pricePerMonth": "5,00 € / mois",
       "period": "Facturé tous les 3 mois",
-      "badge": "MEILLEURE OFFRE"
+      "badge": "MEILLEURE OFFRE",
+      "per": "/ 3 mois",
+      "billing": "{{price}} facturés tous les 3 mois. Renouvellement automatique."
     },
     "monthly": {
       "label": "Mensuel",
       "price": "9,99 €",
       "pricePerMonth": "9,99 € / mois",
-      "period": "Facturé chaque mois"
+      "period": "Facturé chaque mois",
+      "per": "/ mois",
+      "billing": "{{price}} facturés chaque mois. Renouvellement automatique."
     },
     "lifetime": {
       "label": "À vie",
-      "pricePerMonth": "Paiement unique"
+      "pricePerMonth": "Paiement unique",
+      "per": "",
+      "billing": "{{price}}, paiement unique."
     }
   },
-  "ctaButton": "Continuer →",
+  "ctaButton": "Commencer mon accompagnement",
   "purchasingLabel": "Paiement en cours…",
   "unavailableTitle": "Abonnement indisponible",
   "unavailableBody": "Le paiement n’est pas encore configuré pour cette version de Stopklop. Réessaie plus tard.",
@@ -51,5 +53,20 @@
   "restoreErrorBody": "La restauration a échoué. Réessaie plus tard.",
   "legalDisclosure": "Abonnement à renouvellement automatique. Le paiement est prélevé à la confirmation de l'achat. L'abonnement se renouvelle sauf annulation au moins 24 h avant la fin de la période en cours, gérable dans les réglages de ton compte.",
   "termsLink": "Conditions d'utilisation",
-  "privacyLink": "Politique de confidentialité"
+  "privacyLink": "Politique de confidentialité",
+  "benefits": [
+    {
+      "title": "Un plan progressif",
+      "desc": "Avance étape par étape, selon ton objectif."
+    },
+    {
+      "title": "Comprends tes habitudes",
+      "desc": "Identifie ce qui te donne envie de fumer."
+    },
+    {
+      "title": "Tes économies, bien visibles",
+      "desc": "Suis l’argent économisé au fil de tes progrès."
+    }
+  ],
+  "testAccessButton": "Continuer sans abonnement (test)"
 }

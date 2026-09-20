@@ -1,40 +1,42 @@
 {
   "header": {
-    "title": "Start your\nsmoke-free journey",
-    "subtitle": "Access all the features\nto maximize your chances of success."
+    "title": "A plan that fits\nyour pace.",
+    "subtitle": "Cut down gradually, understand your habits and see your savings."
   },
-  "features": [
-    "Personalized daily tracking",
-    "Real-time savings calculation",
-    "Daily tips and challenges",
-    "Detailed health statistics"
-  ],
   "plans": {
     "annual": {
       "label": "Annual",
       "price": "€89.99",
       "pricePerMonth": "€7.50 / month",
-      "period": "Billed yearly"
+      "period": "Billed yearly",
+      "per": "/ year",
+      "billing": "{{price}} billed every year. Renews automatically."
     },
     "quarterly": {
       "label": "Quarterly",
       "price": "€14.99",
       "pricePerMonth": "€5.00 / month",
       "period": "Billed every 3 months",
-      "badge": "BEST VALUE"
+      "badge": "BEST VALUE",
+      "per": "/ 3 months",
+      "billing": "{{price}} billed every 3 months. Renews automatically."
     },
     "monthly": {
       "label": "Monthly",
       "price": "€9.99",
       "pricePerMonth": "€9.99 / month",
-      "period": "Billed monthly"
+      "period": "Billed monthly",
+      "per": "/ month",
+      "billing": "{{price}} billed every month. Renews automatically."
     },
     "lifetime": {
       "label": "Lifetime",
-      "pricePerMonth": "One-time payment"
+      "pricePerMonth": "One-time payment",
+      "per": "",
+      "billing": "{{price}}, one-time payment."
     }
   },
-  "ctaButton": "Continue →",
+  "ctaButton": "Start my plan",
   "purchasingLabel": "Processing payment…",
   "unavailableTitle": "Subscription unavailable",
   "unavailableBody": "Payments are not configured for this version of Stopklop yet. Please try again later.",
@@ -51,5 +53,20 @@
   "restoreErrorBody": "Restoration failed. Please try again later.",
   "legalDisclosure": "Auto-renewing subscription. Payment is charged upon confirmation of purchase. The subscription automatically renews unless cancelled at least 24 hours before the end of the current period, manageable in your account settings.",
   "termsLink": "Terms of Use",
-  "privacyLink": "Privacy Policy"
+  "privacyLink": "Privacy Policy",
+  "benefits": [
+    {
+      "title": "A step-by-step plan",
+      "desc": "Move forward one stage at a time, toward your goal."
+    },
+    {
+      "title": "Understand your habits",
+      "desc": "Spot what makes you want to smoke."
+    },
+    {
+      "title": "Your savings, in plain sight",
+      "desc": "Follow the money saved as you progress."
+    }
+  ],
+  "testAccessButton": "Continue without a subscription (test)"
 }

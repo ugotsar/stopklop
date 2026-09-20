@@ -31,7 +31,10 @@
       "ios": {
         "appleId": "bf3player81@gmail.com",
         "ascAppId": "6804206108",
-        "appleTeamId": "2CK95AV86W"
+        "appleTeamId": "2CK95AV86W",
+        "ascApiKeyPath": "C:\\Users\\laure\\Downloads\\AuthKey_7K89GAAA5N.p8",
+        "ascApiKeyId": "7K89GAAA5N",
+        "ascApiKeyIssuerId": "ff9ba163-c6a3-4cef-8a70-a898aa30d128"
       },
       "android": {
         "serviceAccountKeyPath": "./google-service-account.json",

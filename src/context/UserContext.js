@@ -28,6 +28,7 @@ import { IS_DEMO_BUILD } from '../config/demoMode';
 import { buildDemoProfile } from '../utils/demoData';
 import { buildWidgetSnapshot } from '../widget/snapshot';
 import { clearWidget, syncWidget } from '../widget/syncWidget';
+import { grantTestAccess, loadTestAccess } from '../services/testAccess';
 
 // ─── Contexte ────────────────────────────────────────────────────────────────
 const UserContext = createContext(null);
@@ -41,6 +42,14 @@ export function UserProvider({ children }) {
   // (voir AppNavigator) et ne jamais tenter d'appel Firebase.
   const [firebaseUser, setFirebaseUser] = useState(IS_DEMO_BUILD ? null : undefined);
   const [syncError, setSyncError] = useState(null);
+  // ⚠️ TEMPORAIRE : accès sans abonnement tant que les stores n'en proposent
+  // aucun (voir src/services/testAccess.js). À retirer avant la mise en vente.
+  const [testAccess, setTestAccess] = useState(false);
+  useEffect(() => { loadTestAccess().then(setTestAccess); }, []);
+  async function allowTestAccess() {
+    await grantTestAccess();
+    setTestAccess(true);
+  }
   const [subscription, setSubscription] = useState({
     loading: true,
     available: false,
@@ -396,6 +405,7 @@ export function UserProvider({ children }) {
       profile, loading, firebaseUser, syncError, subscription,
       updateProfile, saveDailyConsumption, recordCraving,
       resetProfile, deleteAccount, refreshSubscription, stats,
+      testAccess, allowTestAccess,
     }}>
       {children}
     </UserContext.Provider>

@@ -1,40 +1,42 @@
 {
   "header": {
-    "title": "Beginne deine\nrauchfreie Reise",
-    "subtitle": "Erhalte Zugriff auf alle Funktionen,\num deine Erfolgschancen zu maximieren."
+    "title": "Ein Plan in\ndeinem Tempo.",
+    "subtitle": "Reduziere Schritt für Schritt, verstehe deine Gewohnheiten und sieh deine Ersparnis."
   },
-  "features": [
-    "Personalisiertes tägliches Tracking",
-    "Berechnung der Ersparnisse in Echtzeit",
-    "Tägliche Tipps und Herausforderungen",
-    "Detaillierte Gesundheitsstatistiken"
-  ],
   "plans": {
     "annual": {
       "label": "Jährlich",
       "price": "89,99 €",
       "pricePerMonth": "7,50 € / Monat",
-      "period": "Jährliche Abrechnung"
+      "period": "Jährliche Abrechnung",
+      "per": "/ Jahr",
+      "billing": "{{price}} jährlich abgerechnet. Verlängert sich automatisch."
     },
     "quarterly": {
       "label": "Vierteljährlich",
       "price": "14,99 €",
       "pricePerMonth": "5,00 € / Monat",
       "period": "Abrechnung alle 3 Monate",
-      "badge": "BESTES ANGEBOT"
+      "badge": "BESTES ANGEBOT",
+      "per": "/ 3 Monate",
+      "billing": "{{price}} alle 3 Monate abgerechnet. Verlängert sich automatisch."
     },
     "monthly": {
       "label": "Monatlich",
       "price": "9,99 €",
       "pricePerMonth": "9,99 € / Monat",
-      "period": "Monatliche Abrechnung"
+      "period": "Monatliche Abrechnung",
+      "per": "/ Monat",
+      "billing": "{{price}} monatlich abgerechnet. Verlängert sich automatisch."
     },
     "lifetime": {
       "label": "Lebenslang",
-      "pricePerMonth": "Einmalzahlung"
+      "pricePerMonth": "Einmalzahlung",
+      "per": "",
+      "billing": "{{price}}, einmalige Zahlung."
     }
   },
-  "ctaButton": "Weiter →",
+  "ctaButton": "Meine Begleitung starten",
   "purchasingLabel": "Zahlung wird verarbeitet…",
   "unavailableTitle": "Abonnement nicht verfügbar",
   "unavailableBody": "Zahlungen sind für diese Version von Stopklop noch nicht eingerichtet. Versuche es später erneut.",
@@ -51,5 +53,20 @@
   "restoreErrorBody": "Die Wiederherstellung ist fehlgeschlagen. Versuche es später erneut.",
   "legalDisclosure": "Abonnement mit automatischer Verlängerung. Die Zahlung wird bei Bestätigung des Kaufs abgebucht. Das Abonnement verlängert sich automatisch, sofern es nicht mindestens 24 Stunden vor Ende des aktuellen Zeitraums gekündigt wird; verwaltbar in den Kontoeinstellungen.",
   "termsLink": "Nutzungsbedingungen",
-  "privacyLink": "Datenschutzrichtlinie"
+  "privacyLink": "Datenschutzrichtlinie",
+  "benefits": [
+    {
+      "title": "Ein Plan in Etappen",
+      "desc": "Geh Schritt für Schritt auf dein Ziel zu."
+    },
+    {
+      "title": "Verstehe deine Gewohnheiten",
+      "desc": "Erkenne, was dir Lust aufs Rauchen macht."
+    },
+    {
+      "title": "Deine Ersparnis im Blick",
+      "desc": "Verfolge das gesparte Geld bei jedem Fortschritt."
+    }
+  ],
+  "testAccessButton": "Ohne Abo fortfahren (Test)"
 }

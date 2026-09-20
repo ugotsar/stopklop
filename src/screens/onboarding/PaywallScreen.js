@@ -1,15 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import {
   View, Text, StyleSheet, SafeAreaView, TouchableOpacity,
-  Alert, ActivityIndicator, ScrollView,
+  Alert, ActivityIndicator, ScrollView, Image,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { colors, spacing, font, radius } from '../../theme';
-import PrimaryButton from '../../components/PrimaryButton';
+import Klop from '../../components/Klop';
+import { IconCible, IconLoupe, IconPieces } from '../../components/PaywallIcons';
 import {
   getOfferings, isPaywallBypassEnabled, isPro, purchasePackage, restorePurchases,
 } from '../../services/purchases';
 import { useUser } from '../../context/UserContext';
+
+const BOCAL = require('../../../assets/ui-kit/bocal_economies_3d.png');
+const BENEFIT_ICONS = [IconCible, IconLoupe, IconPieces];
 
 function planKey(pkg) {
   if (pkg.packageType === 'ANNUAL') return 'annual';
@@ -19,8 +23,8 @@ function planKey(pkg) {
 }
 
 export default function PaywallScreen({ navigation }) {
-  const { t, i18n } = useTranslation('paywallOnboarding');
-  const { subscription, refreshSubscription } = useUser();
+  const { t } = useTranslation('paywallOnboarding');
+  const { subscription, refreshSubscription, allowTestAccess } = useUser();
   const [offering, setOffering] = useState(null);
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -90,134 +94,182 @@ export default function PaywallScreen({ navigation }) {
     }
   }
 
-  const features = t('features', { returnObjects: true }) || [];
+  const benefits = t('benefits', { returnObjects: true });
   const packages = offering?.availablePackages ?? [];
   const unavailable = !subscription.available || loadError || !packages.length;
+  const selectedKey = selectedPlan ? planKey(selectedPlan) : null;
+  // ⚠️ TEMPORAIRE : visible seulement tant qu'aucun abonnement n'est proposé
+  // par le store. Disparaît tout seul dès que les abonnements fonctionnent.
+  const showTestAccess = !loading && (unavailable || isPaywallBypassEnabled());
 
   return (
-    <SafeAreaView style={styles.safe}>
-      <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
-        <View style={styles.header}>
-          <Text style={styles.emoji}>🌿</Text>
-          <Text style={styles.title}>{t('header.title')}</Text>
-          <Text style={styles.subtitle}>{t('header.subtitle')}</Text>
+    <SafeAreaView style={s.safe}>
+      <ScrollView contentContainerStyle={s.container} showsVerticalScrollIndicator={false}>
+
+        <View style={s.topBar}>
+          <Text style={s.brand}>STOPKLOP</Text>
+          {showTestAccess && (
+            <TouchableOpacity style={s.close} onPress={allowTestAccess} accessibilityLabel={t('testAccessButton')}>
+              <Text style={s.closeText}>✕</Text>
+            </TouchableOpacity>
+          )}
         </View>
 
-        <View style={styles.features}>
-          {(Array.isArray(features) ? features : []).map((feature, index) => (
-            <View key={index} style={styles.featureRow}>
-              <View style={styles.featureCheck}><Text style={styles.featureCheckText}>✓</Text></View>
-              <Text style={styles.featureText}>{feature}</Text>
-            </View>
-          ))}
+        <View style={s.hero}>
+          <View style={s.heroText}>
+            <Text style={s.title}>{t('header.title')}</Text>
+            <Text style={s.subtitle}>{t('header.subtitle')}</Text>
+          </View>
+          <View style={s.heroArt}>
+            <Klop width={82} />
+            <Image source={BOCAL} style={s.bocal} resizeMode="contain" />
+          </View>
+        </View>
+
+        <View style={s.benefits}>
+          {(Array.isArray(benefits) ? benefits : []).map((benefit, index) => {
+            const Icon = BENEFIT_ICONS[index] ?? IconCible;
+            return (
+              <View key={index} style={s.benefitCard}>
+                <View style={s.benefitIcon}><Icon /></View>
+                <View style={s.benefitTexts}>
+                  <Text style={s.benefitTitle}>{benefit.title}</Text>
+                  <Text style={s.benefitDesc}>{benefit.desc}</Text>
+                </View>
+              </View>
+            );
+          })}
         </View>
 
         {loading ? (
-          <ActivityIndicator size="large" color={colors.primary} style={styles.loader} />
+          <ActivityIndicator size="large" color={colors.primary} style={s.loader} />
         ) : unavailable ? (
-          <View style={styles.unavailableCard}>
-            <Text style={styles.unavailableTitle}>{t('unavailableTitle')}</Text>
-            <Text style={styles.unavailableText}>{t('unavailableBody')}</Text>
+          <View style={s.unavailableCard}>
+            <Text style={s.unavailableTitle}>{t('unavailableTitle')}</Text>
+            <Text style={s.unavailableText}>{t('unavailableBody')}</Text>
           </View>
         ) : (
-          <View style={styles.plans}>
+          <View style={s.plans}>
             {packages.map(pkg => {
               const key = planKey(pkg);
               const selected = selectedPlan?.identifier === pkg.identifier;
-              const badgeKey = `plans.${key}.badge`;
-              const badge = i18n.exists(badgeKey, { ns: 'paywallOnboarding' }) ? t(badgeKey) : '';
               return (
                 <TouchableOpacity
                   key={pkg.identifier}
-                  style={[styles.planCard, selected && styles.planCardSelected]}
+                  style={[s.planRow, selected && s.planRowSelected]}
                   onPress={() => setSelectedPlan(pkg)}
-                  activeOpacity={0.8}
+                  activeOpacity={0.85}
                 >
-                  {badge ? <View style={styles.badge}><Text style={styles.badgeText}>{badge}</Text></View> : null}
-                  <View style={styles.planLeft}>
-                    <View style={[styles.planRadio, selected && styles.planRadioSelected]}>
-                      {selected && <View style={styles.planRadioDot} />}
-                    </View>
-                    <Text style={[styles.planLabel, selected && styles.planLabelSelected]}>{t(`plans.${key}.label`)}</Text>
+                  <View style={[s.radio, selected && s.radioSelected]}>
+                    {selected && <View style={s.radioDot} />}
                   </View>
-                  <View style={styles.planRight}>
-                    <Text style={[styles.planPrice, selected && styles.planPriceSelected]}>{pkg.product.priceString}</Text>
-                    {pkg.packageType !== 'LIFETIME' && <Text style={styles.planPerMonth}>{t(`plans.${key}.period`)}</Text>}
-                  </View>
+                  <Text style={s.planLabel}>{t(`plans.${key}.label`)}</Text>
+                  <Text style={s.planPrice}>
+                    {pkg.product.priceString}
+                    <Text style={s.planPer}> {t(`plans.${key}.per`)}</Text>
+                  </Text>
                 </TouchableOpacity>
               );
             })}
           </View>
         )}
 
-        <PrimaryButton
-          title={purchasing ? t('purchasingLabel') : t('ctaButton')}
+        <TouchableOpacity
+          style={[s.cta, (unavailable || purchasing) && s.ctaDisabled]}
           onPress={handlePurchase}
           disabled={unavailable || !selectedPlan || purchasing}
-          style={[styles.cta, (unavailable || purchasing) && styles.ctaDisabled]}
-        />
+          activeOpacity={0.9}
+        >
+          <Text style={s.ctaText}>{purchasing ? t('purchasingLabel') : t('ctaButton')}</Text>
+        </TouchableOpacity>
 
-        {isPaywallBypassEnabled() && (
-          <TouchableOpacity onPress={() => navigation.navigate('MainTabs')} disabled={purchasing}>
-            <Text style={styles.skip}>{t('skipButton')}</Text>
+        {selectedKey ? (
+          <Text style={s.billing}>
+            {t(`plans.${selectedKey}.billing`, { price: selectedPlan.product.priceString })}
+          </Text>
+        ) : null}
+
+        {showTestAccess && (
+          <TouchableOpacity onPress={allowTestAccess} disabled={purchasing} style={s.testAccess}>
+            <Text style={s.testAccessText}>{t('testAccessButton')}</Text>
           </TouchableOpacity>
         )}
 
         <TouchableOpacity onPress={handleRestore} disabled={purchasing || unavailable}>
-          <Text style={[styles.restore, unavailable && styles.restoreDisabled]}>
+          <Text style={[s.restore, unavailable && s.restoreDisabled]}>
             {purchasing ? t('restoringLabel') : t('restoreButton')}
           </Text>
         </TouchableOpacity>
 
-        <Text style={styles.legal}>{t('legalDisclosure')}</Text>
-        <View style={styles.legalLinks}>
-          <Text style={styles.legalLink} onPress={() => navigation.navigate('MentionsLegales', { type: 'terms' })}>{t('termsLink')}</Text>
-          <Text style={styles.legalDot}>•</Text>
-          <Text style={styles.legalLink} onPress={() => navigation.navigate('MentionsLegales', { type: 'privacy' })}>{t('privacyLink')}</Text>
+        <View style={s.legalLinks}>
+          <Text style={s.legalLink} onPress={() => navigation.navigate('MentionsLegales', { type: 'terms' })}>{t('termsLink')}</Text>
+          <Text style={s.legalDot}>·</Text>
+          <Text style={s.legalLink} onPress={() => navigation.navigate('MentionsLegales', { type: 'privacy' })}>{t('privacyLink')}</Text>
         </View>
+        <Text style={s.legal}>{t('legalDisclosure')}</Text>
       </ScrollView>
     </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.white },
-  container: { paddingHorizontal: spacing.lg, paddingTop: spacing.lg, paddingBottom: spacing.xl, flexGrow: 1 },
-  header: { alignItems: 'center', marginBottom: spacing.lg },
-  emoji: { fontSize: 56, marginBottom: spacing.sm },
-  title: { fontSize: 26, fontWeight: '800', color: colors.black, textAlign: 'center', lineHeight: 34, marginBottom: spacing.sm },
-  subtitle: { fontSize: font.sm, color: colors.gray, textAlign: 'center', lineHeight: 22 },
-  features: { gap: spacing.sm, marginBottom: spacing.lg },
-  featureRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
-  featureCheck: { width: 22, height: 22, borderRadius: 11, backgroundColor: colors.primaryLight, alignItems: 'center', justifyContent: 'center' },
-  featureCheckText: { color: colors.primary, fontSize: 13, fontWeight: '800' },
-  featureText: { fontSize: font.sm, color: colors.black, flex: 1 },
+const CREAM = '#FBF9F1';
+const MINT = '#E7F2E8';
+const DEEP = '#0B5135';
+
+const s = StyleSheet.create({
+  safe: { flex: 1, backgroundColor: CREAM },
+  container: { paddingHorizontal: 22, paddingTop: 8, paddingBottom: 28 },
+
+  topBar: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', height: 40 },
+  brand: { fontSize: 17, fontWeight: '900', letterSpacing: 1.2, color: DEEP },
+  close: { width: 34, height: 34, borderRadius: 17, backgroundColor: '#EFEEE4', alignItems: 'center', justifyContent: 'center' },
+  closeText: { fontSize: 16, color: '#4B6358', fontWeight: '700' },
+
+  hero: { flexDirection: 'row', alignItems: 'center', marginTop: 10 },
+  heroText: { flex: 1, paddingRight: 6 },
+  title: { fontSize: 34, fontWeight: '900', color: '#0A2A1C', lineHeight: 39, letterSpacing: -0.5 },
+  subtitle: { fontSize: 15, color: '#6B7C72', lineHeight: 21, marginTop: 12 },
+  heroArt: { flexDirection: 'row', alignItems: 'flex-end' },
+  bocal: { width: 86, height: 100, marginLeft: -8 },
+
+  benefits: { gap: 10, marginTop: 22 },
+  benefitCard: { flexDirection: 'row', alignItems: 'center', gap: 14, backgroundColor: MINT, borderRadius: 18, padding: 14 },
+  benefitIcon: { width: 46, height: 46, borderRadius: 14, backgroundColor: colors.white, alignItems: 'center', justifyContent: 'center' },
+  benefitTexts: { flex: 1 },
+  benefitTitle: { fontSize: 16, fontWeight: '800', color: '#0A2A1C' },
+  benefitDesc: { fontSize: 13.5, color: '#5E6F64', marginTop: 3, lineHeight: 18 },
+
   loader: { marginVertical: spacing.xl },
-  unavailableCard: { backgroundColor: '#FFF7ED', borderWidth: 1, borderColor: '#FED7AA', borderRadius: radius.lg, padding: spacing.md, marginBottom: spacing.lg },
+  unavailableCard: { backgroundColor: '#FFF7ED', borderWidth: 1, borderColor: '#FED7AA', borderRadius: radius.lg, padding: spacing.md, marginTop: 20 },
   unavailableTitle: { fontSize: font.md, fontWeight: '800', color: '#9A3412', textAlign: 'center', marginBottom: 6 },
   unavailableText: { fontSize: font.sm, color: '#9A3412', textAlign: 'center', lineHeight: 20 },
-  plans: { gap: spacing.sm, marginBottom: spacing.lg },
-  planCard: { borderWidth: 1.5, borderColor: colors.grayBorder, borderRadius: radius.lg, padding: spacing.md, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', position: 'relative', overflow: 'visible' },
-  planCardSelected: { borderColor: colors.primary, backgroundColor: colors.primaryLight },
-  badge: { position: 'absolute', top: -10, right: 16, backgroundColor: colors.primary, borderRadius: radius.full, paddingHorizontal: 10, paddingVertical: 3 },
-  badgeText: { color: colors.white, fontSize: 10, fontWeight: '800', letterSpacing: 0.5 },
-  planLeft: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm, flex: 1 },
-  planRadio: { width: 20, height: 20, borderRadius: 10, borderWidth: 2, borderColor: colors.grayBorder, alignItems: 'center', justifyContent: 'center' },
-  planRadioSelected: { borderColor: colors.primary, backgroundColor: colors.primary },
-  planRadioDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: colors.white },
-  planLabel: { fontSize: font.md, fontWeight: '700', color: colors.black },
-  planLabelSelected: { color: colors.primary },
-  planRight: { alignItems: 'flex-end', marginLeft: spacing.sm },
-  planPrice: { fontSize: font.lg, fontWeight: '800', color: colors.black },
-  planPriceSelected: { color: colors.primary },
-  planPerMonth: { fontSize: 12, color: colors.gray, marginTop: 2 },
-  cta: { marginBottom: spacing.md },
-  ctaDisabled: { opacity: 0.55 },
-  skip: { textAlign: 'center', color: colors.gray, fontSize: font.sm, marginBottom: spacing.sm },
-  restore: { textAlign: 'center', color: colors.primary, fontSize: font.sm, fontWeight: '600', textDecorationLine: 'underline', marginBottom: spacing.md },
-  restoreDisabled: { color: colors.gray },
-  legal: { textAlign: 'center', color: colors.gray, fontSize: 11, lineHeight: 15, marginTop: 'auto' },
-  legalLinks: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 6, marginTop: 6 },
-  legalLink: { color: colors.gray, fontSize: 11, textDecorationLine: 'underline' },
-  legalDot: { color: colors.gray, fontSize: 11 },
+
+  plans: { gap: 9, marginTop: 20 },
+  planRow: {
+    flexDirection: 'row', alignItems: 'center', gap: 12,
+    borderWidth: 1.5, borderColor: '#E4E2D6', borderRadius: 16,
+    backgroundColor: colors.white, paddingVertical: 15, paddingHorizontal: 16,
+  },
+  planRowSelected: { borderColor: '#1E8E4E', backgroundColor: '#F3FAF4' },
+  radio: { width: 22, height: 22, borderRadius: 11, borderWidth: 2, borderColor: '#D3DED7', alignItems: 'center', justifyContent: 'center' },
+  radioSelected: { borderColor: '#1E8E4E' },
+  radioDot: { width: 10, height: 10, borderRadius: 5, backgroundColor: '#1E8E4E' },
+  planLabel: { flex: 1, fontSize: 16, fontWeight: '800', color: '#0A2A1C' },
+  planPrice: { fontSize: 16, fontWeight: '800', color: '#0A2A1C' },
+  planPer: { fontSize: 14, fontWeight: '500', color: '#6B7C72' },
+
+  cta: { marginTop: 18, borderRadius: 26, backgroundColor: DEEP, paddingVertical: 17, alignItems: 'center' },
+  ctaDisabled: { opacity: 0.5 },
+  ctaText: { color: colors.white, fontSize: 16.5, fontWeight: '800' },
+  billing: { textAlign: 'center', color: '#8A938C', fontSize: 12.5, marginTop: 10 },
+
+  testAccess: { marginTop: 14, alignItems: 'center' },
+  testAccessText: { color: '#9A3412', fontSize: 13, fontWeight: '700', textDecorationLine: 'underline' },
+
+  restore: { textAlign: 'center', color: DEEP, fontSize: 14, fontWeight: '700', textDecorationLine: 'underline', marginTop: 16 },
+  restoreDisabled: { color: '#9AA79F' },
+  legalLinks: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 8, marginTop: 12 },
+  legalLink: { color: DEEP, fontSize: 13, textDecorationLine: 'underline' },
+  legalDot: { color: '#8A938C', fontSize: 13 },
+  legal: { textAlign: 'center', color: '#9AA79F', fontSize: 10.5, lineHeight: 15, marginTop: 12 },
 });
