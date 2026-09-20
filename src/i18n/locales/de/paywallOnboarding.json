@@ -68,5 +68,8 @@
       "desc": "Verfolge das gesparte Geld bei jedem Fortschritt."
     }
   ],
-  "testAccessButton": "Ohne Abo fortfahren (Test)"
+  "testAccessButton": "Ohne Abo fortfahren (Test)",
+  "ctaTrialButton": "{{count}} Tage gratis starten",
+  "trialBadge": "{{count}} Tage gratis",
+  "trialBilling": "{{count}} Tage gratis, danach {{price}} {{per}}. Jederzeit kündbar."
 }

@@ -68,5 +68,8 @@
       "desc": "Sigue el dinero ahorrado con cada avance."
     }
   ],
-  "testAccessButton": "Continuar sin suscripción (prueba)"
+  "testAccessButton": "Continuar sin suscripción (prueba)",
+  "ctaTrialButton": "Empezar mis {{count}} días gratis",
+  "trialBadge": "{{count}} días gratis",
+  "trialBilling": "{{count}} días gratis, luego {{price}} {{per}}. Cancela cuando quieras."
 }

@@ -15,6 +15,21 @@ import { useUser } from '../../context/UserContext';
 const BOCAL = require('../../../assets/ui-kit/bocal_economies_3d.png');
 const BENEFIT_ICONS = [IconCible, IconLoupe, IconPieces];
 
+// Essai gratuit déclaré côté store (Apple : « offre introductive »). Renvoie
+// le nombre de jours offerts, ou 0 si la formule n'en propose pas.
+function trialDays(pkg) {
+  const intro = pkg?.product?.introPrice;
+  if (!intro || intro.price > 0) return 0;
+  const units = intro.periodNumberOfUnits ?? 0;
+  switch (intro.periodUnit) {
+    case 'DAY': return units;
+    case 'WEEK': return units * 7;
+    case 'MONTH': return units * 30;
+    case 'YEAR': return units * 365;
+    default: return 0;
+  }
+}
+
 function planKey(pkg) {
   if (pkg.packageType === 'ANNUAL') return 'annual';
   if (pkg.packageType === 'THREE_MONTH') return 'quarterly';
@@ -98,6 +113,7 @@ export default function PaywallScreen({ navigation }) {
   const packages = offering?.availablePackages ?? [];
   const unavailable = !subscription.available || loadError || !packages.length;
   const selectedKey = selectedPlan ? planKey(selectedPlan) : null;
+  const selectedTrial = trialDays(selectedPlan);
   // ⚠️ TEMPORAIRE : visible seulement tant qu'aucun abonnement n'est proposé
   // par le store. Disparaît tout seul dès que les abonnements fonctionnent.
   const showTestAccess = !loading && (unavailable || isPaywallBypassEnabled());
@@ -153,6 +169,7 @@ export default function PaywallScreen({ navigation }) {
             {packages.map(pkg => {
               const key = planKey(pkg);
               const selected = selectedPlan?.identifier === pkg.identifier;
+              const days = trialDays(pkg);
               return (
                 <TouchableOpacity
                   key={pkg.identifier}
@@ -163,7 +180,10 @@ export default function PaywallScreen({ navigation }) {
                   <View style={[s.radio, selected && s.radioSelected]}>
                     {selected && <View style={s.radioDot} />}
                   </View>
-                  <Text style={s.planLabel}>{t(`plans.${key}.label`)}</Text>
+                  <View style={s.planTexts}>
+                    <Text style={s.planLabel}>{t(`plans.${key}.label`)}</Text>
+                    {days > 0 && <Text style={s.planTrial}>{t('trialBadge', { count: days })}</Text>}
+                  </View>
                   <Text style={s.planPrice}>
                     {pkg.product.priceString}
                     <Text style={s.planPer}> {t(`plans.${key}.per`)}</Text>
@@ -180,12 +200,22 @@ export default function PaywallScreen({ navigation }) {
           disabled={unavailable || !selectedPlan || purchasing}
           activeOpacity={0.9}
         >
-          <Text style={s.ctaText}>{purchasing ? t('purchasingLabel') : t('ctaButton')}</Text>
+          <Text style={s.ctaText}>
+            {purchasing
+              ? t('purchasingLabel')
+              : selectedTrial > 0 ? t('ctaTrialButton', { count: selectedTrial }) : t('ctaButton')}
+          </Text>
         </TouchableOpacity>
 
         {selectedKey ? (
           <Text style={s.billing}>
-            {t(`plans.${selectedKey}.billing`, { price: selectedPlan.product.priceString })}
+            {selectedTrial > 0
+              ? t('trialBilling', {
+                  count: selectedTrial,
+                  price: selectedPlan.product.priceString,
+                  per: t(`plans.${selectedKey}.per`),
+                })
+              : t(`plans.${selectedKey}.billing`, { price: selectedPlan.product.priceString })}
           </Text>
         ) : null}
 
@@ -254,7 +284,9 @@ const s = StyleSheet.create({
   radio: { width: 22, height: 22, borderRadius: 11, borderWidth: 2, borderColor: '#D3DED7', alignItems: 'center', justifyContent: 'center' },
   radioSelected: { borderColor: '#1E8E4E' },
   radioDot: { width: 10, height: 10, borderRadius: 5, backgroundColor: '#1E8E4E' },
-  planLabel: { flex: 1, fontSize: 16, fontWeight: '800', color: '#0A2A1C' },
+  planTexts: { flex: 1 },
+  planLabel: { fontSize: 16, fontWeight: '800', color: '#0A2A1C' },
+  planTrial: { fontSize: 12.5, fontWeight: '700', color: '#1E8E4E', marginTop: 2 },
   planPrice: { fontSize: 16, fontWeight: '800', color: '#0A2A1C' },
   planPer: { fontSize: 14, fontWeight: '500', color: '#6B7C72' },
 

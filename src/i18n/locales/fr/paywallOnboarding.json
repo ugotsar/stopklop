@@ -68,5 +68,8 @@
       "desc": "Suis l’argent économisé au fil de tes progrès."
     }
   ],
-  "testAccessButton": "Continuer sans abonnement (test)"
+  "testAccessButton": "Continuer sans abonnement (test)",
+  "ctaTrialButton": "Commencer mes {{count}} jours gratuits",
+  "trialBadge": "{{count}} jours gratuits",
+  "trialBilling": "{{count}} jours gratuits, puis {{price}} {{per}}. Annulable à tout moment."
 }

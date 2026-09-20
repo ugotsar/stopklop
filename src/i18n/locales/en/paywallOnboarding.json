@@ -68,5 +68,8 @@
       "desc": "Follow the money saved as you progress."
     }
   ],
-  "testAccessButton": "Continue without a subscription (test)"
+  "testAccessButton": "Continue without a subscription (test)",
+  "ctaTrialButton": "Start my {{count}}-day free trial",
+  "trialBadge": "{{count}} days free",
+  "trialBilling": "{{count}} days free, then {{price}} {{per}}. Cancel anytime."
 }
