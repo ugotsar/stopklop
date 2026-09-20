@@ -15,6 +15,7 @@
     "ios": {
       "bundleIdentifier": "com.stopklop.app",
       "appleTeamId": "2CK95AV86W",
+      "usesAppleSignIn": true,
       "supportsTablet": false,
       "buildNumber": "1",
       "infoPlist": {

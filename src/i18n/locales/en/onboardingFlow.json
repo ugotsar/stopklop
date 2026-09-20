@@ -205,6 +205,11 @@
     "levelA11y": "Level {{n}}",
     "sliderA11y": "Motivation level from 1 to 10"
   },
+  "planLoading": {
+    "title": "Creating\nyour plan…",
+    "subtitle": "Personalized with your answers.",
+    "a11y": "Creating your plan, {{pct}}%"
+  },
   "summary": {
     "title": "Your journey is ready 🎉",
     "subtitle": "Here's a summary of your personalized plan.",

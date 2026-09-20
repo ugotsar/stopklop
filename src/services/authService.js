@@ -117,6 +117,21 @@ export function useGoogleAuth() {
 }
 
 // ── Connexion Apple ───────────────────────────────────────────────────────────
+// « Se connecter avec Apple » n'existe que sur iPhone : ailleurs (Android, Web)
+// le bouton est masqué au lieu d'échouer au clic.
+export function useAppleAuthAvailable() {
+  const [available, setAvailable] = useState(false);
+  useEffect(() => {
+    if (Platform.OS !== 'ios') return;
+    let alive = true;
+    AppleAuthentication.isAvailableAsync()
+      .then(ok => { if (alive) setAvailable(ok); })
+      .catch(() => {});
+    return () => { alive = false; };
+  }, []);
+  return available;
+}
+
 export async function signInWithApple() {
   const nonce     = Math.random().toString(36).substring(2, 10);
   const hashedNonce = await Crypto.digestStringAsync(

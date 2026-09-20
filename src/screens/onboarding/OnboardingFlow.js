@@ -13,6 +13,7 @@ import { useUser } from '../../context/UserContext';
 import { jouerSon } from '../../services/sounds';
 import { localDateKey } from '../../utils/dateKeys';
 import { buildOnboardingProfile } from './onboardingProfile';
+import PlanLoading from './PlanLoading';
 
 import { DRAFT_KEY } from '../../store/onboardingStore';
 const PLAN_HD = {
@@ -96,7 +97,19 @@ const V2 = {
   motivTrend:       require('../../../assets/onboarding/v2/18-motivations/trend/trend.png'),
   motivPerso:       require('../../../assets/onboarding/v2/18-motivations/motivation-personnelle/motivation-personnelle.png'),
 };
-const AFFIRMATION_HERO = [V2.illusTentatives, V2.illusAutomatisme, V2.illusChemins];
+// Icônes 3D de l'app pour le résumé final (frise « Ton chemin »), recadrées
+// au plus près du dessin et carrées pour être bien centrées dans les ronds.
+const RECAP = {
+  paquet:       require('../../../assets/ui-kit/recap/paquet_cigarettes.png'),
+  calendrier:   require('../../../assets/ui-kit/recap/calendrier_mois.png'),
+  escalier:     require('../../../assets/ui-kit/recap/escalier_reduction.png'),
+  limite:       require('../../../assets/ui-kit/recap/cible_limite.png'),
+  cible:        require('../../../assets/ui-kit/recap/cible_objectif.png'),
+  portefeuille: require('../../../assets/ui-kit/recap/portefeuille_euros_feuilles.png'),
+  crayon:       require('../../../assets/ui-kit/recap/autre_main_crayon.png'),
+  klop:         require('../../../assets/ui-kit/recap/mascotte_entete.png'),
+};
+const AFFIRMATION_HERO =[V2.illusTentatives, V2.illusAutomatisme, V2.illusChemins];
 const DEVISE_ICONS = { EUR: V2.devEur, CHF: V2.devChf, GBP: V2.devGbp };
 const MOTIV_ICONS_V2 = {
   health: V2.motivHealth, family: V2.motivFriends, appearance: V2.motivSpark,
@@ -242,7 +255,8 @@ export default function OnboardingFlow({ navigation, route }) {
     'objectifQuotidien',               // 16 (si réduction)
     'motivations',                     // 17
     'niveauMotivation',                // 18
-    'synthese',                        // 19
+    'chargement',                      // 19 (« Création de ton plan… », avance seul)
+    'synthese',                        // 20
   ];
   const pages = answers.typeObjectif === 'stop'
     ? PAGES.filter(p => p !== 'objectifQuotidien')
@@ -258,7 +272,9 @@ export default function OnboardingFlow({ navigation, route }) {
       navigation.goBack();
       return;
     }
-    setStep(s => Math.max(0, s - 1));
+    // Depuis le résumé, on revient à la motivation sans rejouer le chargement.
+    const skip = page === 'synthese' ? 2 : 1;
+    setStep(s => Math.max(0, s - skip));
   }
 
   // ── Valeurs dérivées ────────────────────────────────────────────────────────
@@ -807,39 +823,88 @@ export default function OnboardingFlow({ navigation, route }) {
     );
   }
 
+  else if (page === 'chargement') {
+    body = <PlanLoading onDone={next} />;
+    cta = null;
+  }
+
   else if (page === 'synthese') {
     const motivLabels = answers.motivations
       .filter(k => MOTIVATIONS_CHOIX.some(m => m.key === k))
       .map(k => t(`motivations.options.${k}`));
+    const pourquoi = motivLabels.map(l => l.charAt(0).toLowerCase() + l.slice(1));
+    const pourquoiTexte = pourquoi.length > 1
+      ? `Pour ${pourquoi.slice(0, -1).join(', ')} et ${pourquoi[pourquoi.length - 1]}`
+      : pourquoi.length === 1 ? `Pour ${pourquoi[0]}` : null;
+    const arret = answers.typeObjectif === 'stop';
+    const prixTexte = isNaN(prixNum) ? '—' : prixNum.toFixed(2).replace('.', ',');
+    const dateTexte = new Date(answers.dateDebut + 'T12:00:00')
+      .toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+    const coutJour = (consoNormalisee * prixCig).toFixed(2).replace('.', ',');
+    const enMoins = Math.max(0, consoNormalisee - objectifFinal);
+    const baissePct = consoNormalisee > 0 ? Math.round((enMoins / consoNormalisee) * 100) : 0;
+    const eviteesAn = Math.round(enMoins * 365).toLocaleString('fr-FR');
+    const etapes = [
+      { img: RECAP.paquet, quand: 'Aujourd’hui', titre: `${consoNormalisee} cigarettes par jour`,
+        detail: `Paquet à ${prixTexte} ${symboleDevise} (${answers.cigarettesParPaquet} cigarettes), soit environ ${coutJour} ${symboleDevise} par jour.` },
+      { img: RECAP.calendrier, quand: dateTexte, titre: 'Début du plan',
+        detail: `Chaque jour, tu notes simplement ce que tu fumes. Motivation de départ : ${answers.niveauMotivation} / 10.` },
+      { img: RECAP.escalier, quand: 'Semaine après semaine', titre: 'Tu avances à ton rythme',
+        detail: 'Pas de pression : un écart ne casse rien, on repart le lendemain.', raison: pourquoiTexte },
+      { img: arret ? RECAP.cible : RECAP.limite, quand: 'Objectif',
+        titre: arret ? 'Zéro cigarette' : `${objectifFinal} cigarettes par jour maximum`,
+        detail: arret
+          ? 'Arrêter complètement, en avançant étape par étape vers une vie sans cigarette.'
+          : `Soit ${enMoins} cigarette${enMoins > 1 ? 's' : ''} de moins chaque jour (−${baissePct} %).` },
+      { img: RECAP.portefeuille, quand: 'À la clé',
+        titre: `≈ ${Math.round(ecoEstimeeAn).toLocaleString('fr-FR')} ${symboleDevise} par an`,
+        detail: `Soit ≈ ${ecoEstimeeMois.toFixed(0)} ${symboleDevise} chaque mois et ${eviteesAn} cigarettes évitées sur un an.` },
+    ];
     body = (
       <>
-        <Text style={st.title}>Ton parcours est prêt 🎉</Text>
-        <Text style={st.subtitle}>Voici un résumé de ton plan personnalisé.</Text>
-        <View style={st.syntheseCard}>
-          <SyntheseRow img={answers.typeObjectif === 'stop' ? V2.goalStop : V2.goalReduce} label="Objectif"
-            valeur={answers.typeObjectif === 'stop' ? 'Arrêter complètement' : 'Réduire progressivement'} />
-          <SyntheseRow emoji="🚬" label="Consommation actuelle"
-            valeur={`${consoNormalisee} cig / jour`} />
-          <SyntheseRow img={V2.objectifDuJour} label="Objectif quotidien"
-            valeur={`${objectifFinal} cig / jour max`} />
-          <SyntheseRow emoji="💶" label="Prix du paquet"
-            valeur={`${isNaN(prixNum) ? '—' : prixNum.toFixed(2)} ${symboleDevise} (${answers.cigarettesParPaquet} cig.)`} />
-          <SyntheseRow emoji="📅" label="Début"
-            valeur={new Date(answers.dateDebut + 'T12:00:00').toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })} />
-          <SyntheseRow img={V2.statWallet} label="Économie estimée"
-            valeur={`≈ ${ecoEstimeeMois.toFixed(0)} ${symboleDevise} / mois\n≈ ${Math.round(ecoEstimeeAn).toLocaleString('fr-FR')} ${symboleDevise} / an`} />
-          {motivLabels.length > 0 && (
-            <SyntheseRow emoji="💚" label="Motivations" valeur={motivLabels.join(' · ')} />
-          )}
-          {answers.motivationPerso.trim() !== '' && (
-            <SyntheseRow emoji="✏️" label="Votre mot" valeur={`« ${answers.motivationPerso.trim()} »`} />
-          )}
-          <SyntheseRow emoji="🔥" label="Motivation" valeur={`${answers.niveauMotivation} / 10`} />
+        <Text style={[st.title, st.recapTitle]}>{'Ton chemin,\nétape par étape'}</Text>
+        <Text style={[st.subtitle, st.recapIntro]}>
+          Voici le plan préparé à partir de tes réponses. Tu pourras l’ajuster à tout moment.
+        </Text>
+        <View style={st.recapFrise}>
+          {etapes.map((e, i) => (
+            <View key={i} style={st.recapEtape}>
+              <View style={st.recapRail}>
+                <View style={st.recapBulle}>
+                  <Image source={e.img} style={st.recapIcone} resizeMode="contain" />
+                </View>
+                {i < etapes.length - 1 && (
+                  <View style={st.recapTrait}>
+                    {[0, 1, 2, 3].map(d => <View key={d} style={st.recapPoint} />)}
+                  </View>
+                )}
+              </View>
+              <View style={st.recapTexte}>
+                <Text style={st.recapQuand}>{e.quand}</Text>
+                <Text style={st.recapTitre}>{e.titre}</Text>
+                {e.detail ? <Text style={st.recapDetail}>{e.detail}</Text> : null}
+                {e.raison ? <Text style={st.recapRaison}>{e.raison}</Text> : null}
+              </View>
+            </View>
+          ))}
+        </View>
+        {answers.motivationPerso.trim() !== '' && (
+          <View style={st.recapMot}>
+            <Image source={RECAP.crayon} style={st.recapMotIcone} resizeMode="contain" />
+            <Text style={st.recapMotTexte}>« {answers.motivationPerso.trim()} »</Text>
+          </View>
+        )}
+        <View style={st.recapKlop}>
+          <Image source={RECAP.klop} style={st.recapKlopImg} resizeMode="contain" />
+          <View style={{ flex: 1 }}>
+            <Text style={st.recapKlopTitre}>Klop t’accompagne chaque jour</Text>
+            <Text style={st.recapKlopTexte}>Rappels, statistiques et encouragements : tout est prêt dans l’app.</Text>
+          </View>
         </View>
         {saveError && <Text style={st.errorHint}>{saveError}</Text>}
       </>
     );
-    cta   = saving ? null : previewMode ? 'Terminer l’aperçu' : 'Commencer  🚀';
+    cta   = saving ? null : previewMode ? 'Terminer l’aperçu' : 'Commencer';
     onCta = handleFinish;
   }
 
@@ -973,18 +1038,6 @@ function TriggerItem({ trigger, label }) {
     <View style={st.triggerItem}>
       <Image source={trigger.img} style={st.triggerIcon} resizeMode="contain" />
       <Text style={st.triggerLabel}>{label}</Text>
-    </View>
-  );
-}
-
-function SyntheseRow({ emoji, img, label, valeur }) {
-  return (
-    <View style={st.synthRow}>
-      {img
-        ? <Image source={img} style={{ width: 30, height: 30 }} resizeMode="contain" />
-        : <Text style={{ fontSize: 18, width: 30 }}>{emoji}</Text>}
-      <Text style={st.synthLabel}>{label}</Text>
-      <Text style={st.synthVal}>{valeur}</Text>
     </View>
   );
 }
@@ -1445,15 +1498,28 @@ const st = StyleSheet.create({
     fontSize: font.lg, fontWeight: '700', color: colors.black, minWidth: 64, textAlign: 'center',
   },
 
-  // Synthèse
-  syntheseCard: {
-    borderWidth: 1, borderColor: colors.grayBorder, borderRadius: radius.xl,
-    padding: spacing.md,
-  },
-  synthRow: {
-    flexDirection: 'row', alignItems: 'center', gap: spacing.sm,
-    paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: '#F5F5F5',
-  },
-  synthLabel: { flex: 1, fontSize: 12, color: colors.gray },
-  synthVal:   { fontSize: 12, fontWeight: '700', color: colors.black, maxWidth: '55%', textAlign: 'right' },
+  // Synthèse : frise « Ton chemin, étape par étape »
+  recapTitle: { marginBottom: 10 },
+  recapIntro: { marginBottom: 24 },
+  recapFrise: { gap: 0 },
+  recapEtape: { flexDirection: 'row', gap: 14 },
+  recapRail: { width: 52, alignItems: 'center' },
+  recapBulle: { width: 52, height: 52, borderRadius: 26, backgroundColor: DESIGN.mint, alignItems: 'center', justifyContent: 'center' },
+  recapIcone: { width: 32, height: 32 },
+  // Pointillés qui relient les étapes (points dessinés : un bord « dashed »
+  // sur un seul côté ne s'affiche pas sur iOS).
+  recapTrait: { flex: 1, minHeight: 16, paddingVertical: 5, justifyContent: 'space-evenly', alignItems: 'center' },
+  recapPoint: { width: 3, height: 3, borderRadius: 1.5, backgroundColor: '#A9D6BA' },
+  recapTexte: { flex: 1, paddingTop: 3, paddingBottom: 20 },
+  recapQuand: { fontSize: 12, fontWeight: '700', color: DESIGN.green },
+  recapTitre: { fontSize: 16, fontWeight: '700', color: DESIGN.ink, lineHeight: 21, marginTop: 2 },
+  recapDetail: { fontSize: 13, color: DESIGN.muted, lineHeight: 19, marginTop: 3 },
+  recapRaison: { fontSize: 13, fontWeight: '700', color: DESIGN.ink, lineHeight: 19, marginTop: 4 },
+  recapKlop: { flexDirection: 'row', alignItems: 'center', gap: 14, marginTop: 14, padding: 14, borderRadius: 18, backgroundColor: DESIGN.mint },
+  recapKlopImg: { width: 50, height: 54 },
+  recapKlopTitre: { fontSize: 14, fontWeight: '700', color: DESIGN.ink },
+  recapKlopTexte: { fontSize: 12.5, color: DESIGN.muted, lineHeight: 18, marginTop: 2 },
+  recapMot: { flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: '#FFF8E8', borderRadius: 16, paddingVertical: 12, paddingHorizontal: 14 },
+  recapMotIcone: { width: 34, height: 34 },
+  recapMotTexte: { flex: 1, fontSize: 14, fontStyle: 'italic', color: '#5B4A22', lineHeight: 20 },
 });

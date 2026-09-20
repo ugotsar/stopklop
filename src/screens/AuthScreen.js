@@ -6,7 +6,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import {
   createAccountWithEmail, signInAsGuest, signInWithApple,
-  signInWithEmail, useGoogleAuth,
+  signInWithEmail, useAppleAuthAvailable, useGoogleAuth,
 } from '../services/authService';
 import { colors, spacing, font } from '../theme';
 import KlopWave from '../components/KlopWave';
@@ -25,6 +25,7 @@ export default function AuthScreen({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const google = useGoogleAuth();
+  const appleAvailable = useAppleAuthAvailable();
 
   async function handleGuest() {
     try {
@@ -159,10 +160,12 @@ export default function AuthScreen({ navigation }) {
                 </TouchableOpacity>
               )}
 
-              <TouchableOpacity style={s.btnApple} onPress={handleApple}>
-                <Image source={ICON_APPLE} style={s.btnIcon} resizeMode="contain" />
-                <Text style={s.btnAppleText}>{t('apple.button')}</Text>
-              </TouchableOpacity>
+              {appleAvailable && (
+                <TouchableOpacity style={s.btnApple} onPress={handleApple}>
+                  <Image source={ICON_APPLE} style={s.btnIcon} resizeMode="contain" />
+                  <Text style={s.btnAppleText}>{t('apple.button')}</Text>
+                </TouchableOpacity>
+              )}
 
               <TouchableOpacity style={s.btnEmail} onPress={() => setEmailMode('create')}>
                 <Image source={ICON_EMAIL} style={s.btnIcon} resizeMode="contain" />

@@ -205,6 +205,11 @@
     "levelA11y": "Niveau {{n}}",
     "sliderA11y": "Niveau de motivation de 1 à 10"
   },
+  "planLoading": {
+    "title": "Création de\nton plan…",
+    "subtitle": "Personnalisé avec tes réponses.",
+    "a11y": "Création de ton plan, {{pct}} %"
+  },
   "summary": {
     "title": "Ton parcours est prêt 🎉",
     "subtitle": "Voici un résumé de ton plan personnalisé.",

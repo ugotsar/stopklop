@@ -205,6 +205,11 @@
     "levelA11y": "Stufe {{n}}",
     "sliderA11y": "Motivationsniveau von 1 bis 10"
   },
+  "planLoading": {
+    "title": "Dein Plan wird\nerstellt…",
+    "subtitle": "Angepasst an deine Antworten.",
+    "a11y": "Dein Plan wird erstellt, {{pct}} %"
+  },
   "summary": {
     "title": "Dein Weg ist bereit 🎉",
     "subtitle": "Hier ist eine Zusammenfassung deines persönlichen Plans.",
