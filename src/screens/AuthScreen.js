@@ -5,7 +5,7 @@ import {
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import {
-  createAccountWithEmail, signInAsGuest, signInWithApple,
+  createAccountWithEmail, signInWithApple,
   signInWithEmail, useAppleAuthAvailable, useGoogleAuth,
 } from '../services/authService';
 import { colors, spacing, font } from '../theme';
@@ -26,18 +26,6 @@ export default function AuthScreen({ navigation }) {
   const [password, setPassword] = useState('');
   const google = useGoogleAuth();
   const appleAvailable = useAppleAuthAvailable();
-
-  async function handleGuest() {
-    try {
-      setLoading(true);
-      setError(null);
-      await signInAsGuest();
-    } catch (e) {
-      setError(t('errors.guest'));
-    } finally {
-      setLoading(false);
-    }
-  }
 
   async function handleGoogle() {
     setError(null);
@@ -188,24 +176,6 @@ export default function AuthScreen({ navigation }) {
           <Text style={s.legalLink}>{t('legal.privacy')}</Text>.
         </Text>
 
-        {__DEV__ && (
-          <TouchableOpacity
-            onPress={() => navigation.navigate('OnboardingPreview', { previewMode: true })}
-            style={s.devPreview}
-            accessibilityRole="button"
-          >
-            <Text style={s.devPreviewText}>Voir l’onboarding (aperçu)</Text>
-          </TouchableOpacity>
-        )}
-
-        {/* Mode invité — outil de développement, jamais montré à un vrai
-            utilisateur. Retiré définitivement au moment du build EAS de sortie. */}
-        {__DEV__ && (
-          <TouchableOpacity onPress={handleGuest} style={s.devGuest}>
-            <Text style={s.devGuestText}>{t('guest.button')} (dev)</Text>
-          </TouchableOpacity>
-        )}
-
       </ScrollView>
     </SafeAreaView>
   );
@@ -266,11 +236,6 @@ const s = StyleSheet.create({
   legalLink: { color: '#197A47', fontWeight: '600' },
 
   errorText: { color: '#EF4444', fontSize: font.sm, textAlign: 'center', marginTop: 8 },
-
-  devGuest: { marginTop: spacing.lg, alignItems: 'center' },
-  devGuestText: { color: '#B0B7B2', fontSize: 11, textDecorationLine: 'underline' },
-  devPreview: { marginTop: spacing.lg, paddingVertical: 13, paddingHorizontal: 20, borderWidth: 1, borderColor: '#197A47', borderRadius: 30, alignItems: 'center', alignSelf: 'stretch' },
-  devPreviewText: { color: '#197A47', fontSize: font.sm, fontWeight: '700' },
 
   // ── Formulaire e-mail ──────────────────────────────────────────────────────
   emailContainer: { flexGrow: 1, paddingHorizontal: spacing.xl, justifyContent: 'center', gap: 12 },

@@ -4,7 +4,6 @@ import {
   OAuthProvider,
   createUserWithEmailAndPassword,
   signInWithCredential,
-  signInAnonymously,
   signInWithEmailAndPassword,
   deleteUser,
   signOut as firebaseSignOut,
@@ -70,11 +69,6 @@ export async function deleteCurrentUser() {
 
 export function isRecentLoginRequired(error) {
   return error?.code === 'auth/requires-recent-login';
-}
-
-// ── Auth anonyme (test / dev) ─────────────────────────────────────────────────
-export async function signInAsGuest() {
-  return signInAnonymously(auth);
 }
 
 // ── Connexion e-mail / mot de passe ─────────────────────────────────────────
