@@ -20,13 +20,38 @@ import { Platform } from 'react-native';
 // pas servir de client iOS lors d'une authentification native.
 const GOOGLE_WEB_CLIENT_ID = process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID
   ?? '96875002607-7f342hira5brbv9qiokn2qt5fn6b25ft.apps.googleusercontent.com';
-const GOOGLE_IOS_CLIENT_ID = process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID ?? '';
-const GOOGLE_ANDROID_CLIENT_ID = process.env.EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID ?? '';
+const GOOGLE_IOS_CLIENT_ID = process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID
+  ?? '96875002607-cgdatuce0q3c8mn26p1ak3s3fqp0l9c6.apps.googleusercontent.com';
+// Android n'utilise pas d'identifiant dans le code : Google reconnaît l'app à
+// l'empreinte SHA-1 de sa clé de signature, déclarée dans Firebase (faite le
+// 20/09/2026 pour la clé de build EAS). À la mise en ligne sur le Play Store,
+// ajouter aussi la SHA-1 de la clé de signature Google Play, sinon Google
+// marchera en build interne mais pas depuis le Store.
+const GOOGLE_ANDROID_READY = process.env.EXPO_PUBLIC_GOOGLE_ANDROID_READY !== 'false';
 
 // Le hook expo-auth-session exige une valeur native au rendu. Ce repli ne sert
 // qu'à empêcher l'écran de planter : le bouton reste bloqué sans vraie clé.
 const GOOGLE_HOOK_FALLBACK_CLIENT_ID = GOOGLE_WEB_CLIENT_ID
   || 'stopklop-placeholder.apps.googleusercontent.com';
+
+// Connexion Google native (feuille de comptes du téléphone, sans navigateur).
+// Absente d'Expo Go et du Web : on retombe alors sur expo-auth-session.
+let GoogleNative = null;
+let GoogleNativeCodes = null;
+if (Platform.OS !== 'web') {
+  try {
+    const mod = require('@react-native-google-signin/google-signin');
+    GoogleNative = mod.GoogleSignin;
+    GoogleNativeCodes = mod.statusCodes;
+    GoogleNative.configure({
+      webClientId: GOOGLE_WEB_CLIENT_ID,          // requis pour obtenir un idToken
+      iosClientId: GOOGLE_IOS_CLIENT_ID || undefined,
+      offlineAccess: false,
+    });
+  } catch (_) {
+    GoogleNative = null; // module natif absent (Expo Go) : bouton masqué
+  }
+}
 // ── Écouter l'état de connexion ───────────────────────────────────────────────
 export function subscribeToAuth(callback) {
   return onAuthStateChanged(auth, callback);
@@ -66,16 +91,17 @@ export async function signInWithEmail(email, password) {
 
 // ── Connexion Google ──────────────────────────────────────────────────────────
 export function useGoogleAuth() {
+  const native = GoogleNative != null;
   const configured = Platform.select({
-    ios: Boolean(GOOGLE_IOS_CLIENT_ID),
-    android: Boolean(GOOGLE_ANDROID_CLIENT_ID),
+    ios: native && Boolean(GOOGLE_IOS_CLIENT_ID),
+    android: native && GOOGLE_ANDROID_READY,
     default: Boolean(GOOGLE_WEB_CLIENT_ID),
   });
 
   const [request, response, promptAsync] = Google.useAuthRequest({
     webClientId: GOOGLE_WEB_CLIENT_ID || GOOGLE_HOOK_FALLBACK_CLIENT_ID,
     iosClientId: GOOGLE_IOS_CLIENT_ID || GOOGLE_HOOK_FALLBACK_CLIENT_ID,
-    androidClientId: GOOGLE_ANDROID_CLIENT_ID || GOOGLE_HOOK_FALLBACK_CLIENT_ID,
+    androidClientId: GOOGLE_HOOK_FALLBACK_CLIENT_ID,
     selectAccount: true,
   });
   const [loading, setLoading] = useState(false);
@@ -105,6 +131,26 @@ export function useGoogleAuth() {
     }
     setLoading(true);
     setError(null);
+
+    // Téléphone : feuille de comptes native, puis on échange le jeton Google
+    // contre une session Firebase.
+    if (native) {
+      try {
+        if (Platform.OS === 'android') await GoogleNative.hasPlayServices({ showPlayServicesUpdateDialog: true });
+        const result = await GoogleNative.signIn();
+        const idToken = result?.data?.idToken ?? result?.idToken;
+        if (!idToken) throw new Error('google-id-token-missing');
+        await signInWithCredential(auth, GoogleAuthProvider.credential(idToken));
+      } catch (e) {
+        // Fermer la feuille de comptes n'est pas une erreur à afficher.
+        const annule = e?.code === GoogleNativeCodes?.SIGN_IN_CANCELLED;
+        if (!annule) setError(e);
+      } finally {
+        setLoading(false);
+      }
+      return;
+    }
+
     try {
       await promptAsync();
     } catch (e) {
@@ -113,7 +159,7 @@ export function useGoogleAuth() {
     }
   }
 
-  return { request, signInWithGoogle, loading, error, configured };
+  return { request: native ? true : request, signInWithGoogle, loading, error, configured };
 }
 
 // ── Connexion Apple ───────────────────────────────────────────────────────────

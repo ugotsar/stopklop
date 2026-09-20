@@ -22,7 +22,9 @@
         "NSUserNotificationUsageDescription": "Stopklop t'envoie des rappels pour noter tes cigarettes."
       },
       "entitlements": {
-        "com.apple.security.application-groups": ["group.com.stopklop.app"]
+        "com.apple.security.application-groups": [
+          "group.com.stopklop.app"
+        ]
       }
     },
     "android": {
@@ -73,6 +75,12 @@
               "updatePeriodMillis": 1800000
             }
           ]
+        }
+      ],
+      [
+        "@react-native-google-signin/google-signin",
+        {
+          "iosUrlScheme": "com.googleusercontent.apps.96875002607-cgdatuce0q3c8mn26p1ak3s3fqp0l9c6"
         }
       ]
     ],
