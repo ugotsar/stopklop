@@ -92,16 +92,6 @@
       "note": "Example of adjustable steps",
       "goalTitle": "Your goal for today",
       "goalValue": "8 cigarettes maximum · example"
-    },
-    "stats": {
-      "avoidedValue": "47 cigarettes avoided",
-      "avoidedNote": "Compared with your starting consumption",
-      "savedValue": "€28.20 saved",
-      "savedNote": "47 cigarettes × €0.60",
-      "timeValue": "3 h 55 gained",
-      "timeNote": "Estimate: 5 minutes per cigarette",
-      "chartTitle": "Cigarettes avoided · cumulative",
-      "disclaimer": "Example data over 7 days."
     }
   },
   "goalType": {
@@ -232,5 +222,18 @@
     "savingIndicator": "Saving your journey…",
     "saveError": "Unable to save. Check your connection and try again.",
     "startButton": "Start  🚀"
+  },
+  "projection": {
+    "title": "In a month,\nhere is where you'll be",
+    "subtitle": "Worked out from your answers, if you keep to your goal of {{objectif}} a day.",
+    "avoidedValue_one": "{{count}} cigarette avoided",
+    "avoidedValue_other": "{{count}} cigarettes avoided",
+    "avoidedNote": "compared with your {{conso}} a day today",
+    "savedValue": "{{amount}} saved",
+    "savedNote": "{{count}} cigarettes × {{prix}}",
+    "timeValue": "{{duration}} of life gained",
+    "timeNote": "estimate: 5 minutes per cigarette",
+    "chartTitle": "Cigarettes avoided · over 4 weeks",
+    "disclaimer": "A projection from your answers; it will adjust with your real days."
   }
 }

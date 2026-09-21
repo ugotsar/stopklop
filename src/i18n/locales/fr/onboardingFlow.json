@@ -92,16 +92,6 @@
       "note": "Exemple de paliers personnalisables",
       "goalTitle": "Ton objectif du jour",
       "goalValue": "8 cigarettes maximum · exemple"
-    },
-    "stats": {
-      "avoidedValue": "47 cigarettes évitées",
-      "avoidedNote": "Par rapport à ta consommation de départ",
-      "savedValue": "28,20 € économisés",
-      "savedNote": "47 cigarettes × 0,60 €",
-      "timeValue": "3 h 55 de vie gagnée",
-      "timeNote": "Estimation : 5 minutes par cigarette",
-      "chartTitle": "Cigarettes évitées · cumul",
-      "disclaimer": "Données d’exemple sur 7 jours."
     }
   },
   "goalType": {
@@ -232,5 +222,18 @@
     "savingIndicator": "Enregistrement de ton parcours…",
     "saveError": "Impossible d’enregistrer. Vérifie ta connexion et réessaie.",
     "startButton": "Commencer  🚀"
+  },
+  "projection": {
+    "title": "Dans un mois,\nvoilà où tu en seras",
+    "subtitle": "Calculé avec tes réponses, si tu tiens ton objectif de {{objectif}} par jour.",
+    "avoidedValue_one": "{{count}} cigarette évitée",
+    "avoidedValue_other": "{{count}} cigarettes évitées",
+    "avoidedNote": "par rapport à tes {{conso}} par jour d'aujourd'hui",
+    "savedValue": "{{amount}} économisés",
+    "savedNote": "{{count}} cigarettes × {{prix}}",
+    "timeValue": "{{duration}} de vie gagnée",
+    "timeNote": "estimation : 5 minutes par cigarette",
+    "chartTitle": "Cigarettes évitées · cumul sur 4 semaines",
+    "disclaimer": "Projection à partir de tes réponses, elle s'ajustera avec tes journées réelles."
   }
 }

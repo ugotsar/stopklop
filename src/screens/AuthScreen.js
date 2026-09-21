@@ -100,6 +100,37 @@ export default function AuthScreen({ navigation }) {
             </TouchableOpacity>
           )}
           {error && <Text style={s.errorText}>{error}</Text>}
+
+          {/* Mêmes connexions que sur la page d'accueil : quelqu'un qui revient
+              n'a pas forcément créé son compte par e-mail. */}
+          {!loading && (google.configured || appleAvailable) && (
+            <>
+              <View style={s.dividerRow}>
+                <View style={s.dividerLine} />
+                <Text style={s.dividerText}>{t('divider.or')}</Text>
+                <View style={s.dividerLine} />
+              </View>
+
+              {google.configured && (
+                <TouchableOpacity
+                  style={[s.btnGoogle, !google.request && s.btnDisabled]}
+                  disabled={!google.request}
+                  onPress={handleGoogle}
+                >
+                  <Image source={ICON_GOOGLE} style={s.btnIcon} resizeMode="contain" />
+                  <Text style={s.btnGoogleText}>{t('google.button')}</Text>
+                </TouchableOpacity>
+              )}
+
+              {appleAvailable && (
+                <TouchableOpacity style={s.btnApple} onPress={handleApple}>
+                  <Image source={ICON_APPLE} style={s.btnIcon} resizeMode="contain" />
+                  <Text style={s.btnAppleText}>{t('apple.button')}</Text>
+                </TouchableOpacity>
+              )}
+            </>
+          )}
+
           <TouchableOpacity onPress={() => { setEmailMode(emailMode === 'create' ? 'login' : 'create'); setError(null); }}>
             <Text style={s.emailLink}>{t(emailMode === 'create' ? 'email.alreadyHaveAccount' : 'email.createInstead')}</Text>
           </TouchableOpacity>
@@ -243,6 +274,10 @@ const s = StyleSheet.create({
   emailInput: { borderWidth: 1, borderColor: '#D1D5DB', borderRadius: 14, backgroundColor: colors.white, paddingHorizontal: 14, paddingVertical: 13, color: colors.black, fontSize: font.md },
   btnEmailSolid: { backgroundColor: '#197A47', borderRadius: 30, paddingVertical: 14, alignItems: 'center' },
   btnEmailSolidText: { color: '#fff', fontSize: font.md, fontWeight: '700' },
+  dividerRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginVertical: 4 },
+  dividerLine: { flex: 1, height: 1, backgroundColor: '#E4E2D6' },
+  dividerText: { fontSize: 12, fontWeight: '700', color: colors.gray },
+
   emailLink: { color: '#197A47', fontSize: font.sm, fontWeight: '700', textAlign: 'center', paddingVertical: 4 },
   emailBack: { color: colors.gray, fontSize: font.sm, textAlign: 'center', paddingVertical: 4 },
 });

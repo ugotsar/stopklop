@@ -247,7 +247,7 @@ export default function OnboardingFlow({ navigation, route }) {
     'affirmation0', 'affirmation1', 'affirmation2', // 1-3
     'deculpabilisation',               // 4
     'solution',                        // 5
-    'benefice0', 'benefice1', 'benefice2', 'benefice3', // 6-9
+    'benefice0', 'benefice1', 'benefice2', // 6-8
     'objectif',                        // 10
     'conso',                           // 11
     'paquet',                          // 12
@@ -255,6 +255,7 @@ export default function OnboardingFlow({ navigation, route }) {
     'prix',                            // 14
     'dateDebut',                       // 15
     'objectifQuotidien',               // 16 (si réduction)
+    'projection',                      // 17 : ce que ça donne avec SES chiffres
     'motivations',                     // 17
     'niveauMotivation',                // 18
     'chargement',                      // 19 (« Création de ton plan… », avance seul)
@@ -532,21 +533,6 @@ export default function OnboardingFlow({ navigation, route }) {
           </>
         )}
 
-        {/* 10 — bénéfices chiffrés + cumul des cigarettes évitées */}
-        {beneficeIdx === 3 && (
-          <View style={st.statsPanel}>
-            <StatCard img={V2.statAvoided} teinte={colors.primaryLight}
-              valeur={t('benefits.stats.avoidedValue')} label={t('benefits.stats.avoidedNote')} />
-            <StatCard img={V2.statWallet} teinte={colors.primaryLight}
-              valeur={t('benefits.stats.savedValue')} label={t('benefits.stats.savedNote')} />
-            <StatCard img={V2.statTime} teinte="#EFE9FB"
-              valeur={t('benefits.stats.timeValue')} label={t('benefits.stats.timeNote')} />
-            <View style={st.chartCard}>
-              <Image source={V2.courbeEvolution} style={st.chartAsset} resizeMode="contain" />
-            </View>
-            <Text style={st.disclaimer}>{t('benefits.stats.disclaimer')}</Text>
-          </View>
-        )}
       </>
     );
   }
@@ -729,6 +715,56 @@ export default function OnboardingFlow({ navigation, route }) {
             {t('dailyGoal.error', { count: consoNormalisee })}
           </Text>
         )}
+      </>
+    );
+  }
+
+  else if (page === 'projection') {
+    // Tout vient des réponses déjà données : consommation, prix du paquet et
+    // objectif quotidien. Rien n'est écrit en dur.
+    const eviteesJour = Math.max(0, consoNormalisee - objectifFinal);
+    const eviteesMois = Math.round(eviteesJour * 30);
+    const economieMois = eviteesMois * prixCig;
+    const vieMin = eviteesMois * 5;
+    const vieH = Math.floor(vieMin / 60);
+    const vieTexte = vieH >= 24
+      ? `${Math.floor(vieH / 24)} j ${vieH % 24} h`
+      : vieH > 0 ? `${vieH} h ${Math.round(vieMin % 60)}` : `${Math.round(vieMin)} min`;
+    const cumul = [1, 2, 3, 4].map(sem => Math.round(eviteesJour * 7 * sem));
+    const cumulMax = Math.max(...cumul, 1);
+    const prixCigTexte = `${prixCig.toFixed(2).replace('.', ',')} ${symboleDevise}`;
+
+    body = (
+      <>
+        <Text style={st.title}>{t('projection.title')}</Text>
+        <Text style={st.subtitle}>{t('projection.subtitle', { objectif: t('summary.cigPerDayMaxValue', { count: objectifFinal }) })}</Text>
+
+        <View style={st.statsPanel}>
+          <StatCard img={V2.statAvoided} teinte={colors.primaryLight}
+            valeur={t('projection.avoidedValue', { count: eviteesMois })}
+            label={t('projection.avoidedNote', { conso: t('summary.cigPerDayValue', { count: consoNormalisee }) })} />
+          <StatCard img={V2.statWallet} teinte={colors.primaryLight}
+            valeur={t('projection.savedValue', { amount: `${economieMois.toFixed(0)} ${symboleDevise}` })}
+            label={t('projection.savedNote', { count: eviteesMois, prix: prixCigTexte })} />
+          <StatCard img={V2.statTime} teinte="#EFE9FB"
+            valeur={t('projection.timeValue', { duration: vieTexte })}
+            label={t('projection.timeNote')} />
+
+          <View style={st.chartCard}>
+            <Text style={st.projectionChartTitle}>{t('projection.chartTitle')}</Text>
+            <View style={st.projectionBars}>
+              {cumul.map((valeur, i) => (
+                <View key={i} style={st.projectionBarCol}>
+                  <Text style={st.projectionBarValue}>{valeur}</Text>
+                  <View style={[st.projectionBar, { height: Math.max(8, Math.round((valeur / cumulMax) * 90)) }]} />
+                  <Text style={st.projectionBarLabel}>S{i + 1}</Text>
+                </View>
+              ))}
+            </View>
+          </View>
+
+          <Text style={st.disclaimer}>{t('projection.disclaimer')}</Text>
+        </View>
       </>
     );
   }
@@ -1495,6 +1531,14 @@ const st = StyleSheet.create({
     paddingHorizontal: spacing.md, paddingVertical: 8,
     fontSize: font.lg, fontWeight: '700', color: colors.black, minWidth: 64, textAlign: 'center',
   },
+
+  // Projection : petit graphique des cigarettes évitées, semaine par semaine
+  projectionChartTitle: { fontSize: 12, fontWeight: '700', color: DESIGN.muted, marginBottom: 10 },
+  projectionBars: { flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between', gap: 10 },
+  projectionBarCol: { flex: 1, alignItems: 'center' },
+  projectionBarValue: { fontSize: 12, fontWeight: '800', color: DESIGN.ink, marginBottom: 4 },
+  projectionBar: { width: 26, borderRadius: 7, backgroundColor: DESIGN.green },
+  projectionBarLabel: { fontSize: 10, fontWeight: '700', color: DESIGN.muted, marginTop: 5 },
 
   // Synthèse : frise « Ton chemin, étape par étape »
   recapTitle: { marginBottom: 10 },

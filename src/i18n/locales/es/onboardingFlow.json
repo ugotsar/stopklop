@@ -92,16 +92,6 @@
       "note": "Ejemplo de etapas personalizables",
       "goalTitle": "Tu objetivo de hoy",
       "goalValue": "8 cigarrillos máximo · ejemplo"
-    },
-    "stats": {
-      "avoidedValue": "47 cigarrillos evitados",
-      "avoidedNote": "En comparación con tu consumo de partida",
-      "savedValue": "28,20 € ahorrados",
-      "savedNote": "47 cigarrillos × 0,60 €",
-      "timeValue": "3 h 55 ganadas",
-      "timeNote": "Estimación: 5 minutos por cigarrillo",
-      "chartTitle": "Cigarrillos evitados · acumulado",
-      "disclaimer": "Datos de ejemplo en 7 días."
     }
   },
   "goalType": {
@@ -232,5 +222,18 @@
     "savingIndicator": "Guardando tu recorrido…",
     "saveError": "No se pudo guardar. Comprueba tu conexión e inténtalo de nuevo.",
     "startButton": "Empezar  🚀"
+  },
+  "projection": {
+    "title": "Dentro de un mes,\naquí estarás",
+    "subtitle": "Calculado con tus respuestas, si mantienes tu objetivo de {{objectif}} al día.",
+    "avoidedValue_one": "{{count}} cigarrillo evitado",
+    "avoidedValue_other": "{{count}} cigarrillos evitados",
+    "avoidedNote": "frente a tus {{conso}} al día de hoy",
+    "savedValue": "{{amount}} ahorrados",
+    "savedNote": "{{count}} cigarrillos × {{prix}}",
+    "timeValue": "{{duration}} de vida ganada",
+    "timeNote": "estimación: 5 minutos por cigarrillo",
+    "chartTitle": "Cigarrillos evitados · en 4 semanas",
+    "disclaimer": "Proyección a partir de tus respuestas; se ajustará con tus días reales."
   }
 }

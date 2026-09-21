@@ -92,16 +92,6 @@
       "note": "Beispiel für anpassbare Stufen",
       "goalTitle": "Dein Ziel für heute",
       "goalValue": "Maximal 8 Zigaretten · Beispiel"
-    },
-    "stats": {
-      "avoidedValue": "47 vermiedene Zigaretten",
-      "avoidedNote": "Im Vergleich zu deinem Ausgangskonsum",
-      "savedValue": "28,20 € gespart",
-      "savedNote": "47 Zigaretten × 0,60 €",
-      "timeValue": "3 Std. 55 zurückgewonnen",
-      "timeNote": "Schätzung: 5 Minuten pro Zigarette",
-      "chartTitle": "Vermiedene Zigaretten · kumuliert",
-      "disclaimer": "Beispieldaten über 7 Tage."
     }
   },
   "goalType": {
@@ -232,5 +222,18 @@
     "savingIndicator": "Dein Weg wird gespeichert…",
     "saveError": "Speichern nicht möglich. Überprüfe deine Verbindung und versuche es erneut.",
     "startButton": "Starten  🚀"
+  },
+  "projection": {
+    "title": "In einem Monat\nstehst du hier",
+    "subtitle": "Berechnet aus deinen Antworten, wenn du dein Ziel von {{objectif}} pro Tag hältst.",
+    "avoidedValue_one": "{{count}} vermiedene Zigarette",
+    "avoidedValue_other": "{{count}} vermiedene Zigaretten",
+    "avoidedNote": "gegenüber deinen heutigen {{conso}} pro Tag",
+    "savedValue": "{{amount}} gespart",
+    "savedNote": "{{count}} Zigaretten × {{prix}}",
+    "timeValue": "{{duration}} Lebenszeit gewonnen",
+    "timeNote": "Schätzung: 5 Minuten pro Zigarette",
+    "chartTitle": "Vermiedene Zigaretten · über 4 Wochen",
+    "disclaimer": "Hochrechnung aus deinen Antworten, sie passt sich deinen echten Tagen an."
   }
 }
