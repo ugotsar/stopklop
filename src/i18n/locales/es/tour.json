@@ -42,5 +42,13 @@
       "text": "Este botón guarda los cambios de tu objetivo. La visita no cambia nada de tu plan actual. Vamos ahora a tu inicio.",
       "cta": "Descubrir mi inicio"
     }
+  },
+  "widget": {
+    "title": "Tu día en la pantalla de inicio",
+    "text": "Añade el widget de Stopklop: tus cifras sin abrir la app, y un toque para registrar un cigarrillo.",
+    "step1": "Mantén pulsado un espacio vacío de la pantalla de inicio",
+    "step2": "Toca el + de arriba y busca Stopklop",
+    "step3": "Elige el widget y colócalo donde quieras",
+    "cta": "Entendido"
   }
 }

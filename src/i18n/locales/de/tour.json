@@ -42,5 +42,13 @@
       "text": "Dieser Button speichert deine Zieländerungen. Die Tour ändert nichts an deinem aktuellen Plan. Jetzt geht's zu deinem Startbildschirm.",
       "cta": "Zum Startbildschirm"
     }
+  },
+  "widget": {
+    "title": "Dein Tag auf dem Homescreen",
+    "text": "Füge das Stopklop-Widget hinzu: deine Zahlen ohne die App zu öffnen, und eine Zigarette mit einem Tipp eintragen.",
+    "step1": "Halte eine freie Stelle auf dem Homescreen gedrückt",
+    "step2": "Tippe oben auf +, dann suche Stopklop",
+    "step3": "Wähle das Widget und platziere es frei",
+    "cta": "Verstanden"
   }
 }

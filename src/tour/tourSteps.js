@@ -12,4 +12,6 @@ export const TOUR_STEPS = [
   { key: 'plan', route: ['MainTabs', { screen: 'Plan' }], target: 'plan.modify', scroll: 'Plan' },
   { key: 'choice', route: ['ModifierObjectif'], target: 'objectif.choices', scroll: 'ModifierObjectif' },
   { key: 'finish', route: ['ModifierObjectif'], target: 'objectif.save', scroll: 'ModifierObjectif' },
+  // Plein écran, sans cible : présentation du widget d'écran d'accueil.
+  { key: 'widget' },
 ];

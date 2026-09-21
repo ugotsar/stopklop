@@ -42,5 +42,13 @@
       "text": "This button saves your goal changes. The tour doesn't change anything in your current plan. Now let's head to your home screen.",
       "cta": "Discover my home"
     }
+  },
+  "widget": {
+    "title": "Your day on the home screen",
+    "text": "Add the Stopklop widget: your numbers without opening the app, and one tap to log a cigarette.",
+    "step1": "Press and hold an empty spot on your home screen",
+    "step2": "Tap the + at the top, then search for Stopklop",
+    "step3": "Pick the widget and place it where you like",
+    "cta": "Got it"
   }
 }

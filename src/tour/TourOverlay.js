@@ -1,9 +1,11 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, Image, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { colors, radius, shadow } from '../theme';
 import { UI } from '../assets/uiKit';
 import { TOUR_STEPS } from './tourSteps';
+
+const WIDGET_PREVIEW = require('../../assets/ui-kit/widget-preview.png');
 
 const HOLE_PAD = 6;
 const BUBBLE_ROOM = 250;
@@ -78,6 +80,35 @@ export default function TourOverlay({ step, targets, scrolls, onNext, onLater, o
           <Text style={s.later}>{t('welcome.later')}</Text>
         </TouchableOpacity>
       </View>
+    );
+  }
+
+  // Dernière étape : le widget d'écran d'accueil, en plein écran comme l'accueil
+  // de la visite. Aucune cible à pointer, c'est une présentation.
+  if (config.key === 'widget') {
+    return (
+      <ScrollView
+        style={[StyleSheet.absoluteFill, s.widgetScreen]}
+        contentContainerStyle={s.widgetContent}
+        showsVerticalScrollIndicator={false}
+        {...block}
+      >
+        <Text style={s.brand}>stopklop</Text>
+        <Image source={WIDGET_PREVIEW} style={s.widgetPreview} resizeMode="contain" />
+        <Text style={s.widgetTitle}>{t('widget.title')}</Text>
+        <Text style={s.widgetText}>{t('widget.text')}</Text>
+        <View style={s.widgetSteps}>
+          {['step1', 'step2', 'step3'].map((cle, i) => (
+            <View key={cle} style={s.widgetStep}>
+              <View style={s.widgetNum}><Text style={s.widgetNumText}>{i + 1}</Text></View>
+              <Text style={s.widgetStepText}>{t(`widget.${cle}`)}</Text>
+            </View>
+          ))}
+        </View>
+        <TouchableOpacity style={s.welcomeCta} onPress={onNext} accessibilityRole="button">
+          <Text style={s.ctaText}>{t('widget.cta')}</Text>
+        </TouchableOpacity>
+      </ScrollView>
     );
   }
 
@@ -184,4 +215,15 @@ const s = StyleSheet.create({
     paddingVertical: 16, marginBottom: 18,
   },
   later: { fontSize: 15, fontWeight: '600', color: colors.primary },
+
+  widgetScreen: { backgroundColor: colors.cream },
+  widgetContent: { flexGrow: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 28, paddingVertical: 40 },
+  widgetPreview: { width: 250, height: 236, marginBottom: 20 },
+  widgetTitle: { fontSize: 23, fontWeight: '900', color: colors.primaryDeep, textAlign: 'center', marginBottom: 10 },
+  widgetText: { fontSize: 15, lineHeight: 21, color: '#2F4A3D', textAlign: 'center', marginBottom: 20, maxWidth: 320 },
+  widgetSteps: { alignSelf: 'stretch', gap: 10, marginBottom: 26, paddingHorizontal: 10 },
+  widgetStep: { flexDirection: 'row', alignItems: 'center', gap: 11 },
+  widgetNum: { width: 26, height: 26, borderRadius: 13, backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center' },
+  widgetNumText: { color: '#FFFFFF', fontSize: 13, fontWeight: '900' },
+  widgetStepText: { flex: 1, fontSize: 14, lineHeight: 19, color: '#2F4A3D', fontWeight: '600' },
 });
