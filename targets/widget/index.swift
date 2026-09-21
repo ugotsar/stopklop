@@ -40,6 +40,19 @@ struct Snapshot: Codable {
                    saved: "économisés", life: "de vie", thisWeek: "Cette semaine", goal: "obj. 4"),
     deepLink: "stopklop://jaifume")
 
+  // Aucun instantané écrit par l'app (compte tout juste créé, ou app jamais
+  // ouverte depuis l'installation) : on n'invente rien, tout reste vide.
+  static let empty = Snapshot(
+    dateKey: "", cigarettesToday: 0, objectifJour: 0, todayLogged: false,
+    savedToday: "—", lifeToday: "—", savedWeek: "—",
+    week: (0..<7).map { _ in Day(label: " ", value: nil, goal: 0) },
+    labels: Labels(today: "Aujourd'hui", smoked: "J'ai fumé", cigarettes: "cigarettes",
+                   saved: "économisés", life: "de vie", thisWeek: "Cette semaine", goal: ""),
+    deepLink: "stopklop://jaifume")
+
+  // Vrai tant que l'app n'a jamais écrit : le widget affiche alors une invite.
+  var isEmpty: Bool { dateKey.isEmpty }
+
   // Passé minuit sans ouverture de l'app, les chiffres « aujourd'hui » sont ceux d'hier.
   var isStale: Bool {
     let f = DateFormatter()
@@ -56,7 +69,7 @@ func loadSnapshot() -> Snapshot {
     let raw = UserDefaults(suiteName: appGroup)?.string(forKey: storeKey),
     let data = raw.data(using: .utf8),
     let snapshot = try? JSONDecoder().decode(Snapshot.self, from: data)
-  else { return .placeholder }
+  else { return .empty }
   return snapshot
 }
 
@@ -184,7 +197,7 @@ struct BilanView: View {
   let snapshot: Snapshot
 
   var body: some View {
-    let stale = snapshot.isStale
+    let stale = snapshot.isStale || snapshot.isEmpty
     VStack(alignment: .leading, spacing: 11) {
       HStack {
         Text(snapshot.labels.today).font(rounded(14)).foregroundColor(.skInk)
@@ -216,7 +229,18 @@ struct BilanView: View {
         Text(snapshot.savedWeek).font(rounded(17, .black)).foregroundColor(.skGreen)
       }
 
-      WeekChart(week: snapshot.week, goal: snapshot.objectifJour, goalLabel: snapshot.labels.goal)
+      if snapshot.isEmpty {
+        VStack(spacing: 6) {
+          Text("Ouvre Stopklop")
+            .font(rounded(15)).foregroundColor(.skInk)
+          Text("Ton bilan s'affichera ici dès ta première journée enregistrée.")
+            .font(rounded(11, .medium)).foregroundColor(.skMuted)
+            .multilineTextAlignment(.center)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+      } else {
+        WeekChart(week: snapshot.week, goal: snapshot.objectifJour, goalLabel: snapshot.labels.goal)
+      }
     }
   }
 }
