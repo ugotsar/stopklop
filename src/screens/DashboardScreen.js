@@ -16,6 +16,7 @@ const PICTOS = {
   objectif: UI.cible_fleche_feuillue,
   economie: UI.portefeuille_euros_feuilles,
 };
+import Klop from '../components/Klop';
 import { useUser } from '../context/UserContext';
 import { colors, spacing, font, radius, shadow, getScreenWidth } from '../theme';
 import { annulerNotificationSoir } from '../services/notifications';
@@ -458,7 +459,7 @@ export default function DashboardScreen({ navigation }) {
   const smokedLinkRef = useTourTarget('home.smokedLink');
   const {
     profile, stats, resetProfile, updateProfile,
-    saveDailyConsumption, recordCraving,
+    saveDailyConsumption, recordCraving, testAccess,
   } = useUser();
   const [, setTick]          = useState(0);
   const [quoteIdx]           = useState(() => Math.floor(Math.random() * MOTIVATIONS_COUNT));
@@ -546,6 +547,24 @@ export default function DashboardScreen({ navigation }) {
   const progressionPositif = progression >= 0;
   const sousObjectif = ecartPlanJour <= 0;
 
+  // ── Semaine : barres, limite et total (données issues de computeStats) ──
+  const weekData       = stats.weekData ?? [];
+  const weekLabels     = stats.weekLabels ?? [];
+  const weekObjectifs  = stats.weekObjectifs ?? [];
+  const weekRenseignes = stats.weekRenseignes ?? [];
+  const weekMax        = weekObjectifs.reduce((somme, o) => somme + o, 0);
+  const weekJours      = weekRenseignes.filter(Boolean).length;
+  const weekJoursOk    = weekRenseignes.filter((ok, i) => ok && weekData[i] <= weekObjectifs[i]).length;
+  const weekEchelle    = Math.max(...weekData, ...weekObjectifs, 1);
+  const cigEviteesSemaine = Math.max(0, Math.round((stats.consoAvant ?? 0) * weekJours - (stats.weekSum ?? 0)));
+  const restantJour    = Math.max(0, objectifJour - cigarettesToday);
+  const depassement    = Math.max(0, cigarettesToday - objectifJour);
+  // Décimales à la française (4,3) plutôt qu'au format anglais (4.3).
+  const fmtNb = n => Number(n).toLocaleString(i18n.language || 'fr-FR');
+  const consoAvantJour = stats.consoAvant ?? 0;
+  const consoActuelle  = Math.round((stats.consoRecente ?? consoAvantJour) * 10) / 10;
+  const baisseParJour  = Math.round(Math.max(0, consoAvantJour - consoActuelle) * 10) / 10;
+
   return (
     <SafeAreaView style={styles.safe}>
 
@@ -573,40 +592,82 @@ export default function DashboardScreen({ navigation }) {
 
       <ScrollView {...tourScroll} contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
 
-        {/* ── Header ── */}
-        <View style={styles.header}>
-          <Text style={styles.hello}>
-            {t('header.greeting')}{' '}
-            <Text style={styles.prenom}>
-              {profile.prenom || profile.email?.split('@')[0] || t('header.defaultName')}
-            </Text>
-          </Text>
-          <TouchableOpacity style={styles.bellBtn} onPress={() => navigation.navigate('Notifications')}>
-            <Image source={UI.cloche_rappel} style={styles.bellIcon} resizeMode="contain" />
-          </TouchableOpacity>
+        {/* ── Marque, notifications et série ── */}
+        <View style={styles.topBar}>
+          <Text style={styles.brand}>stopklop</Text>
+          <View style={styles.topRight}>
+            <TouchableOpacity style={styles.bellBtn} onPress={() => navigation.navigate('Notifications')}>
+              <Image source={UI.cloche_rappel} style={styles.bellIcon} resizeMode="contain" />
+            </TouchableOpacity>
+            <View style={styles.streakChip}>
+              <Text style={styles.streakText}>{`\u{1F525} ${serie} ${t('common:dayShort')}`}</Text>
+            </View>
+          </View>
         </View>
 
-        {/* ── Carte verte "Temps sans cigarette" (remise à zéro à chaque cigarette) ── */}
-        <View style={styles.heroCard}>
-          <View style={{ flex: 1 }}>
-            <View style={styles.heroRow}>
-              <Text style={styles.heroLabel}>{t('hero.label')}</Text>
-              <Text style={styles.heroMedal}>🏅</Text>
-            </View>
-            <Text style={styles.heroTimer}>{dureeSansCigStr}</Text>
-            <Text style={styles.heroSub}>
-              {aDejaFume ? t('hero.sinceLastCig') : t('hero.sinceStart', { duration: dureeStr })}
+        {/* ── Klop annonce l'état du jour ── */}
+        <View style={styles.helloRow}>
+          <Klop width={58} />
+          <View style={styles.bubble}>
+            <Text style={styles.bubbleText}>
+              {depassement > 0
+                ? t('home2.bubbleOver')
+                : `${t('home2.bubbleLeft', { count: restantJour })} ${(stats.weekSum ?? 0) <= weekMax ? t('home2.bubbleUnder') : t('home2.bubbleAbove')}`}
             </Text>
           </View>
-          <Image source={UI.chrono_feuilles} style={styles.heroIllus} resizeMode="contain" />
         </View>
 
-        {/* ── Section Aujourd'hui (kit UI accueil_reference) ── */}
-        <View style={styles.todayCard}>
-          <Text style={styles.todayTitle}>{t('today.sectionTitle')}</Text>
+        {/* ── Semaine : une barre par jour, le trait marque la limite ── */}
+        <View style={styles.weekCard}>
+          <View style={styles.weekHead}>
+            <Text style={styles.cardLabel}>{t('home2.weekTitle')}</Text>
+            <View style={styles.weekTotal}>
+              <Image source={UI.paquet_cigarettes} style={styles.weekTotalIcon} resizeMode="contain" />
+              <Text style={styles.weekTotalText}>{t('home2.weekCount', { count: stats.weekSum ?? 0, max: weekMax })}</Text>
+            </View>
+          </View>
 
-          <View style={styles.todayContent}>
-            {/* Arc circulaire */}
+          <View style={styles.bars}>
+            {weekData.map((valeur, i) => {
+              const renseigne = weekRenseignes[i];
+              const objectif  = weekObjectifs[i] ?? objectifJour;
+              const hauteur   = Math.max(6, Math.round((valeur / weekEchelle) * 54));
+              const depasse   = renseigne && valeur > objectif;
+              return (
+                <View key={i} style={styles.barCol}>
+                  <View style={[
+                    styles.bar,
+                    { height: renseigne ? hauteur : 6 },
+                    !renseigne && styles.barVide,
+                    depasse && styles.barDepasse,
+                  ]} />
+                </View>
+              );
+            })}
+            <View pointerEvents="none" style={[styles.goalLine, { bottom: Math.round((objectifJour / weekEchelle) * 54) }]} />
+          </View>
+
+          <View style={styles.barLabels}>
+            {weekLabels.map((label, i) => (
+              <Text
+                key={i}
+                style={[
+                  styles.barLabel,
+                  weekRenseignes[i] && weekData[i] > (weekObjectifs[i] ?? objectifJour) && styles.barLabelDepasse,
+                ]}
+              >{label}</Text>
+            ))}
+          </View>
+
+          <Text style={styles.weekFoot}>
+            {t('home2.weekLimit', { count: objectifJour })}
+            {weekJours > 0 ? ` \u00B7 ${t('home2.weekInGoal', { ok: weekJoursOk, total: weekJours })}` : ''}
+          </Text>
+        </View>
+
+        {/* ── Aujourd'hui : anneau, objectif et les deux actions ── */}
+        <View style={styles.todayCard}>
+          <View style={styles.todayRow}>
             <View style={styles.arcContainer}>
               <CircularProgress current={cigarettesToday} total={objectifJour} size={84} />
               <View style={styles.arcInner}>
@@ -619,75 +680,89 @@ export default function DashboardScreen({ navigation }) {
               </View>
             </View>
 
-            {/* Label au centre */}
-            <View style={styles.todayCenter}>
-              <Text style={styles.todaySubtitle}>{jourRenseigne ? t('today.subtitle') : t('today.notLoggedTitle')}</Text>
-              <Text style={styles.todayObjectif}>
-                {jourRenseigne ? t('today.goal', { count: objectifJour }) : t('today.notLoggedGoal', { count: objectifJour })}
-              </Text>
+            <View style={styles.todayTexts}>
+              <Text style={styles.cardLabel}>{t('home2.todayTitle')}</Text>
+
+              <View style={styles.todayLine}>
+                <Image source={UI.cigarette_fumee} style={styles.lineIcon} resizeMode="contain" />
+                <Text style={styles.todayValue}>
+                  {depassement > 0
+                    ? t('home2.reserveOver', { count: depassement })
+                    : t('home2.reserve', { count: restantJour })}
+                </Text>
+              </View>
+
+              <View style={styles.todayLine}>
+                <Image source={UI.cible_limite} style={styles.lineIcon} resizeMode="contain" />
+                <Text style={styles.todayGoal}>{t('home2.goalLine', { count: objectifJour })}</Text>
+              </View>
+
+              <View style={styles.actions}>
+                <TouchableOpacity
+                  style={styles.validateBtn}
+                  onPress={async () => {
+                    jouerSon(cigarettesToday === 0 ? 'enregistrer_zero' : 'valider_journee');
+                    annulerNotificationSoir();
+                    // Avant ce clic, 0 veut dire « pas encore renseigné ». Valider
+                    // crée donc explicitement une journée à 0 cigarette.
+                    const payload = validateDayPayload(jourRenseigne, localDateKey());
+                    if (payload) await saveDailyConsumption(payload);
+                    if (cigarettesToday === 0) setModalParfait(true);
+                    else setModalObjectif(true);
+                  }}
+                >
+                  <Text style={styles.validateBtnText}>{`\u2713 ${t('home2.validate')}`}</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  ref={smokedLinkRef}
+                  collapsable={false}
+                  style={styles.smokedBtn}
+                  onPress={() => navigation.navigate('JaiFume')}
+                >
+                  <Text style={styles.smokedBtnText}>{t('home2.smoked')}</Text>
+                </TouchableOpacity>
+              </View>
             </View>
-
-            {/* Illustration paquet à droite */}
-            <Image source={UI.paquet_cigarettes} style={styles.todayIllus} resizeMode="contain" />
           </View>
-
-          {/* Bouton valider — pilule pleine largeur avec check */}
-          <TouchableOpacity
-            style={styles.validateBtn}
-            onPress={async () => {
-              jouerSon(cigarettesToday === 0 ? 'enregistrer_zero' : 'valider_journee');
-              annulerNotificationSoir();
-              // Avant ce clic, 0 veut dire « pas encore renseigné ». Valider
-              // crée donc explicitement une journée à 0 cigarette.
-              const payload = validateDayPayload(jourRenseigne, localDateKey());
-              if (payload) await saveDailyConsumption(payload);
-              if (cigarettesToday === 0) setModalParfait(true);
-              else setModalObjectif(true);
-            }}
-          >
-            <Text style={styles.validateBtnCheck}>✓</Text>
-            <Text style={styles.validateBtnText}>{t('today.validateButton')}</Text>
-          </TouchableOpacity>
-
-          {/* Lien "J'ai fumé" */}
-          <TouchableOpacity
-            ref={smokedLinkRef}
-            collapsable={false}
-            style={styles.fumerLink}
-            onPress={() => navigation.navigate('JaiFume')}
-          >
-            <Text style={styles.fumerLinkText}>{t('today.smokedLink')}</Text>
-          </TouchableOpacity>
         </View>
 
-        {/* ── Grille stats 2×2 — illustration à gauche, texte à droite ── */}
-        <View style={styles.statsGrid}>
-          <StatBox
-            img={PICTOS.objectif}
-            valeur={ecartPlanJour > 0 ? t('stats.aboveGoal', { count: ecartPlanJour }) : t('stats.belowGoal', { count: Math.abs(ecartPlanJour) })}
-            label={t('stats.vsGoalLabel', { count: objectifJour })}
-            valeurColor={sousObjectif ? colors.primaryDeep : colors.danger}
-          />
-          {/* Tant que la journée n'est pas saisie, 0 cigarette n'est pas un
-              résultat : pas d'argent, de temps ni de progression annoncés. */}
-          <StatBox
-            img={PICTOS.economie}
-            valeur={jourRenseigne ? `${argentVsPlanJour >= 0 ? '+' : '-'}${fmtMoney(Math.abs(argentVsPlanJour))}` : '—'}
-            label={argentVsPlanJour >= 0 ? t('stats.moneyPreserved') : t('stats.moneyOver')}
-            valeurColor={!jourRenseigne ? colors.gray : argentVsPlanJour >= 0 ? colors.primaryDeep : colors.danger}
-          />
-          <StatBox
-            img={PICTOS.temps}
-            valeur={jourRenseigne ? t('stats.minutesVsPlan', { sign: vieVsPlanJour >= 0 ? '+' : '-', count: Math.abs(vieVsPlanJour) }) : '—'}
-            label={vieVsPlanJour >= 0 ? t('stats.lifePreservedVsPlan') : t('stats.lifeLostVsPlan')}
-            valeurColor={!jourRenseigne ? colors.gray : vieVsPlanJour >= 0 ? colors.primaryDeep : colors.danger}
-          />
-          <StatBox
-            img={PICTOS.evitees}
-            valeur={jourRenseigne ? t('stats.progressionValue', { sign: progression > 0 ? '+' : '', count: progression }) : '—'}
-            label={consoEstimee ? t('stats.progressionEstimatedLabel') : t('stats.progressionLabel')}
-            valeurColor={!jourRenseigne ? colors.gray : progressionPositif ? colors.primaryDeep : colors.danger}
-          />
+        {/* ── Ta baisse : avant → maintenant ── */}
+        <View style={styles.dropCard}>
+          <View style={styles.dropHead}>
+            <Image source={UI.cigarette_fumee} style={styles.dropHeadIcon} resizeMode="contain" />
+            <Text style={styles.cardLabel}>{t('home2.dropTitle')}</Text>
+          </View>
+          <View style={styles.dropRow}>
+            <View style={styles.dropBefore}>
+              <Text style={styles.dropBeforeValue}>{fmtNb(Math.round(consoAvantJour * 10) / 10)}</Text>
+              <Text style={styles.dropBeforeLabel}>{t('home2.dropBefore')}</Text>
+            </View>
+            <Text style={styles.dropArrow}>{'\u2192'}</Text>
+            <View style={styles.dropNow}>
+              <Text style={styles.dropNowValue}>{fmtNb(consoActuelle)}</Text>
+              <Text style={styles.dropNowLabel}>{t('home2.dropNow')}</Text>
+            </View>
+          </View>
+          {baisseParJour > 0 && (
+            <Text style={styles.dropDelta}>{t('home2.dropDelta', { count: fmtNb(baisseParJour) })}</Text>
+          )}
+        </View>
+
+        {/* ── Jour et semaine : les mêmes trois chiffres des deux côtés ── */}
+        <View style={styles.colsRow}>
+          <View style={styles.colCard}>
+            <Text style={styles.cardLabel}>{t('home2.todayTitle')}</Text>
+            <ColStat img={UI.cigarette_fumee} valeur={jourRenseigne ? String(stats.cigEviteesAujourdhu ?? 0) : '\u2014'} label={t('home2.colAvoided')} />
+            <ColStat img={UI.portefeuille_euros_feuilles} valeur={jourRenseigne ? fmtMoney(stats.argentEcoAujourdhui ?? 0) : '\u2014'} label={t('home2.colMoney')} />
+            <ColStat img={UI.chrono_vie_preservee} valeur={jourRenseigne ? stats.vieGagneeStrAujourdhui : '\u2014'} label={t('home2.colLife')} />
+          </View>
+          <View style={[styles.colCard, styles.colCardDark]}>
+            <Text style={[styles.cardLabel, styles.cardLabelDark]}>{t('home2.weekTitle')}</Text>
+            <ColStat dark img={UI.cigarette_fumee} valeur={String(cigEviteesSemaine)} label={t('home2.colAvoided')} />
+            <ColStat dark img={UI.portefeuille_euros_feuilles} valeur={fmtMoney(stats.argentEcoSemaine ?? 0)} label={t('home2.colMoney')} />
+            <ColStat dark img={UI.chrono_vie_preservee} valeur={stats.vieGagneeStrSemaine} label={t('home2.colLife')} />
+          </View>
         </View>
 
         {/* ── Envie de fumer — layout horizontal avec bouton à droite ── */}
@@ -696,9 +771,7 @@ export default function DashboardScreen({ navigation }) {
             <Image source={UI.envie_flamme} style={styles.envieIllus} resizeMode="contain" />
             <View style={{ flex: 1, minWidth: 0, marginHorizontal: 8 }}>
               <Text style={styles.envieTitle}>{t('envieCard.title')}</Text>
-              <Text style={styles.envieSub}>
-                {t('envieCard.subtitle')}
-              </Text>
+              <Text style={styles.envieSub}>{t('envieCard.subtitle')}</Text>
             </View>
             <TouchableOpacity style={styles.envieBtn} onPress={() => setModalEnvie(true)}>
               <Text style={styles.envieBtnText}>{t('envieCard.button')}</Text>
@@ -711,21 +784,13 @@ export default function DashboardScreen({ navigation }) {
           )}
         </View>
 
-        {/* ── Motivation du jour — fond sauge + illustration à droite ── */}
-        <TouchableOpacity
-          activeOpacity={0.9}
-          onPress={() => { if (!liked) jouerSon('motivation_like'); setLiked(l => !l); }}
-          style={styles.motivCard}
-        >
-          <View style={{ flex: 1 }}>
-            <View style={styles.motivHeader}>
-              <Text style={styles.motivSparkle}>✨</Text>
-              <Text style={styles.motivTitle}>{t('motivation.sectionTitle')}</Text>
-            </View>
-            <Text style={styles.motivQuote}>"{motivationQuotes[quoteIdx]}"</Text>
-          </View>
-          <Image source={UI.coeur_feuilles} style={styles.motivIllus} resizeMode="contain" />
-        </TouchableOpacity>
+        {/* ⚠️ TEMPORAIRE : refaire l'onboarding depuis une build de test.
+            Visible uniquement avec l'accès de test (voir services/testAccess.js). */}
+        {(testAccess || __DEV__) && !IS_DEMO_BUILD && (
+          <TouchableOpacity style={styles.testBtn} onPress={async () => { await resetProfile(); }}>
+            <Text style={styles.testBtnText}>{t('home2.backToOnboarding')}</Text>
+          </TouchableOpacity>
+        )}
 
         {/* ── Boutons dev — 2 cartes horizontales côte à côte ──
              Outils de développement uniquement : jamais montrés à un vrai
@@ -757,6 +822,23 @@ export default function DashboardScreen({ navigation }) {
 
       </ScrollView>
     </SafeAreaView>
+  );
+}
+
+// ── Ligne d'une colonne « Aujourd'hui » / « Cette semaine » ─────────────────
+// L'icône est posée sur une pastille blanche : les PNG du kit portent une ombre
+// claire qui baverait sur le fond vert foncé de la colonne « cette semaine ».
+function ColStat({ img, valeur, label, dark }) {
+  return (
+    <View style={styles.colStat}>
+      <View style={styles.colStatIcon}>
+        <Image source={img} style={styles.colStatImg} resizeMode="contain" />
+      </View>
+      <View style={{ flex: 1, minWidth: 0 }}>
+        <Text style={[styles.colStatValue, dark && styles.colStatValueDark]}>{valeur}</Text>
+        <Text style={[styles.colStatLabel, dark && styles.colStatLabelDark]}>{label}</Text>
+      </View>
+    </View>
   );
 }
 
@@ -925,4 +1007,73 @@ const styles = StyleSheet.create({
   // Reset
   resetBtn:  { alignItems: 'center', paddingVertical: spacing.md },
   resetText: { color: colors.gray, fontSize: 12 },
+  // ── Accueil : marque, Klop, semaine, jour, baisse, colonnes ────────────────
+  topBar: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing.sm },
+  brand: { fontSize: 20, fontWeight: '900', color: colors.primaryDeep, letterSpacing: -0.4 },
+  topRight: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  streakChip: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.grayBorder, borderRadius: radius.full, paddingHorizontal: 12, paddingVertical: 7 },
+  streakText: { fontSize: 13, fontWeight: '800', color: '#B4670F' },
+
+  helloRow: { flexDirection: 'row', alignItems: 'flex-end', gap: 9, marginBottom: spacing.md },
+  bubble: { flex: 1, backgroundColor: '#E7F2E8', borderRadius: 16, borderBottomLeftRadius: 4, paddingVertical: 10, paddingHorizontal: 12, marginBottom: 6 },
+  bubbleText: { fontSize: 13.5, fontWeight: '700', color: colors.primaryDeep, lineHeight: 19 },
+
+  cardLabel: { fontSize: 10.5, fontWeight: '800', letterSpacing: 0.9, textTransform: 'uppercase', color: '#8A9A90' },
+  cardLabelDark: { color: '#92D6B0' },
+
+  weekCard: { backgroundColor: colors.surface, borderRadius: radius.xl, padding: 14, marginBottom: spacing.sm, ...shadow.card },
+  weekHead: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  weekTotal: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  weekTotalIcon: { width: 20, height: 20 },
+  weekTotalText: { fontSize: 12.5, fontWeight: '800', color: colors.primaryDeep },
+  bars: { flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between', height: 58, marginTop: 10, position: 'relative' },
+  barCol: { flex: 1, alignItems: 'center' },
+  bar: { width: 22, borderRadius: 5, backgroundColor: colors.primary },
+  barVide: { backgroundColor: '#DCE8DF' },
+  barDepasse: { backgroundColor: '#E08A3C' },
+  goalLine: { position: 'absolute', left: 0, right: 0, height: 1.5, backgroundColor: '#B9C9BE' },
+  barLabels: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 5 },
+  barLabel: { flex: 1, textAlign: 'center', fontSize: 9.5, fontWeight: '800', color: '#9AA79F' },
+  barLabelDepasse: { color: '#E08A3C' },
+  weekFoot: { fontSize: 10.5, color: '#7D8F84', fontWeight: '600', marginTop: 7 },
+
+  todayCard: { backgroundColor: colors.surface, borderRadius: radius.xl, padding: 14, marginBottom: spacing.sm, ...shadow.card },
+  todayRow: { flexDirection: 'row', alignItems: 'center', gap: 13 },
+  todayTexts: { flex: 1, minWidth: 0 },
+  todayLine: { flexDirection: 'row', alignItems: 'center', gap: 7, marginTop: 3 },
+  lineIcon: { width: 20, height: 20 },
+  todayValue: { flex: 1, fontSize: 14.5, fontWeight: '800', color: colors.black },
+  todayGoal: { flex: 1, fontSize: 12.5, color: '#6F8078', fontWeight: '600' },
+  actions: { flexDirection: 'row', gap: 7, marginTop: 10 },
+  validateBtn: { flex: 1, backgroundColor: colors.primaryDeep, borderRadius: 14, paddingVertical: 11, alignItems: 'center' },
+  validateBtnText: { color: colors.white, fontSize: 13, fontWeight: '800' },
+  smokedBtn: { flex: 1, backgroundColor: colors.white, borderWidth: 1.5, borderColor: '#DCE6DD', borderRadius: 14, paddingVertical: 11, alignItems: 'center' },
+  smokedBtnText: { color: colors.primaryDeep, fontSize: 13, fontWeight: '800' },
+
+  dropCard: { backgroundColor: colors.surface, borderRadius: radius.xl, padding: 14, marginBottom: spacing.sm, ...shadow.card },
+  dropHead: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  dropHeadIcon: { width: 22, height: 22 },
+  dropRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 10 },
+  dropBefore: { flex: 1, alignItems: 'center', backgroundColor: '#F4F2EC', borderRadius: 14, paddingVertical: 10 },
+  dropBeforeValue: { fontSize: 20, fontWeight: '900', color: '#8A7C62' },
+  dropBeforeLabel: { fontSize: 10, fontWeight: '700', color: '#8A9A90', marginTop: 2 },
+  dropArrow: { fontSize: 18, fontWeight: '900', color: colors.primary },
+  dropNow: { flex: 1, alignItems: 'center', backgroundColor: '#EFF7F1', borderRadius: 14, paddingVertical: 10 },
+  dropNowValue: { fontSize: 20, fontWeight: '900', color: colors.primaryDeep },
+  dropNowLabel: { fontSize: 10, fontWeight: '700', color: '#5C8A6E', marginTop: 2 },
+  dropDelta: { fontSize: 11.5, color: '#7D8F84', fontWeight: '600', textAlign: 'center', marginTop: 9 },
+
+  colsRow: { flexDirection: 'row', gap: 8, marginBottom: spacing.sm },
+  colCard: { flex: 1, backgroundColor: colors.surface, borderRadius: radius.xl, padding: 12, ...shadow.card },
+  colCardDark: { backgroundColor: colors.primaryDeep },
+  colStat: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 9 },
+  colStatIcon: { width: 30, height: 30, borderRadius: 10, backgroundColor: colors.white, alignItems: 'center', justifyContent: 'center' },
+  colStatImg: { width: 22, height: 22 },
+  colStatValue: { fontSize: 14.5, fontWeight: '800', color: colors.black },
+  colStatValueDark: { color: colors.white },
+  colStatLabel: { fontSize: 10, fontWeight: '700', color: '#8A9A90', lineHeight: 13 },
+  colStatLabelDark: { color: '#BFE3CE' },
+
+  testBtn: { marginTop: spacing.sm, alignItems: 'center', paddingVertical: 10 },
+  testBtnText: { color: '#9A3412', fontSize: 13, fontWeight: '700', textDecorationLine: 'underline' },
 });

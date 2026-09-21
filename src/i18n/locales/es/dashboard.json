@@ -105,5 +105,32 @@
   "devButtons": {
     "loadDemo": "Cargar demo (5 semanas de uso)",
     "resetOnboarding": "Reiniciar incorporación"
+  },
+  "home2": {
+    "bubbleLeft_one": "Te queda {{count}} cigarrillo hoy.",
+    "bubbleLeft_other": "Te quedan {{count}} cigarrillos hoy.",
+    "bubbleOver": "Has superado tu objetivo de hoy. Mañana volvemos.",
+    "bubbleUnder": "Esta semana estás por debajo de tu objetivo.",
+    "bubbleAbove": "Esta semana lo superas un poco.",
+    "weekTitle": "Esta semana",
+    "weekCount": "{{count}} fumados de {{max}}",
+    "weekLimit": "La línea es tu límite de {{count}} al día",
+    "weekInGoal": "{{ok}} días de {{total}} dentro del objetivo",
+    "todayTitle": "Hoy",
+    "reserve_one": "{{count}} cigarrillo en reserva",
+    "reserve_other": "{{count}} cigarrillos en reserva",
+    "reserveOver_one": "{{count}} cigarrillo por encima",
+    "reserveOver_other": "{{count}} cigarrillos por encima",
+    "goalLine": "Objetivo: {{count}} máx. al día",
+    "validate": "Validar",
+    "smoked": "He fumado",
+    "dropTitle": "Tu bajada, en cigarrillos al día",
+    "dropBefore": "al día antes",
+    "dropNow": "al día ahora",
+    "dropDelta": "Es decir, {{count}} cigarrillos menos cada día",
+    "colAvoided": "cigarrillos evitados",
+    "colMoney": "no gastados",
+    "colLife": "de vida ganada",
+    "backToOnboarding": "Volver al onboarding (prueba)"
   }
 }
