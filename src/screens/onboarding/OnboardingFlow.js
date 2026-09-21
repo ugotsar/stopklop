@@ -157,9 +157,10 @@ const initialAnswers = {
 
 // ── Composant principal ───────────────────────────────────────────────────────
 export default function OnboardingFlow({ navigation, route }) {
-  const previewMode = __DEV__ && route?.params?.previewMode === true;
   const { t, i18n } = useTranslation('onboardingFlow');
-  const { profile, updateProfile } = useUser();
+  const { profile, updateProfile, testAccess } = useUser();
+  // Aperçu : en développement, ou depuis une build de test (accès sans abonnement).
+  const previewMode = (__DEV__ || testAccess) && route?.params?.previewMode === true;
   const [fontsLoaded] = useFonts({
     'DejaVuSans': require('../../../assets/onboarding/fonts/DejaVuSans.ttf'),
     'DejaVuSans-Bold': require('../../../assets/onboarding/fonts/DejaVuSans-Bold.ttf'),

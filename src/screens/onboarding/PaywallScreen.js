@@ -37,7 +37,9 @@ function planKey(pkg) {
   return 'monthly';
 }
 
-export default function PaywallScreen({ navigation }) {
+export default function PaywallScreen({ navigation, route }) {
+  // Ouvert depuis l'accueil pour revoir l'écran : la croix referme l'aperçu.
+  const apercu = route?.params?.apercu === true;
   const { t } = useTranslation('paywallOnboarding');
   const { subscription, refreshSubscription, allowTestAccess } = useUser();
   const [offering, setOffering] = useState(null);
@@ -116,7 +118,7 @@ export default function PaywallScreen({ navigation }) {
   const selectedTrial = trialDays(selectedPlan);
   // ⚠️ TEMPORAIRE : visible seulement tant qu'aucun abonnement n'est proposé
   // par le store. Disparaît tout seul dès que les abonnements fonctionnent.
-  const showTestAccess = !loading && (unavailable || isPaywallBypassEnabled());
+  const showTestAccess = !apercu && !loading && (unavailable || isPaywallBypassEnabled());
 
   return (
     <SafeAreaView style={s.safe}>
@@ -124,8 +126,12 @@ export default function PaywallScreen({ navigation }) {
 
         <View style={s.topBar}>
           <Text style={s.brand}>STOPKLOP</Text>
-          {showTestAccess && (
-            <TouchableOpacity style={s.close} onPress={allowTestAccess} accessibilityLabel={t('testAccessButton')}>
+          {(showTestAccess || apercu) && (
+            <TouchableOpacity
+              style={s.close}
+              onPress={apercu ? () => navigation.goBack() : allowTestAccess}
+              accessibilityLabel={apercu ? t('common:close', { defaultValue: 'Fermer' }) : t('testAccessButton')}
+            >
               <Text style={s.closeText}>✕</Text>
             </TouchableOpacity>
           )}

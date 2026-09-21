@@ -130,6 +130,15 @@ export default function AppNavigator({ navigationRef }) {
         <Stack.Screen name="PersonnaliserHoraires"  component={PersonnaliserHorairesScreen}  options={{ animation: 'slide_from_right' }} />
         <Stack.Screen name="PaywallPro"       component={PaywallProScreen}       options={{ animation: 'slide_from_bottom', presentation: 'modal' }} />
         <Stack.Screen name="MentionsLegales"  component={MentionsLegalesScreen}  options={{ animation: 'slide_from_right' }} />
+
+        {/* ⚠️ TEMPORAIRE : revoir l'onboarding et l'écran d'abonnement depuis
+            une build de test, sans toucher au profil. */}
+        {(testAccess || __DEV__) && (
+          <>
+            <Stack.Screen name="ApercuOnboarding" component={OnboardingFlow} initialParams={{ previewMode: true }} options={{ animation: 'slide_from_bottom' }} />
+            <Stack.Screen name="ApercuPaywall" component={OnboardingPaywall} initialParams={{ apercu: true }} options={{ animation: 'slide_from_bottom' }} />
+          </>
+        )}
       </Stack.Navigator>
     </NavigationContainer>
     </TourProvider>

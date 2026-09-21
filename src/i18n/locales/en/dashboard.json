@@ -131,6 +131,8 @@
     "colAvoided": "cigarettes avoided",
     "colMoney": "not spent",
     "colLife": "of life gained",
-    "backToOnboarding": "Back to onboarding (test)"
+    "backToOnboarding": "Back to onboarding (test)",
+    "previewOnboarding": "View onboarding (preview)",
+    "previewPaywall": "View subscription screen (preview)"
   }
 }

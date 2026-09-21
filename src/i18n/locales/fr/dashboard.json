@@ -131,6 +131,8 @@
     "colAvoided": "cigarettes évitées",
     "colMoney": "non dépensés",
     "colLife": "de vie gagnée",
-    "backToOnboarding": "Revenir à l'onboarding (test)"
+    "backToOnboarding": "Revenir à l'onboarding (test)",
+    "previewOnboarding": "Voir l'onboarding (aperçu)",
+    "previewPaywall": "Voir l'écran d'abonnement (aperçu)"
   }
 }

@@ -787,9 +787,17 @@ export default function DashboardScreen({ navigation }) {
         {/* ⚠️ TEMPORAIRE : refaire l'onboarding depuis une build de test.
             Visible uniquement avec l'accès de test (voir services/testAccess.js). */}
         {(testAccess || __DEV__) && !IS_DEMO_BUILD && (
-          <TouchableOpacity style={styles.testBtn} onPress={async () => { await resetProfile(); }}>
-            <Text style={styles.testBtnText}>{t('home2.backToOnboarding')}</Text>
-          </TouchableOpacity>
+          <View style={styles.testTools}>
+            <TouchableOpacity style={styles.testBtn} onPress={() => navigation.navigate('ApercuOnboarding')}>
+              <Text style={styles.testBtnText}>{t('home2.previewOnboarding')}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.testBtn} onPress={() => navigation.navigate('ApercuPaywall')}>
+              <Text style={styles.testBtnText}>{t('home2.previewPaywall')}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.testBtn} onPress={async () => { await resetProfile(); }}>
+              <Text style={styles.testBtnText}>{t('home2.backToOnboarding')}</Text>
+            </TouchableOpacity>
+          </View>
         )}
 
         {/* ── Boutons dev — 2 cartes horizontales côte à côte ──
@@ -1074,6 +1082,7 @@ const styles = StyleSheet.create({
   colStatLabel: { fontSize: 10, fontWeight: '700', color: '#8A9A90', lineHeight: 13 },
   colStatLabelDark: { color: '#BFE3CE' },
 
-  testBtn: { marginTop: spacing.sm, alignItems: 'center', paddingVertical: 10 },
+  testTools: { marginTop: spacing.sm },
+  testBtn: { alignItems: 'center', paddingVertical: 9 },
   testBtnText: { color: '#9A3412', fontSize: 13, fontWeight: '700', textDecorationLine: 'underline' },
 });

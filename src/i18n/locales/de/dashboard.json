@@ -131,6 +131,8 @@
     "colAvoided": "vermiedene Zigaretten",
     "colMoney": "nicht ausgegeben",
     "colLife": "Lebenszeit gewonnen",
-    "backToOnboarding": "Zurück zum Onboarding (Test)"
+    "backToOnboarding": "Zurück zum Onboarding (Test)",
+    "previewOnboarding": "Onboarding ansehen (Vorschau)",
+    "previewPaywall": "Abo-Bildschirm ansehen (Vorschau)"
   }
 }
