@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
+import { AppState } from 'react-native';
 import { loadProfile, saveProfile, clearProfile, setProfileOwner } from '../store/onboardingStore';
 import {
   deleteCurrentUser,
@@ -398,6 +399,15 @@ export function UserProvider({ children }) {
   const widgetSnapshot = stats ? JSON.stringify(buildWidgetSnapshot(stats, profile)) : null;
   useEffect(() => {
     if (widgetSnapshot) syncWidget(JSON.parse(widgetSnapshot));
+  }, [widgetSnapshot]);
+
+  // Le widget peut être ajouté après le dernier calcul : on réécrit l'instantané
+  // à chaque retour dans l'app pour qu'il ne reste jamais vide.
+  useEffect(() => {
+    const sub = AppState.addEventListener('change', etat => {
+      if (etat === 'active' && widgetSnapshot) syncWidget(JSON.parse(widgetSnapshot));
+    });
+    return () => sub.remove();
   }, [widgetSnapshot]);
 
   return (

@@ -8,6 +8,7 @@ import { Image } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useTourScroll, useTourTarget } from '../tour/TourContext';
 import { validateDayPayload } from '../utils/dailyConsumption';
+import { widgetDebugStatus } from '../widget/syncWidget';
 
 import { UI } from '../assets/uiKit';
 const PICTOS = {
@@ -797,6 +798,7 @@ export default function DashboardScreen({ navigation }) {
             <TouchableOpacity style={styles.testBtn} onPress={async () => { await resetProfile(); }}>
               <Text style={styles.testBtnText}>{t('home2.backToOnboarding')}</Text>
             </TouchableOpacity>
+            <Text style={styles.testInfo}>widget : {widgetDebugStatus()}</Text>
           </View>
         )}
 
@@ -1084,5 +1086,6 @@ const styles = StyleSheet.create({
 
   testTools: { marginTop: spacing.sm },
   testBtn: { alignItems: 'center', paddingVertical: 9 },
+  testInfo: { textAlign: 'center', fontSize: 11, color: '#9AA79F', marginTop: 4 },
   testBtnText: { color: '#9A3412', fontSize: 13, fontWeight: '700', textDecorationLine: 'underline' },
 });

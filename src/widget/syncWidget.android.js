@@ -28,3 +28,6 @@ export async function clearWidget() {
     // Le widget ne doit jamais faire planter l'app.
   }
 }
+
+// Diagnostic affiché dans les outils de test (à retirer avant la sortie).
+export function widgetDebugStatus() { return 'android'; }
