@@ -44,11 +44,11 @@
     }
   },
   "widget": {
-    "title": "Ton bilan sur l'écran d'accueil",
-    "text": "Ajoute le widget Stopklop : tu vois tes chiffres du jour sans ouvrir l'app, et tu notes une cigarette en un geste.",
-    "step1": "Appui long sur un espace vide de l'écran d'accueil",
-    "step2": "Touche le + en haut, puis cherche Stopklop",
-    "step3": "Choisis le widget et place-le où tu veux",
+    "title": "Comment l'ajouter",
+    "hint": "Le widget affiche ensuite ton bilan, mis à jour à chaque journée validée.",
+    "step1": "Appui long sur l'écran d'accueil",
+    "step2": "Touche le + en haut",
+    "step3": "Choisis Stopklop",
     "cta": "C'est compris"
   }
 }

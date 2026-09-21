@@ -5,7 +5,10 @@ import { colors, radius, shadow } from '../theme';
 import { UI } from '../assets/uiKit';
 import { TOUR_STEPS } from './tourSteps';
 
+import { IconAppuiLong, IconPlus, IconWidgetCarre } from '../components/WidgetHowToIcons';
+
 const WIDGET_PREVIEW = require('../../assets/ui-kit/widget-preview.png');
+const GESTES = [IconAppuiLong, IconPlus, IconWidgetCarre];
 
 const HOLE_PAD = 6;
 const BUBBLE_ROOM = 250;
@@ -94,17 +97,23 @@ export default function TourOverlay({ step, targets, scrolls, onNext, onLater, o
         {...block}
       >
         <Text style={s.brand}>stopklop</Text>
-        <Image source={WIDGET_PREVIEW} style={s.widgetPreview} resizeMode="contain" />
         <Text style={s.widgetTitle}>{t('widget.title')}</Text>
-        <Text style={s.widgetText}>{t('widget.text')}</Text>
-        <View style={s.widgetSteps}>
-          {['step1', 'step2', 'step3'].map((cle, i) => (
-            <View key={cle} style={s.widgetStep}>
-              <View style={s.widgetNum}><Text style={s.widgetNumText}>{i + 1}</Text></View>
-              <Text style={s.widgetStepText}>{t(`widget.${cle}`)}</Text>
-            </View>
-          ))}
+        <Image source={WIDGET_PREVIEW} style={s.widgetPreview} resizeMode="contain" />
+
+        <View style={s.gestes}>
+          {['step1', 'step2', 'step3'].map((cle, i) => {
+            const Picto = GESTES[i];
+            return (
+              <View key={cle} style={s.geste}>
+                <View style={s.gesteIll}><Picto /></View>
+                <Text style={s.gesteText}>{t(`widget.${cle}`)}</Text>
+              </View>
+            );
+          })}
         </View>
+
+        <Text style={s.widgetHint}>{t('widget.hint')}</Text>
+
         <TouchableOpacity style={s.welcomeCta} onPress={onNext} accessibilityRole="button">
           <Text style={s.ctaText}>{t('widget.cta')}</Text>
         </TouchableOpacity>
@@ -217,13 +226,12 @@ const s = StyleSheet.create({
   later: { fontSize: 15, fontWeight: '600', color: colors.primary },
 
   widgetScreen: { backgroundColor: colors.cream },
-  widgetContent: { flexGrow: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 28, paddingVertical: 40 },
-  widgetPreview: { width: 250, height: 236, marginBottom: 20 },
-  widgetTitle: { fontSize: 23, fontWeight: '900', color: colors.primaryDeep, textAlign: 'center', marginBottom: 10 },
-  widgetText: { fontSize: 15, lineHeight: 21, color: '#2F4A3D', textAlign: 'center', marginBottom: 20, maxWidth: 320 },
-  widgetSteps: { alignSelf: 'stretch', gap: 10, marginBottom: 26, paddingHorizontal: 10 },
-  widgetStep: { flexDirection: 'row', alignItems: 'center', gap: 11 },
-  widgetNum: { width: 26, height: 26, borderRadius: 13, backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center' },
-  widgetNumText: { color: '#FFFFFF', fontSize: 13, fontWeight: '900' },
-  widgetStepText: { flex: 1, fontSize: 14, lineHeight: 19, color: '#2F4A3D', fontWeight: '600' },
+  widgetContent: { flexGrow: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 24, paddingVertical: 40 },
+  widgetTitle: { fontSize: 24, fontWeight: '900', color: colors.primaryDeep, textAlign: 'center', marginTop: 14 },
+  widgetPreview: { width: 250, height: 236, marginTop: 16 },
+  gestes: { flexDirection: 'row', alignSelf: 'stretch', gap: 8, marginTop: 18 },
+  geste: { flex: 1, backgroundColor: colors.white, borderRadius: 16, paddingVertical: 12, paddingHorizontal: 8, alignItems: 'center' },
+  gesteIll: { height: 34, justifyContent: 'center' },
+  gesteText: { fontSize: 11.5, lineHeight: 15, fontWeight: '700', color: '#2F4A3D', textAlign: 'center', marginTop: 8 },
+  widgetHint: { fontSize: 12.5, lineHeight: 18, color: '#6F8078', textAlign: 'center', marginTop: 16, marginBottom: 26, maxWidth: 300 },
 });

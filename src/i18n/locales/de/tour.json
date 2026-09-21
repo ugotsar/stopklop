@@ -44,11 +44,11 @@
     }
   },
   "widget": {
-    "title": "Dein Tag auf dem Homescreen",
-    "text": "Füge das Stopklop-Widget hinzu: deine Zahlen ohne die App zu öffnen, und eine Zigarette mit einem Tipp eintragen.",
-    "step1": "Halte eine freie Stelle auf dem Homescreen gedrückt",
-    "step2": "Tippe oben auf +, dann suche Stopklop",
-    "step3": "Wähle das Widget und platziere es frei",
+    "title": "So fügst du es hinzu",
+    "hint": "Das Widget zeigt danach deinen Tag, aktualisiert bei jedem bestätigten Tag.",
+    "step1": "Homescreen gedrückt halten",
+    "step2": "Oben auf + tippen",
+    "step3": "Stopklop auswählen",
     "cta": "Verstanden"
   }
 }

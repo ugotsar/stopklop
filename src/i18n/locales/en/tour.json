@@ -44,11 +44,11 @@
     }
   },
   "widget": {
-    "title": "Your day on the home screen",
-    "text": "Add the Stopklop widget: your numbers without opening the app, and one tap to log a cigarette.",
-    "step1": "Press and hold an empty spot on your home screen",
-    "step2": "Tap the + at the top, then search for Stopklop",
-    "step3": "Pick the widget and place it where you like",
+    "title": "How to add it",
+    "hint": "The widget then shows your day, updated each time you confirm a day.",
+    "step1": "Press and hold the home screen",
+    "step2": "Tap the + at the top",
+    "step3": "Pick Stopklop",
     "cta": "Got it"
   }
 }
