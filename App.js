@@ -9,6 +9,7 @@ import {
   nettoyerNotifications,
 } from './src/services/notifications';
 import { prechargerSons, libererSons } from './src/services/sounds';
+import LoadingScreen from './src/components/LoadingScreen';
 import { colors } from './src/theme';
 
 // ── Cadre "téléphone" sur web ────────────────────────────────────────────────
@@ -49,9 +50,7 @@ export default function App() {
   if (!i18nReady) {
     return (
       <WebFrame>
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.white }}>
-          <ActivityIndicator size="large" color={colors.primary} />
-        </View>
+        <LoadingScreen />
       </WebFrame>
     );
   }

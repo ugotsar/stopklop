@@ -5,6 +5,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { useUser } from '../context/UserContext';
 import { colors } from '../theme';
+import LoadingScreen from '../components/LoadingScreen';
 
 import AuthScreen            from '../screens/AuthScreen';
 import PaywallProScreen      from '../screens/PaywallScreen';
@@ -53,9 +54,7 @@ export default function AppNavigator({ navigationRef }) {
   // Spinner pendant la vérification de l'état de connexion.
   if (loading || firebaseUser === undefined) {
     return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.white }}>
-        <ActivityIndicator size="large" color={colors.primary} />
-      </View>
+      <LoadingScreen />
     );
   }
 
@@ -92,9 +91,7 @@ export default function AppNavigator({ navigationRef }) {
   // plus être contourné par un simple navigation.navigate('MainTabs').
   if (subscription.loading) {
     return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.white }}>
-        <ActivityIndicator size="large" color={colors.primary} />
-      </View>
+      <LoadingScreen />
     );
   }
 

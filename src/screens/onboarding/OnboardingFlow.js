@@ -14,6 +14,7 @@ import { jouerSon } from '../../services/sounds';
 import { localDateKey } from '../../utils/dateKeys';
 import { buildOnboardingProfile } from './onboardingProfile';
 import PlanLoading from './PlanLoading';
+import LoadingScreen from '../../components/LoadingScreen';
 
 import { DRAFT_KEY } from '../../store/onboardingStore';
 const PLAN_HD = {
@@ -332,11 +333,7 @@ export default function OnboardingFlow({ navigation, route }) {
 
   if (!draftLoaded || !fontsLoaded || !artworkReady) {
     return (
-      <SafeAreaView style={st.safe}>
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-          <ActivityIndicator size="large" color={colors.primary} />
-        </View>
-      </SafeAreaView>
+      <LoadingScreen />
     );
   }
 
