@@ -360,26 +360,33 @@ function ModalEnvie({ visible, onSave, onClose }) {
           )}
 
           {step === 'result' && (
-            <>
-              <View style={mp.banner}>
-                <Text style={mp.emoji}>💪</Text>
-                <View style={{ flex: 1 }}>
-                  <Text style={mp.titre}>{t('envieModal.resultTitle')}</Text>
-                  <Text style={mp.sous}>{t('envieModal.resultSubtitle')}</Text>
+            /* Klop annonce, puis trois gestes numérotés : une envie se traverse
+               en faisant quelque chose, pas en lisant un paragraphe. */
+            <View style={env.resultBody}>
+              <View style={env.klopRow}>
+                <Klop width={66} />
+                <View style={env.bulle}>
+                  <Text style={env.bulleTitre}>{t('envieModal.resultHeadline')}</Text>
+                  <Text style={env.bulleSub}>{t('envieModal.resultDuration')}</Text>
                 </View>
               </View>
-              <View style={mp.body}>
-                <Text style={env.conseil}>
-                  {t('envieModal.conseilPrefix')}<Text style={{ fontWeight: '800' }}>{t('envieModal.conseilBold')}</Text>{t('envieModal.conseilSuffix')}
-                </Text>
-                <TouchableOpacity style={mp.btn} onPress={() => handleOutcome(false)}>
-                  <Text style={mp.btnText}>{t('envieModal.keptButton')}</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={env.btnFume} onPress={() => handleOutcome(true)}>
-                  <Text style={env.btnFumeText}>{t('envieModal.smokedButton')}</Text>
-                </TouchableOpacity>
+
+              <View style={env.gestes}>
+                {[1, 2, 3].map(n => (
+                  <View key={n} style={env.geste}>
+                    <View style={env.gesteNum}><Text style={env.gesteNumText}>{n}</Text></View>
+                    <Text style={env.gesteTxt}>{t(`envieModal.step${n}`)}</Text>
+                  </View>
+                ))}
               </View>
-            </>
+
+              <TouchableOpacity style={env.ctaKept} onPress={() => handleOutcome(false)}>
+                <Text style={env.ctaKeptText}>{t('envieModal.keptButton')}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={env.lienFume} onPress={() => handleOutcome(true)}>
+                <Text style={env.lienFumeText}>{t('envieModal.smokedButton')}</Text>
+              </TouchableOpacity>
+            </View>
           )}
 
         </View>
@@ -398,17 +405,33 @@ const env = StyleSheet.create({
   },
   chipIllus: { width: 48, height: 48 },
   chipLabel: { fontSize: 11, fontWeight: '700', color: colors.primaryDeep, textAlign: 'center' },
-  conseil:   { fontSize: 14, color: colors.black, lineHeight: 22, textAlign: 'center', marginBottom: 16 },
+  // ── Étape « c'est noté » : Klop, sa bulle, les trois gestes ──────────────
+  resultBody: { width: '100%' },
+  klopRow:    { flexDirection: 'row', alignItems: 'flex-end', gap: 9 },
+  bulle:      {
+    flex: 1, backgroundColor: '#E7F2E8', borderRadius: 17,
+    borderBottomLeftRadius: 5, paddingVertical: 12, paddingHorizontal: 14,
+  },
+  bulleTitre: { fontSize: 16.5, fontWeight: '900', color: '#0A2A1C', lineHeight: 21 },
+  bulleSub:   { fontSize: 13, color: '#6B7C72', marginTop: 3, lineHeight: 18 },
+  gestes:     { gap: 8, marginTop: 14 },
+  geste:      {
+    flexDirection: 'row', alignItems: 'center', gap: 11,
+    backgroundColor: '#F4F2E9', borderRadius: 15, paddingVertical: 11, paddingHorizontal: 12,
+  },
+  gesteNum:     { width: 23, height: 23, borderRadius: 12, backgroundColor: '#0B5135', alignItems: 'center', justifyContent: 'center' },
+  gesteNumText: { color: '#fff', fontSize: 11.5, fontWeight: '900' },
+  gesteTxt:     { flex: 1, fontSize: 13.5, fontWeight: '700', color: '#0A2A1C' },
+  ctaKept:      { marginTop: 15, borderRadius: 24, backgroundColor: '#0B5135', paddingVertical: 14, alignItems: 'center' },
+  ctaKeptText:  { color: '#fff', fontSize: 15.5, fontWeight: '800' },
+  // « J'ai fumé » reste accessible mais ne se bat plus avec le bouton principal.
+  lienFume:     { marginTop: 10, alignItems: 'center', paddingVertical: 4 },
+  lienFumeText: { color: '#9AA79F', fontSize: 12.5, fontWeight: '700', textDecorationLine: 'underline' },
   noteInput: {
     borderWidth: 1, borderColor: colors.grayBorder, borderRadius: 12,
     padding: 12, minHeight: 90, fontSize: 14, color: colors.black,
     textAlignVertical: 'top', marginBottom: 14,
   },
-  btnFume: {
-    borderWidth: 1.5, borderColor: '#FCA5A5', borderRadius: 30,
-    paddingVertical: 12, alignItems: 'center', marginTop: 8,
-  },
-  btnFumeText: { color: '#DC2626', fontSize: 13, fontWeight: '700' },
 });
 
 // ── Arc circulaire de progression ───────────────────────────────────────────

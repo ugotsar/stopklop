@@ -60,17 +60,17 @@
   "envieModal": {
     "pickTitle": "Une envie de fumer ?",
     "pickSubtitle": "Qu'est-ce qui la déclenche ?",
-    "noteTitle": "Dites-nous en plus",
-    "noteSubtitle": "Que ressentez-vous ? Pourquoi cette envie ?",
+    "noteTitle": "Dis-m'en un peu plus",
+    "noteSubtitle": "Qu'est-ce que tu ressens ? Pourquoi cette envie ?",
     "notePlaceholder": "Ex : je viens de raccrocher un appel stressant…",
     "continueButton": "Continuer",
-    "resultTitle": "C'est noté !",
-    "resultSubtitle": "Envie enregistrée dans vos habitudes",
-    "conseilPrefix": "Une envie dure en moyenne ",
-    "conseilBold": "3 à 5 minutes",
-    "conseilSuffix": ".\n\n💧 Buvez un verre d'eau\n🫁 Respirez profondément 5 fois\n🚶 Changez de pièce ou d'activité\n\nElle va passer — tenez bon !",
-    "keptButton": "J'ai tenu bon 💪",
-    "smokedButton": "J'ai fumé  🚬  (+1 cigarette)"
+    "keptButton": "J'ai tenu bon",
+    "smokedButton": "J'ai fumé (+1 cigarette)",
+    "resultHeadline": "Trois gestes,\net c'est passé.",
+    "resultDuration": "Une envie dure 3 à 5 minutes.",
+    "step1": "Bois un grand verre d'eau",
+    "step2": "Respire à fond, 5 fois",
+    "step3": "Change de pièce ou d'activité"
   },
   "motivation": {
     "sectionTitle": "Motivation du jour",

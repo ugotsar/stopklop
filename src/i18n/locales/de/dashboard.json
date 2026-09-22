@@ -60,17 +60,17 @@
   "envieModal": {
     "pickTitle": "Lust auf eine Zigarette?",
     "pickSubtitle": "Was löst das aus?",
-    "noteTitle": "Erzähl uns mehr",
+    "noteTitle": "Erzähl mir mehr",
     "noteSubtitle": "Wie fühlst du dich? Warum dieses Verlangen?",
     "notePlaceholder": "Z. B.: Ich habe gerade ein stressiges Telefonat beendet…",
     "continueButton": "Weiter",
-    "resultTitle": "Notiert!",
-    "resultSubtitle": "Verlangen in deinen Gewohnheiten gespeichert",
-    "conseilPrefix": "Ein Verlangen dauert im Durchschnitt ",
-    "conseilBold": "3 bis 5 Minuten",
-    "conseilSuffix": ".\n\n💧 Trink ein Glas Wasser\n🫁 Atme 5-mal tief durch\n🚶 Wechsle den Raum oder die Aktivität\n\nEs geht vorbei — halt durch!",
-    "keptButton": "Ich habe durchgehalten 💪",
-    "smokedButton": "Ich habe geraucht  🚬  (+1 Zigarette)"
+    "keptButton": "Ich habe durchgehalten",
+    "smokedButton": "Ich habe geraucht (+1 Zigarette)",
+    "resultHeadline": "Drei Schritte,\nund es ist vorbei.",
+    "resultDuration": "Ein Verlangen dauert 3 bis 5 Minuten.",
+    "step1": "Trink ein großes Glas Wasser",
+    "step2": "Atme 5-mal tief durch",
+    "step3": "Wechsle den Raum oder die Tätigkeit"
   },
   "motivation": {
     "sectionTitle": "Motivation des Tages",

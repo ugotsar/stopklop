@@ -60,17 +60,17 @@
   "envieModal": {
     "pickTitle": "Craving a cigarette?",
     "pickSubtitle": "What's triggering it?",
-    "noteTitle": "Tell us more",
-    "noteSubtitle": "How are you feeling? Why this craving?",
+    "noteTitle": "Tell me a bit more",
+    "noteSubtitle": "How do you feel? Why this craving?",
     "notePlaceholder": "E.g.: I just hung up a stressful call…",
     "continueButton": "Continue",
-    "resultTitle": "Got it!",
-    "resultSubtitle": "Craving logged in your habits",
-    "conseilPrefix": "A craving lasts on average ",
-    "conseilBold": "3 to 5 minutes",
-    "conseilSuffix": ".\n\n💧 Drink a glass of water\n🫁 Take 5 deep breaths\n🚶 Change rooms or activity\n\nIt will pass — hang in there!",
-    "keptButton": "I held on 💪",
-    "smokedButton": "I smoked  🚬  (+1 cigarette)"
+    "keptButton": "I held on",
+    "smokedButton": "I smoked (+1 cigarette)",
+    "resultHeadline": "Three moves,\nand it passes.",
+    "resultDuration": "A craving lasts 3 to 5 minutes.",
+    "step1": "Drink a large glass of water",
+    "step2": "Breathe deeply, 5 times",
+    "step3": "Change room or activity"
   },
   "motivation": {
     "sectionTitle": "Today's motivation",
