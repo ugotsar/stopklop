@@ -557,7 +557,6 @@ export default function DashboardScreen({ navigation }) {
   const weekJours      = weekRenseignes.filter(Boolean).length;
   const weekJoursOk    = weekRenseignes.filter((ok, i) => ok && weekData[i] <= weekObjectifs[i]).length;
   const weekEchelle    = Math.max(...weekData, ...weekObjectifs, 1);
-  const cigEviteesSemaine = Math.max(0, Math.round((stats.consoAvant ?? 0) * weekJours - (stats.weekSum ?? 0)));
   const restantJour    = Math.max(0, objectifJour - cigarettesToday);
   const depassement    = Math.max(0, cigarettesToday - objectifJour);
   // Décimales à la française (4,3) plutôt qu'au format anglais (4.3).
@@ -565,6 +564,37 @@ export default function DashboardScreen({ navigation }) {
   const consoAvantJour = stats.consoAvant ?? 0;
   const consoActuelle  = Math.round((stats.consoRecente ?? consoAvantJour) * 10) / 10;
   const baisseParJour  = Math.round(Math.max(0, consoAvantJour - consoActuelle) * 10) / 10;
+
+  // ── Jour et semaine : on compare toujours à la consommation d'avant ───────
+  // On repart des nombres bruts (et non des champs déjà bornés à zéro) pour
+  // que la comparaison reste juste dans les deux sens : une journée pire que
+  // d'habitude doit le dire, pas afficher « −3 cigarettes évitées ».
+  const prixCigJour = stats.prixCig ?? 0;
+  const fmtVieMin = mins => {
+    const abs = Math.abs(Math.round(mins));
+    const h = Math.floor(abs / 60);
+    const m = abs % 60;
+    const hL = t('common:hourShort');
+    const mL = t('common:minuteShort');
+    if (h === 0) return `${abs} ${mL}`;
+    return m === 0 ? `${h} ${hL}` : `${h} ${hL} ${m}`;
+  };
+  const comparer = (fumees, joursComptes) => {
+    const avant  = Math.round(consoAvantJour * joursComptes * 10) / 10;
+    const ecart  = Math.round((fumees - avant) * 10) / 10;
+    const mieux  = ecart <= 0;
+    const signe  = ecart > 0 ? '+' : ecart < 0 ? '−' : '';
+    return {
+      fumees, avant, mieux,
+      ecartCig: `${signe}${fmtNb(Math.abs(ecart))}`,
+      argent: fumees * prixCigJour,
+      argentAvant: avant * prixCigJour,
+      ecartArgent: `${signe}${fmtMoney(Math.abs(ecart) * prixCigJour)}`,
+      vie: `${mieux ? '+' : '−'}${fmtVieMin(ecart * 5)}`,
+    };
+  };
+  const comparJour    = comparer(cigarettesToday, 1);
+  const comparSemaine = comparer(stats.weekSum ?? 0, weekJours);
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -759,24 +789,58 @@ export default function DashboardScreen({ navigation }) {
         <View style={styles.colsRow}>
           <View style={styles.colCard}>
             <Text style={styles.cardLabel}>{t('home2.todayTitle')}</Text>
-            <ColStat img={UI.cigarette_fumee} valeur={jourRenseigne ? String(stats.cigEviteesAujourdhu ?? 0) : '\u2014'} label={t('home2.colAvoided')} />
-            <ColStat img={UI.portefeuille_euros_feuilles} valeur={jourRenseigne ? fmtMoney(stats.argentEcoAujourdhui ?? 0) : '\u2014'} label={t('home2.colMoney')} />
-            <ColStat img={UI.chrono_vie_preservee} valeur={jourRenseigne ? stats.vieGagneeStrAujourdhui : '\u2014'} label={t('home2.colLife')} />
+            <ColStat
+              img={UI.cigarette_fumee}
+              valeur={jourRenseigne ? fmtNb(comparJour.fumees) : '\u2014'}
+              label={t('home2.colSmoked')}
+              reference={jourRenseigne ? t('home2.colBefore', { value: fmtNb(comparJour.avant) }) : null}
+              ecart={jourRenseigne ? comparJour.ecartCig : null}
+              ecartBon={comparJour.mieux}
+            />
+            <ColStat
+              img={UI.portefeuille_euros_feuilles}
+              valeur={jourRenseigne ? fmtMoney(comparJour.argent) : '\u2014'}
+              label={t('home2.colSpent')}
+              reference={jourRenseigne ? t('home2.colBefore', { value: fmtMoney(comparJour.argentAvant) }) : null}
+              ecart={jourRenseigne ? comparJour.ecartArgent : null}
+              ecartBon={comparJour.mieux}
+            />
+            <ColStat
+              img={UI.chrono_vie_preservee}
+              valeur={jourRenseigne ? comparJour.vie : '\u2014'}
+              label={comparJour.mieux ? t('home2.colLifeGained') : t('home2.colLifeLost')}
+            />
           </View>
           <View style={[styles.colCard, styles.colCardDark]}>
             <Text style={[styles.cardLabel, styles.cardLabelDark]}>{t('home2.weekTitle')}</Text>
-            <ColStat dark img={UI.cigarette_fumee} valeur={String(cigEviteesSemaine)} label={t('home2.colAvoided')} />
-            <ColStat dark img={UI.portefeuille_euros_feuilles} valeur={fmtMoney(stats.argentEcoSemaine ?? 0)} label={t('home2.colMoney')} />
-            <ColStat dark img={UI.chrono_vie_preservee} valeur={stats.vieGagneeStrSemaine} label={t('home2.colLife')} />
+            <ColStat dark
+              img={UI.cigarette_fumee}
+              valeur={weekJours > 0 ? fmtNb(comparSemaine.fumees) : '—'}
+              label={t('home2.colSmoked')}
+              reference={weekJours > 0 ? t('home2.colBefore', { value: fmtNb(comparSemaine.avant) }) : null}
+              ecart={weekJours > 0 ? comparSemaine.ecartCig : null}
+              ecartBon={comparSemaine.mieux}
+            />
+            <ColStat dark
+              img={UI.portefeuille_euros_feuilles}
+              valeur={weekJours > 0 ? fmtMoney(comparSemaine.argent) : '—'}
+              label={t('home2.colSpent')}
+              reference={weekJours > 0 ? t('home2.colBefore', { value: fmtMoney(comparSemaine.argentAvant) }) : null}
+              ecart={weekJours > 0 ? comparSemaine.ecartArgent : null}
+              ecartBon={comparSemaine.mieux}
+            />
+            <ColStat dark
+              img={UI.chrono_vie_preservee}
+              valeur={weekJours > 0 ? comparSemaine.vie : '—'}
+              label={comparSemaine.mieux ? t('home2.colLifeGained') : t('home2.colLifeLost')}
+            />
           </View>
         </View>
 
-        {/* Sans cette phrase, « 13 cigarettes évitées » le jour où l'on en fume 2
-            n'a aucun sens : il manque le point de comparaison. */}
-        {consoAvantJour > 0 && (
-          <Text style={styles.colsFootnote}>
-            {t('home2.colsFootnote', { count: fmtNb(Math.round(consoAvantJour * 10) / 10) })}
-          </Text>
+        {/* La semaine ne totalise que les journées enregistrées : le dire, sinon
+            on croit que le chiffre couvre les sept jours. */}
+        {weekJours > 0 && (
+          <Text style={styles.colsFootnote}>{t('home2.weekDaysNote', { count: weekJours })}</Text>
         )}
 
         {/* ── Envie de fumer — layout horizontal avec bouton à droite ── */}
@@ -851,15 +915,28 @@ export default function DashboardScreen({ navigation }) {
 // ── Ligne d'une colonne « Aujourd'hui » / « Cette semaine » ─────────────────
 // L'icône est posée sur une pastille blanche : les PNG du kit portent une ombre
 // claire qui baverait sur le fond vert foncé de la colonne « cette semaine ».
-function ColStat({ img, valeur, label, dark }) {
+// Une ligne = le vrai nombre, puis à quoi on le compare, puis l'écart.
+// « −3 cigarettes évitées » ne voulait rien dire : on ne peut pas éviter −3
+// cigarettes. On lit désormais « 18 fumées · avant 15 · +3 ».
+function ColStat({ img, valeur, label, reference, ecart, ecartBon, dark }) {
+  const couleurEcart = ecartBon
+    ? (dark ? '#9BE8B4' : colors.primary)
+    : (dark ? '#FFB3A8' : colors.danger);
   return (
     <View style={styles.colStat}>
       <View style={styles.colStatIcon}>
         <Image source={img} style={styles.colStatImg} resizeMode="contain" />
       </View>
       <View style={{ flex: 1, minWidth: 0 }}>
-        <Text style={[styles.colStatValue, dark && styles.colStatValueDark]}>{valeur}</Text>
-        <Text style={[styles.colStatLabel, dark && styles.colStatLabelDark]}>{label}</Text>
+        <Text style={[styles.colStatValue, dark && styles.colStatValueDark]}>
+          {valeur} <Text style={[styles.colStatUnit, dark && styles.colStatLabelDark]}>{label}</Text>
+        </Text>
+        {reference ? (
+          <Text style={[styles.colStatLabel, dark && styles.colStatLabelDark]}>
+            {reference}
+            {ecart ? <Text style={{ color: couleurEcart, fontWeight: '800' }}>{`  ${ecart}`}</Text> : null}
+          </Text>
+        ) : null}
       </View>
     </View>
   );
@@ -1095,7 +1172,8 @@ const styles = StyleSheet.create({
   colStat: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 9 },
   colStatIcon: { width: 30, height: 30, borderRadius: 10, backgroundColor: colors.white, alignItems: 'center', justifyContent: 'center' },
   colStatImg: { width: 22, height: 22 },
-  colStatValue: { fontSize: 14.5, fontWeight: '800', color: colors.black },
+  colStatValue: { fontSize: 15.5, fontWeight: '800', color: colors.black },
+  colStatUnit: { fontSize: 10.5, fontWeight: '700', color: '#8A9A90' },
   colStatValueDark: { color: colors.white },
   colStatLabel: { fontSize: 10, fontWeight: '700', color: '#8A9A90', lineHeight: 13 },
   colStatLabelDark: { color: '#BFE3CE' },

@@ -127,14 +127,17 @@
     "dropBefore": "a day before",
     "dropNow": "a day now",
     "dropDelta": "That is {{count}} fewer cigarettes every day",
-    "colAvoided": "cigarettes avoided",
-    "colMoney": "not spent",
-    "colLife": "of life gained",
     "backToOnboarding": "Back to onboarding (test)",
     "previewOnboarding": "View onboarding (preview)",
     "previewPaywall": "View subscription screen (preview)",
-    "colsFootnote": "Everything is compared with your previous {{count}} cigarettes a day.",
     "weekInGoal_one": "{{count}} day out of {{total}} within goal",
-    "weekInGoal_other": "{{count}} days out of {{total}} within goal"
+    "weekInGoal_other": "{{count}} days out of {{total}} within goal",
+    "colSmoked": "smoked",
+    "colSpent": "spent",
+    "colBefore": "before {{value}}",
+    "colLifeGained": "of life gained",
+    "colLifeLost": "of life lost",
+    "weekDaysNote_one": "This week: {{count}} logged day, compared with your previous habit.",
+    "weekDaysNote_other": "This week: {{count}} logged days, compared with your previous habit."
   }
 }

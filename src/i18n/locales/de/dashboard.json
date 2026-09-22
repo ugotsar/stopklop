@@ -127,14 +127,17 @@
     "dropBefore": "pro Tag vorher",
     "dropNow": "pro Tag jetzt",
     "dropDelta": "Also {{count}} Zigaretten weniger pro Tag",
-    "colAvoided": "vermiedene Zigaretten",
-    "colMoney": "nicht ausgegeben",
-    "colLife": "Lebenszeit gewonnen",
     "backToOnboarding": "Zurück zum Onboarding (Test)",
     "previewOnboarding": "Onboarding ansehen (Vorschau)",
     "previewPaywall": "Abo-Bildschirm ansehen (Vorschau)",
-    "colsFootnote": "Alles wird mit deinen früheren {{count}} Zigaretten pro Tag verglichen.",
     "weekInGoal_one": "{{count}} von {{total}} Tagen im Ziel",
-    "weekInGoal_other": "{{count}} von {{total}} Tagen im Ziel"
+    "weekInGoal_other": "{{count}} von {{total}} Tagen im Ziel",
+    "colSmoked": "geraucht",
+    "colSpent": "ausgegeben",
+    "colBefore": "vorher {{value}}",
+    "colLifeGained": "Leben gewonnen",
+    "colLifeLost": "Leben verloren",
+    "weekDaysNote_one": "Diese Woche: {{count}} erfasster Tag, verglichen mit deiner früheren Menge.",
+    "weekDaysNote_other": "Diese Woche: {{count}} erfasste Tage, verglichen mit deiner früheren Menge."
   }
 }
