@@ -633,13 +633,16 @@ export default function DashboardScreen({ navigation }) {
               const renseigne = weekRenseignes[i];
               const objectif  = weekObjectifs[i] ?? objectifJour;
               const hauteur   = Math.max(6, Math.round((valeur / weekEchelle) * 54));
+              // Vert sous la limite, orange pile dessus, rouge au-dessus.
               const depasse   = renseigne && valeur > objectif;
+              const pile      = renseigne && valeur === objectif && valeur > 0;
               return (
                 <View key={i} style={styles.barCol}>
                   <View style={[
                     styles.bar,
                     { height: renseigne ? hauteur : 6 },
                     !renseigne && styles.barVide,
+                    pile && styles.barPile,
                     depasse && styles.barDepasse,
                   ]} />
                 </View>
@@ -654,6 +657,8 @@ export default function DashboardScreen({ navigation }) {
                 key={i}
                 style={[
                   styles.barLabel,
+                  weekRenseignes[i] && weekData[i] === (weekObjectifs[i] ?? objectifJour)
+                    && weekData[i] > 0 && styles.barLabelPile,
                   weekRenseignes[i] && weekData[i] > (weekObjectifs[i] ?? objectifJour) && styles.barLabelDepasse,
                 ]}
               >{label}</Text>
@@ -662,7 +667,7 @@ export default function DashboardScreen({ navigation }) {
 
           <Text style={styles.weekFoot}>
             {t('home2.weekLimit', { count: objectifJour })}
-            {weekJours > 0 ? ` \u00B7 ${t('home2.weekInGoal', { ok: weekJoursOk, total: weekJours })}` : ''}
+            {weekJours > 0 ? ` \u00B7 ${t('home2.weekInGoal', { count: weekJoursOk, total: weekJours })}` : ''}
           </Text>
         </View>
 
@@ -1048,11 +1053,13 @@ const styles = StyleSheet.create({
   barCol: { flex: 1, alignItems: 'center' },
   bar: { width: 22, borderRadius: 5, backgroundColor: colors.primary },
   barVide: { backgroundColor: '#DCE8DF' },
-  barDepasse: { backgroundColor: '#E08A3C' },
+  barPile: { backgroundColor: '#E08A3C' },
+  barDepasse: { backgroundColor: '#D93A3F' },
   goalLine: { position: 'absolute', left: 0, right: 0, height: 1.5, backgroundColor: '#B9C9BE' },
   barLabels: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 5 },
   barLabel: { flex: 1, textAlign: 'center', fontSize: 9.5, fontWeight: '800', color: '#9AA79F' },
-  barLabelDepasse: { color: '#E08A3C' },
+  barLabelPile: { color: '#E08A3C' },
+  barLabelDepasse: { color: '#D93A3F' },
   weekFoot: { fontSize: 10.5, color: '#7D8F84', fontWeight: '600', marginTop: 7 },
 
   todayCard: { backgroundColor: colors.surface, borderRadius: radius.xl, padding: 14, marginBottom: spacing.sm, ...shadow.card },

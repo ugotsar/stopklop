@@ -115,7 +115,6 @@
     "weekTitle": "Cette semaine",
     "weekCount": "{{count}} fumées sur {{max}}",
     "weekLimit": "Le trait est ta limite de {{count}} par jour",
-    "weekInGoal": "{{ok}} jours sur {{total}} dans l'objectif",
     "todayTitle": "Aujourd'hui",
     "reserve_one": "{{count}} cigarette en réserve",
     "reserve_other": "{{count}} cigarettes en réserve",
@@ -134,6 +133,8 @@
     "backToOnboarding": "Revenir à l'onboarding (test)",
     "previewOnboarding": "Voir l'onboarding (aperçu)",
     "previewPaywall": "Voir l'écran d'abonnement (aperçu)",
-    "colsFootnote": "Tout est comparé à tes {{count}} cigarettes par jour d'avant."
+    "colsFootnote": "Tout est comparé à tes {{count}} cigarettes par jour d'avant.",
+    "weekInGoal_one": "{{count}} jour sur {{total}} dans l'objectif",
+    "weekInGoal_other": "{{count}} jours sur {{total}} dans l'objectif"
   }
 }

@@ -167,8 +167,11 @@ struct WeekGauges: View {
             if let valeur = day.value {
               // Objectif à 0 (arrêt complet) : la moindre cigarette remplit tout.
               let part = day.goal > 0 ? min(CGFloat(valeur) / CGFloat(day.goal), 1) : (valeur > 0 ? 1 : 0)
+              // Vert sous la limite, orange pile dessus, rouge au-dessus.
+              let teinte: Color = valeur > day.goal ? .skRed
+                : (valeur == day.goal && valeur > 0 ? .skOrange : .skGreen)
               RoundedRectangle(cornerRadius: 9, style: .continuous)
-                .fill(valeur > day.goal ? Color.skRed : Color.skGreen)
+                .fill(teinte)
                 .frame(width: 28, height: valeur > 0 ? max(8, 62 * part) : 4)
             }
           }

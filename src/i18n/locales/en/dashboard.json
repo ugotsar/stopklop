@@ -115,7 +115,6 @@
     "weekTitle": "This week",
     "weekCount": "{{count}} smoked out of {{max}}",
     "weekLimit": "The line is your limit of {{count}} a day",
-    "weekInGoal": "{{ok}} days out of {{total}} within goal",
     "todayTitle": "Today",
     "reserve_one": "{{count}} cigarette left",
     "reserve_other": "{{count}} cigarettes left",
@@ -134,6 +133,8 @@
     "backToOnboarding": "Back to onboarding (test)",
     "previewOnboarding": "View onboarding (preview)",
     "previewPaywall": "View subscription screen (preview)",
-    "colsFootnote": "Everything is compared with your previous {{count}} cigarettes a day."
+    "colsFootnote": "Everything is compared with your previous {{count}} cigarettes a day.",
+    "weekInGoal_one": "{{count}} day out of {{total}} within goal",
+    "weekInGoal_other": "{{count}} days out of {{total}} within goal"
   }
 }
