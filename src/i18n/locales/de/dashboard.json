@@ -133,6 +133,7 @@
     "colLife": "Lebenszeit gewonnen",
     "backToOnboarding": "Zurück zum Onboarding (Test)",
     "previewOnboarding": "Onboarding ansehen (Vorschau)",
-    "previewPaywall": "Abo-Bildschirm ansehen (Vorschau)"
+    "previewPaywall": "Abo-Bildschirm ansehen (Vorschau)",
+    "colsFootnote": "Alles wird mit deinen früheren {{count}} Zigaretten pro Tag verglichen."
   }
 }

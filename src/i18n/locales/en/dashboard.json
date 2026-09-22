@@ -133,6 +133,7 @@
     "colLife": "of life gained",
     "backToOnboarding": "Back to onboarding (test)",
     "previewOnboarding": "View onboarding (preview)",
-    "previewPaywall": "View subscription screen (preview)"
+    "previewPaywall": "View subscription screen (preview)",
+    "colsFootnote": "Everything is compared with your previous {{count}} cigarettes a day."
   }
 }

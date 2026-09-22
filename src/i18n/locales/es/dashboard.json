@@ -133,6 +133,7 @@
     "colLife": "de vida ganada",
     "backToOnboarding": "Volver al onboarding (prueba)",
     "previewOnboarding": "Ver el onboarding (vista previa)",
-    "previewPaywall": "Ver la pantalla de suscripción (vista previa)"
+    "previewPaywall": "Ver la pantalla de suscripción (vista previa)",
+    "colsFootnote": "Todo se compara con tus {{count}} cigarrillos al día de antes."
   }
 }

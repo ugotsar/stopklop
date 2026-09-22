@@ -766,6 +766,14 @@ export default function DashboardScreen({ navigation }) {
           </View>
         </View>
 
+        {/* Sans cette phrase, « 13 cigarettes évitées » le jour où l'on en fume 2
+            n'a aucun sens : il manque le point de comparaison. */}
+        {consoAvantJour > 0 && (
+          <Text style={styles.colsFootnote}>
+            {t('home2.colsFootnote', { count: fmtNb(Math.round(consoAvantJour * 10) / 10) })}
+          </Text>
+        )}
+
         {/* ── Envie de fumer — layout horizontal avec bouton à droite ── */}
         <View style={styles.envieCard}>
           <View style={styles.envieTop}>
@@ -1074,6 +1082,7 @@ const styles = StyleSheet.create({
   dropDelta: { fontSize: 11.5, color: '#7D8F84', fontWeight: '600', textAlign: 'center', marginTop: 9 },
 
   colsRow: { flexDirection: 'row', gap: 8, marginBottom: spacing.sm },
+  colsFootnote: { fontSize: 12.5, color: '#8A938C', textAlign: 'center', marginTop: -2, marginBottom: spacing.sm, lineHeight: 17 },
   colCard: { flex: 1, backgroundColor: colors.surface, borderRadius: radius.xl, padding: 12, ...shadow.card },
   colCardDark: { backgroundColor: colors.primaryDeep },
   colStat: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 9 },
