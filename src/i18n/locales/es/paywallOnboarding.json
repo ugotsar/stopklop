@@ -6,32 +6,21 @@
   "plans": {
     "annual": {
       "label": "Anual",
-      "price": "89,99 €",
-      "pricePerMonth": "7,50 € / mes",
-      "period": "Facturado cada año",
       "per": "/ año",
       "billing": "{{price}} facturados cada año. Renovación automática."
     },
     "quarterly": {
       "label": "Trimestral",
-      "price": "14,99 €",
-      "pricePerMonth": "5,00 € / mes",
-      "period": "Facturado cada 3 meses",
-      "badge": "MEJOR OFERTA",
       "per": "/ 3 meses",
       "billing": "{{price}} facturados cada 3 meses. Renovación automática."
     },
     "monthly": {
       "label": "Mensual",
-      "price": "9,99 €",
-      "pricePerMonth": "9,99 € / mes",
-      "period": "Facturado cada mes",
       "per": "/ mes",
       "billing": "{{price}} facturados cada mes. Renovación automática."
     },
     "lifetime": {
       "label": "De por vida",
-      "pricePerMonth": "Pago único",
       "per": "",
       "billing": "{{price}}, pago único."
     }
@@ -71,5 +60,7 @@
   "testAccessButton": "Continuar sin suscripción (prueba)",
   "ctaTrialButton": "Empezar mis {{count}} días gratis",
   "trialBadge": "{{count}} días gratis",
-  "trialBilling": "{{count}} días gratis, luego {{price}} {{per}}. Cancela cuando quieras."
+  "trialBilling": "{{count}} días gratis, luego {{price}} {{per}}. Cancela cuando quieras.",
+  "bestBadge": "MEJOR PRECIO",
+  "perMonth": "o sea {{price}} / mes"
 }

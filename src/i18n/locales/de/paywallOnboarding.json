@@ -6,32 +6,21 @@
   "plans": {
     "annual": {
       "label": "Jährlich",
-      "price": "89,99 €",
-      "pricePerMonth": "7,50 € / Monat",
-      "period": "Jährliche Abrechnung",
       "per": "/ Jahr",
       "billing": "{{price}} jährlich abgerechnet. Verlängert sich automatisch."
     },
     "quarterly": {
       "label": "Vierteljährlich",
-      "price": "14,99 €",
-      "pricePerMonth": "5,00 € / Monat",
-      "period": "Abrechnung alle 3 Monate",
-      "badge": "BESTES ANGEBOT",
       "per": "/ 3 Monate",
       "billing": "{{price}} alle 3 Monate abgerechnet. Verlängert sich automatisch."
     },
     "monthly": {
       "label": "Monatlich",
-      "price": "9,99 €",
-      "pricePerMonth": "9,99 € / Monat",
-      "period": "Monatliche Abrechnung",
       "per": "/ Monat",
       "billing": "{{price}} monatlich abgerechnet. Verlängert sich automatisch."
     },
     "lifetime": {
       "label": "Lebenslang",
-      "pricePerMonth": "Einmalzahlung",
       "per": "",
       "billing": "{{price}}, einmalige Zahlung."
     }
@@ -71,5 +60,7 @@
   "testAccessButton": "Ohne Abo fortfahren (Test)",
   "ctaTrialButton": "{{count}} Tage gratis starten",
   "trialBadge": "{{count}} Tage gratis",
-  "trialBilling": "{{count}} Tage gratis, danach {{price}} {{per}}. Jederzeit kündbar."
+  "trialBilling": "{{count}} Tage gratis, danach {{price}} {{per}}. Jederzeit kündbar.",
+  "bestBadge": "BESTPREIS",
+  "perMonth": "also {{price}} / Monat"
 }

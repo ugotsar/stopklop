@@ -6,32 +6,21 @@
   "plans": {
     "annual": {
       "label": "Annual",
-      "price": "€89.99",
-      "pricePerMonth": "€7.50 / month",
-      "period": "Billed yearly",
       "per": "/ year",
       "billing": "{{price}} billed every year. Renews automatically."
     },
     "quarterly": {
       "label": "Quarterly",
-      "price": "€14.99",
-      "pricePerMonth": "€5.00 / month",
-      "period": "Billed every 3 months",
-      "badge": "BEST VALUE",
       "per": "/ 3 months",
       "billing": "{{price}} billed every 3 months. Renews automatically."
     },
     "monthly": {
       "label": "Monthly",
-      "price": "€9.99",
-      "pricePerMonth": "€9.99 / month",
-      "period": "Billed monthly",
       "per": "/ month",
       "billing": "{{price}} billed every month. Renews automatically."
     },
     "lifetime": {
       "label": "Lifetime",
-      "pricePerMonth": "One-time payment",
       "per": "",
       "billing": "{{price}}, one-time payment."
     }
@@ -71,5 +60,7 @@
   "testAccessButton": "Continue without a subscription (test)",
   "ctaTrialButton": "Start my {{count}}-day free trial",
   "trialBadge": "{{count}} days free",
-  "trialBilling": "{{count}} days free, then {{price}} {{per}}. Cancel anytime."
+  "trialBilling": "{{count}} days free, then {{price}} {{per}}. Cancel anytime.",
+  "bestBadge": "BEST PRICE",
+  "perMonth": "that's {{price}} / mo"
 }

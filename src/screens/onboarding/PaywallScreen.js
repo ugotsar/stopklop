@@ -5,6 +5,7 @@ import {
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { colors, spacing, font, radius } from '../../theme';
+import { formatCurrency } from '../../utils/currency';
 import Klop from '../../components/Klop';
 import { IconCible, IconLoupe, IconPieces } from '../../components/PaywallIcons';
 import {
@@ -37,10 +38,30 @@ function planKey(pkg) {
   return 'monthly';
 }
 
+// Nombre de mois couverts par une formule, pour ramener tous les prix
+// au mois et rendre la comparaison évidente.
+function moisCouverts(pkg) {
+  switch (pkg?.packageType) {
+    case 'ANNUAL': return 12;
+    case 'SIX_MONTH': return 6;
+    case 'THREE_MONTH': return 3;
+    case 'TWO_MONTH': return 2;
+    case 'MONTHLY': return 1;
+    case 'WEEKLY': return 1 / 4.345;
+    default: return 0; // « à vie » : aucun prix mensuel à afficher
+  }
+}
+
+function prixParMois(pkg) {
+  const mois = moisCouverts(pkg);
+  const prix = Number(pkg?.product?.price);
+  return mois > 0 && Number.isFinite(prix) ? prix / mois : null;
+}
+
 export default function PaywallScreen({ navigation, route }) {
   // Ouvert depuis l'accueil pour revoir l'écran : la croix referme l'aperçu.
   const apercu = route?.params?.apercu === true;
-  const { t } = useTranslation('paywallOnboarding');
+  const { t, i18n } = useTranslation('paywallOnboarding');
   const { subscription, refreshSubscription, allowTestAccess } = useUser();
   const [offering, setOffering] = useState(null);
   const [selectedPlan, setSelectedPlan] = useState(null);
@@ -116,6 +137,14 @@ export default function PaywallScreen({ navigation, route }) {
   const unavailable = !subscription.available || loadError || !packages.length;
   const selectedKey = selectedPlan ? planKey(selectedPlan) : null;
   const selectedTrial = trialDays(selectedPlan);
+
+  // La formule la moins chère au mois porte le repère « meilleure offre ».
+  // Calculé sur les vrais prix du store : si les tarifs changent, le repère suit.
+  const meilleur = packages.reduce((best, pkg) => {
+    const pm = prixParMois(pkg);
+    if (pm == null) return best;
+    return best == null || pm < prixParMois(best) ? pkg : best;
+  }, null);
   // ⚠️ TEMPORAIRE : visible seulement tant qu'aucun abonnement n'est proposé
   // par le store. Disparaît tout seul dès que les abonnements fonctionnent.
   const showTestAccess = !apercu && !loading && (unavailable || isPaywallBypassEnabled());
@@ -176,6 +205,8 @@ export default function PaywallScreen({ navigation, route }) {
               const key = planKey(pkg);
               const selected = selectedPlan?.identifier === pkg.identifier;
               const days = trialDays(pkg);
+              const parMois = prixParMois(pkg);
+              const estMeilleur = meilleur?.identifier === pkg.identifier && packages.length > 1;
               return (
                 <TouchableOpacity
                   key={pkg.identifier}
@@ -187,13 +218,29 @@ export default function PaywallScreen({ navigation, route }) {
                     {selected && <View style={s.radioDot} />}
                   </View>
                   <View style={s.planTexts}>
-                    <Text style={s.planLabel}>{t(`plans.${key}.label`)}</Text>
+                    <View style={s.planLabelRow}>
+                      <Text style={s.planLabel}>{t(`plans.${key}.label`)}</Text>
+                      {estMeilleur && (
+                        <View style={s.planBadge}>
+                          <Text style={s.planBadgeText} numberOfLines={1}>{t('bestBadge')}</Text>
+                        </View>
+                      )}
+                    </View>
                     {days > 0 && <Text style={s.planTrial}>{t('trialBadge', { count: days })}</Text>}
                   </View>
-                  <Text style={s.planPrice}>
-                    {pkg.product.priceString}
-                    <Text style={s.planPer}> {t(`plans.${key}.per`)}</Text>
-                  </Text>
+                  <View style={s.planRight}>
+                    <Text style={s.planPrice}>
+                      {pkg.product.priceString}
+                      <Text style={s.planPer}> {t(`plans.${key}.per`)}</Text>
+                    </Text>
+                    {parMois != null && (
+                      <Text style={[s.planPerMonth, estMeilleur && s.planPerMonthBest]}>
+                        {t('perMonth', {
+                          price: formatCurrency(parMois, pkg.product.currencyCode, i18n.language),
+                        })}
+                      </Text>
+                    )}
+                  </View>
                 </TouchableOpacity>
               );
             })}
@@ -291,10 +338,16 @@ const s = StyleSheet.create({
   radioSelected: { borderColor: '#1E8E4E' },
   radioDot: { width: 10, height: 10, borderRadius: 5, backgroundColor: '#1E8E4E' },
   planTexts: { flex: 1 },
+  planLabelRow: { flexDirection: 'row', alignItems: 'center', gap: 7 },
   planLabel: { fontSize: 16, fontWeight: '800', color: '#0A2A1C' },
+  planBadge: { backgroundColor: '#1E8E4E', borderRadius: 7, paddingHorizontal: 7, paddingVertical: 3 },
+  planBadgeText: { color: colors.white, fontSize: 9, fontWeight: '900', letterSpacing: 0.3 },
   planTrial: { fontSize: 12.5, fontWeight: '700', color: '#1E8E4E', marginTop: 2 },
+  planRight: { alignItems: 'flex-end' },
   planPrice: { fontSize: 16, fontWeight: '800', color: '#0A2A1C' },
   planPer: { fontSize: 14, fontWeight: '500', color: '#6B7C72' },
+  planPerMonth: { fontSize: 12, color: '#8A938C', marginTop: 3 },
+  planPerMonthBest: { color: '#1E8E4E', fontWeight: '700' },
 
   cta: { marginTop: 18, borderRadius: 26, backgroundColor: DEEP, paddingVertical: 17, alignItems: 'center' },
   ctaDisabled: { opacity: 0.5 },
