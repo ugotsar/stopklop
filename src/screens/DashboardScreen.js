@@ -681,7 +681,7 @@ export default function DashboardScreen({ navigation }) {
                   styles.arcCurrent,
                   cigarettesToday > objectifJour && { color: colors.danger },
                   cigarettesToday === objectifJour && cigarettesToday > 0 && { color: colors.warning },
-                ]}>{cigarettesToday}</Text>
+                ]} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7}>{cigarettesToday}</Text>
                 <Text style={styles.arcTotal}>/{objectifJour}</Text>
               </View>
             </View>
@@ -931,8 +931,8 @@ const styles = StyleSheet.create({
   todayContent: { flexDirection: 'row', alignItems: 'center', marginBottom: spacing.md, gap: 6 },
   arcContainer: { position: 'relative', width: 84, height: 84, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
   arcInner: { position: 'absolute', flexDirection: 'row', alignItems: 'baseline' },
-  arcCurrent: { fontSize: 34, fontWeight: '900', color: colors.primary, lineHeight: 36 },
-  arcTotal:   { fontSize: 15, fontWeight: '600', color: colors.gray, marginLeft: 2 },
+  arcCurrent: { fontSize: 28, fontWeight: '900', color: colors.primary, lineHeight: 30 },
+  arcTotal:   { fontSize: 14, fontWeight: '600', color: colors.gray, marginLeft: 2 },
   // minWidth: 0 est indispensable sur React Native Web : sans lui, un enfant flex:1
   // dans une row garde sa largeur de contenu et force un retour à la ligne lettre
   // par lettre au lieu de rester sur la largeur réellement disponible.
