@@ -15,9 +15,13 @@ struct Snapshot: Codable {
   struct Labels: Codable {
     let today: String; let smoked: String; let cigarettes: String
     let saved: String; let life: String; let thisWeek: String; let goal: String
+    // Ajoutés après coup : optionnels pour qu'un ancien instantané reste lisible.
+    let smokedToday: String?; let yesterday: String?
+    let limit: String?; let perDay: String?; let cigShort: String?
   }
   let dateKey: String
   let cigarettesToday: Int
+  let cigarettesYesterday: Int?
   let objectifJour: Int
   let todayLogged: Bool
   let savedToday: String
@@ -28,7 +32,7 @@ struct Snapshot: Codable {
   let deepLink: String
 
   static let placeholder = Snapshot(
-    dateKey: "", cigarettesToday: 3, objectifJour: 4, todayLogged: true,
+    dateKey: "", cigarettesToday: 3, cigarettesYesterday: 5, objectifJour: 4, todayLogged: true,
     savedToday: "+7,56 €", lifeToday: "+1 h", savedWeek: "+49,77 €",
     week: [
       Day(label: "J", value: 5, goal: 4), Day(label: "V", value: 4, goal: 4),
@@ -37,17 +41,21 @@ struct Snapshot: Codable {
       Day(label: "Auj.", value: 3, goal: 4),
     ],
     labels: Labels(today: "Aujourd'hui", smoked: "J'ai fumé", cigarettes: "cigarettes",
-                   saved: "économisés", life: "de vie", thisWeek: "Cette semaine", goal: "obj. 4"),
+                   saved: "économisés", life: "de vie", thisWeek: "Cette semaine", goal: "obj. 4",
+                   smokedToday: "fumées aujourd'hui", yesterday: "Hier",
+                   limit: "Limite", perDay: "/ jour", cigShort: "cig."),
     deepLink: "stopklop://jaifume")
 
   // Aucun instantané écrit par l'app (compte tout juste créé, ou app jamais
   // ouverte depuis l'installation) : on n'invente rien, tout reste vide.
   static let empty = Snapshot(
-    dateKey: "", cigarettesToday: 0, objectifJour: 0, todayLogged: false,
+    dateKey: "", cigarettesToday: 0, cigarettesYesterday: nil, objectifJour: 0, todayLogged: false,
     savedToday: "—", lifeToday: "—", savedWeek: "—",
     week: (0..<7).map { _ in Day(label: " ", value: nil, goal: 0) },
     labels: Labels(today: "Aujourd'hui", smoked: "J'ai fumé", cigarettes: "cigarettes",
-                   saved: "économisés", life: "de vie", thisWeek: "Cette semaine", goal: ""),
+                   saved: "économisés", life: "de vie", thisWeek: "Cette semaine", goal: "",
+                   smokedToday: "fumées aujourd'hui", yesterday: "Hier",
+                   limit: "Limite", perDay: "/ jour", cigShort: "cig."),
     deepLink: "stopklop://jaifume")
 
   // Vrai tant que l'app n'a jamais écrit : le widget affiche alors une invite.
@@ -118,13 +126,6 @@ func rounded(_ size: CGFloat, _ weight: Font.Weight = .heavy) -> Font {
   .system(size: size, weight: weight, design: .rounded)
 }
 
-func barColor(_ day: Snapshot.Day) -> Color {
-  guard let value = day.value else { return .skTrack }
-  if value > day.goal { return .skRed }
-  if value == day.goal && value > 0 { return .skOrange }
-  return .skGreen
-}
-
 // MARK: - Composants
 
 struct DayTile: View {
@@ -135,7 +136,7 @@ struct DayTile: View {
     VStack(spacing: 2) {
       Image(image).resizable().scaledToFit().frame(width: 34, height: 34)
       Text(value).font(rounded(16)).foregroundColor(.skDeep).lineLimit(1).minimumScaleFactor(0.7)
-      Text(label).font(rounded(10, .bold)).foregroundColor(.skMuted).lineLimit(1)
+      Text(label).font(rounded(10, .bold)).foregroundColor(.skMuted).lineLimit(1).minimumScaleFactor(0.75)
     }
     .frame(maxWidth: .infinity)
     .padding(.vertical, 8)
@@ -144,52 +145,64 @@ struct DayTile: View {
   }
 }
 
-struct WeekChart: View {
+// Une jauge par jour : le cadre clair vaut la limite du jour, le vert ce qui a
+// été fumé, et le nombre est écrit au-dessus. Une barre de 2 sur 12 restait
+// invisible ; ici le remplissage et le chiffre se lisent d'un coup d'œil.
+struct WeekGauges: View {
   let week: [Snapshot.Day]
-  let goal: Int
-  let goalLabel: String
 
   var body: some View {
-    GeometryReader { geo in
-      let labelH: CGFloat = 14
-      let valueH: CGFloat = 13
-      let chartH = max(geo.size.height - labelH - valueH, 20)
-      let top = CGFloat(max(week.compactMap { $0.value }.max() ?? 0, goal, 1)) * 1.15
-      let goalY = valueH + chartH - chartH * CGFloat(goal) / top
+    HStack(spacing: 6) {
+      ForEach(Array(week.enumerated()), id: \.offset) { index, day in
+        let marque = index >= week.count - 2   // hier et aujourd'hui
+        VStack(spacing: 4) {
+          Text(day.value.map(String.init) ?? "–")
+            .font(rounded(12))
+            .foregroundColor(day.value == nil ? Color(hex: 0xC4C9C2) : .skDeep)
 
-      ZStack(alignment: .topLeading) {
-        HStack(alignment: .bottom, spacing: 6) {
-          ForEach(Array(week.enumerated()), id: \.offset) { index, day in
-            let isToday = index == week.count - 1
-            VStack(spacing: 2) {
-              Text(day.value.map(String.init) ?? " ")
-                .font(rounded(10)).foregroundColor(.skMuted).frame(height: valueH)
-              Spacer(minLength: 0)
-              RoundedRectangle(cornerRadius: 5, style: .continuous)
-                .fill(barColor(day))
-                .frame(maxWidth: 22)
-                .frame(height: day.value.map { max(chartH * CGFloat($0) / top, 3) } ?? 3)
-              Text(day.label)
-                .font(rounded(10)).foregroundColor(isToday ? .skInk : .skMuted)
-                .frame(height: labelH)
+          ZStack(alignment: .bottom) {
+            RoundedRectangle(cornerRadius: 9, style: .continuous)
+              .fill(day.value == nil ? Color(hex: 0xF7F5EC) : Color(hex: 0xF1EDE0))
+              .frame(width: 28, height: 62)
+            if let valeur = day.value {
+              // Objectif à 0 (arrêt complet) : la moindre cigarette remplit tout.
+              let part = day.goal > 0 ? min(CGFloat(valeur) / CGFloat(day.goal), 1) : (valeur > 0 ? 1 : 0)
+              RoundedRectangle(cornerRadius: 9, style: .continuous)
+                .fill(valeur > day.goal ? Color.skRed : Color.skGreen)
+                .frame(width: 28, height: valeur > 0 ? max(8, 62 * part) : 4)
             }
-            .frame(maxWidth: .infinity)
           }
-        }
+          .frame(width: 28, height: 62)
 
-        Path { p in
-          p.move(to: CGPoint(x: 0, y: goalY))
-          p.addLine(to: CGPoint(x: geo.size.width, y: goalY))
+          Text(day.label)
+            .font(rounded(10.5, marque ? .heavy : .bold))
+            .foregroundColor(marque ? .skInk : .skMuted)
+            .lineLimit(1).minimumScaleFactor(0.8)
         }
-        .stroke(Color.skGreen.opacity(0.5), style: StrokeStyle(lineWidth: 1.5, dash: [4, 3]))
-
-        Text(goalLabel)
-          .font(rounded(9)).foregroundColor(.skGreen)
-          .padding(.horizontal, 4)
-          .background(Color.skSurface)
-          .position(x: geo.size.width - 22, y: max(goalY - 7, 6))
+        .frame(maxWidth: .infinity)
       }
     }
+  }
+}
+
+// Hier et la limite du jour, ecrits noir sur blanc sous les trois pastilles.
+struct PairBox: View {
+  let label: String
+  let value: String
+  let unit: String
+  let warm: Bool
+
+  var body: some View {
+    HStack(alignment: .firstTextBaseline, spacing: 4) {
+      Text(label).font(rounded(11.5, .bold)).foregroundColor(.skMuted).lineLimit(1)
+      Spacer(minLength: 2)
+      Text(value).font(rounded(19)).foregroundColor(warm ? Color(hex: 0xB07800) : .skDeep)
+      Text(unit).font(rounded(10.5, .bold)).foregroundColor(Color(hex: 0x8A938C))
+    }
+    .padding(.horizontal, 12)
+    .padding(.vertical, 8)
+    .background(RoundedRectangle(cornerRadius: 14, style: .continuous)
+      .fill(warm ? Color(hex: 0xFFF6E3) : Color(hex: 0xF4F2E9)))
   }
 }
 
@@ -217,9 +230,22 @@ struct BilanView: View {
       HStack(spacing: 8) {
         DayTile(image: "cible",
                 value: stale ? "—" : "\(snapshot.cigarettesToday)/\(snapshot.objectifJour)",
-                label: snapshot.labels.cigarettes)
+                label: snapshot.labels.smokedToday ?? snapshot.labels.cigarettes)
         DayTile(image: "portefeuille", value: stale ? "—" : snapshot.savedToday, label: snapshot.labels.saved)
         DayTile(image: "sablier", value: stale ? "—" : snapshot.lifeToday, label: snapshot.labels.life)
+      }
+
+      if !snapshot.isEmpty {
+        HStack(spacing: 8) {
+          PairBox(label: snapshot.labels.yesterday ?? "Hier",
+                  value: stale ? "—" : (snapshot.cigarettesYesterday.map(String.init) ?? "–"),
+                  unit: snapshot.labels.cigShort ?? "",
+                  warm: false)
+          PairBox(label: snapshot.labels.limit ?? "Limite",
+                  value: stale ? "—" : "\(snapshot.objectifJour)",
+                  unit: snapshot.labels.perDay ?? "",
+                  warm: true)
+        }
       }
 
       HStack(spacing: 8) {
@@ -239,7 +265,7 @@ struct BilanView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
       } else {
-        WeekChart(week: snapshot.week, goal: snapshot.objectifJour, goalLabel: snapshot.labels.goal)
+        WeekGauges(week: snapshot.week)
       }
     }
   }

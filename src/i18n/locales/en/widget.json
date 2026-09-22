@@ -7,5 +7,11 @@
   "thisWeek": "This week",
   "todayShort": "Today",
   "goal": "goal {{count}}",
-  "openApp": "Open Stopklop to show your summary."
+  "openApp": "Open Stopklop to show your summary.",
+  "yesterdayShort": "Yest.",
+  "smokedToday": "smoked today",
+  "yesterday": "Yesterday",
+  "limit": "Limit",
+  "perDay": "/ day",
+  "cigShort": "cig."
 }

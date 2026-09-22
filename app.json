@@ -17,7 +17,7 @@
       "appleTeamId": "2CK95AV86W",
       "usesAppleSignIn": true,
       "supportsTablet": false,
-      "buildNumber": "9",
+      "buildNumber": "10",
       "infoPlist": {
         "NSUserNotificationUsageDescription": "Stopklop t'envoie des rappels pour noter tes cigarettes.",
         "ITSAppUsesNonExemptEncryption": false
@@ -30,7 +30,7 @@
     },
     "android": {
       "package": "com.stopklop.app",
-      "versionCode": 9,
+      "versionCode": 10,
       "adaptiveIcon": {
         "backgroundColor": "#DDEBD6",
         "foregroundImage": "./assets/android-icon-foreground.png",

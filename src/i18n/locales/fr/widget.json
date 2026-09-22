@@ -7,5 +7,11 @@
   "thisWeek": "Cette semaine",
   "todayShort": "Auj.",
   "goal": "obj. {{count}}",
-  "openApp": "Ouvre Stopklop pour afficher ton bilan."
+  "openApp": "Ouvre Stopklop pour afficher ton bilan.",
+  "yesterdayShort": "Hier",
+  "smokedToday": "fumées aujourd'hui",
+  "yesterday": "Hier",
+  "limit": "Limite",
+  "perDay": "/ jour",
+  "cigShort": "cig."
 }

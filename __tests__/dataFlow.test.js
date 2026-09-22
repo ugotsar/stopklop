@@ -184,6 +184,16 @@ describe('« J’ai fumé » : saisie de 6 cigarettes', () => {
     expect(barTone(6, 8)).toBe('under');
   });
 
+  test('le widget nomme hier et annonce la limite', () => {
+    const veille = localDateKey(addLocalDays(TODAY, -1));
+    const p = applyDailyConsumption(smoke(onboard(), 6), { dateKey: veille, cigarettes: 9 }, { todayKey: TODAY_KEY }).profile;
+    const w = buildWidgetSnapshot(computeStats(p), p);
+    expect(w.cigarettesYesterday).toBe(9);
+    expect(w.week[5].label).toBe('Hier');
+    expect(w.labels.limit).toBe('Limite');
+    expect(w.labels.smokedToday).toBe("fumées aujourd'hui");
+  });
+
   test('rouvrir « J’ai fumé » repart du total déjà saisi', () => {
     // L'écran initialise son compteur ainsi (JaiFumeScreen)
     const initial = profile.lastSavedDate === localDateKey() ? profile.cigarettesToday : 0;

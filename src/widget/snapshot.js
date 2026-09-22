@@ -41,8 +41,14 @@ export function buildWidgetSnapshot(stats, profile) {
     savedToday: stats.jourRenseigne ? signedMoney(stats.argentEcoAujourdhui, currency, locale) : '—',
     lifeToday: stats.jourRenseigne ? signedLife(stats.vieGagneeMinAujourdhui) : '—',
     savedWeek: signedMoney(stats.argentEcoSemaine, currency, locale),
+    // Hier est nomme comme aujourd'hui : ce sont les deux jours qu'on regarde.
+    cigarettesYesterday: stats.weekRenseignes[stats.weekLabels.length - 2]
+      ? stats.weekData[stats.weekLabels.length - 2]
+      : null,
     week: stats.weekLabels.map((label, i) => ({
-      label: i === stats.weekLabels.length - 1 ? t('todayShort') : label.charAt(0).toUpperCase(),
+      label: i === stats.weekLabels.length - 1 ? t('todayShort')
+        : i === stats.weekLabels.length - 2 ? t('yesterdayShort')
+        : label.charAt(0).toUpperCase(),
       value: stats.weekRenseignes[i] ? stats.weekData[i] : null,
       goal: stats.weekObjectifs[i],
     })),
@@ -54,6 +60,11 @@ export function buildWidgetSnapshot(stats, profile) {
       life: t('life'),
       thisWeek: t('thisWeek'),
       goal: t('goal', { count: stats.objectifJour }),
+      smokedToday: t('smokedToday'),
+      yesterday: t('yesterday'),
+      limit: t('limit'),
+      perDay: t('perDay'),
+      cigShort: t('cigShort'),
     },
     deepLink: WIDGET_DEEP_LINK,
   };
