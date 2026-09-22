@@ -31,8 +31,15 @@ export function computeStats(profile) {
   // Les anciens comptes pouvaient hériter du 10 par défaut sans que la
   // personne l'ait réellement renseigné. On ne le présente pas comme une
   // référence certaine : l'onboarding moderne pose explicitement ce flag.
+  // Les comptes créés avant l'ajout du marqueur n'ont ni consoAvantDeclaree ni
+  // consoDeclaree, mais ont bien une consommation saisie dans consoAvantApp :
+  // un onboarding terminé avec une valeur réelle vaut déclaration.
+  const consoAvantBrute = Number(profile.consoAvantApp);
+  const baselineHeritee = profile.onboardingComplete === true
+    && Number.isFinite(consoAvantBrute) && consoAvantBrute > 0;
   const baselineDeclared = consoAvantDeclaree === true
-    || (consoDeclaree !== null && consoDeclaree !== undefined && Number.isFinite(Number(consoDeclaree)));
+    || (consoDeclaree !== null && consoDeclaree !== undefined && Number.isFinite(Number(consoDeclaree)))
+    || baselineHeritee;
   let objectifJour, consoAvant, consoEstimee = !baselineDeclared;
   if (objectifCigarettes != null) {
     objectifJour = objectifCigarettes;

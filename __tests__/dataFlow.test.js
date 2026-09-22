@@ -121,6 +121,27 @@ describe('Profil → statistiques, avant toute saisie', () => {
   test('une conso déclarée en semaine se retrouve en référence quotidienne', () => {
     expect(computeStats(onboard({ consoDeclaree: 70, consoUnite: 'semaine' })).consoAvant).toBe(10);
   });
+
+  test('un compte ancien garde sa consommation : elle n’est pas dite estimée', () => {
+    // Profil d'avant le marqueur consoAvantDeclaree : la valeur saisie existe.
+    const ancien = { ...onboard() };
+    delete ancien.consoAvantDeclaree;
+    delete ancien.consoDeclaree;
+    ancien.consoAvantApp = 15;
+    const s = computeStats(ancien);
+    expect(s.consoAvant).toBe(15);
+    expect(s.consoEstimee).toBe(false);
+  });
+
+  test('sans aucune consommation saisie, la référence est annoncée comme estimée', () => {
+    const sansRien = { ...onboard() };
+    delete sansRien.consoAvantDeclaree;
+    delete sansRien.consoDeclaree;
+    delete sansRien.consoAvantApp;
+    sansRien.onboardingComplete = false;
+    const s = computeStats(sansRien);
+    expect(s.consoEstimee).toBe(true);
+  });
 });
 
 describe('« J’ai fumé » : saisie de 6 cigarettes', () => {

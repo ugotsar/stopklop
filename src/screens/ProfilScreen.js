@@ -735,6 +735,8 @@ export default function ProfilScreen({ navigation }) {
         initialNiveau={profile?.niveauMotivation}
         onSave={changes => updateProfile(changes)}
       />
+      {/* Saisir sa conso d'avant vaut déclaration : sans ce marqueur, les écrans
+          continueraient d'annoncer une référence « estimée ». */}
       <EditModal
         visible={modalConso}
         onClose={() => setModalConso(false)}
@@ -742,7 +744,7 @@ export default function ProfilScreen({ navigation }) {
         currentValue={consoAvant}
         unit={t('editModal.unitCigPerDay')}
         step={1}
-        onSave={v => updateProfile({ consoAvantApp: Math.round(v) })}
+        onSave={v => updateProfile({ consoAvantApp: Math.round(v), consoAvantDeclaree: true })}
       />
       <LanguageModal
         visible={modalLang}
