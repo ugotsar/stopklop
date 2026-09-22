@@ -687,6 +687,15 @@ export default function StatistiquesScreen() {
     : null;
   const hasPeriodData = p.nbEnregistres > 0;
 
+  // Carte « Objectif » : la valeur comparée à l'objectif, et sa couleur.
+  // Même code couleur que l'accueil et le widget — vert en dessous, orange
+  // pile dessus, rouge au-dessus — sinon le nombre contredit le message.
+  const valeurObjectif = activeTab === 'jour' ? p.sum : p.sum / p.n;
+  const couleurObjectif = !hasPeriodData ? colors.gray
+    : valeurObjectif > objectifJour ? colors.danger
+    : valeurObjectif === objectifJour && valeurObjectif > 0 ? colors.warning
+    : colors.primaryDeep;
+
   // Navigation des bornes de la période libre
   const periodeLabel = TAB_LABELS[activeTab];
   const fmtMoney = n => formatCurrency(n, currency, i18n.language);
@@ -977,12 +986,16 @@ export default function StatistiquesScreen() {
           </View>
           <Text style={styles.goalSub}>{t('goalCard.stayUnder', { count: objectifJour })}</Text>
           <View style={styles.goalRow}>
-            <Text style={styles.goalFraction}>
+            {/* Le nombre prend la couleur du verdict : vert en dessous de
+                l'objectif, orange pile dessus, rouge au-dessus. Il restait
+                vert alors que le message disait « Objectif dépassé ». */}
+            <Text style={[styles.goalFraction, { color: couleurObjectif }]}>
               {hasPeriodData ? (activeTab === 'jour' ? p.sum : (p.sum / p.n).toFixed(1)) : '—'}
               <Text style={styles.goalFractionTotal}> / {objectifJour}</Text>
             </Text>
-            <Text style={[styles.goalMsg, { color: !hasPeriodData ? colors.gray : (activeTab === 'jour' ? p.sum : p.sum / p.n) <= objectifJour ? colors.primary : colors.danger }]}>
-              {!hasPeriodData ? t('goalCard.noData') : (activeTab === 'jour' ? p.sum : p.sum / p.n) <= objectifJour ? t('goalCard.onTrack') : t('goalCard.overGoal')}
+            <Text style={[styles.goalMsg, { color: couleurObjectif }]}>
+              {!hasPeriodData ? t('goalCard.noData')
+                : valeurObjectif <= objectifJour ? t('goalCard.onTrack') : t('goalCard.overGoal')}
             </Text>
           </View>
         </View>
