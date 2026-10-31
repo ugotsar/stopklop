@@ -127,9 +127,6 @@
     "dropBefore": "pro Tag vorher",
     "dropNow": "pro Tag jetzt",
     "dropDelta": "Also {{count}} Zigaretten weniger pro Tag",
-    "backToOnboarding": "Zurück zum Onboarding (Test)",
-    "previewOnboarding": "Onboarding ansehen (Vorschau)",
-    "previewPaywall": "Abo-Bildschirm ansehen (Vorschau)",
     "weekInGoal_one": "{{count}} von {{total}} Tagen im Ziel",
     "weekInGoal_other": "{{count}} von {{total}} Tagen im Ziel",
     "colSmoked": "geraucht",
@@ -138,6 +135,17 @@
     "colLifeGained": "Leben gewonnen",
     "colLifeLost": "Leben verloren",
     "weekDaysNote_one": "Diese Woche: {{count}} erfasster Tag, verglichen mit deiner früheren Menge.",
-    "weekDaysNote_other": "Diese Woche: {{count}} erfasste Tage, verglichen mit deiner früheren Menge."
+    "weekDaysNote_other": "Diese Woche: {{count}} erfasste Tage, verglichen mit deiner früheren Menge.",
+    "cigMore_one": "Zigarette mehr",
+    "cigMore_other": "Zigaretten mehr",
+    "cigLess_one": "Zigarette weniger",
+    "cigLess_other": "Zigaretten weniger",
+    "cigSame_one": "Zigarette Unterschied",
+    "cigSame_other": "Zigaretten Unterschied",
+    "moneyMore": "mehr ausgegeben",
+    "moneyLess": "gespart",
+    "moneySame": "Unterschied",
+    "lifeSame": "geschätzter Unterschied",
+    "comparisonBaseline": "Im Vergleich zu deinen {{count}} Zigaretten pro Tag vor Stopklop."
   }
 }

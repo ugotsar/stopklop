@@ -127,9 +127,6 @@
     "dropBefore": "a day before",
     "dropNow": "a day now",
     "dropDelta": "That is {{count}} fewer cigarettes every day",
-    "backToOnboarding": "Back to onboarding (test)",
-    "previewOnboarding": "View onboarding (preview)",
-    "previewPaywall": "View subscription screen (preview)",
     "weekInGoal_one": "{{count}} day out of {{total}} within goal",
     "weekInGoal_other": "{{count}} days out of {{total}} within goal",
     "colSmoked": "smoked",
@@ -138,6 +135,17 @@
     "colLifeGained": "of life gained",
     "colLifeLost": "of life lost",
     "weekDaysNote_one": "This week: {{count}} logged day, compared with your previous habit.",
-    "weekDaysNote_other": "This week: {{count}} logged days, compared with your previous habit."
+    "weekDaysNote_other": "This week: {{count}} logged days, compared with your previous habit.",
+    "cigMore_one": "extra cigarette",
+    "cigMore_other": "extra cigarettes",
+    "cigLess_one": "fewer cigarette",
+    "cigLess_other": "fewer cigarettes",
+    "cigSame_one": "cigarette difference",
+    "cigSame_other": "cigarettes difference",
+    "moneyMore": "extra spent",
+    "moneyLess": "saved",
+    "moneySame": "difference",
+    "lifeSame": "estimated difference",
+    "comparisonBaseline": "Compared with your {{count}} cigarettes per day before Stopklop."
   }
 }

@@ -8,7 +8,6 @@ import { Image } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useTourScroll, useTourTarget } from '../tour/TourContext';
 import { validateDayPayload } from '../utils/dailyConsumption';
-import { widgetDebugStatus } from '../widget/syncWidget';
 
 import { UI } from '../assets/uiKit';
 const PICTOS = {
@@ -303,7 +302,7 @@ function ModalEnvie({ visible, onSave, onClose }) {
         style={mp.overlay}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
-        <View style={mp.card}>
+        <View style={[mp.card, step === 'note' && env.noteCard]}>
 
           {step === 'pick' && (
             <>
@@ -334,16 +333,17 @@ function ModalEnvie({ visible, onSave, onClose }) {
 
           {step === 'note' && (
             <>
-              <View style={[mp.banner, { backgroundColor: '#B45309' }]}>
+              <View style={[mp.banner, env.noteBanner]}>
                 <Text style={mp.emoji}>✍️</Text>
                 <View style={{ flex: 1 }}>
                   <Text style={mp.titre}>{t('envieModal.noteTitle')}</Text>
                   <Text style={mp.sous}>{t('envieModal.noteSubtitle')}</Text>
                 </View>
               </View>
-              <View style={mp.body}>
+              <View style={env.noteBody}>
                 <TextInput
                   style={env.noteInput}
+                  accessibilityLabel={t('envieModal.noteTitle')}
                   value={note}
                   onChangeText={setNote}
                   placeholder={t('envieModal.notePlaceholder')}
@@ -352,7 +352,7 @@ function ModalEnvie({ visible, onSave, onClose }) {
                   autoFocus
                   maxLength={200}
                 />
-                <TouchableOpacity style={mp.btn} onPress={() => setStep('result')}>
+                <TouchableOpacity style={[mp.btn, env.noteButton]} accessibilityRole="button" onPress={() => setStep('result')}>
                   <Text style={mp.btnText}>{t('envieModal.continueButton')}</Text>
                 </TouchableOpacity>
               </View>
@@ -427,11 +427,20 @@ const env = StyleSheet.create({
   // « J'ai fumé » reste accessible mais ne se bat plus avec le bouton principal.
   lienFume:     { marginTop: 10, alignItems: 'center', paddingVertical: 4 },
   lienFumeText: { color: '#9AA79F', fontSize: 12.5, fontWeight: '700', textDecorationLine: 'underline' },
-  noteInput: {
-    borderWidth: 1, borderColor: colors.grayBorder, borderRadius: 12,
-    padding: 12, minHeight: 90, fontSize: 14, color: colors.black,
-    textAlignVertical: 'top', marginBottom: 14,
+  // Proposition 5 : les trois blocs partagent la même largeur intérieure.
+  noteCard: { padding: 20, alignItems: 'stretch', maxWidth: 390 },
+  noteBanner: {
+    width: '100%', backgroundColor: '#B45309', borderRadius: 20,
+    paddingVertical: 16, paddingHorizontal: 16,
   },
+  noteBody: { width: '100%', marginTop: 12 },
+  noteInput: {
+    width: '100%', backgroundColor: colors.surface,
+    borderWidth: 1, borderColor: colors.grayBorder, borderRadius: 16,
+    padding: 14, height: 96, fontSize: 16, lineHeight: 22, color: colors.black,
+    textAlignVertical: 'top', marginBottom: 12,
+  },
+  noteButton: { borderRadius: 18, minHeight: 48, paddingVertical: 14 },
 });
 
 // ── Arc circulaire de progression ───────────────────────────────────────────
@@ -483,7 +492,7 @@ export default function DashboardScreen({ navigation }) {
   const smokedLinkRef = useTourTarget('home.smokedLink');
   const {
     profile, stats, resetProfile, updateProfile,
-    saveDailyConsumption, recordCraving, testAccess,
+    saveDailyConsumption, recordCraving,
   } = useUser();
   const [, setTick]          = useState(0);
   const [quoteIdx]           = useState(() => Math.floor(Math.random() * MOTIVATIONS_COUNT));
@@ -608,12 +617,14 @@ export default function DashboardScreen({ navigation }) {
     const mieux  = ecart <= 0;
     const signe  = ecart > 0 ? '+' : ecart < 0 ? '−' : '';
     return {
-      fumees, avant, mieux,
+      fumees, avant, mieux, ecart,
+      difference: fmtNb(Math.abs(ecart)),
+      differenceArgent: fmtMoney(Math.abs(ecart) * prixCigJour),
       ecartCig: `${signe}${fmtNb(Math.abs(ecart))}`,
       argent: fumees * prixCigJour,
       argentAvant: avant * prixCigJour,
       ecartArgent: `${signe}${fmtMoney(Math.abs(ecart) * prixCigJour)}`,
-      vie: `${mieux ? '+' : '−'}${fmtVieMin(ecart * 5)}`,
+      vie: fmtVieMin(ecart * 5),
     };
   };
   const comparJour    = comparer(cigarettesToday, 1);
@@ -810,55 +821,42 @@ export default function DashboardScreen({ navigation }) {
 
         {/* ── Jour et semaine : les mêmes trois chiffres des deux côtés ── */}
         <View style={styles.colsRow}>
-          <View style={styles.colCard}>
-            <Text style={styles.cardLabel}>{t('home2.todayTitle')}</Text>
-            <ColStat
-              img={UI.cigarette_fumee}
-              valeur={jourRenseigne ? fmtNb(comparJour.fumees) : '\u2014'}
-              label={t('home2.colSmoked')}
-              reference={jourRenseigne ? t('home2.colBefore', { value: fmtNb(comparJour.avant) }) : null}
-              ecart={jourRenseigne ? comparJour.ecartCig : null}
-              ecartBon={comparJour.mieux}
-            />
-            <ColStat
-              img={UI.portefeuille_euros_feuilles}
-              valeur={jourRenseigne ? fmtMoney(comparJour.argent) : '\u2014'}
-              label={t('home2.colSpent')}
-              reference={jourRenseigne ? t('home2.colBefore', { value: fmtMoney(comparJour.argentAvant) }) : null}
-              ecart={jourRenseigne ? comparJour.ecartArgent : null}
-              ecartBon={comparJour.mieux}
-            />
-            <ColStat
-              img={UI.chrono_vie_preservee}
-              valeur={jourRenseigne ? comparJour.vie : '\u2014'}
-              label={comparJour.mieux ? t('home2.colLifeGained') : t('home2.colLifeLost')}
-            />
-          </View>
-          <View style={[styles.colCard, styles.colCardDark]}>
-            <Text style={[styles.cardLabel, styles.cardLabelDark]}>{t('home2.weekTitle')}</Text>
-            <ColStat dark
-              img={UI.cigarette_fumee}
-              valeur={weekJours > 0 ? fmtNb(comparSemaine.fumees) : '—'}
-              label={t('home2.colSmoked')}
-              reference={weekJours > 0 ? t('home2.colBefore', { value: fmtNb(comparSemaine.avant) }) : null}
-              ecart={weekJours > 0 ? comparSemaine.ecartCig : null}
-              ecartBon={comparSemaine.mieux}
-            />
-            <ColStat dark
-              img={UI.portefeuille_euros_feuilles}
-              valeur={weekJours > 0 ? fmtMoney(comparSemaine.argent) : '—'}
-              label={t('home2.colSpent')}
-              reference={weekJours > 0 ? t('home2.colBefore', { value: fmtMoney(comparSemaine.argentAvant) }) : null}
-              ecart={weekJours > 0 ? comparSemaine.ecartArgent : null}
-              ecartBon={comparSemaine.mieux}
-            />
-            <ColStat dark
-              img={UI.chrono_vie_preservee}
-              valeur={weekJours > 0 ? comparSemaine.vie : '—'}
-              label={comparSemaine.mieux ? t('home2.colLifeGained') : t('home2.colLifeLost')}
-            />
-          </View>
+          {[
+            { key: 'today', title: 'todayTitle', data: comparJour, available: jourRenseigne },
+            { key: 'week', title: 'weekTitle', data: comparSemaine, available: weekJours > 0 },
+          ].map(({ key, title, data, available }) => {
+            const tone = !available || data.ecart === 0 ? colors.gray
+              : data.mieux ? colors.primary : '#B42318';
+            const direction = data.ecart > 0 ? 'More' : data.ecart < 0 ? 'Less' : 'Same';
+            return (
+              <View key={key} style={styles.colCard}>
+                <Text style={styles.cardLabel}>{t('home2.' + title)}</Text>
+                <ColStat
+                  img={UI.cigarette_fumee}
+                  valeur={available ? data.difference : '—'}
+                  label={t('home2.cig' + direction, { count: Math.abs(data.ecart) })}
+                  valueColor={tone}
+                />
+                <ColStat
+                  img={UI.portefeuille_euros_feuilles}
+                  valeur={available ? data.differenceArgent : '—'}
+                  label={t('home2.money' + direction)}
+                  valueColor={tone}
+                />
+                <ColStat
+                  img={UI.chrono_vie_preservee}
+                  valeur={available ? data.vie : '—'}
+                  label={data.ecart === 0 ? t('home2.lifeSame')
+                    : data.mieux ? t('home2.colLifeGained') : t('home2.colLifeLost')}
+                  valueColor={tone}
+                />
+              </View>
+            );
+          })}
         </View>
+        <Text style={styles.colsFootnote}>
+          {t('home2.comparisonBaseline', { count: consoAvantJour })}
+        </Text>
 
         {/* La semaine ne totalise que les journées enregistrées : le dire, sinon
             on croit que le chiffre couvre les sept jours. */}
@@ -884,23 +882,6 @@ export default function DashboardScreen({ navigation }) {
             </Text>
           )}
         </View>
-
-        {/* ⚠️ TEMPORAIRE : refaire l'onboarding depuis une build de test.
-            Visible uniquement avec l'accès de test (voir services/testAccess.js). */}
-        {(testAccess || __DEV__) && !IS_DEMO_BUILD && (
-          <View style={styles.testTools}>
-            <TouchableOpacity style={styles.testBtn} onPress={() => navigation.navigate('ApercuOnboarding')}>
-              <Text style={styles.testBtnText}>{t('home2.previewOnboarding')}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.testBtn} onPress={() => navigation.navigate('ApercuPaywall')}>
-              <Text style={styles.testBtnText}>{t('home2.previewPaywall')}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.testBtn} onPress={async () => { await resetProfile(); }}>
-              <Text style={styles.testBtnText}>{t('home2.backToOnboarding')}</Text>
-            </TouchableOpacity>
-            <Text style={styles.testInfo}>widget : {widgetDebugStatus()}</Text>
-          </View>
-        )}
 
         {/* ── Boutons dev — 2 cartes horizontales côte à côte ──
              Outils de développement uniquement : jamais montrés à un vrai
@@ -941,7 +922,7 @@ export default function DashboardScreen({ navigation }) {
 // Une ligne = le vrai nombre, puis à quoi on le compare, puis l'écart.
 // « −3 cigarettes évitées » ne voulait rien dire : on ne peut pas éviter −3
 // cigarettes. On lit désormais « 18 fumées · avant 15 · +3 ».
-function ColStat({ img, valeur, label, reference, ecart, ecartBon, dark }) {
+function ColStat({ img, valeur, label, reference, ecart, ecartBon, dark, valueColor }) {
   const couleurEcart = ecartBon
     ? (dark ? '#9BE8B4' : colors.primary)
     : (dark ? '#FFB3A8' : colors.danger);
@@ -951,8 +932,11 @@ function ColStat({ img, valeur, label, reference, ecart, ecartBon, dark }) {
         <Image source={img} style={styles.colStatImg} resizeMode="contain" />
       </View>
       <View style={{ flex: 1, minWidth: 0 }}>
-        <Text style={[styles.colStatValue, dark && styles.colStatValueDark]}>
-          {valeur} <Text style={[styles.colStatUnit, dark && styles.colStatLabelDark]}>{label}</Text>
+        <Text style={[styles.colStatValue, dark && styles.colStatValueDark, valueColor && { color: valueColor }]}>
+          {valeur}
+        </Text>
+        <Text style={[styles.colStatLabel, dark && styles.colStatLabelDark]}>
+          {label}
         </Text>
         {reference ? (
           <Text style={[styles.colStatLabel, dark && styles.colStatLabelDark]}>
@@ -1201,8 +1185,4 @@ const styles = StyleSheet.create({
   colStatLabel: { fontSize: 10, fontWeight: '700', color: '#8A9A90', lineHeight: 13 },
   colStatLabelDark: { color: '#BFE3CE' },
 
-  testTools: { marginTop: spacing.sm },
-  testBtn: { alignItems: 'center', paddingVertical: 9 },
-  testInfo: { textAlign: 'center', fontSize: 11, color: '#9AA79F', marginTop: 4 },
-  testBtnText: { color: '#9A3412', fontSize: 13, fontWeight: '700', textDecorationLine: 'underline' },
 });
