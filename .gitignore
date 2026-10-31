@@ -60,3 +60,6 @@ firestore-*-deploy.log
 # generated native folders
 /ios
 /android
+
+# Identifiants locaux (compte de revue Apple) — jamais versionnés
+.secrets/
