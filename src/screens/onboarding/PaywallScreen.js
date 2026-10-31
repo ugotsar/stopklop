@@ -9,7 +9,7 @@ import { formatCurrency } from '../../utils/currency';
 import Klop from '../../components/Klop';
 import { IconCible, IconLoupe, IconPieces } from '../../components/PaywallIcons';
 import {
-  getOfferings, isPaywallBypassEnabled, isPro, purchasePackage, restorePurchases,
+  getOfferings, isPro, purchasePackage, restorePurchases,
 } from '../../services/purchases';
 import { useUser } from '../../context/UserContext';
 
@@ -59,10 +59,8 @@ function prixParMois(pkg) {
 }
 
 export default function PaywallScreen({ navigation, route }) {
-  // Ouvert depuis l'accueil pour revoir l'écran : la croix referme l'aperçu.
-  const apercu = route?.params?.apercu === true;
   const { t, i18n } = useTranslation('paywallOnboarding');
-  const { subscription, refreshSubscription, allowTestAccess } = useUser();
+  const { subscription, refreshSubscription } = useUser();
   const [offering, setOffering] = useState(null);
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -145,9 +143,6 @@ export default function PaywallScreen({ navigation, route }) {
     if (pm == null) return best;
     return best == null || pm < prixParMois(best) ? pkg : best;
   }, null);
-  // ⚠️ TEMPORAIRE : visible seulement tant qu'aucun abonnement n'est proposé
-  // par le store. Disparaît tout seul dès que les abonnements fonctionnent.
-  const showTestAccess = !apercu && !loading && (unavailable || isPaywallBypassEnabled());
 
   return (
     <SafeAreaView style={s.safe}>
@@ -155,15 +150,6 @@ export default function PaywallScreen({ navigation, route }) {
 
         <View style={s.topBar}>
           <Text style={s.brand}>STOPKLOP</Text>
-          {(showTestAccess || apercu) && (
-            <TouchableOpacity
-              style={s.close}
-              onPress={apercu ? () => navigation.goBack() : allowTestAccess}
-              accessibilityLabel={apercu ? t('common:close', { defaultValue: 'Fermer' }) : t('testAccessButton')}
-            >
-              <Text style={s.closeText}>✕</Text>
-            </TouchableOpacity>
-          )}
         </View>
 
         <View style={s.hero}>
@@ -272,12 +258,6 @@ export default function PaywallScreen({ navigation, route }) {
           </Text>
         ) : null}
 
-        {showTestAccess && (
-          <TouchableOpacity onPress={allowTestAccess} disabled={purchasing} style={s.testAccess}>
-            <Text style={s.testAccessText}>{t('testAccessButton')}</Text>
-          </TouchableOpacity>
-        )}
-
         <TouchableOpacity onPress={handleRestore} disabled={purchasing || unavailable}>
           <Text style={[s.restore, unavailable && s.restoreDisabled]}>
             {purchasing ? t('restoringLabel') : t('restoreButton')}
@@ -354,8 +334,6 @@ const s = StyleSheet.create({
   ctaText: { color: colors.white, fontSize: 16.5, fontWeight: '800' },
   billing: { textAlign: 'center', color: '#8A938C', fontSize: 12.5, marginTop: 10 },
 
-  testAccess: { marginTop: 14, alignItems: 'center' },
-  testAccessText: { color: '#9A3412', fontSize: 13, fontWeight: '700', textDecorationLine: 'underline' },
 
   restore: { textAlign: 'center', color: DEEP, fontSize: 14, fontWeight: '700', textDecorationLine: 'underline', marginTop: 16 },
   restoreDisabled: { color: '#9AA79F' },

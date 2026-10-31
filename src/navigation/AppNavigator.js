@@ -48,7 +48,7 @@ const LINKING = {
 };
 
 export default function AppNavigator({ navigationRef }) {
-  const { profile, loading, firebaseUser, subscription, testAccess } = useUser();
+  const { profile, loading, firebaseUser, subscription } = useUser();
   const paywallBypassEnabled = isPaywallBypassEnabled();
 
   // Spinner pendant la vérification de l'état de connexion.
@@ -95,9 +95,7 @@ export default function AppNavigator({ navigationRef }) {
     );
   }
 
-  // `testAccess` : ouverture temporaire tant qu'aucun abonnement n'est vendable
-  // sur les stores (voir src/services/testAccess.js). À retirer avant la sortie.
-  if (!subscription.isPro && !paywallBypassEnabled && !testAccess) {
+  if (!subscription.isPro && !paywallBypassEnabled) {
     return (
       <NavigationContainer theme={AppTheme} ref={navigationRef}>
         <Stack.Navigator key="subscription-required" initialRouteName="Paywall" screenOptions={{ headerShown: false, animation: 'slide_from_right' }}>
