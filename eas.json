@@ -24,6 +24,13 @@
       "android": {
         "buildType": "app-bundle"
       }
+    },
+    "captures": {
+      "extends": "production",
+      "distribution": "store",
+      "env": {
+        "EXPO_PUBLIC_ALLOW_PAYWALL_BYPASS": "true"
+      }
     }
   },
   "submit": {

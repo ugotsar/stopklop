@@ -17,7 +17,7 @@
       "appleTeamId": "2CK95AV86W",
       "usesAppleSignIn": true,
       "supportsTablet": false,
-      "buildNumber": "13",
+      "buildNumber": "14",
       "infoPlist": {
         "NSUserNotificationUsageDescription": "Stopklop t'envoie des rappels pour noter tes cigarettes.",
         "ITSAppUsesNonExemptEncryption": false
