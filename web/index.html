@@ -1,21 +1,125 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
   <head>
     <meta charset="utf-8" />
-    <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <title>Stopklop</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="index,follow" />
+    <title>Assistance — Stopklop</title>
+    <meta
+      name="description"
+      content="Assistance de l'application Stopklop : contact, gestion de l'abonnement, suppression du compte et questions fréquentes."
+    />
     <style>
-      html, body, #root {
-        width: 100%;
-        height: 100%;
-        background-color: #EAF4EC;
-        margin: 0;
-        padding: 0;
+      :root {
+        color-scheme: light;
+        --cream: #fbf9f1;
+        --surface: #fffdf8;
+        --green: #1e5530;
+        --green-mid: #2f7a44;
+        --sage: #e8f0e2;
+        --border: #ede8d8;
+        --text: #173d26;
+        --muted: #6f746f;
       }
+
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        background: var(--cream);
+        color: var(--text);
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        line-height: 1.55;
+      }
+      main { width: min(720px, calc(100% - 32px)); margin: 48px auto; }
+      .brand { color: var(--green); font-size: 20px; font-weight: 800; margin-bottom: 18px; }
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 28px;
+        padding: clamp(24px, 6vw, 48px);
+        box-shadow: 0 18px 50px rgba(30, 85, 48, 0.08);
+      }
+      h1 { margin: 0 0 12px; font-size: clamp(28px, 5vw, 40px); line-height: 1.15; }
+      h2 { margin: 30px 0 10px; font-size: 19px; color: var(--green); }
+      h3 { margin: 22px 0 6px; font-size: 16px; }
+      p, li { color: var(--muted); }
+      ul, ol { padding-left: 22px; }
+      li { margin: 5px 0; }
+      .notice { background: var(--sage); border-radius: 18px; padding: 16px 18px; margin: 24px 0; }
+      .notice strong { color: var(--green); }
+      .updated { color: var(--muted); font-size: 13px; margin-top: -4px; }
+      .lang { border-top: 1px solid var(--border); margin-top: 34px; padding-top: 28px; }
+      footer { text-align: center; color: var(--muted); font-size: 13px; margin-top: 18px; }
+      a { color: var(--green-mid); }
     </style>
   </head>
   <body>
-    <div id="root"></div>
+    <main>
+      <div class="brand">Stopklop</div>
+      <section class="card">
+        <h1>Assistance</h1>
+        <p class="updated">Stopklop vous aide à réduire votre consommation de tabac à votre rythme, puis à arrêter.</p>
+
+        <div class="notice">
+          <strong>Une question, un bug, une demande ?</strong><br />
+          Écrivez à <a href="mailto:futurtsarcorp@gmail.com">futurtsarcorp@gmail.com</a>.
+          Réponse sous 72 heures ouvrées.
+        </div>
+
+        <h2>Questions fréquentes</h2>
+
+        <h3>Comment annuler mon abonnement ?</h3>
+        <p>L'abonnement est géré par Apple ou par Google, jamais par nous.</p>
+        <ul>
+          <li><strong>iPhone</strong> : Réglages → votre nom → Abonnements → Stopklop → Annuler.</li>
+          <li><strong>Android</strong> : Google Play → photo de profil → Paiements et abonnements → Abonnements → Stopklop → Annuler.</li>
+        </ul>
+        <p>L'annulation doit intervenir au moins 24 heures avant la fin de la période en cours.</p>
+
+        <h3>Comment récupérer un abonnement déjà payé ?</h3>
+        <p>
+          Dans l'application : <strong>Profil → Restaurer mes achats</strong>, en étant connecté
+          avec le même compte Apple ou Google que lors de l'achat.
+        </p>
+
+        <h3>J'ai perdu mon mot de passe</h3>
+        <p>
+          Sur l'écran de connexion, utilisez <strong>Mot de passe oublié</strong>. Si vous
+          vous êtes inscrit avec « Continuer avec Apple » ou « Continuer avec Google », il
+          n'y a pas de mot de passe : reprenez le même bouton.
+        </p>
+
+        <h3>Comment supprimer mon compte et mes données ?</h3>
+        <p>
+          Dans l'application : <strong>Profil → Supprimer mon compte</strong>. La marche à
+          suivre complète est détaillée sur la page
+          <a href="/delete-account">Supprimer un compte</a>.
+        </p>
+
+        <h3>Mes données sont-elles revendues ?</h3>
+        <p>
+          Non. Aucune donnée n'est vendue ni utilisée à des fins publicitaires. Voir la
+          <a href="/confidentialite">politique de confidentialité</a>.
+        </p>
+
+        <h3>Stopklop remplace-t-il un médecin ?</h3>
+        <p>
+          Non. Stopklop est un outil d'accompagnement et de suivi. Ce n'est pas un
+          dispositif médical et son contenu ne constitue pas un avis médical. Pour un
+          sevrage tabagique, parlez-en à un professionnel de santé. En France, Tabac info
+          service : <strong>39 89</strong>.
+        </p>
+
+        <div class="lang">
+          <h2>Documents</h2>
+          <ul>
+            <li><a href="/confidentialite">Politique de confidentialité</a></li>
+            <li><a href="/conditions">Conditions d'utilisation</a></li>
+            <li><a href="/delete-account">Supprimer un compte</a></li>
+          </ul>
+        </div>
+      </section>
+      <footer>Stopklop · <a href="mailto:futurtsarcorp@gmail.com">futurtsarcorp@gmail.com</a></footer>
+    </main>
   </body>
 </html>
