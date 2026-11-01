@@ -9,6 +9,8 @@ import { useUser } from '../context/UserContext';
 import { colors, spacing, font, radius } from '../theme';
 import { SUPPORTED_LANGUAGES, changeLanguage } from '../i18n';
 import { isRecentLoginRequired } from '../services/authService';
+import { isPaywallBypassEnabled } from '../services/purchases';
+import { buildVeteranProfile } from '../utils/demoData';
 import { currencySymbol, formatCurrency } from '../utils/currency';
 
 const ACCOUNT_DELETION_URL = 'https://stopklop-413e1.web.app/delete-account';
@@ -682,6 +684,38 @@ export default function ProfilScreen({ navigation }) {
           </TouchableOpacity>
         </View>
 
+        {/* ── Outil interne : jeu de données pour les captures App Store ──
+             Visible uniquement quand le contournement du paywall est actif,
+             c'est-à-dire en développement ou dans la build « captures ».
+             Jamais présent dans une build de production. */}
+        {isPaywallBypassEnabled() && (
+          <TouchableOpacity
+            style={styles.demoBtn}
+            onPress={() => Alert.alert(
+              'Charger le profil de démonstration',
+              "Un an d'historique : un paquet par jour au départ, deux périodes "
+              + "d'arrêt, aujourd'hui 5 cigarettes par jour.\n\nCela remplace vos "
+              + 'données actuelles.',
+              [
+                { text: 'Annuler', style: 'cancel' },
+                {
+                  text: 'Charger',
+                  style: 'destructive',
+                  onPress: async () => {
+                    try {
+                      await updateProfile(buildVeteranProfile());
+                    } catch (e) {
+                      Alert.alert('Échec du chargement', String(e?.message ?? e));
+                    }
+                  },
+                },
+              ],
+            )}
+          >
+            <Text style={styles.demoBtnText}>📸  Charger le profil de démonstration</Text>
+          </TouchableOpacity>
+        )}
+
         {/* ── Supprimer compte ── */}
         <TouchableOpacity
           style={[styles.deleteBtn, deletingAccount && { opacity: 0.5 }]}
@@ -835,6 +869,15 @@ const styles = StyleSheet.create({
   listModifier:  { fontSize: 13, color: colors.primary, fontWeight: '700' },
 
   // Supprimer
+  // Outil interne (build « captures » uniquement) : volontairement discret.
+  demoBtn: {
+    backgroundColor: colors.primaryLight, borderRadius: radius.xl,
+    paddingVertical: spacing.sm + 2, paddingHorizontal: spacing.md,
+    marginTop: spacing.md, alignItems: 'center',
+    borderWidth: 1, borderColor: colors.primary,
+  },
+  demoBtnText: { fontSize: font.sm, fontWeight: '700', color: colors.primaryDeep },
+
   deleteBtn: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
     backgroundColor: colors.surface, borderRadius: radius.xl,
