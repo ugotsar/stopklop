@@ -492,7 +492,7 @@ export default function DashboardScreen({ navigation }) {
   const smokedLinkRef = useTourTarget('home.smokedLink');
   const {
     profile, stats, resetProfile, updateProfile,
-    saveDailyConsumption, recordCraving,
+    saveDailyConsumption, recordCraving, enterCaptureMode,
   } = useUser();
   const [, setTick]          = useState(0);
   const [quoteIdx]           = useState(() => Math.floor(Math.random() * MOTIVATIONS_COUNT));
@@ -890,7 +890,7 @@ export default function DashboardScreen({ navigation }) {
           <View style={styles.devRow}>
             <TouchableOpacity
               style={styles.devCard}
-              onPress={async () => { await updateProfile(buildDemoProfile()); }}
+              onPress={async () => { await enterCaptureMode(buildDemoProfile()); }}
             >
               <Text style={styles.devIcon}>🎬</Text>
               <View style={{ flex: 1 }}>

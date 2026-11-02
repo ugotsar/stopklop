@@ -26,7 +26,12 @@ import { localDateKey } from '../utils/dateKeys';
 import { computeStats } from '../utils/stats';
 import { applyDailyConsumption } from '../utils/dailyConsumption';
 import { IS_DEMO_BUILD } from '../config/demoMode';
-import { buildDemoProfile } from '../utils/demoData';
+import { buildDemoProfile, buildVeteranProfile } from '../utils/demoData';
+import {
+  clearCaptureProfile,
+  loadCaptureProfile,
+  saveCaptureProfile,
+} from '../store/captureStore';
 import { buildWidgetSnapshot } from '../widget/snapshot';
 import { clearWidget, syncWidget } from '../widget/syncWidget';
 
@@ -56,6 +61,13 @@ export function UserProvider({ children }) {
   // précédent très rapproché (avant que le re-render n'ait eu lieu).
   const profileRef = useRef(null);
   useEffect(() => { profileRef.current = profile; }, [profile]);
+
+  // Mode « captures » : jeu de données de démonstration pour les captures
+  // d'écran des stores. Il vit dans sa propre clé locale (captureStore) et ne
+  // sort jamais du téléphone : aucune écriture cloud, aucun écrasement du
+  // cache du profil réel. Tant qu'il est actif, l'écoute Firestore est coupée.
+  const [captureMode, setCaptureMode] = useState(false);
+  const captureRef = useRef(false);
 
   // `computeStats()` lit `new Date()` à chaque appel, mais ne se ré-exécute
   // que lorsque `profile` change. Si l'app reste ouverte sans aucune action
@@ -147,6 +159,18 @@ export function UserProvider({ children }) {
       try {
         let loaded = null;
 
+        // Le jeu de démonstration est prioritaire et autosuffisant : ni
+        // Firestore ni le cache du profil réel ne sont touchés.
+        const captured = await loadCaptureProfile();
+        if (captured) {
+          captureRef.current = true;
+          setCaptureMode(true);
+          profileRef.current = captured;
+          setProfile(captured);
+          return;
+        }
+        captureRef.current = false;
+
         if (firebaseUser) {
           // 1. Essayer Firestore (timeout 5s pour ne pas bloquer)
           let cloudProfile = null;
@@ -235,16 +259,19 @@ export function UserProvider({ children }) {
         setLoading(false);
       }
     })();
-  }, [firebaseUser]);
+  }, [firebaseUser, captureMode]);
 
   // Les changements cloud (autre appareil, relance après réseau coupé) sont
   // reflétés automatiquement dans tous les écrans sans devoir redémarrer l'app.
   useEffect(() => {
-    if (!firebaseUser) return undefined;
+    // En mode captures, l'écoute est coupée : son premier instantané
+    // recomposerait l'activité réelle depuis les sous-collections `days` et
+    // `cravings` et effacerait aussitôt le jeu de démonstration.
+    if (!firebaseUser || captureMode) return undefined;
     return subscribeToUserData(
       firebaseUser.uid,
       cloudProfile => {
-        if (!cloudProfile) return;
+        if (!cloudProfile || captureRef.current) return;
         profileRef.current = cloudProfile;
         setProfile(cloudProfile);
         saveProfile(cloudProfile);
@@ -255,7 +282,7 @@ export function UserProvider({ children }) {
         setSyncError(error);
       },
     );
-  }, [firebaseUser]);
+  }, [firebaseUser, captureMode]);
 
   // Met à jour une ou plusieurs clés du profil + persiste (local + cloud).
   // Fusionne sur `profileRef.current` (toujours à jour de façon synchrone),
@@ -265,6 +292,11 @@ export function UserProvider({ children }) {
     const updated = { ...profileRef.current, ...changes };
     profileRef.current = updated;
     setProfile(updated);
+    // Mode captures : tout reste dans la clé de démonstration.
+    if (captureRef.current) {
+      await saveCaptureProfile(updated);
+      return { synced: false, capture: true };
+    }
     // Sauvegarde locale (cache offline)
     await saveProfile(updated);
     // Sauvegarde cloud si connecté
@@ -290,6 +322,10 @@ export function UserProvider({ children }) {
     );
     profileRef.current = updated;
     setProfile(updated);
+    if (captureRef.current) {
+      await saveCaptureProfile(updated);
+      return { synced: false, capture: true };
+    }
     await saveProfile(updated);
 
     if (!firebaseUser) return { synced: false, offline: true };
@@ -317,6 +353,10 @@ export function UserProvider({ children }) {
     const updated = { ...current, envies: [...(current.envies ?? []), item] };
     profileRef.current = updated;
     setProfile(updated);
+    if (captureRef.current) {
+      await saveCaptureProfile(updated);
+      return { synced: false, capture: true, item };
+    }
     await saveProfile(updated);
     if (!firebaseUser) return { synced: false, offline: true, item };
     try {
@@ -330,8 +370,31 @@ export function UserProvider({ children }) {
     }
   }
 
+  // ── Mode captures (outil interne) ─────────────────────────────────────────
+  // Charge le profil « un an de grosse consommation » dans la clé locale de
+  // démonstration, sans jamais écrire dans le compte réel.
+  async function enterCaptureMode(custom = null) {
+    const demo = custom ?? buildVeteranProfile();
+    await saveCaptureProfile(demo);
+    captureRef.current = true;
+    profileRef.current = demo;
+    setProfile(demo);
+    setCaptureMode(true);
+    return demo;
+  }
+
+  // Sortie : la clé de démonstration est effacée, puis l'effet de chargement
+  // se rejoue et remet les vraies données (cache local + cloud).
+  async function exitCaptureMode() {
+    await clearCaptureProfile();
+    captureRef.current = false;
+    setCaptureMode(false);
+  }
+
   // Réinitialise tout (déconnexion / reset)
   async function resetProfile() {
+    // En mode captures, on ne touche pas au compte réel : on sort de la démo.
+    if (captureRef.current) return exitCaptureMode();
     await clearProfile();
     clearWidget();
     profileRef.current = null;
@@ -343,6 +406,9 @@ export function UserProvider({ children }) {
   // Firebase Auth. L'ordre est important : les règles Firestore exigent que
   // l'utilisateur soit encore authentifié pour supprimer ses données.
   async function deleteAccount() {
+    // Mode captures : le compte réel ne doit jamais être supprimé depuis la
+    // démo. On sort simplement du mode captures.
+    if (captureRef.current) return exitCaptureMode();
     // Mode démo : aucun compte réel à supprimer. On recharge simplement un
     // profil type frais, pour qu'un visiteur curieux qui teste ce bouton
     // retombe sur la démo plutôt que sur un écran cassé.
@@ -406,6 +472,7 @@ export function UserProvider({ children }) {
       profile, loading, firebaseUser, syncError, subscription,
       updateProfile, saveDailyConsumption, recordCraving,
       resetProfile, deleteAccount, refreshSubscription, stats,
+      captureMode, enterCaptureMode, exitCaptureMode,
     }}>
       {children}
     </UserContext.Provider>

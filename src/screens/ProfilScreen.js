@@ -10,7 +10,6 @@ import { colors, spacing, font, radius } from '../theme';
 import { SUPPORTED_LANGUAGES, changeLanguage } from '../i18n';
 import { isRecentLoginRequired } from '../services/authService';
 import { isPaywallBypassEnabled } from '../services/purchases';
-import { buildVeteranProfile } from '../utils/demoData';
 import { currencySymbol, formatCurrency } from '../utils/currency';
 
 const ACCOUNT_DELETION_URL = 'https://stopklop-413e1.web.app/delete-account';
@@ -361,7 +360,8 @@ function LanguageModal({ visible, onClose, current }) {
 // ── Écran Profil ─────────────────────────────────────────────────────────────
 export default function ProfilScreen({ navigation }) {
   const { t, i18n } = useTranslation('profil');
-  const { profile, stats, updateProfile, deleteAccount } = useUser();
+  const { profile, stats, updateProfile, deleteAccount,
+    captureMode, enterCaptureMode, exitCaptureMode } = useUser();
 
   const [notifs,       setNotifs]       = useState(true);
   const [modalPrix,    setModalPrix]    = useState(false);
@@ -688,22 +688,28 @@ export default function ProfilScreen({ navigation }) {
              Visible uniquement quand le contournement du paywall est actif,
              c'est-à-dire en développement ou dans la build « captures ».
              Jamais présent dans une build de production. */}
-        {isPaywallBypassEnabled() && (
+        {isPaywallBypassEnabled() && !captureMode && (
           <TouchableOpacity
             style={styles.demoBtn}
             onPress={() => Alert.alert(
               'Charger le profil de démonstration',
               "Un an d'historique : un paquet par jour au départ, deux périodes "
-              + "d'arrêt, aujourd'hui 5 cigarettes par jour.\n\nCela remplace vos "
-              + 'données actuelles.',
+              + "d'arrêt, aujourd'hui 5 cigarettes par jour.\n\nVos vraies données "
+              + 'ne sont pas touchées : elles reviennent '
+              + 'dès que vous quittez le mode captures.',
               [
                 { text: 'Annuler', style: 'cancel' },
                 {
                   text: 'Charger',
-                  style: 'destructive',
                   onPress: async () => {
                     try {
-                      await updateProfile(buildVeteranProfile());
+                      await enterCaptureMode();
+                      Alert.alert(
+                        'Profil de démonstration chargé',
+                        "L'app affiche maintenant un an d'historique. Le bandeau "
+                        + '« mode captures » reste en bas de cet écran Profil '
+                        + "jusqu'à ce que vous en sortiez.",
+                      );
                     } catch (e) {
                       Alert.alert('Échec du chargement', String(e?.message ?? e));
                     }
@@ -714,6 +720,28 @@ export default function ProfilScreen({ navigation }) {
           >
             <Text style={styles.demoBtnText}>📸  Charger le profil de démonstration</Text>
           </TouchableOpacity>
+        )}
+
+        {isPaywallBypassEnabled() && captureMode && (
+          <View style={styles.captureBanner}>
+            <Text style={styles.captureBannerTitle}>📸  Mode captures actif</Text>
+            <Text style={styles.captureBannerText}>
+              Les données affichées sont un jeu de démonstration local. Vos vraies
+              données sont intactes et reviennent dès que vous quittez ce mode.
+            </Text>
+            <TouchableOpacity
+              style={styles.captureExitBtn}
+              onPress={async () => {
+                try {
+                  await exitCaptureMode();
+                } catch (e) {
+                  Alert.alert('Échec de la sortie', String(e?.message ?? e));
+                }
+              }}
+            >
+              <Text style={styles.captureExitBtnText}>Quitter le mode captures</Text>
+            </TouchableOpacity>
+          </View>
         )}
 
         {/* ── Supprimer compte ── */}
@@ -877,6 +905,19 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderColor: colors.primary,
   },
   demoBtnText: { fontSize: font.sm, fontWeight: '700', color: colors.primaryDeep },
+
+  captureBanner: {
+    backgroundColor: colors.primaryLight, borderRadius: radius.xl,
+    padding: spacing.md, marginTop: spacing.md,
+    borderWidth: 1, borderColor: colors.primary,
+  },
+  captureBannerTitle: { fontSize: font.sm, fontWeight: '800', color: colors.primaryDeep },
+  captureBannerText: { fontSize: 12, color: colors.primaryDeep, marginTop: 4, lineHeight: 17 },
+  captureExitBtn: {
+    backgroundColor: colors.primary, borderRadius: radius.lg,
+    paddingVertical: spacing.sm, alignItems: 'center', marginTop: spacing.sm,
+  },
+  captureExitBtnText: { fontSize: font.sm, fontWeight: '700', color: '#FFFFFF' },
 
   deleteBtn: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
