@@ -65,6 +65,7 @@ firestore-*-deploy.log
 .secrets/
 captures-appstore/
 captures-store/
+captures-store-final/
 captures-finales/
 captures-essais/
 captures-elements/
