@@ -64,3 +64,4 @@ firestore-*-deploy.log
 # Identifiants locaux (compte de revue Apple) — jamais versionnés
 .secrets/
 captures-appstore/
+captures-store/
