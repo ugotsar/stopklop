@@ -56,6 +56,38 @@ async function defile(y) {
   await pause(1200);
 }
 
+// Les modales d'impact : argent, temps de vie, bénéfices santé. Elles s'ouvrent
+// par le (i) de chaque carte de « Votre impact ».
+async function modaleImpact(repere, nom) {
+  await tap('Plan');
+  await pause(1500);
+  const ouvert = await page.evaluate((repere) => {
+    const texte = [...document.querySelectorAll('div,span')]
+      .filter(e => e.children.length === 0 && (e.textContent || '').trim() === repere)[0];
+    if (!texte) return false;
+    // le (i) est le dernier élément cliquable de la ligne
+    let ligne = texte;
+    for (let i = 0; i < 5 && ligne.parentElement; i++) ligne = ligne.parentElement;
+    const boutons = [...ligne.querySelectorAll('div[role="button"],div[tabindex]')];
+    const cible = boutons[boutons.length - 1] ?? ligne;
+    const r = cible.getBoundingClientRect();
+    const ev = o => new MouseEvent(o, { bubbles: true, cancelable: true, clientX: r.x + r.width - 14, clientY: r.y + r.height / 2 });
+    cible.dispatchEvent(ev('pointerdown')); cible.dispatchEvent(ev('mousedown'));
+    cible.dispatchEvent(ev('pointerup')); cible.dispatchEvent(ev('mouseup'));
+    cible.dispatchEvent(ev('click'));
+    return true;
+  }, repere);
+  if (!ouvert) { console.log('  ⚠ repère absent :', repere); return; }
+  await pause(2500);
+  await page.screenshot({ path: path.join(OUT, nom + '.png') });
+  console.log('  ✓', nom);
+  await page.keyboard.press('Escape');
+  await pause(1200);
+}
+
+await modaleImpact('Meilleure santé', '24-bienfaits-sante');
+await modaleImpact('Vie récupérée · par an', '25-vie-recuperee');
+
 await tap('Plan');
 await defile(1800);
 if (await tap('Modifier le plan')) {
